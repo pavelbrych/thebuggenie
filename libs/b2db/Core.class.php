@@ -25,39 +25,27 @@
 		 *
 		 * @var \PDO
 		 */
-		protected static $_db_connection = null;
+		protected $_db_connection = null;
 
-		static protected $_db_host;
-		static protected $_db_uname;
-		static protected $_db_pwd;
-		static protected $_db_name;
-		static protected $_db_type;
-		static protected $_db_port;
-		static protected $_dsn;
-		static protected $_tableprefix = '';
+		protected $_db_host;
+		protected $_db_uname;
+		protected $_db_pwd;
+		protected $_db_name;
+		protected $_db_type;
+		protected $_db_port;
+		protected $_dsn;
+		protected $_tableprefix = '';
+		protected $_aliascnt = 0;
+		protected $_transaction_active = false;
+		protected $_tables = array();
+		
 		static protected $_sqlhits = array();
 		static protected $_sqltiming;
 		static protected $_throwhtmlexception = true;
-		static protected $_aliascnt = 0;
-		static protected $_transaction_active = false;
-		static protected $_tables = array();
 		static protected $_debug_mode = true;
 		static protected $_cache_path;
 		static protected $_cached_column_class_properties = array();
 		static protected $_cached_foreign_classes = array();
-
-		/**
-		 * Loads a table and adds it to the B2DBObject stack
-		 * 
-		 * @param Table $tbl_name
-		 * 
-		 * @return Table
-		 */
-		public static function loadNewTable(Table $table)
-		{
-			self::$_tables[\get_class($table)] = $table;
-			return $table;
-		}
 
 		/**
 		 * Enable or disable debug mode
@@ -80,22 +68,15 @@
 		}
 
 		/**
-		 * Add a table alias to alias counter
+		 * Initialize a B2DB connection instance
 		 *
-		 * @return integer
+		 * @param array $configuration
+		 * 
+		 * @return Connection
 		 */
-		public static function addAlias()
+		public static function getInstance($configuration)
 		{
-			return self::$_aliascnt++;
-		}
-
-		/**
-		 * Initialize B2DB and load related B2DB classes
-		 *
-		 * @param boolean $load_parameters[optional] whether to load connection parameters
-		 */
-		public static function initialize($configuration)
-		{
+			$b2db = new Core();
 		}
 
 		public static function setCachePath($cache_path)
@@ -103,21 +84,11 @@
 			self::$_cache_path = $cache_path;
 		}
 
-		/**
-		 * Return true if B2DB is initialized with database name and username
-		 *
-		 * @return boolean
-		 */
-		public static function isInitialized()
-		{
-			return (bool) (self::getDBtype() != '' && self::getUname() != '');
-		}
-
-		/**
+		/*
 		 * Store connection parameters
 		 *
 		 * @param string $bootstrap_location Where to save the connection parameters
-		 */
+		
 		public static function saveConnectionParameters($bootstrap_location)
 		{
 			$string = "<?php\n";
@@ -129,7 +100,7 @@
 			$string .= "\t * @license http://www.opensource.org/licenses/mozilla1.1.php Mozilla Public License 1.1 (MPL 1.1)\n";
 			$string .= "\t * @package b2db\n";
 			$string .= "\t * @subpackage core\n";
-			$string .= "\t */\n";
+			$string .= "\t *\n";
 			$string .= "\n";
 			$string .= "\tself::setUname('".addslashes(self::getUname())."');\n";
 			$string .= "\tself::setPasswd('".addslashes(self::getPasswd())."');\n";
@@ -148,59 +119,8 @@
 			{
 				throw $e;
 			}
-		}
+		} */
 		
-		/**
-		 * Returns the Table object
-		 *
-		 * @param Table $tbl_name
-		 * 
-		 * @return Table
-		 */
-		public static function getTable($tbl_name)
-		{
-			if (!isset(self::$_tables[$tbl_name]))
-			{
-				try
-				{
-					if (!\class_exists($tbl_name))
-					{
-						throw new Exception("Class $tbl_name does not exist, cannot load it");
-					}
-					self::loadNewTable(new $tbl_name());
-				}
-				catch (\Exception $e)
-				{
-					throw $e;
-				}
-			}
-			if (!isset(self::$_tables[$tbl_name]))
-			{
-				throw new Exception('Table ' . $tbl_name . ' is not loaded');
-			}
-			return self::$_tables[$tbl_name];
-		}
-
-		/**
-		 * Return all tables registered
-		 *
-		 * @return array
-		 */
-		public static function getTables()
-		{
-			return self::$_tables;
-		}
-
-		/**
-		 * Set tables
-		 *
-		 * @param array $tables
-		 */
-		public static function setTables($tables)
-		{
-			self::$_tables = $tables;
-		}
-
 		/**
 		 * Register a new SQL call
 		 */
@@ -246,325 +166,6 @@
 			return self::$_sqltiming;
 		}
 
-		/**
-		 * Returns PDO object
-		 *
-		 * @return \PDO
-		 */
-		public static function getDBlink()
-		{
-			return self::$_db_connection;
-		}
-
-		/**
-		 * returns a PDO resultset
-		 *
-		 * @param string $sql
-		 */
-		public static function simpleQuery($sql)
-		{
-			self::$_sqlhits++;
-			try
-			{
-				$res = self::getDBLink()->query($sql);
-			}
-			catch (\PDOException $e)
-			{
-				throw new Exception($e->getMessage());
-			}
-			return $res;
-		}
-		
-		/**
-		 * Set the DSN
-		 *
-		 * @param string $dsn
-		 */
-		public static function setDSN($dsn)
-		{
-			$dsn_details = \parse_url($dsn);
-			if (!\array_key_exists('scheme', $dsn_details))
-			{
-				throw new Exception('This does not look like a valid DSN - cannot read the database type');
-			}
-			try
-			{
-				self::setDBtype($dsn_details['scheme']);
-				$dsn_details = \explode(';', $dsn_details['path']);
-				foreach ($dsn_details as $dsn_detail)
-				{
-					$detail_info = \explode('=', $dsn_detail);
-					if (\count($detail_info) != 2)
-					{
-						throw new B2DBException('This does not look like a valid DSN - cannot read the connection details');
-					}
-					switch ($detail_info[0])
-					{
-						case 'host':
-							self::setHost($detail_info[1]);
-							break;
-						case 'port':
-							self::setPort($detail_info[1]);
-							break;
-						case 'dbname':
-							self::setDBname($detail_info[1]);
-							break;
-					}
-				}
-			}
-			catch (\Exception $e)
-			{
-				throw $e;
-			}
-			self::$_dsn = $dsn;
-		}
-
-		/**
-		 * Generate the DSN when needed
-		 */
-		protected static function _generateDSN()
-		{
-			$dsn = self::getDBtype() . ":host=" . self::getHost();
-			if (self::getPort())
-			{
-				$dsn .= ';port=' . self::getPort();
-			}
-			$dsn .= ';dbname='.self::getDBname();
-			self::$_dsn = $dsn;
-		}
-
-		/**
-		 * Return current DSN
-		 *
-		 * @return string
-		 */
-		public static function getDSN()
-		{
-			if (self::$_dsn === null)
-			{
-				self::_generateDSN();
-			}
-			return self::$_dsn;
-		}
-
-		/**
-		 * Set the database host
-		 *
-		 * @param string $host
-		 */
-		public static function setHost($host)
-		{
-			self::$_db_host = $host;
-		}
-
-		/**
-		 * Return the database host
-		 *
-		 * @return string
-		 */
-		public static function getHost()
-		{
-			return self::$_db_host;
-		}
-
-		/**
-		 * Return the database port
-		 *
-		 * @return integer
-		 */
-		public static function getPort()
-		{
-			return self::$_db_port;
-		}
-
-		/**
-		 * Set the database port
-		 * 
-		 * @param integer $port 
-		 */
-		public static function setPort($port)
-		{
-			self::$_db_port = $port;
-		}
-
-		/**
-		 * Set database username
-		 *
-		 * @param string $uname
-		 */
-		public static function setUname($uname)
-		{
-			self::$_db_uname = $uname;
-		}
-
-		/**
-		 * Get database username
-		 *
-		 * @return string
-		 */
-		public static function getUname()
-		{
-			return self::$_db_uname;
-		}
-
-		/**
-		 * Set the database table prefix
-		 *
-		 * @param string $prefix
-		 */
-		public static function setTablePrefix($prefix)
-		{
-			self::$_tableprefix = $prefix;
-		}
-
-		/**
-		 * Get the database table prefix
-		 *
-		 * @return string
-		 */
-		public static function getTablePrefix()
-		{
-			return self::$_tableprefix;
-		}
-
-		/**
-		 * Set the database password
-		 *
-		 * @param string $upwd
-		 */
-		public static function setPasswd($upwd)
-		{
-			self::$_db_pwd = $upwd;
-		}
-
-		/**
-		 * Return the database password
-		 *
-		 * @return string
-		 */
-		public static function getPasswd()
-		{
-			return self::$_db_pwd;
-		}
-
-		/**
-		 * Set the database name
-		 *
-		 * @param string $dbname
-		 */
-		public static function setDBname($dbname)
-		{
-			self::$_db_name = $dbname;
-			self::$_dsn = null;
-		}
-
-		/**
-		 * Get the database name
-		 *
-		 * @return string
-		 */
-		public static function getDBname()
-		{
-			return self::$_db_name;
-		}
-
-		/**
-		 * Set the database type
-		 *
-		 * @param string $dbtype
-		 */
-		public static function setDBtype($dbtype)
-		{
-			if (self::hasDBEngine($dbtype) == false)
-			{
-				throw new Exception('The selected database is not supported: "' . $dbtype . '".');
-			}
-			self::$_db_type = $dbtype;
-		}
-
-		/**
-		 * Get the database type
-		 *
-		 * @return string
-		 */
-		public static function getDBtype()
-		{
-			if (!self::$_db_type && \defined('B2DB_SQLTYPE'))
-			{
-				self::setDBtype(B2DB_SQLTYPE);
-			}
-			return self::$_db_type;
-		}
-
-		public static function hasDBtype()
-		{
-			return (bool) (self::getDBtype() != '');
-		}
-
-		/**
-		 * Try connecting to the database
-		 */
-		public static function doConnect()
-		{
-			if (!\class_exists('\\PDO'))
-			{
-				throw new B2DBException('B2DB needs the PDO PHP libraries installed. See http://php.net/PDO for more information.');
-			}
-			try
-			{
-				$uname = self::getUname();
-				$pwd = self::getPasswd();
-				if (self::$_db_connection instanceof \PDO)
-				{
-					self::$_db_connection = null;
-				}
-				self::$_db_connection = new \PDO(self::getDSN(), $uname, $pwd);
-				if (!self::$_db_connection instanceof \PDO)
-				{
-					throw new Exception('Could not connect to the database, but not caught by PDO');
-				}
-				self::getDBLink()->query('SET NAMES UTF8');
-			}
-			catch (\PDOException $e)
-			{
-				throw new Exception($e->getMessage());
-			}
-			catch (Exception $e)
-			{
-				throw $e;
-			}
-		}
-
-		/**
-		 * Select a database to use
-		 *
-		 * @param string $db
-		 * @deprecated
-		 */
-		public static function doSelectDB($db = null)
-		{
-			return true;
-		}
-
-		/**
-		 * Create the specified database
-		 *
-		 * @param string $db_name
-		 */
-		public static function createDatabase($db_name)
-		{
-			$res = self::getDBLink()->query('create database ' . $db_name);
-		}
-
-		/**
-		 * Close the database connection
-		 */
-		public static function closeDBLink()
-		{
-			self::saveCache();
-			self::$_db_connection = null;
-		}
-
 		public static function getCachePath()
 		{
 			return self::$_cache_path;
@@ -608,29 +209,6 @@
 			}
 		}
 
-		/**
-		 * Toggle the transaction state
-		 *
-		 * @param boolean $state
-		 */
-		public static function setTransaction($state)
-		{
-			self::$_transaction_active = $state;
-		}
-		
-		/**
-		 * Starts a new transaction
-		 */
-		public static function startTransaction()
-		{
-			return new Transaction();
-		}
-		
-		public static function isTransactionActive()
-		{
-			return (bool) self::$_transaction_active == Transaction::STATE_STARTED;
-		}
-		
 		/**
 		 * Displays a nicely formatted exception message
 		 *  
@@ -790,21 +368,15 @@
 		public static function loadCachedClassFiles($class)
 		{
 			$filename = self::getCachePath() . "/{$class}.column_class_properties.cache.php";
-			if (\file_exists($filename))
-			{
-				require $filename;
-			}
+			if (\file_exists($filename)) require $filename;
+
 			$filename = self::getCachePath() . "/{$class}.foreign_classes.cache.php";
-			if (\file_exists($filename))
-			{
-				require $filename;
-			}
+			if (\file_exists($filename)) require $filename;
 		}
 		
 		public static function addCachedColumnClassProperty($column, $class, $property)
 		{
-			if (!\array_key_exists($class, self::$_cached_column_class_properties))
-			{
+			if (!\array_key_exists($class, self::$_cached_column_class_properties)) {
 				self::$_cached_column_class_properties[$class] = array();
 			}
 			self::$_cached_column_class_properties[$class][$column] = $property;
@@ -813,20 +385,16 @@
 		public static function getCachedColumnClassProperty($column, $class)
 		{
 			self::loadCachedClassFiles($class);
-			if (\array_key_exists($class, self::$_cached_column_class_properties))
-			{
-				if (\array_key_exists($column, self::$_cached_column_class_properties[$class]))
-				{
+			if (\array_key_exists($class, self::$_cached_column_class_properties)) {
+				if (\array_key_exists($column, self::$_cached_column_class_properties[$class])) {
 					return self::$_cached_column_class_properties[$class][$column];
 				}
 			}
-			return null;
 		}
 		
 		public static function addCachedClassPropertyForeignClass($class, $property, $foreign_class)
 		{
-			if (!\array_key_exists($class, self::$_cached_foreign_classes))
-			{
+			if (!\array_key_exists($class, self::$_cached_foreign_classes)) {
 				self::$_cached_foreign_classes[$class] = array();
 			}
 			self::$_cached_foreign_classes[$class][$property] = $foreign_class;
@@ -835,14 +403,11 @@
 		public static function getCachedClassPropertyForeignClass($class, $property)
 		{
 			self::loadCachedClassFiles($class);
-			if (\array_key_exists($class, self::$_cached_foreign_classes))
-			{
-				if (\array_key_exists($property, self::$_cached_foreign_classes[$class]))
-				{
+			if (\array_key_exists($class, self::$_cached_foreign_classes)) {
+				if (\array_key_exists($property, self::$_cached_foreign_classes[$class])) {
 					return self::$_cached_foreign_classes[$class][$property];
 				}
 			}
-			return null;
 		}
 	
 	}

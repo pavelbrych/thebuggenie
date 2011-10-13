@@ -1,6 +1,6 @@
 <?php
 
-	namespace caspar\core;
+	namespace thebuggenie\core;
 
 	/**
 	 * Settings class
@@ -344,17 +344,6 @@
 		public static function isGravatarsEnabled()
 		{
 			return (bool) self::get(self::SETTING_ENABLE_GRAVATARS);
-		}
-		
-		public static function getLanguage()
-		{
-			return self::get(self::SETTING_DEFAULT_LANGUAGE);
-		}
-
-		public static function getHTMLLanguage()
-		{
-			$lang = explode('_', self::getLanguage());
-			return $lang[0];
 		}
 		
 		public static function getCharset()

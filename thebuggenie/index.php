@@ -13,4 +13,4 @@
 	require CASPAR_PATH . 'caspar' . DS . 'bootstrap.inc.php';
 	
 	// Trigger the framework's start function
-	Caspar::go();
+	\caspar\core\Caspar::go();

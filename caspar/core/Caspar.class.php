@@ -138,32 +138,11 @@
 		static protected $_response;
 		
 		/**
-		 * The current scope object
-		 *
-		 * @var TBGScope
-		 */
-		static protected $_scope;
-
-		/**
 		 * The Factory instance
 		 *
 		 * @var Factory
 		 */
 		static protected $_factory;
-		
-		/**
-		 * The currently selected project, if any
-		 * 
-		 * @var TBGProject
-		 */
-		static protected $_selected_project;
-		
-		/**
-		 * The currently selected client, if any
-		 * 
-		 * @var TBGClient
-		 */
-		static protected $_selected_client;
 		
 		/**
 		 * Used to determine when the b2 engine started loading
@@ -339,10 +318,9 @@
 				require $filename_alternate;
 				return;
 			}
+			$filename = (isset($filename)) ? $filename : null;
+			$filename_alternate = (isset($filename_alternate)) ? $filename_alternate : null;
 			throw new \Exception("Class {$classname} not found, even though we tried both '{$filename}' and '{$filename_alternate}'");
-//			if (isset($filename)) var_dump($filename);
-//			if (isset($filename_alternate)) var_dump($filename_alternate);
-//			die();
 		}
 		
 		/**
@@ -616,6 +594,9 @@
 		 */
 		public static function getRequest()
 		{
+			if (!self::$_request instanceof Request) {
+				self::$_request = new Request();
+			}
 			return self::$_request;
 		}
 		
@@ -626,6 +607,9 @@
 		 */
 		public static function getResponse()
 		{
+			if (!self::$_response instanceof Response) {
+				self::$_response = new Response();
+			}
 			return self::$_response;
 		}
 		
@@ -655,10 +639,10 @@
 		 */
 		public static function getI18n()
 		{
-			if (!self::$_i18n instanceof TBGI18n)
-			{
-				Logging::log('Cannot access the translation object until the i18n system has been initialized!', 'i18n', Logging::LEVEL_WARNING);
-				throw new \Exception('Cannot access the translation object until the i18n system has been initialized!');
+			if (!self::$_i18n instanceof I18n) {
+				self::$_i18n = new I18n();
+//				Logging::log('Cannot access the translation object until the i18n system has been initialized!', 'i18n', Logging::LEVEL_WARNING);
+//				throw new \Exception('Cannot access the translation object until the i18n system has been initialized!');
 				//self::reinitializeI18n(self::getUser()->getLanguage());
 			}
 			return self::$_i18n;
@@ -1560,255 +1544,6 @@
 			Event::createNew('core', 'post_logout')->trigger();
 		}
 
-		/**
-		 * Find and set the current scope
-		 * 
-		 * @param integer $scope Specify a scope to set for this request
-		 */
-		public static function setScope($scope = null)
-		{
-			Logging::log("Setting current scope");
-			if ($scope !== null)
-			{
-				Logging::log("Setting scope from function parameter");
-				self::$_scope = $scope;
-				Settings::forceSettingsReload();
-				Logging::log("...done (Setting scope from function parameter)");
-				return true;
-			}
-	
-			$row = null;
-			try
-			{
-				$hostname = null;
-				if (!self::isCLI() && !self::isInstallmode())
-				{
-					Logging::log("Checking if scope can be set from hostname (".$_SERVER['HTTP_HOST'].")");
-					$hostname = $_SERVER['HTTP_HOST'];
-				}
-				
-				if (!self::isUpgrademode() && !self::isInstallmode())
-					$row = \thebuggenie\tables\Scopes::getTable()->getByHostnameOrDefault($hostname);
-				
-				if (!$row instanceof \b2db\Row)
-				{
-					Logging::log("It couldn't", 'main', Logging::LEVEL_WARNING);
-					if (!self::isInstallmode())
-						throw new \Exception("The Bug Genie isn't set up to work with this server name.");
-					else
-						return;
-				}
-				
-				Logging::log("Setting scope from hostname");
-				self::$_scope = self::factory()->manufacture("\\caspar\\core\\Scope", $row->get(\thebuggenie\tables\Scopes::ID), $row);
-				Settings::forceSettingsReload();
-				Settings::loadSettings();
-				Logging::log("...done (Setting scope from hostname)");
-				return true;
-			}
-			catch (Exception $e)
-			{
-				if (self::isCLI())
-				{
-					Logging::log("Couldn't set up default scope.", 'main', Logging::LEVEL_FATAL);
-					throw new \Exception("Could not load default scope. Error message was: " . $e->getMessage());
-				}
-				elseif (!self::isInstallmode())
-				{
-					throw $e;
-					Logging::log("Couldn't find a scope for hostname {$_SERVER['HTTP_HOST']}", 'main', Logging::LEVEL_FATAL);
-					Logging::log($e->getMessage(), 'main', Logging::LEVEL_FATAL);
-					throw new \Exception("Could not load scope. This is usually because the scopes table doesn't have a scope for this hostname");
-				}
-				else
-				{
-					Logging::log("Couldn't find a scope for hostname {$_SERVER['HTTP_HOST']}, but we're in installmode so continuing anyway");
-				}
-			}
-		}
-
-		/**
-		 * Returns current scope
-		 *
-		 * @return TBGScope
-		 */
-		public static function getScope()
-		{
-			return self::$_scope;
-		}
-		
-		/**
-		 * Set the currently selected project
-		 * 
-		 * @param TBGProject $project The project, or null if none
-		 */
-		public static function setCurrentProject($project)
-		{
-			self::getResponse()->setBreadcrumb(null);
-			self::$_selected_project = $project;
-			
-			$childbreadcrumbs = array();
-			
-			if ($project instanceof TBGProject)
-			{
-				$t = $project;
-				
-				$hierarchy_breadcrumbs = array();
-				$projects_processed = array();
-				
-				while ($t instanceof TBGProject)
-				{
-					if (array_key_exists($t->getKey(), $projects_processed))
-					{
-						// We have a cyclic dependency! Oh no!
-						// If this happens, throw an \Exception
-						
-						throw new \Exception(self::geti18n()->__('A loop has been found in the project heirarchy. Go to project configuration, and alter the subproject setting for this project so that this project is not a subproject of one which is a subproject of this one.'));
-						continue;
-					}
-					else
-					{
-						$all_projects = array_merge(TBGProject::getAllRootProjects(true), TBGProject::getAllRootProjects(false));
-						// If this is a root project, display a list of other root projects, then t is null
-						if (!($t->hasParent()) && count($all_projects) > 1)
-						{
-							$itemsubmenulinks = array();
-							foreach ($all_projects as $child)
-							{
-								$itemsubmenulinks[] = array('url' => self::getRouting()->generate('project_dashboard', array('project_key' => $child->getKey())), 'title' => $child->getName());
-							}
-							
-							$hierarchy_breadcrumbs[] = array($t, $itemsubmenulinks);
-							
-							$projects_processed[$t->getKey()] = $t;
-							
-							$t = null;
-							continue;
-						}
-						elseif (!($t->hasParent()))
-						{
-							$hierarchy_breadcrumbs[] = array($t, null);
-							
-							$projects_processed[$t->getKey()] = $t;
-							
-							$t = null;
-							continue;
-						}
-						else
-						{
-							// What we want to do here is to build a list of the children of the parent unless we are the only one
-							$parent = $t->getParent();
-							$children = $parent->getChildren();
-							
-							$itemsubmenulinks = null;
-							
-							if ($parent->hasChildren() && count($children) > 1)
-							{
-								$itemsubmenulinks = array();
-								foreach ($children as $child)
-								{
-									$itemsubmenulinks[] = array('url' => self::getRouting()->generate('project_dashboard', array('project_key' => $child->getKey())), 'title' => $child->getName());
-								}
-							}
-							
-							$hierarchy_breadcrumbs[] = array($t, $itemsubmenulinks);
-							
-							$projects_processed[$t->getKey()] = $t;
-							
-							$t = $parent;
-							continue;
-						}
-					}
-				}
-				
-				$clientsubmenulinks = null;
-				if (self::$_selected_project->hasClient())
-				{
-					$clientsubmenulinks = array();
-					foreach (TBGClient::getAll() as $client)
-					{
-						if ($client->hasAccess())
-							$clientsubmenulinks[] = array('url' => self::getRouting()->generate('client_dashboard', array('client_id' => $client->getID())), 'title' => $client->getName());
-					}
-					self::setCurrentClient(self::$_selected_project->getClient());
-				}
-				if (mb_strtolower(Settings::getTBGname()) != mb_strtolower($project->getName()) || self::isClientContext())
-				{
-					self::getResponse()->addBreadcrumb(Settings::getTBGName(), self::getRouting()->generate('home'));
-					if (self::isClientContext())
-					{
-						self::getResponse()->addBreadcrumb(self::getCurrentClient()->getName(), self::getRouting()->generate('client_dashboard', array('client_id' => self::getCurrentClient()->getID())), $clientsubmenulinks);
-					}
-				}
-				
-				// Add root breadcrumb first, so reverse order
-				$hierarchy_breadcrumbs = array_reverse($hierarchy_breadcrumbs);
-				
-				foreach ($hierarchy_breadcrumbs as $breadcrumb)
-				{
-					$class = null;
-					if ($breadcrumb[0]->getKey() == self::getCurrentProject()->getKey())
-					{
-						$class = 'selected_project';
-					}
-					self::getResponse()->addBreadcrumb($breadcrumb[0]->getName(), self::getRouting()->generate('project_dashboard', array('project_key' => $breadcrumb[0]->getKey())), $breadcrumb[1], $class);					
-				}
-			}
-			else
-			{
-				self::getResponse()->addBreadcrumb(Settings::getTBGName(), self::getRouting()->generate('home'));
-			}
-		}
-		
-		/**
-		 * Return the currently selected project if any, or null
-		 * 
-		 * @return TBGProject
-		 */
-		public static function getCurrentProject()
-		{
-			return self::$_selected_project;
-		}
-
-		/**
-		 * Return whether current project is set
-		 *
-		 * @return boolean
-		 */
-		public static function isProjectContext()
-		{
-			return (bool) (self::getCurrentProject() instanceof TBGProject);
-		}
-		
-		/**
-		 * Set the currently selected client
-		 * 
-		 * @param TBGClient $client The client, or null if none
-		 */
-		public static function setCurrentClient($client)
-		{
-			self::$_selected_client = $client;
-		}
-		
-		/**
-		 * Return the currently selected client if any, or null
-		 * 
-		 * @return TBGClient
-		 */
-		public static function getCurrentClient()
-		{
-			return self::$_selected_client;
-		}
-
-		/**
-		 * Return whether current client is set
-		 *
-		 * @return boolean
-		 */
-		public static function isClientContext()
-		{
-			return (bool) (self::getCurrentClient() instanceof TBGClient);
-		}
 		
 		/**
 		 * Set a message to be retrieved in the next request
@@ -1938,29 +1673,22 @@
 			{
 				$lib_file_name = "{$lib_name}.inc.php";
 
-				if (isset($module) && file_exists(THEBUGGENIE_MODULES_PATH . $module . DS . 'lib' . DS . $lib_file_name))
-				{
-					require THEBUGGENIE_MODULES_PATH . $module . DS . 'lib' . DS . $lib_file_name;
-					self::$_libs[$lib_name] = THEBUGGENIE_MODULES_PATH . $module . DS . 'lib' . DS . $lib_file_name;
-				}
-				elseif (file_exists(THEBUGGENIE_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . $lib_file_name))
-				{
+				if (isset($module) && file_exists(CASPAR_MODULES_PATH . $module . DS . 'lib' . DS . $lib_file_name)) {
+					require CASPAR_MODULES_PATH . $module . DS . 'lib' . DS . $lib_file_name;
+					self::$_libs[$lib_name] = CASPAR_MODULES_PATH . $module . DS . 'lib' . DS . $lib_file_name;
+				} elseif (file_exists(CASPAR_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . $lib_file_name)) {
 					// Include the library from the current module if it exists
-					require THEBUGGENIE_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . $lib_file_name;
-					self::$_libs[$lib_name] = THEBUGGENIE_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . $lib_file_name;
-				}
-				elseif (file_exists(THEBUGGENIE_CORE_PATH . 'lib' . DS . $lib_file_name))
-				{
+					require CASPAR_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . $lib_file_name;
+					self::$_libs[$lib_name] = CASPAR_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . $lib_file_name;
+				} elseif (file_exists(CASPAR_LIB_PATH . DS . $lib_file_name)) {
 					// Include the library from the global library directory if it exists
-					require THEBUGGENIE_CORE_PATH . 'lib' . DS . $lib_file_name;
-					self::$_libs[$lib_name] = THEBUGGENIE_CORE_PATH . 'lib' . DS . $lib_file_name;
-				}
-				else
-				{
+					require CASPAR_LIB_PATH . DS . $lib_file_name;
+					self::$_libs[$lib_name] = CASPAR_LIB_PATH . DS . $lib_file_name;
+				} else {
 					// Throw an \Exception if the library can't be found in any of
 					// the above directories
-					Logging::log("The \"{$lib_name}\" library does not exist in either " . THEBUGGENIE_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . ' or ' . THEBUGGENIE_CORE_PATH . 'lib' . DS, 'core', Logging::LEVEL_FATAL);
-					throw new TBGLibraryNotFoundException("The \"{$lib_name}\" library does not exist in either " . THEBUGGENIE_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . ' or ' . THEBUGGENIE_CORE_PATH . 'lib' . DS);
+					Logging::log("The \"{$lib_name}\" library does not exist in either " . CASPAR_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . ' or ' . CASPAR_CORE_PATH . 'lib' . DS, 'core', Logging::LEVEL_FATAL);
+					throw new LibraryNotFoundException("The \"{$lib_name}\" library does not exist in either " . CASPAR_MODULES_PATH . self::getRouting()->getCurrentRouteModule() . DS . 'lib' . DS . ' or ' . CASPAR_CORE_PATH . 'lib' . DS);
 				}
 			}
 		}
@@ -1996,10 +1724,10 @@
 			$content = null;
 			
 			// Set the template to be used when rendering the html (or other) output
-			$templatePath = THEBUGGENIE_MODULES_PATH . $module . DS . 'templates' . DS;
+			$template_path = CASPAR_MODULES_PATH . $module . DS . 'templates' . DS;
 
 			// Construct the action class and method name, including any pre- action(s)
-			$actionClassName = "\\thebuggenie\\modules\\$module\\Actions";
+			$actionClassName = "\\application\\modules\\$module\\Actions";
 			$actionToRunName = 'run' . ucfirst($method);
 			$preActionToRunName = 'pre' . ucfirst($method);
 
@@ -2007,7 +1735,6 @@
 			self::getResponse()->setPage(self::getRouting()->getCurrentRouteName());
 			self::getResponse()->setTemplate(mb_strtolower($method) . '.' . self::getRequest()->getRequestedFormat() . '.php');
 			self::getResponse()->setupResponseContentType(self::getRequest()->getRequestedFormat());
-			self::setCurrentProject(null);
 			
 			// Set up the action object
 			$actionObject = new $actionClassName();
@@ -2074,33 +1801,26 @@
 							self::visitPartial("{$actionClassName}::{$actionToRunName}", $action_posttime - $action_pretime);
 						}
 					}
-					if (self::getResponse()->getHttpStatus() == 200 && $action_retval)
-					{
+					if (self::getResponse()->getHttpStatus() == 200 && $action_retval) {
 						// If the action returns *any* output, we're done, and collect the
 						// output to a variable to be outputted in context later
 						$content = ob_get_clean();
 						Logging::log('...done');
-					}
-					elseif (!$action_retval)
-					{
+					} elseif (!$action_retval) {
 						// If the action doesn't return any output (which it usually doesn't)
 						// we continue on to rendering the template file for that specific action
 						Logging::log('...done');
 						Logging::log('Displaying template');
 
 						// Check to see if we have a translated version of the template
-						if (($templateName = self::getI18n()->hasTranslatedTemplate(self::getResponse()->getTemplate())) === false)
-						{
+						if (!self::getI18n() instanceof I18n || ($templateName = self::getI18n()->hasTranslatedTemplate(self::getResponse()->getTemplate())) === false) {
 							// Check to see if the template has been changed, and whether it's in a
 							// different module, specified by "module/templatename"
-							if (mb_strpos(self::getResponse()->getTemplate(), '/'))
-							{
+							if (mb_strpos(self::getResponse()->getTemplate(), '/')) {
 								$newPath = explode('/', self::getResponse()->getTemplate());
 								$templateName = THEBUGGENIE_MODULES_PATH . $newPath[0] . DS . 'templates' . DS . $newPath[1] . '.' . self::getRequest()->getRequestedFormat() . '.php';
-							}
-							else
-							{
-								$templateName = $templatePath . self::getResponse()->getTemplate();
+							} else {
+								$templateName = $template_path . self::getResponse()->getTemplate();
 							}
 						}
 
@@ -2108,12 +1828,12 @@
 						if (!file_exists($templateName))
 						{
 							Logging::log('The template file for the ' . $method . ' action ("'.self::getResponse()->getTemplate().'") does not exist', 'core', Logging::LEVEL_FATAL);
-							throw new TBGTemplateNotFoundException('The template file for the ' . $method . ' action ("'.self::getResponse()->getTemplate().'") does not exist');
+							throw new TemplateNotFoundException('The template file for the ' . $method . ' action ("'.self::getResponse()->getTemplate().'") does not exist');
 						}
 
 						self::loadLibrary('common');
 						// Present template for current action
-						TBGActionComponent::presentTemplate($templateName, $actionObject->getParameterHolder());
+						ActionComponents::presentTemplate($templateName, $actionObject->getParameterHolder());
 						$content = ob_get_clean();
 						Logging::log('...completed');
 					}
@@ -2149,7 +1869,7 @@
 				self::loadLibrary('common');
 				Logging::log('rendering content');
 				
-				if (Settings::isMaintenanceModeEnabled() && !mb_strstr(self::getRouting()->getCurrentRouteName(), 'configure'))
+				if (self::isMaintenanceModeEnabled() && !mb_strstr(self::getRouting()->getCurrentRouteName(), 'configure'))
 				{
 					if (!file_exists(THEBUGGENIE_CORE_PATH . 'templates/offline.inc.php'))
 					{
@@ -2166,7 +1886,7 @@
 
 				if (self::getResponse()->getDecoration() == Response::DECORATE_DEFAULT)
 				{
-					require THEBUGGENIE_CORE_PATH . 'templates/layout.php';
+					require \CASPAR_APPLICATION_PATH . 'templates/layout.php';
 				}
 				else
 				{
@@ -2244,87 +1964,49 @@
 		public static function go()
 		{
 			Logging::log('Dispatching');
-			try
-			{
-				if (($route = self::getRouting()->getRouteFromUrl(self::getRequest()->getParameter('url', null, false)))  || self::isInstallmode())
-				{
-					if (self::isUpgrademode())
-					{
+			try {
+				if (($route = self::getRouting()->getRouteFromUrl(self::getRequest()->getParameter('url', null, false))) || self::isInstallmode()) {
+					if (self::isUpgrademode()) {
 						$route = array('module' => 'installation', 'action' => 'upgrade');
-					}
-					elseif (self::isInstallmode())
-					{
+					} elseif (self::isInstallmode()) {
 						$route = array('module' => 'installation', 'action' => 'installIntro');
 					}
-					if (self::$_redirect_login)
-					{
+					if (self::$_redirect_login) {
 						Logging::log('An error occurred setting up the user object, redirecting to login', 'main', Logging::LEVEL_NOTICE);
 						self::setMessage('login_message_err', self::geti18n()->__('Please log in'));
 						self::getResponse()->headerRedirect(self::getRouting()->generate('login_page'), 403);
 					}
-					if (is_dir(THEBUGGENIE_MODULES_PATH . $route['module']))
-					{
-//						if (!file_exists(THEBUGGENIE_MODULES_PATH . $route['module'] . DS . 'classes' . DS . 'actions.class.php'))
-//						{
-//							throw new TBGActionNotFoundException('The ' . $route['module'] . ' module is missing the classes/actions.class.php file, containing all the module actions');
-//						}
-//						if (!class_exists($route['module'].'Actions') && !class_exists($route['module'].'ActionComponents'))
-//						{
-//							self::addAutoloaderClassPath(THEBUGGENIE_MODULES_PATH . $route['module'] . DS . 'classes' . DS);
-//						}
-						if (self::performAction($route['module'], $route['action']))
-						{
-							if (\b2db\Core::isInitialized())
-							{
-								\b2db\Core::closeDBLink();
-							}
-							return true;
-						}
+					if (self::performAction($route['module'], $route['action'])) {
+						\b2db\Core::closeConnections();
+						return true;
 					}
-					else
-					{
-						throw new \Exception('Cannot load the ' . $route['module'] . ' module');
-						return;
-					}
-				}
-				else
-				{
-					require THEBUGGENIE_MODULES_PATH . 'main' . DS . 'classes' . DS . 'actions.class.php';
+				} else {
 					self::performAction('main', 'notFound');
 				}
-			}
-			catch (TBGTemplateNotFoundException $e)
-			{
+			} catch (TBGTemplateNotFoundException $e) {
 				\b2db\Core::closeDBLink();
 				self::setLoadedAt();
 				header("HTTP/1.0 404 Not Found", true, 404);
 				tbg_exception($e->getMessage() /*'Template file does not exist for current action'*/, $e);
-			}
-			catch (TBGActionNotFoundException $e)
-			{
+			} catch (TBGActionNotFoundException $e) {
 				\b2db\Core::closeDBLink();
 				self::setLoadedAt();
 				header("HTTP/1.0 404 Not Found", true, 404);
 				tbg_exception('Module action "' . $route['action'] . '" does not exist for module "' . $route['module'] . '"', $e);
-			}
-			catch (TBGCSRFFailureException $e)
-			{
+			} catch (TBGCSRFFailureException $e) {
 				\b2db\Core::closeDBLink();
 				self::setLoadedAt();
 				self::$_response->setHttpStatus(301);
 				$message = $e->getMessage();
 
-				if (self::getRequest()->getRequestedFormat() == 'json')
-				{
+				if (self::getRequest()->getRequestedFormat() == 'json') {
 					self::$_response->setContentType('application/json');
 					$message = json_encode(array('message' => $message));
 				}
 
 				self::$_response->renderHeaders();
 				echo $message;
-			}
-			catch (Exception $e)
-			{
+			} catch (Exception $e) {
 				\b2db\Core::closeDBLink();
 				self::setLoadedAt();
 				header("HTTP/1.0 404 Not Found", true, 404);
@@ -2798,21 +2480,16 @@
 			}
 		}
 
-		public static function getB2DB($config = 'default')
+		public static function getB2DBInstance($config = 'default')
 		{
 			\b2db\Core::setCachePath(\CASPAR_CACHE_PATH);
 			if (!array_key_exists(self::$_b2db[$config])) {
 				$configuration = self::$_configuration['b2db'][$config];
 				Logging::log('Initializing B2DB');
-				$b2db = \b2db\Core::initialize($configuration);
+				$b2db = \b2db\Core::getInstance($configuration);
 				Logging::log('...done (Initializing B2DB)');
+				$b2db->connect();
 
-				if (\b2db\Core::isInitialized())
-				{
-					Logging::log('Database connection details found, connecting');
-					\b2db\Core::doConnect();
-					Logging::log('...done (Database connection details found, connecting)');
-				}
 				self::$_b2db[$config] = $b2db;
 				Logging::log('...done');
 			}
@@ -2838,24 +2515,22 @@
 			Logging::log((Cache::isEnabled()) ? 'APC cache is enabled' : 'APC cache is not enabled');
 
 			self::loadConfiguration();
-
-			Logging::log('Loading B2DB');
-
 			
-//				Logging::log('Adding B2DB classes to autoload path');
-//				define('B2DB_BASEPATH', \THEBUGGENIE_CORE_PATH . 'B2DB' . DS);
-//				define('B2DB_CACHEPATH', \THEBUGGENIE_CORE_PATH . 'cache' . DS . 'B2DB' . DS);
-
-
-//			Logging::log('Initializing context');
-//			self::initialize();
-//			Logging::log('...done');
-
-			//require THEBUGGENIE_CORE_PATH . 'common_functions.inc.php';
-			require \THEBUGGENIE_CORE_PATH . 'geshi/geshi.php';
+			require CASPAR_APPLICATION_PATH . 'bootstrap.inc.php';
 
 			Logging::log('Caspar framework loaded');
 		}
 
+		public static function isMaintenanceModeEnabled()
+		{
+			$val = false;
+			
+			if (array_key_exists('core', self::$_configuration) && array_key_exists('maintenance_mode', self::$_configuration['core'])) {
+				$val = self::$_configuration['core']['maintenance_mode'];
+			}
+			
+			return $val;
+		}
+		
 	}
 	

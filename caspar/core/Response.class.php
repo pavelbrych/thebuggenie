@@ -42,6 +42,20 @@
 		protected $_breadcrumb = null;
 		
 		/**
+		 * Breadcrumb trail for the current page
+		 * 
+		 * @var array
+		 */
+		protected $_base_title = null;
+		
+		/**
+		 * Breadcrumb trail for the current page
+		 * 
+		 * @var array
+		 */
+		protected $_favicon_url = null;
+		
+		/**
 		 * Current page title
 		 * 
 		 * @var string
@@ -201,30 +215,6 @@
 			$this->_page = $page;
 		}
 		
-		/**
-		 * Set the breadcrumb trail for the current page
-		 * 
-		 * @param array $breadcrumb 
-		 */
-		public function setBreadcrumb($breadcrumb)
-		{
-			$this->_breadcrumb = $breadcrumb;
-		}
-
-		/**
-		 * Add to the breadcrumb trail for the current page
-		 * 
-		 * @param string $breadcrumb 
-		 * @param string $url[optional]
-		 */
-		public function addBreadcrumb($breadcrumb, $url = null, $subitems = null, $class = null)
-		{
-			if ($this->_breadcrumb === null)
-				$this->_breadcrumb = array();
-
-			$this->_breadcrumb[] = array('title' => $breadcrumb, 'url' => $url, 'subitems' => $subitems, 'class' => $class);
-		}
-
 		/**
 		 * Set the current title
 		 * 
@@ -609,6 +599,16 @@
 		public function getAllHeaders()
 		{
 			return $this->_headers;
+		}
+		
+		public function getBaseTitle()
+		{
+			return $this->_base_title;
+		}
+		
+		public function getFaviconURL()
+		{
+			return $this->_favicon_url;
 		}
 
 	}

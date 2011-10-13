@@ -1,5 +1,7 @@
 <?php
 
+	namespace caspar\core;
+
 	/**
 	 * The TBG event class
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage core
 	 */
-	final class TBGEvent
+	final class Event
 	{
 
 		/**
@@ -92,12 +94,12 @@
 		 *
 		 * @return unknown_type
 		 */
-		protected static function _trigger(TBGEvent $event, $return_when_processed = false)
+		protected static function _trigger(Event $event, $return_when_processed = false)
 		{
 			$module = $event->getModule();
 			$identifier = $event->getIdentifier();
 			
-			TBGLogging::log("Triggering $module - $identifier");
+			Logging::log("Triggering $module - $identifier");
 			if (isset(self::$_registeredlisteners[$module][$identifier]))
 			{
 				foreach (self::$_registeredlisteners[$module][$identifier] as $trigger)
@@ -105,13 +107,13 @@
 					try
 					{
 						$cb_string = (is_array($trigger)) ? get_class($trigger[0]).'::'.$trigger[1] : $trigger;
-						TBGLogging::log('Running callback function '.$cb_string);
+						Logging::log('Running callback function '.$cb_string);
 						$retval = call_user_func($trigger, $event);
 						if ($return_when_processed && $event->isProcessed())
 						{
 							return true;
 						}
-						TBGLogging::log('done (Running callback function '.$cb_string.')');
+						Logging::log('done (Running callback function '.$cb_string.')');
 					}
 					catch (Exception $e)
 					{
@@ -119,7 +121,7 @@
 					}
 				}
 			}
-			TBGLogging::log("done (Triggering $module - $identifier)");
+			Logging::log("done (Triggering $module - $identifier)");
 		}
 
 		/**
@@ -133,7 +135,7 @@
 		 */
 		public static function createNew($module, $identifier, $subject = null, $parameters = array(), $initial_list = array())
 		{
-			$event = new TBGEvent($module, $identifier, $subject, $parameters, $initial_list);
+			$event = new Event($module, $identifier, $subject, $parameters, $initial_list);
 			return $event;
 		}
 

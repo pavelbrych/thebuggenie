@@ -1,5 +1,7 @@
 <?php
 
+	namespace caspar\core;
+
 	/**
 	 * I18n class
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage core
 	 */
-	class TBGI18n
+	class I18n
 	{
 
 		protected $_strings = array();
@@ -34,15 +36,13 @@
 			return $_i18n;
 		}
 
-		public function __construct($language)
+		public function __construct($language = 'en_US')
 		{
-			if (!file_exists($this->getStringsFilename($language)))
-			{
-				TBGLogging::log('Selected language not available, trying "en_US" as a last attempt', 'i18n', TBGLogging::LEVEL_NOTICE);
+			if (!file_exists($this->getStringsFilename($language))) {
+				Logging::log('Selected language not available, trying "en_US" as a last attempt', 'i18n', Logging::LEVEL_NOTICE);
 				$this->_language = 'en_US';
-				if (!file_exists($this->getStringsFilename($this->_language)))
-				{
-					throw new Exception('The selected language is not available');
+				if (!file_exists($this->getStringsFilename($this->_language))) {
+					throw new \Exception('The selected language is not available');
 				}
 			}
 			$this->_language = $language;
@@ -51,20 +51,18 @@
 		public function getStringsFilename($language = null)
 		{
 			$language = ($language === null) ? $this->_language : $language;
-			return THEBUGGENIE_CORE_PATH . 'i18n' . DS . $language . DS . 'strings.inc.php';
+			return \CASPAR_PATH . 'caspar' . DS . 'i18n' . DS . $language . DS . 'strings.inc.php';
 		}
 		
 		public function initialize()
 		{
-			$filename = THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->_language . DS . 'initialize.inc.php';
-			if (file_exists($filename))
-			{
-				TBGLogging::log("Initiating with file '{$filename}", 'i18n');
+			$filename = \CASPAR_PATH . 'caspar' . DS . 'i18n' . DS . $this->_language . DS . 'initialize.inc.php';
+			if (file_exists($filename)) {
+				Logging::log("Initiating with file '{$filename}", 'i18n');
 				include $filename;
 			}
 			$this->loadStrings();
-			foreach (TBGContext::getModules() as $module_name => $module)
-			{
+			foreach (Caspar::getModules() as $module_name => $module) {
 				$this->loadStrings($module_name);
 			}
 			
@@ -72,8 +70,7 @@
 		
 		public function setLanguage($language)
 		{
-			if ($language != $this->_language)
-			{
+			if ($language != $this->_language) {
 				$this->_language = $language;
 				$this->initialize();
 			}
@@ -117,10 +114,15 @@
 			return $this->_language;
 		}
 		
+		public function getHTMLLanguage()
+		{
+			$lang = explode('_', $this->getCurrentLanguage());
+			return $lang[0];
+		}
+		
 		public function getCharset()
 		{
-			if (TBGContext::isInstallmode()) return $this->_charset;
-			return (TBGSettings::get('charset') != '') ? TBGSettings::get('charset') : $this->_charset;
+			return $this->_charset;
 		}
 		
 		public function getLangCharset()
@@ -136,32 +138,23 @@
 		protected function loadStrings($module = null)
 		{
 			$filename = '';
-			if ($module !== null)
-			{
-				if (file_exists(THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->_language . DS . "{$module}.inc.php"))
-				{
+			if ($module !== null) {
+				if (file_exists(THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->_language . DS . "{$module}.inc.php")) {
 					$filename = THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->_language . DS . "{$module}.inc.php";
-				}
-				else
-				{
+				} else {
 					$filename = THEBUGGENIE_MODULES_PATH . $module . DS . 'i18n' . DS . $this->_language . DS . "{$module}.inc.php";
 				}
-			}
-			else
-			{
+			} else {
 				$filename = $this->getStringsFilename();
 			}
 
-			if (file_exists($filename))
-			{
-				TBGLogging::log("Loading strings from file '{$filename}", 'i18n');
+			if (file_exists($filename)) {
+				Logging::log("Loading strings from file '{$filename}", 'i18n');
 				$strings = array();
 				require $filename;
-			}
-			else
-			{
+			} else {
 				$message = 'Could not find language file ' . $filename;
-				TBGLogging::log($message, 'i18n', TBGLogging::LEVEL_NOTICE);
+				Logging::log($message, 'i18n', Logging::LEVEL_NOTICE);
 			}
 			$this->addStrings($strings);
 		}
@@ -173,10 +166,8 @@
 		
 		public function addStrings($strings)
 		{
-			if (is_array($strings))
-			{
-				foreach ($strings as $key => $translation)
-				{
+			if (is_array($strings)) {
+				foreach ($strings as $key => $translation) {
 					$this->_strings[$key] = $translation;
 				}
 			}
@@ -186,10 +177,8 @@
 		{
 			$retarr = array();
 			$cp_handle = opendir(THEBUGGENIE_CORE_PATH . 'i18n');
-			while ($classfile = readdir($cp_handle))
-			{
-				if (mb_strstr($classfile, '.') == '' && file_exists(THEBUGGENIE_CORE_PATH . 'i18n/' . $classfile . '/language'))
-				{ 
+			while ($classfile = readdir($cp_handle)) {
+				if (mb_strstr($classfile, '.') == '' && file_exists(THEBUGGENIE_CORE_PATH . 'i18n/' . $classfile . '/language')) {
 					$retarr[$classfile] = file_get_contents(THEBUGGENIE_CORE_PATH . 'i18n/' . $classfile . '/language');
 				}
 			}
@@ -199,23 +188,17 @@
 
 		public function hasTranslatedTemplate($template, $is_component = false)
 		{
-			if (mb_strpos($template, '/'))
-			{
+			if (mb_strpos($template, '/')) {
 				$templateinfo = explode('/', $template);
 				$module = $templateinfo[0];
-				$templatefile = ($is_component) ? '_' . $templateinfo[1] . '.inc.php' : $templateinfo[1] . '.' . TBGContext::getRequest()->getRequestedFormat() . '.php';
+				$templatefile = ($is_component) ? '_' . $templateinfo[1] . '.inc.php' : $templateinfo[1] . '.' . Caspar::getRequest()->getRequestedFormat() . '.php';
+			} else {
+				$module = Caspar::getRouting()->getCurrentRouteModule();
+				$templatefile = ($is_component) ? '_' . $template . '.inc.php' : $template . '.' . Caspar::getRequest()->getRequestedFormat() . '.php';
 			}
-			else
-			{
-				$module = TBGContext::getRouting()->getCurrentRouteModule();
-				$templatefile = ($is_component) ? '_' . $template . '.inc.php' : $template . '.' . TBGContext::getRequest()->getRequestedFormat() . '.php';
-			}
-			if (file_exists(THEBUGGENIE_MODULES_PATH . $module . DS . 'i18n' . DS . $this->_language . DS . 'templates' . DS . $templatefile))
-			{
+			if (file_exists(THEBUGGENIE_MODULES_PATH . $module . DS . 'i18n' . DS . $this->_language . DS . 'templates' . DS . $templatefile)) {
 				return THEBUGGENIE_MODULES_PATH . $module . DS . 'i18n' . DS . $this->_language . DS . 'templates' . DS . $templatefile;
-			}
-			elseif (file_exists(THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->getCurrentLanguage() . DS . 'templates' . DS . $module . DS . $templatefile))
-			{
+			} elseif (file_exists(THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->getCurrentLanguage() . DS . 'templates' . DS . $module . DS . $templatefile)) {
 				return THEBUGGENIE_CORE_PATH . 'i18n' . DS . $this->getCurrentLanguage() . DS . 'templates' . DS . $module . DS . $templatefile;
 			}
 			return false;
@@ -223,21 +206,16 @@
 
 		public function __($text, $replacements = array(), $html_decode = false)
 		{
-			if (isset($this->_strings[$text]))
-			{
+			if (isset($this->_strings[$text])) {
 				$retstring = $this->_strings[$text];
-			}
-			else
-			{
+			} else {
 				$retstring = $text;
-				TBGLogging::log('The text "' . $text . '" does not exist in list of translated strings.', 'i18n');
+				Logging::log('The text "' . $text . '" does not exist in list of translated strings.', 'i18n');
 				$this->_missing_strings[$text] = true;
 			}
-			if (!empty($replacements))
-			{
+			if (!empty($replacements)) {
 				$tmp = array();
-				foreach ($replacements as $key => $value)
-				{
+				foreach ($replacements as $key => $value) {
         			$tmp[$key] = $value;
     				$retstring = str_replace(array_keys($tmp), array_values($tmp), $retstring);
 				}
@@ -256,8 +234,7 @@
 		 */
 		public function setDateTimeFormats($formats)
 		{
-			if(is_array($formats))
-			{
+			if(is_array($formats)) {
 				$this->_datetime_formats = $formats;
 			}
 		}
@@ -273,12 +250,10 @@
 		 */
 		public function getDateTimeFormat($id)
 		{
-			if(array_key_exists($id, $this->_datetime_formats))
-			{
+			if(array_key_exists($id, $this->_datetime_formats)) {
 				 return $this->_datetime_formats[$id];
 			}
-			switch ($id)
-			{
+			switch ($id) {
 				case 1 : // 14:45 - Thu Dec 30, 2010
 					$format = '%H:%M - %a %b %d, %Y';
 					break;

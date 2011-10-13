@@ -1,6 +1,6 @@
 <?php
 
-	namespace caspar\core;
+	namespace thebuggenie\core;
 	
 	/**
 	 * List of interfaces

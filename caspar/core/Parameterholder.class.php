@@ -1,5 +1,7 @@
 <?php
 
+	namespace caspar\core;
+	
 	/**
 	 * Parameter holder class used in the MVC part of the framework for TBGAction and TBGActionComponent
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage mvc
 	 */
-	class TBGParameterholder
+	class Parameterholder
 	{
 		
 		protected $_property_list = array();

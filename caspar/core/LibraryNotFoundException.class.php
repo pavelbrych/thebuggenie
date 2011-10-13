@@ -1,5 +1,7 @@
 <?php
 
+	namespace caspar\core;
+
 	/**
 	 * Exception used in action
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage core
 	 */
-	class TBGLibraryNotFoundException extends Exception
+	class LibraryNotFoundException extends \Exception
 	{
 		
 	}

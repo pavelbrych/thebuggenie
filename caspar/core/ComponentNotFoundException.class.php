@@ -1,5 +1,7 @@
 <?php
 
+	namespace caspar\core;
+
 	/**
 	 * Exception used in component localization
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage core
 	 */
-	class TBGComponentNotFoundException extends Exception
+	class ComponentNotFoundException extends \Exception
 	{
 		
 	}

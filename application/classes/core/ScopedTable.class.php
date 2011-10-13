@@ -1,6 +1,6 @@
 <?php
 
-	namespace caspar\core;
+	namespace thebuggenie\core;
 	
 	use b2db\Table;
 

@@ -1,6 +1,6 @@
 <?php
 
-	namespace caspar\core;
+	namespace thebuggenie\core;
 
 	/**
 	 * Module class, extended by all thebuggenie modules
