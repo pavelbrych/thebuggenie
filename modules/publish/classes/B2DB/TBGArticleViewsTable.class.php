@@ -4,7 +4,7 @@
 		b2db\Criteria,
 		b2db\Criterion;
 
-	class TBGArticleViewsTable extends TBGB2DBTable 
+	class TBGArticleViewsTable extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;

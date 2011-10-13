@@ -13,7 +13,7 @@
 			<?php elseif (empty($dashboardViews)): ?>
 				<p class="content faded_out"><?php echo __("This dashboard doesn't contain any views."); ?></p>
 			<?php else: ?>
-				<ul id="dashboard">
+				<ul id="dashboard" class="column-2s">
 					<?php $clearleft = true; ?>
 					<?php foreach($dashboardViews as $view): ?>
 					<li style="clear: <?php echo ($clearleft) ? 'left' : 'right'; ?>;">

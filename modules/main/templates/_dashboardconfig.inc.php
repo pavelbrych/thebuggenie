@@ -1,9 +1,9 @@
-<div class="backdrop_box large">
+<div class="backdrop_box <?php echo ($target_type == TBGDashboardView::TYPE_USER) ? 'huge' : 'large'; ?>">
 	<div class="backdrop_detail_header">
 		<?php echo __('Configure dashboard'); ?>
 	</div>
 	<div id="backdrop_detail_content">
-		<ul id="views_list" style="float: left; margin: 0; padding: 0; list-style: none;" class="sortable">
+		<ul id="views_list" style="float: left; margin: 0; padding: 0; list-style: none;" class="sortable<?php echo ($target_type == TBGDashboardView::TYPE_USER) ? ' column-4s' : ' column-2s'; ?>">
 		<?php foreach ($dashboardViews as $view): ?>
 			<li id="view_<?php echo $view->get(TBGDashboardViewsTable::VIEW); ?>" class="rounded_box mediumgrey">
 				<span class="dashboard_view_data" id="<?php echo $view->get(TBGDashboardViewsTable::VIEW); ?>_<?php echo $view->get(TBGDashboardViewsTable::TYPE); ?>"><?php echo ($view->get(TBGDashboardViewsTable::TYPE)) ? __($views[$view->get(TBGDashboardViewsTable::TYPE)][$view->get(TBGDashboardViewsTable::VIEW)]) : __('...Select a view...'); ?></span>

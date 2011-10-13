@@ -128,8 +128,21 @@ TBG.Core._resizeWatcher = function() {
 	}
 	if ($('dashboard')) {
 		var dashboard_width = $('dashboard').getWidth();
-		var element_width = (dashboard_width > 600) ? ((dashboard_width / 2) - 5) : (dashboard_width - 5);
-		$('dashboard').childElements().each(function(item) {
+		var dashboard_elements = $('dashboard').childElements();
+		if ($('dashboard').hasClassName('column-2s')) {
+			var element_width = (dashboard_width > 600) ? ((dashboard_width / 2) - 5) : (dashboard_width - 5);
+		} else if ($('dashboard').hasClassName('column-4s')) {
+			if (dashboard_elements.size() >= 4) {
+				var element_width = ((dashboard_width / 4) - 5);
+			} else if (dashboard_elements.size() >= 3) {
+				var element_width = ((dashboard_width / 3) - 5);
+			} else if (dashboard_elements.size() >= 2) {
+				var element_width = ((dashboard_width / 2) - 5);
+			} else {
+				var element_width = dashboard_width - 5;
+			}
+		}
+		dashboard_elements.each(function(item) {
 			item.setStyle({width: element_width + 'px'});
 		});
 	}
@@ -741,6 +754,10 @@ TBG.Main.Dashboard.View.add = function()
 	
 	Sortable.create('views_list');
 }
+
+TBG.Main.Dashboard.View.init = function(url, view_id) {
+	
+};
 
 TBG.Main.Dashboard.save = function(url)
 {

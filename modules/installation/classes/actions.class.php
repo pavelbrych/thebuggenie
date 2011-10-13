@@ -371,7 +371,7 @@
 		 */
 		public function runInstallStep6(TBGRequest $request)
 		{
-			if (file_put_contents(THEBUGGENIE_PATH . 'installed', '3.0, installed ' . date('d.m.Y H:i')) === false)
+			if (file_put_contents(THEBUGGENIE_PATH . 'installed', TBGSettings::getMajorVer() . '.' . TBGSettings::getMinorVer() . ', installed ' . date('d.m.Y H:i')) === false)
 			{
 				$this->error = "Couldn't write to the main directory. Please create the file " . THEBUGGENIE_PATH . "installed manually, with the following content: \n3.0, installed " . date('d.m.Y H:i');
 			}
@@ -384,7 +384,7 @@
 		protected function _upgradeFrom3dot0()
 		{
 			// Add new tables
-			TBGScopeHostnamesTable::getTable()->create();
+			\thebuggenie\tables\ScopeHostnames::getTable()->create();
 			
 			// Add classpath for existing old tables used for upgrade
 			TBGContext::addAutoloaderClassPath(THEBUGGENIE_MODULES_PATH . 'installation' . DS . 'classes' . DS . 'upgrade_3.0');

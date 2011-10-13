@@ -4,7 +4,7 @@
 		b2db\Criteria,
 		b2db\Criterion;
 
-	class TBGMailQueueTable extends TBGB2DBTable
+	class TBGMailQueueTable extends ScopedTable
 	{
 		
 		const B2DB_TABLE_VERSION = 1;

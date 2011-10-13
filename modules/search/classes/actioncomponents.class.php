@@ -98,11 +98,11 @@
 			$request = new TBGRequest();
 			switch ($this->type)
 			{
-				case TBGDashboard::DASHBOARD_VIEW_PREDEFINED_SEARCH :
+				case TBGDashboardView::VIEW_PREDEFINED_SEARCH :
 					$request->setParameter('predefined_search', $this->view);
 				break;
 				
-				case TBGDashboard::DASHBOARD_VIEW_SAVED_SEARCH :
+				case TBGDashboardView::VIEW_SAVED_SEARCH :
 					$request->setParameter('saved_search', $this->view);
 				break;
 			}
@@ -113,7 +113,7 @@
 			$this->issues = $search->issues;
 			$this->title = $search->searchtitle;
 			$this->parameters = $request->getParameters();
-		}		
+		}
 		
 		public function componentSidebar()
 		{

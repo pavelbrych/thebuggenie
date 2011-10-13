@@ -20,7 +20,7 @@
 	 * @package thebuggenie
 	 * @subpackage vcs_integration
 	 */
-	class TBGVCSIntegrationCommitsTable extends TBGB2DBTable 
+	class TBGVCSIntegrationCommitsTable extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;

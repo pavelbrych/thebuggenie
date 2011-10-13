@@ -16,7 +16,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class TBGBuildsTable3dot1 extends TBGB2DBTable
+	class TBGBuildsTable3dot1 extends ScopedTable
 	{
 
 		const B2DB_TABLE_VERSION = 1;

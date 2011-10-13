@@ -1,0 +1,10 @@
+# Caspar configuration
+core:
+  url: "http://localhost/dev/caspar/public/"
+  modules: ['main']
+  language: 'en_US'
+  site_name: 'Caspar'
+  css: []
+  javascripts: ['prototype', 'scriptaculous']
+  user_classname: \User
+

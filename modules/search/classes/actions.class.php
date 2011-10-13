@@ -1,9 +1,11 @@
 <?php
 
+	namespace thebuggenie\modules\search;
+
 	/**
 	 * actions for the search module
 	 */
-	class searchActions extends TBGAction
+	class Actions extends \TBGAction
 	{
 
 		protected $foundissues = array();
@@ -12,18 +14,18 @@
 		/**
 		 * Pre-execute function for search functions
 		 *
-		 * @param TBGRequest $request
+		 * @param \TBGRequest $request
 		 */
-		public function preExecute(TBGRequest $request, $action)
+		public function preExecute(\TBGRequest $request, $action)
 		{
-			$this->forward403unless(TBGContext::getUser()->hasPageAccess('search') && TBGContext::getUser()->canSearchForIssues());
+			$this->forward403unless(\TBGContext::getUser()->hasPageAccess('search') && \TBGContext::getUser()->canSearchForIssues());
 			if ($request->hasParameter('project_key'))
 			{
 				if (($project = TBGProject::getByKey($request->getParameter('project_key'))) instanceof TBGProject)
 				{
-					$this->forward403unless(TBGContext::getUser()->hasProjectPageAccess('project_issues', $project->getID()));
-					TBGContext::getResponse()->setPage('project_issues');
-					TBGContext::setCurrentProject($project);
+					$this->forward403unless(\TBGContext::getUser()->hasProjectPageAccess('project_issues', $project->getID()));
+					\TBGContext::getResponse()->setPage('project_issues');
+					\TBGContext::setCurrentProject($project);
 				}
 			}
 			$filters = $request->getParameter('filters', array());
@@ -37,13 +39,35 @@
 		/**
 		 * Performs quicksearch
 		 * 
-		 * @param TBGRequest $request The request object
+		 * @param \TBGRequest $request The request object
 		 */		
-		public function runQuickSearch(TBGRequest $request)
+		public function runQuickSearch(\TBGRequest $request)
 		{
 		}
 
-		protected function _getSearchDetailsFromRequest(TBGRequest $request)
+		public function getPredefinedSearchName($type, $project)
+		{
+			$i18n = \TBGContext::getI18n();
+			switch ($type)
+			{
+				case \TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES:
+					return ($project instanceof TBGProject) ? $i18n->__('Open issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All open issues');
+				case \TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES:
+					return ($project instanceof TBGProject) ? $i18n->__('Closed issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All closed issues');
+				case \TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
+					return $i18n->__('Milestone todo-list for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName()));
+				case \TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
+					return ($project instanceof TBGProject) ? $i18n->__('Most voted issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('Most voted issues');
+				case \TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
+					return $i18n->__('Open issues assigned to me');
+				case \TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
+					return $i18n->__('Open issues assigned to my teams');
+				case \TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES:
+					return $i18n->__('Issues reported by me');
+			}
+		}
+
+		protected function _getSearchDetailsFromRequest(\TBGRequest $request)
 		{
 			$this->ipp = $request->getParameter('issues_per_page', 50);
 			$this->offset = $request->getParameter('offset', 0);
@@ -53,23 +77,23 @@
 				$filters['text']['operator'] = '=';
 			}
 			$this->filters = $filters;
-			if (TBGContext::isProjectContext())
+			if (\TBGContext::isProjectContext())
 			{
-				$this->filters['project_id'][0] = array('operator' => '=', 'value' => TBGContext::getCurrentProject()->getID());
+				$this->filters['project_id'][0] = array('operator' => '=', 'value' => \TBGContext::getCurrentProject()->getID());
 			}
 			$this->groupby = $request->getParameter('groupby');
 			$this->grouporder = $request->getParameter('grouporder', 'asc');
 			$this->predefined_search = $request->getParameter('predefined_search', false);
 			$this->templatename = ($request->hasParameter('template') && in_array($request->getParameter('template'), array_keys(self::getTemplates(false)))) ? $request->getParameter('template') : 'results_normal';
 			$this->template_parameter = $request->getParameter('template_parameter');
-			$this->searchtitle = TBGContext::getI18n()->__('Search results');
+			$this->searchtitle = \TBGContext::getI18n()->__('Search results');
 			$this->issavedsearch = false;
 			$this->show_results = ($request->hasParameter('quicksearch') || $request->hasParameter('filters') || $request->getParameter('search', false)) ? true : false;
 
 			if ($request->hasParameter('saved_search'))
 			{
 				$savedsearch = \b2db\Core::getTable('TBGSavedSearchesTable')->doSelectById($request->getParameter('saved_search'));
-				if ($savedsearch instanceof \b2db\Row && TBGContext::getUser()->canAccessSavedSearch($savedsearch))
+				if ($savedsearch instanceof \b2db\Row && \TBGContext::getUser()->canAccessSavedSearch($savedsearch))
 				{
 					$this->issavedsearch = true;
 					$this->savedsearch = $savedsearch;
@@ -84,17 +108,17 @@
 			}
 		}
 
-		protected function doSearch(TBGRequest $request)
+		protected function doSearch(\TBGRequest $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \TBGContext::getI18n();
 			if ($this->searchterm)
 			{
 				preg_replace_callback(TBGTextParser::getIssueRegex(), array($this, 'extractIssues'), $this->searchterm);
 				
 				if (!count($this->foundissues))
 				{
-					$issue = TBGIssue::getIssueFromLink($this->searchterm);
-					if ($issue instanceof TBGIssue)
+					$issue = \TBGIssue::getIssueFromLink($this->searchterm);
+					if ($issue instanceof \TBGIssue)
 					{
 						$this->foundissues = array($issue);
 						$this->resultcount = 1;
@@ -108,36 +132,36 @@
 				{
 					switch ((int) $request->getParameter('predefined_search'))
 					{
-						case TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES:
-							$this->filters['state'] = array('operator' => '=', 'value' => TBGIssue::STATE_OPEN);
+						case \TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES:
+							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_OPEN);
 							$this->groupby = 'issuetype';
 							break;
-						case TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES:
-							$this->filters['state'] = array('operator' => '=', 'value' => TBGIssue::STATE_CLOSED);
+						case \TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES:
+							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_CLOSED);
 							$this->groupby = 'issuetype';
 							break;
-						case TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
+						case \TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
 							$this->groupby = 'milestone';
 							break;
-						case TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
-							$this->filters['state'] = array('operator' => '=', 'value' => TBGIssue::STATE_OPEN);
+						case \TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
+							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_OPEN);
 							$this->groupby = 'votes';
 							$this->grouporder = 'desc';
 							break;
-						case TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES:
-							$this->filters['posted_by'] = array('operator' => '=', 'value' => TBGContext::getUser()->getID());
+						case \TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES:
+							$this->filters['posted_by'] = array('operator' => '=', 'value' => \TBGContext::getUser()->getID());
 							$this->groupby = 'issuetype';
 							break;
-						case TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
-							$this->filters['state'] = array('operator' => '=', 'value' => TBGIssue::STATE_OPEN);
+						case \TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
+							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_OPEN);
 							$this->filters['assigned_type'] = array('operator' => '=', 'value' => TBGIdentifiableClass::TYPE_USER);
-							$this->filters['assigned_to'] = array('operator' => '=', 'value' => TBGContext::getUser()->getID());
+							$this->filters['assigned_to'] = array('operator' => '=', 'value' => \TBGContext::getUser()->getID());
 							$this->groupby = 'issuetype';
 							break;
-						case TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
-							$this->filters['state'] = array('operator' => '=', 'value' => TBGIssue::STATE_OPEN);
+						case \TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
+							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_OPEN);
 							$this->filters['assigned_type'] = array('operator' => '=', 'value' => TBGIdentifiableClass::TYPE_TEAM);
-							foreach (TBGContext::getUser()->getTeams() as $team_id => $team)
+							foreach (\TBGContext::getUser()->getTeams() as $team_id => $team)
 							{
 								$this->filters['assigned_to'][] = array('operator' => '=', 'value' => $team_id);
 							}
@@ -151,7 +175,7 @@
 					$this->ipp = 0;
 					$this->groupby = 'user_pain';
 					$this->grouporder = 'desc';
-					$ids = TBGIssueTypesTable::getTable()->getBugReportTypeIDs();
+					$ids = \TBGIssueTypesTable::getTable()->getBugReportTypeIDs();
 					$this->filters['issuetype'] = array();
 					foreach ($ids as $id)
 					{
@@ -165,12 +189,12 @@
 					$this->groupby = 'votes';
 					$this->grouporder = 'desc';
 				}
-				list ($this->foundissues, $this->resultcount) = TBGIssue::findIssues($this->filters, $this->ipp, $this->offset, $this->groupby, $this->grouporder);
+				list ($this->foundissues, $this->resultcount) = \TBGIssue::findIssues($this->filters, $this->ipp, $this->offset, $this->groupby, $this->grouporder);
 			}
 			elseif (count($this->foundissues) == 1 && !$request->getParameter('quicksearch'))
 			{
 				$issue = array_shift($this->foundissues);
-				$this->forward(TBGContext::getRouting()->generate('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())));
+				$this->forward(\TBGContext::getRouting()->generate('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())));
 			}
 			elseif ($request->hasParameter('sortby'))
 			{
@@ -187,32 +211,17 @@
 			
 			if ($request->hasParameter('predefined_search'))
 			{
-				switch ((int) $request->getParameter('predefined_search'))
+				$predefined_search = $request['predefined_search'];
+				switch ((int) $predefined_search)
 				{
-					case TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES:
-						$this->searchtitle = (TBGContext::isProjectContext()) ? $i18n->__('Open issues for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())) : $i18n->__('All open issues');
-						break;
-					case TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES:
-						$this->searchtitle = (TBGContext::isProjectContext()) ? $i18n->__('Closed issues for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())) : $i18n->__('All closed issues');
-						break;
-					case TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
-						$this->searchtitle = $i18n->__('Milestone todo-list for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName()));
+					case \TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
 						$this->templatename = 'results_todo';
 						break;
-					case TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
-						$this->searchtitle = (TBGContext::isProjectContext()) ? $i18n->__('Most voted issues for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())) : $i18n->__('Most voted issues');
+					case \TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
 						$this->templatename = 'results_votes';
 						break;
-					case TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
-						$this->searchtitle = $i18n->__('Open issues assigned to me');
-						break;
-					case TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
-						$this->searchtitle = $i18n->__('Open issues assigned to my teams');
-						break;
-					case TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES:
-						$this->searchtitle = $i18n->__('Issues reported by me');
-						break;
 				}
+				$this->searchtitle = $this->getPredefinedSearchName($predefined_search, \TBGContext::getCurrentProject());
 			}
 
 		}
@@ -220,14 +229,14 @@
 		public static function getTemplates($display_only = true)
 		{
 			$templates = array();
-			$templates['results_normal'] = TBGContext::getI18n()->__('Standard search results');
-			$templates['results_todo'] = TBGContext::getI18n()->__('Todo-list with progress indicator');
-			$templates['results_votes'] = TBGContext::getI18n()->__('Most voted-for issues');
-			$templates['results_userpain_singlepainthreshold'] = TBGContext::getI18n()->__('User pain indicator with custom single bug pain threshold');
-			//$templates['results_userpain_totalpainthreshold'] = TBGContext::getI18n()->__('User pain indicator with custom total pain threshold');
+			$templates['results_normal'] = \TBGContext::getI18n()->__('Standard search results');
+			$templates['results_todo'] = \TBGContext::getI18n()->__('Todo-list with progress indicator');
+			$templates['results_votes'] = \TBGContext::getI18n()->__('Most voted-for issues');
+			$templates['results_userpain_singlepainthreshold'] = \TBGContext::getI18n()->__('User pain indicator with custom single bug pain threshold');
+			//$templates['results_userpain_totalpainthreshold'] = \TBGContext::getI18n()->__('User pain indicator with custom total pain threshold');
 			if (!$display_only)
 			{
-				$templates['results_rss'] = TBGContext::getI18n()->__('RSS feed');
+				$templates['results_rss'] = \TBGContext::getI18n()->__('RSS feed');
 			}
 			return $templates;
 		}
@@ -235,59 +244,59 @@
 		/**
 		 * Performs the "find issues" action
 		 *
-		 * @param TBGRequest $request
+		 * @param \TBGRequest $request
 		 */
-		public function runFindIssues(TBGRequest $request)
+		public function runFindIssues(\TBGRequest $request)
 		{
 			$this->_getSearchDetailsFromRequest($request);
 
-			if ($request->isMethod(TBGRequest::POST) && !$request->getParameter('quicksearch'))
+			if ($request->isMethod(\TBGRequest::POST) && !$request->getParameter('quicksearch'))
 			{
 				if ($request->getParameter('delete_saved_search'))
 				{
 					try
 					{
 						$search = TBGSavedSearchesTable::getTable()->getByID($request->getParameter('saved_search_id'));
-						if ($search->get(TBGSavedSearchesTable::UID) == TBGContext::getUser()->getID() || $search->get(TBGSavedSearchesTable::IS_PUBLIC) && TBGContext::getUser()->canCreatePublicSearches())
+						if ($search->get(TBGSavedSearchesTable::UID) == \TBGContext::getUser()->getID() || $search->get(TBGSavedSearchesTable::IS_PUBLIC) && \TBGContext::getUser()->canCreatePublicSearches())
 						{
 							TBGSavedSearchesTable::getTable()->doDeleteById($request->getParameter('saved_search_id'));
-							return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The saved search was deleted successfully')));
+							return $this->renderJSON(array('failed' => false, 'message' => \TBGContext::getI18n()->__('The saved search was deleted successfully')));
 						}
 					}
 					catch (Exception $e)
 					{
-						return $this->renderJSON(array('failed' => true, 'message' => TBGContext::getI18n()->__('Cannot delete this saved search')));
+						return $this->renderJSON(array('failed' => true, 'message' => \TBGContext::getI18n()->__('Cannot delete this saved search')));
 					}
 				}
 				elseif ($request->getParameter('saved_search_name') != '')
 				{
-					$project_id = (TBGContext::isProjectContext()) ? TBGContext::getCurrentProject()->getID() : 0;
+					$project_id = (\TBGContext::isProjectContext()) ? \TBGContext::getCurrentProject()->getID() : 0;
 					TBGSavedSearchesTable::getTable()->saveSearch($request->getParameter('saved_search_name'), $request->getParameter('saved_search_description'), $request->getParameter('saved_search_public'), $this->filters, $this->groupby, $this->grouporder, $this->ipp, $this->templatename, $this->template_parameter, $project_id, $request->getParameter('saved_search_id'));
 					if ($request->getParameter('saved_search_id'))
 					{
-						TBGContext::setMessage('search_message', TBGContext::getI18n()->__('The saved search was updated'));
+						\TBGContext::setMessage('search_message', \TBGContext::getI18n()->__('The saved search was updated'));
 					}
 					else
 					{
-						TBGContext::setMessage('search_message', TBGContext::getI18n()->__('The saved search has been created'));
+						\TBGContext::setMessage('search_message', \TBGContext::getI18n()->__('The saved search has been created'));
 					}
 					$params = array();
 				}
 				else
 				{
-					TBGContext::setMessage('search_error', TBGContext::getI18n()->__('You have to specify a name for the saved search'));
+					\TBGContext::setMessage('search_error', \TBGContext::getI18n()->__('You have to specify a name for the saved search'));
 					$params = array('filters' => $this->filters, 'groupby' => $this->groupby, 'grouporder' => $this->grouporder, 'templatename' => $this->templatename, 'saved_search' => $request->getParameter('saved_search_id'), 'issues_per_page' => $this->ipp);
 				}
-				if (TBGContext::isProjectContext())
+				if (\TBGContext::isProjectContext())
 				{
 					$route = 'project_issues';
-					$params['project_key'] = TBGContext::getCurrentProject()->getKey();
+					$params['project_key'] = \TBGContext::getCurrentProject()->getKey();
 				}
 				else
 				{
 					$route = 'search';
 				}
-				$this->forward(TBGContext::getRouting()->generate($route, $params));
+				$this->forward(\TBGContext::getRouting()->generate($route, $params));
 			}
 			else
 			{
@@ -298,13 +307,13 @@
 					$this->redirect('quicksearch');
 				}
 			}
-			$this->search_error = TBGContext::getMessageAndClear('search_error');
-			$this->search_message = TBGContext::getMessageAndClear('search_message');
+			$this->search_error = \TBGContext::getMessageAndClear('search_error');
+			$this->search_message = \TBGContext::getMessageAndClear('search_message');
 			$this->appliedfilters = $this->filters;
 			$this->templates = self::getTemplates();
 		}
 
-		public function runFindIssuesPaginated(TBGRequest $request)
+		public function runFindIssuesPaginated(\TBGRequest $request)
 		{
 			$this->_getSearchDetailsFromRequest($request);
 			$this->getResponse()->setDecoration(TBGResponse::DECORATE_NONE);
@@ -318,28 +327,28 @@
 			$this->templates = self::getTemplates();
 		}
 
-		public function runAddFilter(TBGRequest $request)
+		public function runAddFilter(\TBGRequest $request)
 		{
 			if ($request->getParameter('filter_name') == 'project_id' && count(TBGProject::getAll()) == 0)
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('No projects exist so this filter can not be added')));
+				return $this->renderJSON(array('failed' => true, 'error' => \TBGContext::getI18n()->__('No projects exist so this filter can not be added')));
 			}
-			elseif (in_array($request->getParameter('filter_name'), TBGIssuesTable::getValidSearchFilters()) || TBGCustomDatatype::doesKeyExist($request->getParameter('filter_name')))
+			elseif (in_array($request->getParameter('filter_name'), \TBGIssuesTable::getValidSearchFilters()) || TBGCustomDatatype::doesKeyExist($request->getParameter('filter_name')))
 			{
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getComponentHTML('search/filter', array('filter' => $request->getParameter('filter_name'), 'key' => $request->getParameter('key', 0)))));
 			}
 			else
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('This is not a valid search field')));
+				return $this->renderJSON(array('failed' => true, 'error' => \TBGContext::getI18n()->__('This is not a valid search field')));
 			}
 		}
 
 		public function extractIssues($matches)
 		{
-			$issue = TBGIssue::getIssueFromLink($matches[0]);
-			if ($issue instanceof TBGIssue)
+			$issue = \TBGIssue::getIssueFromLink($matches[0]);
+			if ($issue instanceof \TBGIssue)
 			{
-				if (!TBGContext::isProjectContext() || (TBGContext::isProjectContext() && $issue->getProjectID() == TBGContext::getCurrentProject()->getID()))
+				if (!\TBGContext::isProjectContext() || (\TBGContext::isProjectContext() && $issue->getProjectID() == \TBGContext::getCurrentProject()->getID()))
 				{
 					$this->foundissues[$issue->getID()] = $issue;
 					$this->resultcount++;
@@ -347,14 +356,14 @@
 			}
 		}
 		
-		public function runOpensearch(TBGRequest $request)
+		public function runOpensearch(\TBGRequest $request)
 		{
 			
 		}
 
-		static function resultGrouping(TBGIssue $issue, $groupby, $cc, $prevgroup_id)
+		static function resultGrouping(\TBGIssue $issue, $groupby, $cc, $prevgroup_id)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \TBGContext::getI18n();
 			$showtablestart = false;
 			$showheader = false;
 			$groupby_id = 0;
@@ -461,7 +470,7 @@
 						}
 						break;
 					case 'issuetype':
-						if ($issue->getIssueType() instanceof TBGIssuetype)
+						if ($issue->getIssueType() instanceof \TBGIssuetype)
 						{
 							$groupby_id = $issue->getIssueType()->getID();
 							$groupby_description = $issue->getIssueType()->getName();
@@ -499,12 +508,12 @@
 					case 'state':
 						if ($issue->isClosed())
 						{
-							$groupby_id = TBGIssue::STATE_CLOSED;
+							$groupby_id = \TBGIssue::STATE_CLOSED;
 							$groupby_description = $i18n->__('Closed');
 						}
 						else
 						{
-							$groupby_id = TBGIssue::STATE_OPEN;
+							$groupby_id = \TBGIssue::STATE_OPEN;
 							$groupby_description = $i18n->__('Open');
 						}
 						break;
@@ -519,7 +528,7 @@
 			return array($showtablestart, $showheader, $prevgroup_id, $groupby_description);
 		}
 
-		static public function userPainSort(TBGIssue $first_issue, TBGIssue $second_issue)
+		static public function userPainSort(\TBGIssue $first_issue, \TBGIssue $second_issue)
 		{
 			$first_issue_pain = $first_issue->getUserPain();
 			$second_issue_pain = $second_issue->getUserPain();
@@ -530,17 +539,17 @@
 			return ($first_issue_pain < $second_issue_pain) ? -1 : 1;
 		}
 		
-		public function runSaveColumnSettings(TBGRequest $request)
+		public function runSaveColumnSettings(\TBGRequest $request)
 		{
 			TBGSettings::saveSetting('search_scs_'.$request->getParameter('template'), join(',', $request->getParameter('columns')));
 			return $this->renderJSON('template '.$request->getParameter('template').' columns saved ok');
 		}
 
-		public function runBulkUpdateIssues(TBGRequest $request)
+		public function runBulkUpdateIssues(\TBGRequest $request)
 		{
 			$issue_ids = $request['issue_ids'];
 			$options = array('issue_ids' => array_values($issue_ids));
-			TBGContext::loadLibrary('common');
+			\TBGContext::loadLibrary('common');
 			$options['last_updated'] = tbg_formatTime(time(), 20);
 
 			if (!empty($issue_ids))
@@ -553,10 +562,10 @@
 						if ($request['milestone'] == 'new')
 						{
 							$milestone = new TBGMilestone();
-							$milestone->setProject(TBGContext::getCurrentProject());
+							$milestone->setProject(\TBGContext::getCurrentProject());
 							$milestone->setName($request['milestone_name']);
 							$milestone->save();
-							$options['milestone_url'] = TBGContext::getRouting()->generate('project_planning_milestone', array('project_key' => $milestone->getProject()->getKey(), 'milestone_id' => $milestone->getID()));
+							$options['milestone_url'] = \TBGContext::getRouting()->generate('project_planning_milestone', array('project_key' => $milestone->getProject()->getKey(), 'milestone_id' => $milestone->getID()));
 						}
 						elseif ($request['milestone'])
 						{
@@ -567,7 +576,7 @@
 						{
 							if (is_numeric($issue_id))
 							{
-								$issue = new TBGIssue($issue_id);
+								$issue = new \TBGIssue($issue_id);
 								$issue->setMilestone($milestone_id);
 								$issue->save();
 							}
@@ -583,7 +592,7 @@
 							{
 								if (is_numeric($issue_id))
 								{
-									$issue = new TBGIssue($issue_id);
+									$issue = new \TBGIssue($issue_id);
 									$issue->setStatus($status->getID());
 									$issue->save();
 								}
@@ -599,7 +608,7 @@
 							{
 								if (is_numeric($issue_id))
 								{
-									$issue = new TBGIssue($issue_id);
+									$issue = new \TBGIssue($issue_id);
 									$severity_id = ($severity instanceof TBGSeverity) ? $severity->getID() : 0;
 									$issue->setSeverity($severity_id);
 									$issue->save();
@@ -616,7 +625,7 @@
 							{
 								if (is_numeric($issue_id))
 								{
-									$issue = new TBGIssue($issue_id);
+									$issue = new \TBGIssue($issue_id);
 									$resolution_id = ($resolution instanceof TBGResolution) ? $resolution->getID() : 0;
 									$issue->setResolution($resolution_id);
 									$issue->save();
@@ -633,7 +642,7 @@
 							{
 								if (is_numeric($issue_id))
 								{
-									$issue = new TBGIssue($issue_id);
+									$issue = new \TBGIssue($issue_id);
 									$priority_id = ($priority instanceof TBGPriority) ? $priority->getID() : 0;
 									$issue->setPriority($priority_id);
 									$issue->save();
@@ -650,7 +659,7 @@
 							{
 								if (is_numeric($issue_id))
 								{
-									$issue = new TBGIssue($issue_id);
+									$issue = new \TBGIssue($issue_id);
 									$category_id = ($category instanceof TBGCategory) ? $category->getID() : 0;
 									$issue->setCategory($category_id);
 									$issue->save();

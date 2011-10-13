@@ -192,12 +192,6 @@
 							\b2db\Core::setPasswd($db_password);
 							\b2db\Core::setDBtype($db_type);
 							\b2db\Core::initialize();
-							$engine_path = \b2db\Core::getEngineClassPath();
-							if ($engine_path !== null)
-								TBGContext::addAutoloaderClassPath($engine_path);
-							else
-								throw new Exception("Cannot initialize the B2DB engine");
-
 							\b2db\Core::doConnect();
 							\b2db\Core::createDatabase($db_name);
 							\b2db\Core::setDBname($db_name);

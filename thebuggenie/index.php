@@ -1,15 +1,16 @@
 <?php
 
-	// Set the path to The Bug Genie top folder
-	$path = realpath(getcwd());
-	defined('THEBUGGENIE_SESSION_NAME') || define('THEBUGGENIE_SESSION_NAME', 'THEBUGGENIE');
-	defined('THEBUGGENIE_PATH') || define('THEBUGGENIE_PATH', realpath(getcwd() . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
-	defined('THEBUGGENIE_CORE_PATH') || define('THEBUGGENIE_CORE_PATH', THEBUGGENIE_PATH . 'core' . DIRECTORY_SEPARATOR);
-	defined('THEBUGGENIE_MODULES_PATH') || define('THEBUGGENIE_MODULES_PATH', THEBUGGENIE_PATH . 'modules' . DIRECTORY_SEPARATOR);
-	defined('THEBUGGENIE_PUBLIC_FOLDER_NAME') || define('THEBUGGENIE_PUBLIC_FOLDER_NAME', mb_substr($path, strrpos($path, DIRECTORY_SEPARATOR) + 1));
+	// This code requires PHP 5.3 or newer, so if we don't have it - complain
+	if (PHP_VERSION_ID < 50300) die('This software requires PHP 5.3.0 or newer, but you have an older version. Please upgrade');
+
+	// Set standard constants needed elsewhere
+	defined('DS') || define('DS', DIRECTORY_SEPARATOR);
+	defined('CASPAR_PATH') || define('CASPAR_PATH', realpath(getcwd() . DS . '..' . DS) . DS);
+
+	defined('THEBUGGENIE_SESSION_NAME') || define('CASPAR_SESSION_NAME', 'THEBUGGENIE');
 	
 	// Include the "engine" script, which initializes and sets up stuff
-	require THEBUGGENIE_CORE_PATH . 'tbg_engine.inc.php';
+	require CASPAR_PATH . 'caspar' . DS . 'bootstrap.inc.php';
 	
 	// Trigger the framework's start function
-	TBGContext::go();
+	Caspar::go();

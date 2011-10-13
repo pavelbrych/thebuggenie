@@ -20,7 +20,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class TBGArticleFilesTable extends TBGB2DBTable
+	class TBGArticleFilesTable extends ScopedTable
 	{
 
 		const B2DB_TABLE_VERSION = 1;

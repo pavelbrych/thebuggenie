@@ -105,29 +105,29 @@
 					$crit->addOrderBy(TBGVCSIntegrationTable::DATE, \b2db\Criteria::SORT_DESC);
 					$results = TBGVCSIntegrationTable::getTable()->doSelect($crit);
 					
-					if (is_object($results) && $results->getNumberOfRows() > 0)
+					if ($results)
 					{
 						$commits = array();
 
-						while ($results->next())
+						while ($row = $result->getNextRow())
 						{
-							$rev = $results->get(TBGVCSIntegrationTable::NEW_REV);
+							$rev = $row->get(TBGVCSIntegrationTable::NEW_REV);
 							if (array_key_exists($rev, $commits))
 							{
 								// Add a new file or issue to the commit data
-								$commits[$rev]['files'][$results->get(TBGVCSIntegrationTable::FILE_NAME)] = array('file_name' => $results->get(TBGVCSIntegrationTable::FILE_NAME), 'action' => $results->get(TBGVCSIntegrationTable::ACTION));
-								$commits[$rev]['issues'][$results->get(TBGVCSIntegrationTable::ISSUE_NO)] = $results->get(TBGVCSIntegrationTable::ISSUE_NO);
+								$commits[$rev]['files'][$row->get(TBGVCSIntegrationTable::FILE_NAME)] = array('file_name' => $row->get(TBGVCSIntegrationTable::FILE_NAME), 'action' => $row->get(TBGVCSIntegrationTable::ACTION));
+								$commits[$rev]['issues'][$row->get(TBGVCSIntegrationTable::ISSUE_NO)] = $row->get(TBGVCSIntegrationTable::ISSUE_NO);
 							}
 							else
 							{
 								// All issues will be of the same project, so use one issue
-								$issue = TBGContext::factory()->TBGIssue($results->get(TBGVCSIntegrationTable::ISSUE_NO));
+								$issue = TBGContext::factory()->TBGIssue($row->get(TBGVCSIntegrationTable::ISSUE_NO));
 								// Add details of a new commit
 								$commits[$rev] = array('commit' => array(), 'files' => array(), 'issues' => array());
 								
-								$commits[$rev]['commit'] = array('new_rev' => $rev, 'old_rev' => $results->get(TBGVCSIntegrationTable::OLD_REV), 'author' => $results->get(TBGVCSIntegrationTable::AUTHOR), 'date' => $results->get(TBGVCSIntegrationTable::DATE), 'log' => $results->get(TBGVCSIntegrationTable::LOG), 'scope' => $results->get(TBGVCSIntegrationTable::SCOPE), 'project' => $issue->getProject());
-								$commits[$rev]['files'][$results->get(TBGVCSIntegrationTable::FILE_NAME)] = array('file_name' => $results->get(TBGVCSIntegrationTable::FILE_NAME), 'action' => $results->get(TBGVCSIntegrationTable::ACTION));
-								$commits[$rev]['issues'][$results->get(TBGVCSIntegrationTable::ISSUE_NO)] = $results->get(TBGVCSIntegrationTable::ISSUE_NO);
+								$commits[$rev]['commit'] = array('new_rev' => $rev, 'old_rev' => $row->get(TBGVCSIntegrationTable::OLD_REV), 'author' => $row->get(TBGVCSIntegrationTable::AUTHOR), 'date' => $row->get(TBGVCSIntegrationTable::DATE), 'log' => $row->get(TBGVCSIntegrationTable::LOG), 'scope' => $row->get(TBGVCSIntegrationTable::SCOPE), 'project' => $issue->getProject());
+								$commits[$rev]['files'][$row->get(TBGVCSIntegrationTable::FILE_NAME)] = array('file_name' => $row->get(TBGVCSIntegrationTable::FILE_NAME), 'action' => $row->get(TBGVCSIntegrationTable::ACTION));
+								$commits[$rev]['issues'][$row->get(TBGVCSIntegrationTable::ISSUE_NO)] = $row->get(TBGVCSIntegrationTable::ISSUE_NO);
 							}
 						}
 						

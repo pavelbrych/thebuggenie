@@ -1,0 +1,6 @@
+## YAML Template.
+---
+home:
+  url: /
+  module: main
+  action: index
