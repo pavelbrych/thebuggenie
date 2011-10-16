@@ -42,9 +42,9 @@
 			return Core::getTable('TBGIssueFilesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUE_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
@@ -81,7 +81,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$file = TBGContext::factory()->TBGFile($row->get(TBGFilesTable::ID), $row);
+					$file = \caspar\core\Caspar::factory()->TBGFile($row->get(TBGFilesTable::ID), $row);
 					$file->setUploadedAt($row->get(self::ATTACHED_AT));
 					$ret_arr[$row->get(TBGFilesTable::ID)] = $file;
 				}

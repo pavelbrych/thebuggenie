@@ -40,9 +40,9 @@
 			return Core::getTable('TBGClientMembersTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
 			parent::_addForeignKeyColumn(self::CID, Core::getTable('TBGClientsTable'), TBGClientsTable::ID);

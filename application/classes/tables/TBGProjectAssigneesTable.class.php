@@ -37,9 +37,9 @@
 		const TYPE_TESTER = '_role_tester';
 		const TYPE_DOCUMENTOR = '_role_documentor';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TARGET_TYPE, 5);
 			parent::_addForeignKeyColumn(self::PROJECT_ID, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
@@ -145,7 +145,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$projects[$row->get(self::PROJECT_ID)] = TBGContext::factory()->TBGProject($row->get(self::PROJECT_ID), $row); 
+					$projects[$row->get(self::PROJECT_ID)] = \caspar\core\Caspar::factory()->TBGProject($row->get(self::PROJECT_ID), $row); 
 				}
 			}
 			return $projects;
@@ -161,7 +161,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$projects[$row->get(self::PROJECT_ID)] = TBGContext::factory()->TBGProject($row->get(self::PROJECT_ID), $row); 
+					$projects[$row->get(self::PROJECT_ID)] = \caspar\core\Caspar::factory()->TBGProject($row->get(self::PROJECT_ID), $row); 
 				}
 			}
 			return $projects;

@@ -46,9 +46,9 @@
 			return Core::getTable('TBGListTypesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addVarchar(self::ITEMTYPE, 25);
 			parent::_addText(self::ITEMDATA, false);

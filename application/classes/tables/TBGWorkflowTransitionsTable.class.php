@@ -43,9 +43,9 @@
 			return Core::getTable('TBGWorkflowTransitionsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_ID, TBGWorkflowsTable::getTable(), TBGWorkflowsTable::ID);
 			parent::_addVarchar(self::NAME, 200);
@@ -97,7 +97,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$return_array[$row->get(self::ID)] = TBGContext::factory()->TBGWorkflowTransition($row->get(self::ID), $row);
+					$return_array[$row->get(self::ID)] = \caspar\core\Caspar::factory()->TBGWorkflowTransition($row->get(self::ID), $row);
 				}
 			}
 

@@ -43,9 +43,9 @@
 			return Core::getTable('TBGWorkflowTransitionValidationRulesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addVarchar(self::PRE_OR_POST, 4);
 			parent::_addVarchar(self::RULE, 100);
@@ -65,7 +65,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$actions[$row->get(self::PRE_OR_POST)][$row->get(self::RULE)] = TBGContext::factory()->TBGWorkflowTransitionValidationRule($row->get(self::ID), $row);
+					$actions[$row->get(self::PRE_OR_POST)][$row->get(self::RULE)] = \caspar\core\Caspar::factory()->TBGWorkflowTransitionValidationRule($row->get(self::ID), $row);
 				}
 			}
 			

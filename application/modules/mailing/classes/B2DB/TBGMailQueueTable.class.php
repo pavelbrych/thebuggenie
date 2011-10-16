@@ -24,9 +24,9 @@
 			return Core::getTable('TBGMailQueueTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addText(self::MESSAGE);
 			parent::_addInteger(self::DATE, 10);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);

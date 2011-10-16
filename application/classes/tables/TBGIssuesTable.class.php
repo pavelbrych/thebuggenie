@@ -83,9 +83,8 @@
 			return Core::getTable('TBGIssuesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
 			parent::_addInteger(self::ISSUE_NO, 10);
 			parent::_addVarchar(self::TITLE, 200);
 			parent::_addInteger(self::POSTED, 10);
@@ -300,7 +299,7 @@
 			{
 				while ($row = $results->getNextRow())
 				{
-					$data[] = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+					$data[] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 				}
 			}
 			

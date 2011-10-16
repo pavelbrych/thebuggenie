@@ -102,6 +102,11 @@
 			return Caspar::getResponse();
 		}
 		
+		protected function b2db($config = 'default')
+		{
+			return Caspar::getB2DBInstance($config);
+		}
+		
 		/**
 		 * Sets the response to 404 and shows an error, with an optional message
 		 * 

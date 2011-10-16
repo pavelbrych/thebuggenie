@@ -144,7 +144,7 @@
 			{
 				try
 				{
-					$this->_status_id = TBGContext::factory()->TBGStatus($this->_status_id);
+					$this->_status_id = \caspar\core\Caspar::factory()->TBGStatus($this->_status_id);
 				}
 				catch (Exception $e)
 				{

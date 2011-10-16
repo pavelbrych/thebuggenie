@@ -42,9 +42,9 @@
 			return Core::getTable('TBGWorkflowTransitionActionsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addVarchar(self::ACTION_TYPE, 100);
 			parent::_addVarchar(self::TARGET_VALUE, 200);

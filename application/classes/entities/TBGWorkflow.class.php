@@ -63,7 +63,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$workflow = TBGContext::factory()->TBGWorkflow($row->get(TBGWorkflowsTable::ID), $row);
+						$workflow = \caspar\core\Caspar::factory()->TBGWorkflow($row->get(TBGWorkflowsTable::ID), $row);
 						
 						if (self::$_core_workflow === null)
 							self::$_core_workflow = $workflow;

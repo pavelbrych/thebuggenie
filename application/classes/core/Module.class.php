@@ -1,6 +1,8 @@
 <?php
 
 	namespace thebuggenie\core;
+	
+	use thebuggenie\tables\Modules;
 
 	/**
 	 * Module class, extended by all thebuggenie modules
@@ -21,7 +23,7 @@
 	abstract class Module extends IdentifiableClass 
 	{
 
-		static protected $_b2dbtablename = 'TBGModulesTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\Modules';
 		protected $_classname = '';
 		protected $_description = '';
 		protected $_enabled = false;
@@ -71,7 +73,7 @@
   			if (!TBGContext::getScope() instanceof TBGScope) throw new Exception('No scope??');
 
 			TBGLogging::log('installing module ' . $module_name);
-			$module_id = TBGModulesTable::getTable()->installModule($module_name, $classname, $version, $scope_id);
+			$module_id = Modules::getTable()->installModule($module_name, $classname, $version, $scope_id);
 
 			if (!class_exists($classname))
 			{
@@ -153,7 +155,7 @@
 		 */
 		final public function _construct(\b2db\Row $row, $foreign_key = null)
 		{
-			if ($this->_version != $row->get(TBGModulesTable::VERSION))
+			if ($this->_version != $row->get(Modules::VERSION))
 			{
 				throw new Exception('This module must be upgraded to the latest version');
 			}
@@ -195,12 +197,12 @@
 		
 		public static function disableModule($module_id)
 		{
-			TBGModulesTable::getTable()->disableModuleByID($module_id);
+			Modules::getTable()->disableModuleByID($module_id);
 		}
 
 		public static function removeModule($module_id)
 		{
-			TBGModulesTable::getTable()->removeModuleByID($module_id);
+			Modules::getTable()->removeModuleByID($module_id);
 		}
 
 		public final function isCore()
@@ -217,8 +219,8 @@
 		public function enable()
 		{
 			$crit = new \b2db\Criteria();
-			$crit->addUpdate(TBGModulesTable::ENABLED, 1);
-			\b2db\Core::getTable('TBGModulesTable')->doUpdateById($crit, $this->getID());
+			$crit->addUpdate(Modules::ENABLED, 1);
+			\b2db\Core::getTable('Modules')->doUpdateById($crit, $this->getID());
 			$this->_enabled = true;
 		}
 		
@@ -230,7 +232,7 @@
 			}
 			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
 			$this->_uninstall($scope);
-			\b2db\Core::getTable('TBGModulesTable')->doDeleteById($this->getID());
+			\b2db\Core::getTable('Modules')->doDeleteById($this->getID());
 			TBGSettings::deleteModuleSettings($this->getName(), $scope);
 			TBGContext::deleteModulePermissions($this->getName(), $scope);
 		}
@@ -527,14 +529,12 @@
 			return $this->getName();
 		}
 
-		public function postConfigSettings(TBGRequest $request)
+		public function postConfigSettings(\caspar\core\Request $request)
 		{
-
 		}
 
-		public function postAccountSettings(TBGRequest $request)
+		public function postAccountSettings(\caspar\core\Request $request)
 		{
-
 		}
 
 	}

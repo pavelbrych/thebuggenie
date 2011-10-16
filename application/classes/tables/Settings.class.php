@@ -4,8 +4,7 @@
 
 	use b2db\Core,
 		b2db\Criteria,
-		b2db\Criterion,
-		caspar\core\ScopedTable;
+		b2db\Criterion;
 
 	/**
 	 * Settings table
@@ -35,15 +34,13 @@
 		const VALUE = 'settings.value';
 		const UID = 'settings.uid';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
-			
 			parent::_addVarchar(self::NAME, 45);
 			parent::_addVarchar(self::MODULE, 45);
 			parent::_addVarchar(self::VALUE, 200);
 			parent::_addInteger(self::UID, 10);
-			parent::_addForeignKeyColumn(self::SCOPE, Scopes::getTable());
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\Scopes'));
 		}
 		
 		public function getDefaultScope()

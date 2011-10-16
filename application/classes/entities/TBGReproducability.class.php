@@ -38,7 +38,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = TBGContext::factory()->TBGReproducability($row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->TBGReproducability($row_id, $row);
 					}
 				}
 			}
@@ -55,7 +55,7 @@
 		public static function createNew($name)
 		{
 			$res = parent::_createNew($name, self::REPRODUCABILITY);
-			return TBGContext::factory()->TBGReproducability($res->getInsertID());
+			return \caspar\core\Caspar::factory()->TBGReproducability($res->getInsertID());
 		}
 		
 	}

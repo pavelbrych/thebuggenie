@@ -30,9 +30,9 @@
 		const NAME = 'teams.name';
 		const ONDEMAND = 'teams.ondemand';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 50);
 			parent::_addBoolean(self::ONDEMAND);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);

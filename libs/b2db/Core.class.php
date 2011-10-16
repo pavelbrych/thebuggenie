@@ -20,25 +20,6 @@
 	 */
 	class Core
 	{
-		/**
-		 * PDO object
-		 *
-		 * @var \PDO
-		 */
-		protected $_db_connection = null;
-
-		protected $_db_host;
-		protected $_db_uname;
-		protected $_db_pwd;
-		protected $_db_name;
-		protected $_db_type;
-		protected $_db_port;
-		protected $_dsn;
-		protected $_tableprefix = '';
-		protected $_aliascnt = 0;
-		protected $_transaction_active = false;
-		protected $_tables = array();
-		
 		static protected $_sqlhits = array();
 		static protected $_sqltiming;
 		static protected $_throwhtmlexception = true;
@@ -76,7 +57,14 @@
 		 */
 		public static function getInstance($configuration)
 		{
-			$b2db = new Core();
+			$b2db = new Connection();
+			if (array_key_exists('hostname', $configuration)) $b2db->setHost($configuration['hostname']);
+			if (array_key_exists('username', $configuration)) $b2db->setUname($configuration['username']);
+			if (array_key_exists('password', $configuration)) $b2db->setPasswd($configuration['password']);
+			if (array_key_exists('tableprefix', $configuration)) $b2db->setTablePrefix($configuration['tableprefix']);
+			if (array_key_exists('dsn', $configuration)) $b2db->setDSN($configuration['dsn']);
+			
+			return $b2db;
 		}
 
 		public static function setCachePath($cache_path)

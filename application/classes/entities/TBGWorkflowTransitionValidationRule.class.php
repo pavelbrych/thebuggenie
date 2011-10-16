@@ -143,7 +143,7 @@
 			{
 				try
 				{
-					$return_values[] = TBGContext::factory()->$fieldname((int) $value)->getName();
+					$return_values[] = \caspar\core\Caspar::factory()->$fieldname((int) $value)->getName();
 				}
 				catch (Exception $e) {}
 			}
@@ -222,7 +222,7 @@
 						{
 							$type = "TBG{$fieldname}";
 							$getter = "get{$fieldname}";
-							if (TBGContext::factory()->$type((int) $item)->getID() == $issue->$getter()->getID())
+							if (\caspar\core\Caspar::factory()->$type((int) $item)->getID() == $issue->$getter()->getID())
 							{
 								$valid = true;
 								break;

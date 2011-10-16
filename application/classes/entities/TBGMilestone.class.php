@@ -130,7 +130,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$milestone = TBGContext::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+					$milestone = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
 					$milestones[$milestone->getID()] = $milestone;
 				}
 			}
@@ -151,7 +151,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$milestone = TBGContext::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+					$milestone = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
 					$milestones[$milestone->getID()] = $milestone;
 				}
 			}
@@ -172,7 +172,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$sprint = TBGContext::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+					$sprint = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
 					$sprints[$sprint->getID()] = $sprint;
 				}
 			}
@@ -327,7 +327,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$theIssue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+						$theIssue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
 						if ($this->isSprint() && $theIssue->getIssueType()->isTask()) continue;
 						$this->_issues[$theIssue->getID()] = $theIssue;
 						if ($theIssue->getState() == TBGIssue::STATE_CLOSED)

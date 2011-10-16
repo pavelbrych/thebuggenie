@@ -96,7 +96,7 @@
 		public static function createNew($name, $icon = 'bug_report')
 		{
 			$res = TBGIssueTypesTable::getTable()->createNew($name, $icon);
-			return TBGContext::factory()->TBGIssuetype($res->getInsertID());
+			return \caspar\core\Caspar::factory()->TBGIssuetype($res->getInsertID());
 		}
 
 		/**
@@ -183,7 +183,7 @@
 				$row = TBGIssueTypesTable::getTable()->doSelectOne($crit);
 				if ($row instanceof \b2db\Row)
 				{
-					return TBGContext::factory()->TBGIssuetype($row->get(TBGIssueTypesTable::ID), $row);
+					return \caspar\core\Caspar::factory()->TBGIssuetype($row->get(TBGIssueTypesTable::ID), $row);
 				}
 				else
 				{
@@ -222,7 +222,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$issuetypes[$row->get(TBGIssueTypesTable::ID)] = TBGContext::factory()->TBGIssuetype($res->get(TBGIssueTypesTable::ID), $row);
+						$issuetypes[$row->get(TBGIssueTypesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssuetype($res->get(TBGIssueTypesTable::ID), $row);
 					}
 				}
 				else

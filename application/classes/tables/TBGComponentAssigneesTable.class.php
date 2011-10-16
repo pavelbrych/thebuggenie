@@ -32,9 +32,9 @@
 		const COMPONENT_ID = 'componentassignees.component_id';
 		const TARGET_TYPE = 'componentassignees.target_type';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TARGET_TYPE, 5);
 			parent::_addForeignKeyColumn(self::COMPONENT_ID, Core::getTable('TBGComponentsTable'), TBGComponentsTable::ID);
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
@@ -83,7 +83,7 @@
 			{
 				foreach ($res->getNextRow() as $row)
 				{
-					$projects[$row->get(TBGComponentsTable::PROJECT)] = TBGContext::factory()->TBGProject($row->get(TBGComponentsTable::PROJECT)); 
+					$projects[$row->get(TBGComponentsTable::PROJECT)] = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGComponentsTable::PROJECT)); 
 				}
 			}
 			return $projects;
@@ -99,7 +99,7 @@
 			{
 				foreach ($res->getNextRow() as $row)
 				{
-					$projects[$row->get(TBGComponentsTable::PROJECT)] = TBGContext::factory()->TBGProject($row->get(TBGComponentsTable::PROJECT)); 
+					$projects[$row->get(TBGComponentsTable::PROJECT)] = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGComponentsTable::PROJECT)); 
 				}
 			}
 			return $projects;

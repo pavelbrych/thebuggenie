@@ -1,14 +1,20 @@
 <?php
 
 	namespace thebuggenie\core;
+	
+	use \caspar\core\Caspar,
+		\caspar\core\Cache,
+		\caspar\core\Logging;
 
 	class Context
 	{
 
+		const CACHE_KEY_MODULES = '_thebuggenie_modules';
+		
 		/**
 		 * The current scope object
 		 *
-		 * @var TBGScope
+		 * @var Scope
 		 */
 		static protected $_scope;
 
@@ -27,6 +33,34 @@
 		static protected $_selected_client;
 		
 		/**
+		 * Whether we're in installmode or not
+		 * 
+		 * @var boolean
+		 */
+		static protected $_installmode = false;
+		
+		/**
+		 * Whether we're in upgrademode or not
+		 * 
+		 * @var boolean
+		 */
+		static protected $_upgrademode = false;
+		
+		/**
+		 * Outdated modules
+		 * 
+		 * @var array
+		 */
+		static protected $_outdated_modules;
+
+		/**
+		 * List of modules 
+		 * 
+		 * @var array
+		 */
+		static protected $_modules;
+		
+		/**
 		 * Initialize the context
 		 *
 		 * @return null
@@ -35,16 +69,7 @@
 		{
 			try
 			{
-				mb_internal_encoding("UTF-8");
-				mb_language('uni');
-				mb_http_output("UTF-8");
-
-				self::$_request = new Request();
-				self::$_response = new Response();
-				self::$_factory = new Factory();
-
 				self::checkInstallMode();
-				self::loadPreModuleRoutes();
 				self::setScope();
 
 				if (!self::$_installmode)
@@ -52,19 +77,20 @@
 					self::loadModules();
 					self::initializeUser();
 				}
-
 				else
-					self::$_modules = array();
-
-//				var_dump(self::getUser());die();
-				self::setupI18n();
-
-				if (!is_writable(THEBUGGENIE_CORE_PATH . DIRECTORY_SEPARATOR . 'cache'))
 				{
-					throw new \Exception(self::geti18n()->__('The cache directory is not writable. Please correct the permissions of core/cache, and try again'));
+					self::$_modules = array();
 				}
 
-				self::loadPostModuleRoutes();
+//				var_dump(self::getUser());die();
+//				self::setupI18n();
+//
+//				if (!is_writable(THEBUGGENIE_CORE_PATH . DIRECTORY_SEPARATOR . 'cache'))
+//				{
+//					throw new \Exception(self::geti18n()->__('The cache directory is not writable. Please correct the permissions of core/cache, and try again'));
+//				}
+//
+//				self::loadPostModuleRoutes();
 				Logging::log('...done initializing');
 			}
 			catch (Exception $e)
@@ -72,6 +98,16 @@
 				if (!self::isCLI() && !self::isInstallmode())
 					throw $e;
 			}
+		}
+
+		public static function checkInstallMode()
+		{
+			if (!is_readable(THEBUGGENIE_PATH . 'installed'))
+				self::$_installmode = true;
+			elseif (is_readable(THEBUGGENIE_PATH . 'upgrade'))
+				self::$_installmode = self::$_upgrademode = true;
+			elseif (!Caspar::getB2DBInstance() instanceof \b2db\Connection)
+				throw new \Exception("The Bug Genie seems installed, but B2DB isn't configured. This usually indicates an error with the installation. Try removing the file ".THEBUGGENIE_PATH."installed and try again.");
 		}
 
 		/**
@@ -95,14 +131,14 @@
 			try
 			{
 				$hostname = null;
-				if (!self::isCLI() && !self::isInstallmode())
+				if (!Caspar::isCLI() && !self::isInstallmode())
 				{
 					Logging::log("Checking if scope can be set from hostname (".$_SERVER['HTTP_HOST'].")");
 					$hostname = $_SERVER['HTTP_HOST'];
 				}
 				
 				if (!self::isUpgrademode() && !self::isInstallmode())
-					$row = \thebuggenie\tables\Scopes::getTable()->getByHostnameOrDefault($hostname);
+					$row = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Scopes')->getByHostnameOrDefault($hostname);
 				
 				if (!$row instanceof \b2db\Row)
 				{
@@ -114,7 +150,7 @@
 				}
 				
 				Logging::log("Setting scope from hostname");
-				self::$_scope = self::factory()->manufacture("\\caspar\\core\\Scope", $row->get(\thebuggenie\tables\Scopes::ID), $row);
+				self::$_scope = Caspar::factory()->manufacture("\\thebuggenie\\core\\Scope", $row->get(\thebuggenie\tables\Scopes::ID), $row);
 				Settings::forceSettingsReload();
 				Settings::loadSettings();
 				Logging::log("...done (Setting scope from hostname)");
@@ -144,7 +180,7 @@
 		/**
 		 * Returns current scope
 		 *
-		 * @return TBGScope
+		 * @return Scope
 		 */
 		public static function getScope()
 		{
@@ -348,4 +384,90 @@
 			$this->_breadcrumb[] = array('title' => $breadcrumb, 'url' => $url, 'subitems' => $subitems, 'class' => $class);
 		}
 
+		/**
+		 * Returns whether or not we're in install mode
+		 * 
+		 * @return boolean
+		 */
+		public static function isInstallmode()
+		{
+			return self::$_installmode;
+		}
+		
+		/**
+		 * Returns whether or not we're in upgrade mode
+		 * 
+		 * @return boolean
+		 */
+		public static function isUpgrademode()
+		{
+			return self::$_upgrademode;
+		}
+
+		/**
+		 * Loads and initializes all modules
+		 */
+		public static function loadModules()
+		{
+			Logging::log('Loading modules');
+			if (self::$_modules === null)
+			{
+				self::$_modules = array();
+				if (self::isInstallmode()) return;
+
+				if (!Cache::has(self::CACHE_KEY_MODULES))
+				{
+					$modules = array();
+
+					Logging::log('getting modules from database');
+
+					if ($res = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Modules')->getAll())
+					{
+						while ($row = $res->getNextRow())
+						{
+							$module_name = $row->get(\thebuggenie\tables\Modules::MODULE_NAME);
+							$classname = "\\application\\modules\\{$module_name}\\" . ucfirst($module_name);
+							if (class_exists($classname))
+							{
+								self::$_modules[$module_name] = new $classname($row->get(\thebuggenie\tables\Modules::ID), $row);
+							}
+							else
+							{
+								Logging::log('Cannot load module "' . $module_name . '" as class "' . $classname . '", the class is not defined in the classpaths.', 'modules', Logging::LEVEL_WARNING_RISK);
+								Logging::log('Removing module "' . $module_name . '" as it cannot be loaded', 'modules', Logging::LEVEL_NOTICE);
+								Module::removeModule($row->get(\thebuggenie\tables\Modules::ID));
+							}
+						}
+					}
+					Cache::add(Cache::KEY_MODULES, self::$_modules);
+					Logging::log('done (setting up module objects)');
+				}
+				else
+				{
+					Logging::log('using cached modules');
+					self::$_modules = Cache::get(self::CACHE_KEY_MODULES);
+					Logging::log('done (using cached modules)');
+				}
+
+				Logging::log('initializing modules');
+				if (!empty(self::$_modules))
+				{
+					foreach (self::$_modules as $module_name => $module)
+					{
+						$module->initialize();
+					}
+					Logging::log('done (initializing modules)');
+				}
+				else
+				{
+					Logging::log('no modules found');
+				}
+			}
+			else
+			{
+				Logging::log('Modules already loaded', 'core', Logging::LEVEL_FATAL);
+			}
+			Logging::log('...done');
+		}
+		
 	}

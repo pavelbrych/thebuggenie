@@ -449,7 +449,7 @@
 			}
 			if ($request->hasParameter('scheme_id'))
 			{
-				$this->scheme = TBGContext::factory()->TBGIssuetypeScheme((int) $request->getParameter('scheme_id'));
+				$this->scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme((int) $request->getParameter('scheme_id'));
 				if ($this->mode == 'copy_scheme')
 				{
 					if ($new_name = $request->getParameter('new_name'))
@@ -498,7 +498,7 @@
 		{
 			if ($request->hasParameter('scheme_id'))
 			{
-				$this->scheme = TBGContext::factory()->TBGIssuetypeScheme((int) $request->getParameter('scheme_id'));
+				$this->scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme((int) $request->getParameter('scheme_id'));
 			}
 			$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL);
 			switch ($request->getParameter('mode'))
@@ -515,7 +515,7 @@
 					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name for the issue type')));
 					break;
 				case 'update':
-					if (($issuetype = TBGContext::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
+					if (($issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
 					{
 						if ($this->scheme instanceof TBGIssuetypeScheme)
 						{
@@ -539,7 +539,7 @@
 					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid issue type')));
 					break;
 				case 'updatechoices':
-					if (($issuetype = TBGContext::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
+					if (($issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
 					{
 						$this->scheme->clearAvailableFieldsForIssuetype($issuetype);
 						foreach ($request->getParameter('field', array()) as $key => $details)
@@ -555,7 +555,7 @@
 					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Not implemented yet')));
 					break;
 				case 'delete':
-					if (($issuetype = TBGContext::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
+					if (($issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
 					{
 						$issuetype->delete();
 						return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('Issue type deleted')));
@@ -566,7 +566,7 @@
 					}
 					break;
 				case 'toggletype':
-					if (($issuetype = TBGContext::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
+					if (($issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($request->getParameter('id'))) instanceof TBGIssuetype)
 					{
 						if ($this->scheme instanceof TBGIssuetypeScheme)
 						{
@@ -629,12 +629,12 @@
 						if (array_key_exists($request->getParameter('type'), $types))
 						{
 							$labname = $types[$request->getParameter('type')];
-							$item = TBGContext::factory()->$labname($request->getParameter('id'));
+							$item = \caspar\core\Caspar::factory()->$labname($request->getParameter('id'));
 						}
 						else
 						{
 							$customtype = TBGCustomDatatype::getByKey($request->getParameter('type'));
-							$item = TBGContext::factory()->TBGCustomDatatypeOption($request->getParameter('id'));
+							$item = \caspar\core\Caspar::factory()->TBGCustomDatatypeOption($request->getParameter('id'));
 						}
 						if ($item instanceof TBGDatatypeBase && $item->getItemtype() == $item->getType())
 						{
@@ -659,7 +659,7 @@
 						if (array_key_exists($request->getParameter('type'), $types))
 						{
 							$classname = 'TBG'.ucfirst($request->getParameter('type'));
-							$item = TBGContext::factory()->$classname($request->getParameter('id'))->delete();
+							$item = \caspar\core\Caspar::factory()->$classname($request->getParameter('id'))->delete();
 							return $this->renderJSON(array('failed' => false, 'title' => $i18n->__('The option was deleted')));
 						}
 						else
@@ -756,7 +756,7 @@
 			
 			if ($request->getParameter('find_by'))
 			{
-				$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 				$this->users = TBGUser::findUsers($request->getParameter('find_by'), 10);
 				$this->teams = TBGTeam::findTeams($request->getParameter('find_by'));
 			}
@@ -779,7 +779,7 @@
 			{
 				try
 				{
-					$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+					$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 				}
 				catch (Exception $e) {}
 				
@@ -793,10 +793,10 @@
 					switch ($assignee_type)
 					{
 						case 'user':
-							$assignee = TBGContext::factory()->TBGUser($assignee_id);
+							$assignee = \caspar\core\Caspar::factory()->TBGUser($assignee_id);
 							break;
 						case 'team':
-							$assignee = TBGContext::factory()->TBGTeam($assignee_id);
+							$assignee = \caspar\core\Caspar::factory()->TBGTeam($assignee_id);
 							break;
 						default:
 							$this->forward403();
@@ -858,7 +858,7 @@
 		{
 			try
 			{
-				$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e) {}
 			
@@ -874,7 +874,7 @@
 		{
 			try
 			{
-				$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e) {}
 			
@@ -890,7 +890,7 @@
 		{
 			try
 			{
-				$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e) {}
 			
@@ -907,7 +907,7 @@
 		{
 			try
 			{
-				$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e)
 			{
@@ -965,7 +965,7 @@
 		{
 			try
 			{
-				$this->theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e) {}
 			
@@ -984,13 +984,13 @@
 				switch ($request->getParameter('item_type'))
 				{
 					case 'project':
-						$item = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+						$item = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 						break;
 					case 'edition':
-						$item = TBGContext::factory()->TBGEdition($request->getParameter('edition_id'));
+						$item = \caspar\core\Caspar::factory()->TBGEdition($request->getParameter('edition_id'));
 						break;
 					case 'component':
-						$item = TBGContext::factory()->TBGComponent($request->getParameter('component_id'));
+						$item = \caspar\core\Caspar::factory()->TBGComponent($request->getParameter('component_id'));
 						break;
 				}
 			}
@@ -1008,10 +1008,10 @@
 						switch ($request->getParameter('identifiable_type'))
 						{
 							case TBGIdentifiableClass::TYPE_USER:
-								$identified = TBGContext::factory()->TBGUser($request->getParameter('value'));
+								$identified = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('value'));
 								break;
 							case TBGIdentifiableClass::TYPE_TEAM:
-								$identified = TBGContext::factory()->TBGTeam($request->getParameter('value'));
+								$identified = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('value'));
 								break;
 						}
 						if ($identified instanceof TBGIdentifiableClass)
@@ -1048,7 +1048,7 @@
 		{
 			try
 			{
-				$this->project = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->project = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e) {}
 			
@@ -1101,7 +1101,7 @@
 					}
 					else
 					{
-						$this->project->setClient(TBGContext::factory()->TBGClient($request->getParameter('client')));
+						$this->project->setClient(\caspar\core\Caspar::factory()->TBGClient($request->getParameter('client')));
 					}
 				}
 
@@ -1109,7 +1109,7 @@
 				{
 					try
 					{
-						$workflow_scheme = TBGContext::factory()->TBGWorkflowScheme($request->getParameter('workflow_scheme'));
+						$workflow_scheme = \caspar\core\Caspar::factory()->TBGWorkflowScheme($request->getParameter('workflow_scheme'));
 						$this->project->setWorkflowScheme($workflow_scheme);
 					}
 					catch (Exception $e) {}
@@ -1119,7 +1119,7 @@
 				{
 					try
 					{
-						$issuetype_scheme = TBGContext::factory()->TBGIssuetypeScheme($request->getParameter('issuetype_scheme'));
+						$issuetype_scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme($request->getParameter('issuetype_scheme'));
 						$this->project->setIssuetypeScheme($issuetype_scheme);
 					}
 					catch (Exception $e) {}
@@ -1219,13 +1219,13 @@
 				try
 				{
 					$p_id = $request->getParameter('project_id');
-					if ($project = TBGContext::factory()->TBGProject($p_id))
+					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
 						if (TBGContext::getUser()->canManageProjectReleases($project))
 						{
 							if (($e_name = $request->getParameter('e_name')) && trim($e_name) != '')
 							{
-								$project = TBGContext::factory()->TBGProject($p_id);
+								$project = \caspar\core\Caspar::factory()->TBGProject($p_id);
 								if (in_array($e_name, $project->getEditions()))
 								{
 									throw new Exception($i18n->__('This edition already exists for this project'));
@@ -1271,7 +1271,7 @@
 				{
 					if ($b_id = $request->getParameter('build_id'))
 					{
-						$build = TBGContext::factory()->TBGBuild($b_id);
+						$build = \caspar\core\Caspar::factory()->TBGBuild($b_id);
 						if ($build->hasAccess())
 						{
 							switch ($request->getParameter('build_action'))
@@ -1360,7 +1360,7 @@
 		 */
 		public function runGetUserEditForm(Request $request)
 		{
-			return $this->renderJSON(array('failed' => false, "content" => get_template_html('finduser_row_editable', array('user' => TBGContext::factory()->TBGUser($request->getParameter('user_id'))))));
+			return $this->renderJSON(array('failed' => false, "content" => get_template_html('finduser_row_editable', array('user' => \caspar\core\Caspar::factory()->TBGUser($request->getParameter('user_id'))))));
 		}	
 			
 		/**
@@ -1377,7 +1377,7 @@
 				try
 				{
 					$p_id = $request->getParameter('project_id');
-					if ($project = TBGContext::factory()->TBGProject($p_id))
+					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
 						if (TBGContext::getUser()->canManageProjectReleases($project))
 						{
@@ -1388,7 +1388,7 @@
 								$build->setVersion($request->getParameter('ver_mj', 0), $request->getParameter('ver_mn', 0), $request->getParameter('ver_rev', 0));
 								$build->setReleased((bool) $request->getParameter('isreleased'));
 								$build->setLocked((bool) $request->getParameter('locked'));
-								if ($request->getParameter('milestone') && $milestone = TBGContext::factory()->TBGMilestone($request->getParameter('milestone')))
+								if ($request->getParameter('milestone') && $milestone = \caspar\core\Caspar::factory()->TBGMilestone($request->getParameter('milestone')))
 								{
 									$build->setMilestone($milestone);
 								}
@@ -1396,7 +1396,7 @@
 								{
 									$build->clearMilestone();
 								}
-								if ($request->getParameter('edition') && $edition = TBGContext::factory()->TBGEdition($request->getParameter('edition')))
+								if ($request->getParameter('edition') && $edition = \caspar\core\Caspar::factory()->TBGEdition($request->getParameter('edition')))
 								{
 									$build->setEdition($edition);
 								}
@@ -1471,13 +1471,13 @@
 				try
 				{
 					$p_id = $request->getParameter('project_id');
-					if ($project = TBGContext::factory()->TBGProject($p_id))
+					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
 						if (TBGContext::getUser()->canManageProjectReleases($project))
 						{
 							if (($c_name = $request->getParameter('c_name')) && trim($c_name) != '')
 							{
-								$project = TBGContext::factory()->TBGProject($p_id);
+								$project = \caspar\core\Caspar::factory()->TBGProject($p_id);
 								if (in_array($c_name, $project->getComponents()))
 								{
 									throw new Exception($i18n->__('This component already exists for this project'));
@@ -1522,13 +1522,13 @@
 				try
 				{
 					$p_id = $request->getParameter('project_id');
-					if ($project = TBGContext::factory()->TBGProject($p_id))
+					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
 						if (TBGContext::getUser()->canManageProjectReleases($project))
 						{
 							if (($m_name = $request->getParameter('name')) && trim($m_name) != '')
 							{
-								$theProject = TBGContext::factory()->TBGProject($p_id);
+								$theProject = \caspar\core\Caspar::factory()->TBGProject($p_id);
 								if (in_array($m_name, $theProject->getAllMilestones()))
 								{
 									throw new Exception($i18n->__('This milestone already exists for this project'));
@@ -1574,7 +1574,7 @@
 				{
 					if ($m_id = $request->getParameter('milestone_id'))
 					{
-						$theMilestone = TBGContext::factory()->TBGMilestone($m_id);
+						$theMilestone = \caspar\core\Caspar::factory()->TBGMilestone($m_id);
 						if ($theMilestone->hasAccess())
 						{
 							switch ($request->getParameter('milestone_action'))
@@ -1676,7 +1676,7 @@
 			{
 				try
 				{
-					$theEdition   = TBGContext::factory()->TBGEdition($request->getParameter('edition_id'));
+					$theEdition   = \caspar\core\Caspar::factory()->TBGEdition($request->getParameter('edition_id'));
 					if ($request->getParameter('mode') == 'add')
 					{
 						$theEdition->addComponent($request->getParameter('component_id'));
@@ -1709,7 +1709,7 @@
 			{
 				try
 				{
-					$theComponent = TBGContext::factory()->TBGComponent($request->getParameter('component_id'));
+					$theComponent = \caspar\core\Caspar::factory()->TBGComponent($request->getParameter('component_id'));
 					if ($request->getParameter('mode') == 'update')
 					{
 						if (($c_name = $request->getParameter('c_name')) && trim($c_name) != '')
@@ -1759,7 +1759,7 @@
 			{
 				try
 				{
-					$theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+					$theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 					$theProject->setDeleted();
 					$theProject->save();
 					return $this->renderJSON(array('failed' => false, 'title' => $i18n->__('The project was deleted'), 'total_count' => TBGProject::getProjectsCount(), 'more_available' => TBGContext::getScope()->hasProjectsAvailable()));
@@ -1786,7 +1786,7 @@
 			{
 				try
 				{
-					$theProject = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+					$theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 					$theProject->setArchived($archived);
 					$theProject->save();
 					
@@ -2100,7 +2100,7 @@
 				
 				try
 				{
-					$group = TBGContext::factory()->TBGGroup($request->getParameter('group_id'));
+					$group = \caspar\core\Caspar::factory()->TBGGroup($request->getParameter('group_id'));
 				}
 				catch (Exception $e) { }
 				if (!$group instanceof TBGGroup)
@@ -2128,7 +2128,7 @@
 					{
 						try
 						{
-							$old_group = TBGContext::factory()->TBGGroup($request->getParameter('group_id'));
+							$old_group = \caspar\core\Caspar::factory()->TBGGroup($request->getParameter('group_id'));
 						}
 						catch (Exception $e) { }
 						if (!$old_group instanceof TBGGroup)
@@ -2173,7 +2173,7 @@
 		{
 			try
 			{
-				$group = TBGContext::factory()->TBGGroup((int) $request->getParameter('group_id'));
+				$group = \caspar\core\Caspar::factory()->TBGGroup((int) $request->getParameter('group_id'));
 				$users = $group->getMembers();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('configuration/groupuserlist', array('users' => $users))));
 			}
@@ -2190,7 +2190,7 @@
 			{
 				try
 				{
-					$theEdition = TBGContext::factory()->TBGEdition($request->getParameter('edition_id'));
+					$theEdition = \caspar\core\Caspar::factory()->TBGEdition($request->getParameter('edition_id'));
 					
 					$project = $theEdition->getProject();
 					$theEdition->delete();
@@ -2213,7 +2213,7 @@
 				try
 				{
 					$return_options = array('success' => true);
-					$user = TBGContext::factory()->TBGUser($request->getParameter('user_id'));
+					$user = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('user_id'));
 					if ($user->getGroup() instanceof TBGGroup)
 					{
 						$return_options['update_groups'] = array('ids' => array(), 'membercounts' => array());
@@ -2262,7 +2262,7 @@
 			{
 				try
 				{
-					$team = TBGContext::factory()->TBGTeam($request->getParameter('team_id'));
+					$team = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('team_id'));
 				}
 				catch (Exception $e) { }
 				if (!$team instanceof TBGTeam)
@@ -2290,7 +2290,7 @@
 					{
 						try
 						{
-							$old_team = TBGContext::factory()->TBGTeam($request->getParameter('team_id'));
+							$old_team = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('team_id'));
 						}
 						catch (Exception $e) { }
 						if (!$old_team instanceof TBGTeam)
@@ -2339,7 +2339,7 @@
 		{
 			try
 			{
-				$team = TBGContext::factory()->TBGTeam((int) $request->getParameter('team_id'));
+				$team = \caspar\core\Caspar::factory()->TBGTeam((int) $request->getParameter('team_id'));
 				$users = $team->getMembers();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('configuration/teamuserlist', array('users' => $users))));
 			}
@@ -2424,7 +2424,7 @@
 		{
 			try
 			{
-				$user = TBGContext::factory()->TBGUser($request->getParameter('user_id'));
+				$user = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('user_id'));
 				if ($user instanceof TBGUser)
 				{
 					$testuser = TBGUser::getByUsername($request->getParameter('username'));
@@ -2459,7 +2459,7 @@
 					$return_options = array();
 					try
 					{
-						if ($group = TBGContext::factory()->TBGGroup($request->getParameter('group')))
+						if ($group = \caspar\core\Caspar::factory()->TBGGroup($request->getParameter('group')))
 						{
 							if ($user->getGroupID() != $group->getID())
 							{
@@ -2481,7 +2481,7 @@
 					{
 						foreach ($request->getParameter('teams', array()) as $team_id => $team)
 						{
-							if ($team = TBGContext::factory()->TBGTeam($team_id))
+							if ($team = \caspar\core\Caspar::factory()->TBGTeam($team_id))
 							{
 								$new_teams[] = $team_id;
 								$user->addToTeam($team);
@@ -2498,7 +2498,7 @@
 						$user->clearClients();
 						foreach ($request->getParameter('clients', array()) as $client_id => $client)
 						{
-							if ($client = TBGContext::factory()->TBGClient($client_id))
+							if ($client = \caspar\core\Caspar::factory()->TBGClient($client_id))
 							{
 								$new_clients[] = $client_id;
 								$user->addToClient($client);
@@ -2520,7 +2520,7 @@
 						{
 							if (!$group_id) continue;
 							$return_options['update_groups']['ids'][] = $group_id;
-							$return_options['update_groups']['membercounts'][$group_id] = TBGContext::factory()->TBGGroup($group_id)->getNumberOfMembers();
+							$return_options['update_groups']['membercounts'][$group_id] = \caspar\core\Caspar::factory()->TBGGroup($group_id)->getNumberOfMembers();
 						}
 					}
 					if ($new_teams != $existing_teams)
@@ -2532,7 +2532,7 @@
 						foreach ($teams_to_update as $team_id)
 						{
 							$return_options['update_teams']['ids'][] = $team_id;
-							$return_options['update_teams']['membercounts'][$team_id] = TBGContext::factory()->TBGTeam($team_id)->getNumberOfMembers();
+							$return_options['update_teams']['membercounts'][$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id)->getNumberOfMembers();
 						}
 					}
 					$return_options['failed'] = false;
@@ -2570,7 +2570,7 @@
 			{
 				if ($edition_id = $request->getParameter('edition_id'))
 				{
-					$edition = TBGContext::factory()->TBGEdition($edition_id);
+					$edition = \caspar\core\Caspar::factory()->TBGEdition($edition_id);
 					if ($request->isMethod(TBGRequest::POST))
 					{
 						if ($request->hasParameter('release_month') && $request->hasParameter('release_day') && $request->hasParameter('release_year'))
@@ -2638,7 +2638,7 @@
 					// Build list of valid targets for the subproject dropdown
 					// The following items are banned from the list: current project, children of the current project
 					// Any further tests and things get silly, so we will trap it when building breadcrumbs
-					$project = TBGContext::factory()->TBGProject($project_id);
+					$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 					$valid_subproject_targets = TBGProject::getValidSubprojects($project);					
 					$content = $this->getComponentHTML('configuration/projectconfig', array('valid_subproject_targets' => $valid_subproject_targets, 'project' => $project, 'access_level' => $this->access_level, 'section' => 'hierarchy'));
 					return $this->renderJSON(array('failed' => false, 'content' => $content));
@@ -2689,7 +2689,7 @@
 			$this->mode = $request->getParameter('mode', 'list');
 			try
 			{
-				$this->workflow_scheme = TBGContext::factory()->TBGWorkflowScheme($request->getParameter('scheme_id'));
+				$this->workflow_scheme = \caspar\core\Caspar::factory()->TBGWorkflowScheme($request->getParameter('scheme_id'));
 				$this->issuetypes = TBGIssuetype::getAll();
 				if (TBGContext::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'copy_scheme')
 				{
@@ -2721,10 +2721,10 @@
 				{
 					foreach ($request->getParameter('workflow_id', array()) as $issuetype_id => $workflow_id)
 					{
-						$issuetype = TBGContext::factory()->TBGIssuetype($issuetype_id);
+						$issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($issuetype_id);
 						if ($workflow_id)
 						{
-							$workflow = TBGContext::factory()->TBGWorkflow($workflow_id);
+							$workflow = \caspar\core\Caspar::factory()->TBGWorkflow($workflow_id);
 							$this->workflow_scheme->associateIssuetypeWithWorkflow($issuetype, $workflow);
 						}
 						else
@@ -2755,7 +2755,7 @@
 			$this->mode = $request->getParameter('mode', 'list');
 			try
 			{
-				$this->workflow = TBGContext::factory()->TBGWorkflow($request->getParameter('workflow_id'));
+				$this->workflow = \caspar\core\Caspar::factory()->TBGWorkflow($request->getParameter('workflow_id'));
 				if ($this->mode == 'copy_workflow')
 				{
 					if ($new_name = $request->getParameter('new_name'))
@@ -2794,7 +2794,7 @@
 			$this->step = null;
 			try
 			{
-				$this->workflow = TBGContext::factory()->TBGWorkflow($request->getParameter('workflow_id'));
+				$this->workflow = \caspar\core\Caspar::factory()->TBGWorkflow($request->getParameter('workflow_id'));
 				if ($request->getParameter('mode') == 'edit' && !$request->hasParameter('step_id'))
 				{
 					$this->step = new TBGWorkflowStep();
@@ -2802,7 +2802,7 @@
 				}
 				else
 				{
-					$this->step = TBGContext::factory()->TBGWorkflowStep($request->getParameter('step_id'));
+					$this->step = \caspar\core\Caspar::factory()->TBGWorkflowStep($request->getParameter('step_id'));
 				}
 				if ($request->isMethod(TBGRequest::POST) && $request->getParameter('mode') == 'delete_outgoing_transitions')
 				{
@@ -2839,11 +2839,11 @@
 			
 			try
 			{
-				$this->workflow = TBGContext::factory()->TBGWorkflow($request->getParameter('workflow_id'));
+				$this->workflow = \caspar\core\Caspar::factory()->TBGWorkflow($request->getParameter('workflow_id'));
 				if ($request->hasParameter('transition_id'))
 				{
 					$mode = $request->getParameter('mode');
-					$this->transition = TBGContext::factory()->TBGWorkflowTransition($request->getParameter('transition_id'));
+					$this->transition = \caspar\core\Caspar::factory()->TBGWorkflowTransition($request->getParameter('transition_id'));
 					if ($request->isMethod(TBGRequest::POST))
 					{
 						if ($mode == 'delete')
@@ -2853,7 +2853,7 @@
 						}
 						elseif ($mode == 'delete_action')
 						{
-							$this->action = TBGContext::factory()->TBGWorkflowTransitionAction($request->getParameter('action_id'));
+							$this->action = \caspar\core\Caspar::factory()->TBGWorkflowTransitionAction($request->getParameter('action_id'));
 							$this->action->delete();
 							return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The action has been deleted')));
 						}
@@ -2869,36 +2869,36 @@
 						}
 						elseif ($mode == 'update_action')
 						{
-							$this->action = TBGContext::factory()->TBGWorkflowTransitionAction($request->getParameter('action_id'));
+							$this->action = \caspar\core\Caspar::factory()->TBGWorkflowTransitionAction($request->getParameter('action_id'));
 							$this->action->setTargetValue($request->getParameter('target_value'));
 							$this->action->save();
 							$text = $request->getParameter('target_value');
 							switch ($this->action->getActionType())
 							{
 								case TBGWorkflowTransitionAction::ACTION_ASSIGN_ISSUE:
-									$text = ($this->action->getTargetValue()) ? TBGContext::factory()->TBGUser((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('User specified during transition');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGUser((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('User specified during transition');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_RESOLUTION:
-									$text = ($this->action->getTargetValue()) ? TBGContext::factory()->TBGResolution((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Resolution specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGResolution((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Resolution specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_REPRODUCABILITY:
-									$text = ($this->action->getTargetValue()) ? TBGContext::factory()->TBGReproducability((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Reproducability specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGReproducability((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Reproducability specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_STATUS:
-									$text = ($this->action->getTargetValue()) ? TBGContext::factory()->TBGStatus((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Status specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGStatus((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Status specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_MILESTONE:
-									$text = ($this->action->getTargetValue()) ? TBGContext::factory()->TBGMilestone((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Milestone specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGMilestone((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Milestone specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_PRIORITY:
-									$text = ($this->action->getTargetValue()) ? TBGContext::factory()->TBGPriority((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Priority specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGPriority((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Priority specified by user');
 									break;
 							}
 							return $this->renderJSON(array('failed' => false, 'content' => $text));
 						}
 						elseif ($mode == 'delete_validation_rule')
 						{
-							$this->rule = TBGContext::factory()->TBGWorkflowTransitionValidationRule($request->getParameter('rule_id'));
+							$this->rule = \caspar\core\Caspar::factory()->TBGWorkflowTransitionValidationRule($request->getParameter('rule_id'));
 							$this->rule->delete();
 							return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The validation rule has been deleted')));
 						}
@@ -2930,7 +2930,7 @@
 						}
 						elseif ($mode == 'update_validation_rule')
 						{
-							$this->rule = TBGContext::factory()->TBGWorkflowTransitionValidationRule($request->getParameter('rule_id'));
+							$this->rule = \caspar\core\Caspar::factory()->TBGWorkflowTransitionValidationRule($request->getParameter('rule_id'));
 							$text = null;
 							switch ($this->rule->getRule())
 							{
@@ -2966,7 +2966,7 @@
 							}
 							try
 							{
-								$step = TBGContext::factory()->TBGWorkflowStep($request->getParameter('outgoing_step_id'));
+								$step = \caspar\core\Caspar::factory()->TBGWorkflowStep($request->getParameter('outgoing_step_id'));
 							}
 							catch (Exception $e) {}
 							$this->transition->setOutgoingStep($step);
@@ -2978,21 +2978,21 @@
 				}
 				elseif ($request->isMethod(TBGRequest::POST) && $request->hasParameter('step_id'))
 				{
-					$step = TBGContext::factory()->TBGWorkflowStep($request->getParameter('step_id'));
+					$step = \caspar\core\Caspar::factory()->TBGWorkflowStep($request->getParameter('step_id'));
 					/*if ($step->isCore() || $workflow->isCore())
 					{
 						throw new InvalidArgumentException("The default workflow cannot be edited");
 					}*/
 					if ($request->getParameter('add_transition_type') == 'existing' && $request->hasParameter('existing_transition_id'))
 					{
-						$transition = TBGContext::factory()->TBGWorkflowTransition($request->getParameter('existing_transition_id'));
+						$transition = \caspar\core\Caspar::factory()->TBGWorkflowTransition($request->getParameter('existing_transition_id'));
 						$redirect_transition = false;
 					}
 					else
 					{
 						if ($request->getParameter('transition_name') && $request->getParameter('outgoing_step_id') && $request->hasParameter('template'))
 						{
-							if (($outgoing_step = TBGContext::factory()->TBGWorkflowStep((int) $request->getParameter('outgoing_step_id'))) && $step instanceof TBGWorkflowStep)
+							if (($outgoing_step = \caspar\core\Caspar::factory()->TBGWorkflowStep((int) $request->getParameter('outgoing_step_id'))) && $step instanceof TBGWorkflowStep)
 							{
 								if (array_key_exists($request->getParameter('template'), TBGWorkflowTransition::getTemplates()))
 								{
@@ -3089,7 +3089,7 @@
 			{
 				try
 				{
-					$client = TBGContext::factory()->TBGClient($request->getParameter('client_id'));
+					$client = \caspar\core\Caspar::factory()->TBGClient($request->getParameter('client_id'));
 				}
 				catch (Exception $e) { }
 				if (!$client instanceof TBGClient)
@@ -3120,7 +3120,7 @@
 		{
 			try
 			{
-				$client = TBGContext::factory()->TBGClient((int) $request->getParameter('client_id'));
+				$client = \caspar\core\Caspar::factory()->TBGClient((int) $request->getParameter('client_id'));
 				$users = $client->getMembers();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('configuration/clientuserlist', array('users' => $users))));
 			}
@@ -3137,7 +3137,7 @@
 			{
 				try
 				{
-					$client = TBGContext::factory()->TBGClient($request->getParameter('client_id'));
+					$client = \caspar\core\Caspar::factory()->TBGClient($request->getParameter('client_id'));
 				}
 				catch (Exception $e) { }
 				if (!$client instanceof TBGClient)
@@ -3501,7 +3501,7 @@
 											case 1:
 												try
 												{
-													TBGContext::factory()->TBGUser(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3511,7 +3511,7 @@
 											case 2:
 												try
 												{
-													TBGContext::factory()->TBGTeam(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->TBGTeam(trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3533,7 +3533,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGClient(trim($activerow[$client], '" '));
+											\caspar\core\Caspar::factory()->TBGClient(trim($activerow[$client], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3553,7 +3553,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGWorkflowScheme(trim($activerow[$workflow_id], '" '));
+											\caspar\core\Caspar::factory()->TBGWorkflowScheme(trim($activerow[$workflow_id], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3573,7 +3573,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGIssuetypeScheme(trim($activerow[$issuetype_scheme], '" '));
+											\caspar\core\Caspar::factory()->TBGIssuetypeScheme(trim($activerow[$issuetype_scheme], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3602,7 +3602,7 @@
 								// Check if project exists
 								try
 								{
-									$prjtmp = TBGContext::factory()->TBGProject($activerow[$project]);
+									$prjtmp = \caspar\core\Caspar::factory()->TBGProject($activerow[$project]);
 								}
 								catch (Exception $e)
 								{
@@ -3666,7 +3666,7 @@
 											case 1:
 												try
 												{
-													TBGContext::factory()->TBGUser(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3676,7 +3676,7 @@
 											case 2:
 												try
 												{
-													TBGContext::factory()->TBGTeam(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->TBGTeam(trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3698,7 +3698,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGUser(trim($activerow[$posted_by], '" '));
+											\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$posted_by], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3718,7 +3718,7 @@
 									{
 										try
 										{
-											$milestonetmp = TBGContext::factory()->TBGMilestone(trim($activerow[$milestone], '" '));
+											$milestonetmp = \caspar\core\Caspar::factory()->TBGMilestone(trim($activerow[$milestone], '" '));
 											if ($milestonetmp->getProject()->getID() != $activerow[$project])
 											{
 												$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: milestone does not apply to the specified project', array('%col%' => $milestone+1, '%row%' => $i+1));
@@ -3742,7 +3742,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGStatus(trim($activerow[$status], '" '));
+											\caspar\core\Caspar::factory()->TBGStatus(trim($activerow[$status], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3762,7 +3762,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGResolution(trim($activerow[$resolution], '" '));
+											\caspar\core\Caspar::factory()->TBGResolution(trim($activerow[$resolution], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3782,7 +3782,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGPriority(trim($activerow[$priority], '" '));
+											\caspar\core\Caspar::factory()->TBGPriority(trim($activerow[$priority], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3802,7 +3802,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGCategory(trim($activerow[$category], '" '));
+											\caspar\core\Caspar::factory()->TBGCategory(trim($activerow[$category], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3822,7 +3822,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGSeverity(trim($activerow[$severity], '" '));
+											\caspar\core\Caspar::factory()->TBGSeverity(trim($activerow[$severity], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3842,7 +3842,7 @@
 									{
 										try
 										{
-											TBGContext::factory()->TBGReproducability(trim($activerow[$reproducability], '" '));
+											\caspar\core\Caspar::factory()->TBGReproducability(trim($activerow[$reproducability], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3862,7 +3862,7 @@
 									{
 										try
 										{
-											$typetmp = TBGContext::factory()->TBGIssuetype(trim($activerow[$issue_type], '" '));
+											$typetmp = \caspar\core\Caspar::factory()->TBGIssuetype(trim($activerow[$issue_type], '" '));
 											if (!($prjtmp->getIssuetypeScheme()->isSchemeAssociatedWithIssuetype($typetmp)))
 												$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: this project does not support issues of this type (%type%)', array('%type%' => $typetmp->getName(), '%col%' => $issue_type+1, '%row%' => $i+1));
 										}
@@ -4035,13 +4035,13 @@
 								
 								if ($workflow_id !== null)
 								{
-									$workflow = TBGContext::factory()->TBGWorkflowScheme(trim($activerow[$workflow_id], '" '));
+									$workflow = \caspar\core\Caspar::factory()->TBGWorkflowScheme(trim($activerow[$workflow_id], '" '));
 									$project->setWorkflowScheme($workflow);
 								}
 								
 								if ($client !== null)
 								{
-									$client_object = TBGContext::factory()->TBGWorkflowScheme(trim($activerow[$client], '" '));
+									$client_object = \caspar\core\Caspar::factory()->TBGWorkflowScheme(trim($activerow[$client], '" '));
 									$project->setClient($client_object);
 								}
 								
@@ -4055,7 +4055,7 @@
 									$project->setFrontpageSummaryType(trim($activerow[$summary_type], '" '));
 
 								if ($issuetype_scheme !== null)
-									$project->setIssuetypeScheme(TBGContext::factory()->TBGIssuetypeScheme(trim($activerow[$issuetype_scheme], '"')));
+									$project->setIssuetypeScheme(\caspar\core\Caspar::factory()->TBGIssuetypeScheme(trim($activerow[$issuetype_scheme], '"')));
 									
 								if ($allow_reporting !== null)
 									$project->setLocked(trim($activerow[$allow_reporting], '" '));
@@ -4100,7 +4100,7 @@
 									$issue->setStatus(trim($activerow[$status], '" '));
 									
 								if ($posted_by !== null)
-									$issue->setPostedBy(TBGContext::factory()->TBGUser(trim($activerow[$posted_by], '"')));
+									$issue->setPostedBy(\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$posted_by], '"')));
 								
 								if ($owner !== null && $owner_type !== null)
 								{
@@ -4192,7 +4192,7 @@
 		{
 			try
 			{
-				$this->project = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$this->project = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			}
 			catch (Exception $e) {}
 			
@@ -4303,7 +4303,7 @@
 		{
 			try
 			{
-				$project = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+				$project = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 				$project->removeAssignee($request->getParameter('assignee_type'), $request->getParameter('assignee_id'));
 				return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The assignee has been removed')));
 			}
@@ -4315,7 +4315,7 @@
 		
 		public function runProjectIcons(Request $request)
 		{
-			$project = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+			$project = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			if ($request->isMethod(TBGRequest::POST))
 			{
 				if ($request->getParameter('clear_icons'))
@@ -4361,7 +4361,7 @@
 
 		public function runProjectWorkflow(Request $request)
 		{
-			$project = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+			$project = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			
 			try
 			{
@@ -4375,7 +4375,7 @@
 					$project->convertIssueStepPerIssuetype($type, $data);
 				}
 				
-				$project->setWorkflowScheme(TBGContext::factory()->TBGWorkflowScheme($request->getParameter('workflow_id')));
+				$project->setWorkflowScheme(\caspar\core\Caspar::factory()->TBGWorkflowScheme($request->getParameter('workflow_id')));
 				$project->save();
 				
 				return $this->renderJSON(array('message' => TBGContext::geti18n()->__('Workflow scheme changed and issues updated')));
@@ -4389,12 +4389,12 @@
 
 		public function runProjectWorkflowTable(Request $request)
 		{
-			$project = TBGContext::factory()->TBGProject($request->getParameter('project_id'));
+			$project = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 			if ($request->isMethod(TBGRequest::POST))
 			{
 				try
 				{
-					$workflow_scheme = TBGContext::factory()->TBGWorkflowScheme($request->getParameter('new_workflow'));
+					$workflow_scheme = \caspar\core\Caspar::factory()->TBGWorkflowScheme($request->getParameter('new_workflow'));
 					return $this->renderJSON(array('content' => $this->getTemplateHtml('projectworkflow_table', array('project' => $project, 'new_workflow' => $workflow_scheme))));
 				}
 				catch (Exception $e)

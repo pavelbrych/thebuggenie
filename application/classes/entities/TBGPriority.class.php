@@ -39,7 +39,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = TBGContext::factory()->TBGPriority($row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->TBGPriority($row_id, $row);
 					}
 				}
 			}
@@ -56,7 +56,7 @@
 		public static function createNew($name)
 		{
 			$res = parent::_createNew($name, self::PRIORITY);
-			return TBGContext::factory()->TBGPriority($res->getInsertID());
+			return \caspar\core\Caspar::factory()->TBGPriority($res->getInsertID());
 		}
 		
 		public function getValue()

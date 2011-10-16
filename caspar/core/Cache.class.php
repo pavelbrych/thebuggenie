@@ -22,12 +22,12 @@
 	{
 
 		const KEY_SCOPES = '_scopes';
-		const KEY_PREMODULES_ROUTES_CACHE = '_routes';
-		const KEY_POSTMODULES_ROUTES_CACHE = '_routes_postmodules';
+		const KEY_ROUTES_ALL = '_routes';
+		const KEY_ROUTES_PREMODULES = '_routes_premodules';
+		const KEY_ROUTES_POSTMODULES = '_routes_postmodules';
+		const KEY_B2DB_CONFIG = '_b2db_config';
 		const KEY_PERMISSIONS_CACHE = '_permissions';
 		const KEY_USERSTATES_CACHE = 'TBGUserstate::getAll';
-		const KEY_MODULE_PATHS = '_module_paths';
-		const KEY_MODULES = '_modules';
 		const KEY_SETTINGS = '_settings';
 		const KEY_TEXTPARSER_ISSUE_REGEX = 'TBGTextParser::getIssueRegex';
 		

@@ -32,9 +32,9 @@
 		const FILE_ID = 'articlefiles.file_id';
 		const ARTICLE_ID = 'articlefiles.article_id';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::ARTICLE_ID, TBGArticlesTable::getTable(), TBGArticlesTable::ID);
@@ -73,7 +73,7 @@
 				{
 					try
 					{
-						$file = TBGContext::factory()->TBGFile($row->get(TBGFilesTable::ID), $row);
+						$file = \caspar\core\Caspar::factory()->TBGFile($row->get(TBGFilesTable::ID), $row);
 						$file->setUploadedAt($row->get(self::ATTACHED_AT));
 						$ret_arr[$row->get(TBGFilesTable::ID)] = $file;
 					}

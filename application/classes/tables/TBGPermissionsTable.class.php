@@ -45,9 +45,9 @@
 			return Core::getTable('TBGPermissionsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			
 			parent::_addVarchar(self::PERMISSION_TYPE, 100);
 			parent::_addVarchar(self::TARGET_ID, 200, 0);

@@ -125,8 +125,8 @@
 
 		public function componentIssueTypeSchemeOptions()
 		{
-			$this->issuetype = TBGContext::factory()->TBGIssuetype($this->id);
-			$this->scheme = TBGContext::factory()->TBGIssuetypeScheme($this->scheme_id);
+			$this->issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($this->id);
+			$this->scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme($this->scheme_id);
 			$this->builtinfields = TBGDatatype::getAvailableFields(true);
 			$this->customtypes = TBGCustomDatatype::getAll();
 			$this->visiblefields = $this->scheme->getVisibleFieldsForIssuetype($this->issuetype);
@@ -258,7 +258,7 @@
 				$this->build = new TBGBuild();
 				$this->build->setProject(TBGContext::getCurrentProject());
 				$this->build->setName(TBGContext::getI18n()->__('%project_name% version 0.0.0', array('%project_name%' => $this->project->getName())));
-				if (TBGContext::getRequest()->getParameter('edition_id') && $edition = TBGContext::factory()->TBGEdition(TBGContext::getRequest()->getParameter('edition_id')))
+				if (TBGContext::getRequest()->getParameter('edition_id') && $edition = \caspar\core\Caspar::factory()->TBGEdition(TBGContext::getRequest()->getParameter('edition_id')))
 				{
 					$this->build->setEdition($edition);
 				}

@@ -30,9 +30,9 @@
 		const PROJECT_ID = 'visible_milestones.project_id';
 		const MILESTONE_ID = 'visible_milestones.milestone_id';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::MILESTONE_ID, TBGMilestonesTable::getTable(), TBGMilestonesTable::ID);
 			parent::_addForeignKeyColumn(self::PROJECT_ID, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);

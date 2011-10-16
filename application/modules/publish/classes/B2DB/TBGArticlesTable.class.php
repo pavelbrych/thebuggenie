@@ -27,9 +27,9 @@
 			return Core::getTable('TBGArticlesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 255);
 			parent::_addText(self::CONTENT, false);
 			parent::_addBoolean(self::IS_PUBLISHED);

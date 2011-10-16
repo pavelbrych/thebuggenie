@@ -32,9 +32,9 @@
 		const ICON = 'issuetypes.itemdata';
 		const TASK = 'issuetypes.task';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 50);
 			parent::_addVarchar(self::ICON, 30, 'bug_report');
 			parent::_addText(self::DESCRIPTION, false);

@@ -1,10 +1,8 @@
 <?php
 
-	namespace thebuggenie\modules;
+	namespace application\modules\mailing;
 
-	use caspar\core\Module;
-
-	class Mailing extends Module
+	class Mailing extends \thebuggenie\core\Module
 	{
 
 		/**
@@ -400,7 +398,7 @@
 			
 			foreach ($issue->getProject()->getAssignedTeams() as $team_id => $assignments)
 			{
-				foreach (TBGContext::factory()->TBGTeam($team_id)->getMembers() as $member)
+				foreach (\caspar\core\Caspar::factory()->TBGTeam($team_id)->getMembers() as $member)
 				{
 					if ($member->getID() == $cu && !$ns) continue;
 					if (!$this->getSetting(self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, $member->getID())) continue;
@@ -409,7 +407,7 @@
 			}
 			foreach ($issue->getProject()->getAssignedUsers() as $user_id => $assignments)
 			{
-				$member = TBGContext::factory()->TBGUser($user_id);
+				$member = \caspar\core\Caspar::factory()->TBGUser($user_id);
 				if (!($member->getID() == $cu && !$ns) && !(!$this->getSetting(self::NOTIFY_ISSUE_PROJECT_ASSIGNED, $member->getID())))
 					$uids[$member->getID()] = $member->getID();
 			}
@@ -448,7 +446,7 @@
 				}
 				foreach ($edition_list['edition']->getAssignedTeams() as $team_id => $assignments)
 				{
-					foreach (TBGContext::factory()->TBGTeam($team_id)->getMembers() as $member)
+					foreach (\caspar\core\Caspar::factory()->TBGTeam($team_id)->getMembers() as $member)
 					{
 						if ($member->getID() == $cu && !$ns) continue;
 						if (!$this->getSetting(self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, $member->getID())) continue;
@@ -457,7 +455,7 @@
 				}
 				foreach ($edition_list['edition']->getAssignedUsers() as $user_id => $assignments)
 				{
-					$member = TBGContext::factory()->TBGUser($user_id);
+					$member = \caspar\core\Caspar::factory()->TBGUser($user_id);
 					if ($member->getID() == $cu && !$ns) continue;
 					if (!$this->getSetting(self::NOTIFY_ISSUE_PROJECT_ASSIGNED, $member->getID())) continue;
 					$uids[$member->getID()] = $member->getID();
@@ -469,7 +467,7 @@
 			{
 				foreach ($component_list['component']->getAssignedTeams() as $team_id => $assignments)
 				{
-					foreach (TBGContext::factory()->TBGTeam($team_id)->getMembers() as $member)
+					foreach (\caspar\core\Caspar::factory()->TBGTeam($team_id)->getMembers() as $member)
 					{
 						if ($member->getID() == $cu && !$ns) continue;
 						if (!$this->getSetting(self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, $member->getID())) continue;
@@ -478,7 +476,7 @@
 				}
 				foreach ($component_list['component']->getAssignedUsers() as $user_id => $assignments)
 				{
-					$member = TBGContext::factory()->TBGUser($user_id);
+					$member = \caspar\core\Caspar::factory()->TBGUser($user_id);
 					if ($member->getID() == $cu && !$ns) continue;
 					if (!$this->getSetting(self::NOTIFY_ISSUE_PROJECT_ASSIGNED, $member->getID())) continue;
 					$uids[$member->getID()] = $member->getID();
@@ -499,7 +497,7 @@
 						$this->saveSetting(self::NOTIFY_ISSUE_ONCE . '_' . $issue->getID(), 1, $uid);
 					}
 				}
-				$uids[$uid] = TBGContext::factory()->TBGUser($uid);
+				$uids[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
 			}
 			
 			return $uids;

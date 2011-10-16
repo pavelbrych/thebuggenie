@@ -50,9 +50,9 @@
 			return Core::getTable('TBGCommentsTable');
 		}
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TARGET_ID, 10);
 			parent::_addInteger(self::TARGET_TYPE, 3);
 			parent::_addText(self::CONTENT, false);

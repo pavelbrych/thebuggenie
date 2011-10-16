@@ -1,0 +1,343 @@
+project_open_issues:
+  url: /:project_key/issues/open/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 1, search: true}
+
+project_closed_issues:
+  url: /:project_key/issues/closed/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 2, search: true}
+
+project_milestone_todo_list:
+  url: /:project_key/issues/todo/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 6, search: true}
+
+project_most_voted_issues:
+  url: /:project_key/issues/mostvoted/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 7, search: true}
+
+project_my_teams_assigned_issues:
+  url: /:project_key/issues/my/assigned/teams
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 4, search: true}
+
+project_my_assigned_issues:
+  url: /:project_key/issues/my/assigned/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 3, search: true}
+
+project_my_reported_issues:
+  url: /:project_key/issues/my/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 5, search: true}
+
+viewissue_find_issue:
+  url: /:project_key/findissues/:type
+  module: main
+  action: findIssue
+  parameters: {format: 'json'}
+
+viewissue_relate_issues:
+  url: /:project_key/issues/:issue_id/relate
+  module: main
+  action: relateIssues
+  parameters: {format: 'json'}
+
+closeissue:
+  url: /:project_key/issues/:issue_id/close
+  module: main
+  action: closeIssue
+
+markasduplicate:
+  url: /:project_key/issues/:issue_id/markasduplicate
+  module: main
+  action: markAsDuplicate
+
+notduplicate:
+  url: /:project_key/issues/:issue_id/notduplicate
+  module: main
+  action: markAsNotDuplicate
+
+openissue:
+  url: /:project_key/issues/:issue_id/open
+  module: main
+  action: reopenIssue
+
+deleteissue:
+  url: /:project_key/issues/:issue_id/delete
+  module: main
+  action: deleteIssue
+
+block:
+  url: /:project_key/issues/:issue_id/block
+  module: main
+  action: markAsBlocker
+
+unblock:
+  url: /:project_key/issues/:issue_id/unblock
+  module: main
+  action: markAsNotBlocker
+
+issue_gettempfieldvalue:
+  url: /:project_key/issues/:issue_id/get/temp/value/for/:field/*
+  module: main
+  action: issueGetTempFieldValue
+
+issue_setfield:
+  url: /:project_key/issues/:issue_id/set/:field/*
+  module: main
+  action: issueSetField
+
+issue_revertfield:
+  url: /:project_key/issues/:issue_id/revert/:field
+  module: main
+  action: issueRevertField
+
+main_find_identifiable:
+  url: /find/identifiable/by/*
+  module: main
+  action: findIdentifiable
+
+toggle_favourite_issue:
+  url: /toggle_favourite_issue/:issue_id
+  module: main
+  action: toggleFavouriteIssue
+  parameters: {format: 'json'}
+
+project_getmenulinks:
+  url: /:project_key/menulinks
+  module: project
+  action: menuLinks
+
+project_reportissue:
+  url: /:project_key/issues/new/*
+  module: main
+  action: reportIssue
+
+transition_issue:
+  url: /:project_key/:issue_id/transition/:transition_id
+  module: project
+  action: transitionIssue
+
+transition_issues:
+  url: /:project_key/transition/:transition_id
+  module: project
+  action: transitionIssues
+
+project_planning:
+  url: /:project_key/planning
+  module: project
+  action: planning
+
+project_milestone:
+  url: /:project_key/milestone
+  module: project
+  action: milestone
+
+project_settings:
+  url: /:project_key/settings
+  module: project
+  action: settings
+
+project_releases:
+  url: /:project_key/releases
+  module: project
+  action: releases
+
+project_release_center:
+  url: /:project_key/release_center
+  module: project
+  action: releaseCenter
+
+project_milestone_details:
+  url: /:project_key/milestone/:milestone_id/details/*
+  module: project
+  action: scrumShowDetails
+
+project_scrum_release_burndown:
+  url: /:project_key/scrum/burndown/release
+  module: project
+  action: scrumShowBurndown
+  parameters: {mode: 'release'}
+
+project_scrum_sprint_burndown_image:
+  url: /:project_key/scrum/burndown/sprint/image/*
+  module: project
+  action: scrumShowBurndownImage
+  parameters: {mode: 'sprint'}
+
+project_scrum_release_burndown_image:
+  url: /:project_key/scrum/burndown/release/image/*
+  module: project
+  action: scrumShowBurndownImage
+  parameters: {mode: 'release'}
+
+project_scrum_assign_story:
+  url: /:project_key/scrum/assign/story
+  module: project
+  action: scrumAssignStory
+
+project_scrum_add_sprint:
+  url: /:project_key/scrum/add/sprint
+  module: project
+  action: scrumAddSprint
+
+project_scrum_story_setcolor:
+  url: /:project_key/scrum/set/color/for/story/:story_id
+  module: project
+  action: scrumSetStoryDetail
+  parameters: {detail: 'color'}
+
+project_scrum_story_setestimates:
+  url: /:project_key/scrum/set/estimates/for/story/:story_id
+  module: project
+  action: scrumSetStoryDetail
+  parameters: {detail: 'estimates'}
+
+project_scrum_story_addtask:
+  url: /:project_key/scrum/add/task/for/story/:story_id/*
+  module: project
+  action: scrumAddTask
+
+project_search_paginated:
+  url: /:project_key/issues/paginated/*
+  module: search
+  action: findIssuesPaginated
+
+project_search_add_filter:
+  url: /:project_key/issues/add/filter/*
+  module: search
+  action: addFilter
+
+project_issues:
+  url: /:project_key/issues/find/*
+  module: search
+  action: findIssues
+
+viewissue:
+  url: /:project_key/issues/:issue_no/*
+  module: main
+  action: viewIssue
+
+project_quicksearch:
+  url: /:project_key/quicksearch/*
+  module: search
+  action: findIssues
+  parameters: {quicksearch: true, issues_per_page: 6}
+
+project_opensearch:
+  url: /:project_key/opensearch.xml
+  module: search
+  action: opensearch
+  parameters: {format: 'xml'}
+
+project_team:
+  url: /:project_key/team
+  module: project
+  action: team
+
+project_statistics:
+  url: /:project_key/statistics
+  module: project
+  action: statistics
+
+project_statistics_last_15:
+  url: /:project_key/statistics/last/15
+  module: project
+  action: statisticsLast15
+
+project_statistics_imagesets:
+  url: /:project_key/statistics/imagesets/:set
+  module: project
+  action: statisticsImagesets
+
+project_statistics_image:
+  url: /:project_key/statistics/image/:key/:mode/:image_number/*
+  module: project
+  action: statisticsGetImage
+
+project_timeline:
+  url: /:project_key/timeline/*
+  module: project
+  action: timeline
+
+project_timeline_important:
+  url: /:project_key/timeline/show/important/*
+  module: project
+  action: timeline
+
+project_files:
+  url: /:project_key/files
+  module: project
+  action: files
+
+project_planning_milestone:
+  url: /:project_key/planning/milestone/:milestone_id
+  module: project
+  action: getMilestone
+
+project_planning_milestone_remove:
+  url: /:project_key/planning/milestone/:milestone_id/remove
+  module: project
+  action: removeMilestone
+
+project_planning_milestone_issues:
+  url: /:project_key/planning/milestone/:milestone_id/get/issues
+  module: project
+  action: getMilestoneIssues
+  parameters: {mode: 'planning'}
+
+project_planning_update_milestone_issues:
+  url: /:project_key/planning/milestone/:milestone_id/update/issues
+  module: project
+  action: updateMilestoneIssues
+
+project_roadmap:
+  url: /:project_key/roadmap
+  module: project
+  action: roadmap
+
+project_roadmap_milestone_issues:
+  url: /:project_key/milestone/:milestone_id/get/issues
+  module: project
+  action: getMilestoneIssues
+
+project_roadmap_milestone_refresh:
+  url: /:project_key/milestone/:milestone_id/get/details
+  module: project
+  action: getMilestoneDetails
+
+project_list_issues:
+  url: /:project_key/list/issues/:format/*
+  module: project
+  action: listIssues
+
+project_list_issuefields:
+  url: /:project_key/list/issuefields/for/type/:issuetype/:format
+  module: project
+  action: listIssuefields
+
+project_update_issuedetails:
+  url: /:project_key/update/issue/:issue_no/:format/*
+  module: project
+  action: updateIssueDetails
+
+project_list_workflowtransitions:
+  url: /:project_key/list/workflowtransitions/:issue_no/:format/*
+  module: project
+  action: listWorkflowTransitions
+
+project_dashboard:
+  url: /:project_key
+  module: project
+  action: dashboard
+

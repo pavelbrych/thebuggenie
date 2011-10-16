@@ -34,9 +34,9 @@
 			return Core::getTable('TBGIncomingEmailAccountTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 200);
 			parent::_addVarchar(self::SERVER, 200);
 			parent::_addVarchar(self::USERNAME, 200);

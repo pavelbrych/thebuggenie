@@ -17,7 +17,7 @@
 				if (!$this->user instanceof \TBGUser)
 				{
 					\TBGLogging::log('loading user object in dropdown');
-					$this->user = \TBGContext::factory()->TBGUser($this->user);
+					$this->user = \\caspar\core\Caspar::factory()->TBGUser($this->user);
 					\TBGLogging::log('done (loading user object in dropdown)');
 				}
 			}
@@ -35,7 +35,7 @@
 				if (!$this->client instanceof \TBGClient)
 				{
 					\TBGLogging::log('loading user object in dropdown');
-					$this->client = \TBGContext::factory()->TBGClient($this->client);
+					$this->client = \\caspar\core\Caspar::factory()->TBGClient($this->client);
 					\TBGLogging::log('done (loading user object in dropdown)');
 				}
 				$this->clientusers = $this->client->getMembers();
@@ -54,7 +54,7 @@
 			}
 			elseif ($this->target == \TBGIdentifiableClass::TYPE_TEAM)
 			{
-				$this->team = \TBGContext::factory()->TBGTeam($this->id);
+				$this->team = \\caspar\core\Caspar::factory()->TBGTeam($this->id);
 				$own = \TBGProject::getAllByOwner($this->team);
 				$leader = \TBGProject::getAllByLeader($this->team);
 				$qa = \TBGProject::getAllByQaResponsible($this->team);
@@ -72,7 +72,7 @@
 			}
 			elseif ($this->target == \TBGIdentifiableClass::TYPE_CLIENT)
 			{
-				$this->client = \TBGContext::factory()->TBGClient($this->id);
+				$this->client = \\caspar\core\Caspar::factory()->TBGClient($this->id);
 				$projects = \TBGProject::getAllByClientID($this->client->getID());
 				
 				$final_projects = array();
@@ -86,7 +86,7 @@
 			}
 			elseif ($this->target == 'project')
 			{
-				$this->parent = \TBGContext::factory()->TBGProject($this->id);
+				$this->parent = \\caspar\core\Caspar::factory()->TBGProject($this->id);
 				$this->projects = $this->parent->getChildren(true);;
 			}
 			
@@ -103,7 +103,7 @@
 				if (!$this->team instanceof \TBGTeam)
 				{
 					\TBGLogging::log('loading team object in dropdown');
-					$this->team = \TBGContext::factory()->TBGTeam($this->team);
+					$this->team = \\caspar\core\Caspar::factory()->TBGTeam($this->team);
 					\TBGLogging::log('done (loading team object in dropdown)');
 				}
 			}
@@ -258,7 +258,7 @@
 		{
 			if ($this->mode == 'issue' && !isset($this->issue))
 			{
-				$this->issue = \TBGContext::factory()->TBGIssue($this->issue_id);
+				$this->issue = \\caspar\core\Caspar::factory()->TBGIssue($this->issue_id);
 			}
 			elseif ($this->mode == 'article' && !isset($this->article))
 			{
@@ -296,7 +296,7 @@
 			{
 				try
 				{
-					$this->issue = \TBGContext::factory()->TBGIssue($this->log_action['target']);
+					$this->issue = \\caspar\core\Caspar::factory()->TBGIssue($this->log_action['target']);
 				}
 				catch (Exception $e) {}
 			}
@@ -308,7 +308,7 @@
 			{
 				try
 				{
-					$this->issue = \TBGContext::factory()->TBGIssue($this->comment->getTargetID());
+					$this->issue = \\caspar\core\Caspar::factory()->TBGIssue($this->comment->getTargetID());
 				}
 				catch (Exception $e) {}
 			}

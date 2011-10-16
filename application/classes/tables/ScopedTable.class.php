@@ -1,6 +1,6 @@
 <?php
 
-	namespace thebuggenie\core;
+	namespace thebuggenie\tables;
 	
 	use b2db\Table;
 
@@ -20,7 +20,7 @@
 	 * @package thebuggenie
 	 * @subpackage mvc
 	 */
-	class ScopedTable extends Table
+	abstract class ScopedTable extends Table
 	{
 		
 		/**
@@ -35,7 +35,7 @@
 			if (defined('static::SCOPE'))
 			{
 				$crit = $this->getCriteria();
-				$crit->addWhere(static::SCOPE, Caspar::getScope()->getID());
+				$crit->addWhere(static::SCOPE, Context::getScope()->getID());
 				$row = $this->doSelectById($id, $crit);
 			}
 			else

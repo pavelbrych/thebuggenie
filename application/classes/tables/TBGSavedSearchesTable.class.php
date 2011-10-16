@@ -22,9 +22,9 @@
 		const IS_PUBLIC = 'savedsearches.is_public';
 		const UID = 'savedsearches.uid';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 200);
 			parent::_addVarchar(self::DESCRIPTION, 255, '');
 			parent::_addBoolean(self::IS_PUBLIC);

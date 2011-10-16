@@ -40,9 +40,9 @@
 		const FILE_ID = 'builds.file_id';
 		const FILE_URL = 'builds.file_url';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addText(self::FILE_URL);
 			parent::_addInteger(self::VERSION_MAJOR, 3);

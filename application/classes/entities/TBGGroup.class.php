@@ -41,7 +41,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_groups[$row->get(TBGGroupsTable::ID)] = TBGContext::factory()->TBGGroup($row->get(TBGGroupsTable::ID), $row);
+						self::$_groups[$row->get(TBGGroupsTable::ID)] = \caspar\core\Caspar::factory()->TBGGroup($row->get(TBGGroupsTable::ID), $row);
 					}
 				}
 			}
@@ -118,7 +118,7 @@
 					while ($row = $res->getNextRow())
 					{
 						$uid = $row->get(TBGUsersTable::ID);
-						$this->_members[$uid] = TBGContext::factory()->TBGUser($uid);
+						$this->_members[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
 					}
 				}
 			}

@@ -41,9 +41,9 @@
 			return Core::getTable('TBGWorkflowIssuetypeTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_ID, TBGWorkflowsTable::getTable(), TBGWorkflowsTable::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_SCHEME_ID, TBGWorkflowSchemesTable::getTable(), TBGWorkflowSchemesTable::ID);
@@ -132,7 +132,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$return_array[$row->get(self::ISSUETYPE_ID)] = TBGContext::factory()->TBGWorkflow($row->get(self::WORKFLOW_ID), $row);
+					$return_array[$row->get(self::ISSUETYPE_ID)] = \caspar\core\Caspar::factory()->TBGWorkflow($row->get(self::WORKFLOW_ID), $row);
 				}
 			}
 

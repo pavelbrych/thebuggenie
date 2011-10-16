@@ -44,9 +44,9 @@
 			return Core::getTable('TBGDashboardViewsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TYPE);
 			parent::_addInteger(self::VIEW);
 			parent::_addInteger(self::PID);

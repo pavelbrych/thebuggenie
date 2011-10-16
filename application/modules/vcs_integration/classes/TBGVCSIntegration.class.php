@@ -121,7 +121,7 @@
 							else
 							{
 								// All issues will be of the same project, so use one issue
-								$issue = TBGContext::factory()->TBGIssue($row->get(TBGVCSIntegrationTable::ISSUE_NO));
+								$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGVCSIntegrationTable::ISSUE_NO));
 								// Add details of a new commit
 								$commits[$rev] = array('commit' => array(), 'files' => array(), 'issues' => array());
 								
@@ -136,15 +136,15 @@
 							$files = array();
 							$issues = array();
 
-							$scope = TBGContext::factory()->TBGScope($commit['commit']['scope']);
+							$scope = \caspar\core\Caspar::factory()->TBGScope($commit['commit']['scope']);
 							
 							try
 							{
-								$author = TBGContext::factory()->TBGUser($commit['commit']['author']);
+								$author = \caspar\core\Caspar::factory()->TBGUser($commit['commit']['author']);
 							}
 							catch (Exception $e)
 							{
-								$author = TBGContext::factory()->TBGUser(TBGSettings::getDefaultUserID());
+								$author = \caspar\core\Caspar::factory()->TBGUser(TBGSettings::getDefaultUserID());
 							}
 
 							// Add the commit
@@ -178,7 +178,7 @@
 							foreach ($issues as $issue)
 							{
 								// Add affected issues
-								$issue = TBGContext::factory()->TBGIssue($issue);
+								$issue = \caspar\core\Caspar::factory()->TBGIssue($issue);
 								$inst = new TBGVCSIntegrationIssueLink();
 								$inst->setIssue($issue);
 								$inst->setCommit($commit);
@@ -532,7 +532,7 @@
 				$uid = TBGSettings::getDefaultUserID();
 			}
 			
-			$user = TBGContext::factory()->TBGUser($uid);
+			$user = \caspar\core\Caspar::factory()->TBGUser($uid);
 			
 			$output .= '[VCS '.$project->getKey().'] Commit to be logged by user ' . $user->getName() . "\n";
 

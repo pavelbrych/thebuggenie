@@ -5,8 +5,8 @@
 	use b2db\Core,
 		b2db\Criteria,
 		b2db\Criterion,
-		caspar\core\Caspar,
-		caspar\core\ScopedTable;
+		thebuggenie\core\Context,
+		caspar\core\Caspar;
 
 	/**
 	 * Modules table
@@ -37,20 +37,19 @@
 		const CLASSNAME = 'modules.classname';
 		const SCOPE = 'modules.scope';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
 			parent::_addVarchar(self::MODULE_NAME, 50);
 			parent::_addBoolean(self::ENABLED);
 			parent::_addVarchar(self::VERSION, 10);
 			parent::_addVarchar(self::CLASSNAME, 50);
-			parent::_addForeignKeyColumn(self::SCOPE, Scopes::getTable());
+			parent::_addForeignKeyColumn(self::SCOPE, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Scopes'));
 		}
 		
 		public function getAll()
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, Caspar::getScope()->getID());
+			$crit->addWhere(self::SCOPE, Context::getScope()->getID());
 			$res = $this->doSelect($crit, 'none');
 			return $res;
 		}
@@ -72,7 +71,7 @@
 			$crit = $this->getCriteria();
 			$crit->addUpdate(self::ENABLED, 0);
 			$crit->addWhere(self::MODULE_NAME, $module_name);
-			$crit->addWhere(self::SCOPE, Caspar::getScope()->getID());
+			$crit->addWhere(self::SCOPE, Context::getScope()->getID());
 			return $this->doUpdate($crit);
 		}
 

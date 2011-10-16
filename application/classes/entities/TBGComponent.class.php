@@ -38,7 +38,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$component = TBGContext::factory()->TBGComponent($row->get(TBGComponentsTable::ID), $row);
+					$component = \caspar\core\Caspar::factory()->TBGComponent($row->get(TBGComponentsTable::ID), $row);
 					if ($component->hasAccess())
 					{
 						$retval[$component->getID()] = $component;
@@ -128,7 +128,7 @@
 			$users = array();
 			foreach (array_keys($this->_assignees['users']) as $user_id)
 			{
-				$users[$user_id] = TBGContext::factory()->TBGUser($user_id);
+				$users[$user_id] = \caspar\core\Caspar::factory()->TBGUser($user_id);
 			}
 			return $users;
 		}
@@ -139,7 +139,7 @@
 			$teams = array();
 			foreach (array_keys($this->_assignees['teams']) as $team_id)
 			{
-				$teams[$team_id] = TBGContext::factory()->TBGTeam($team_id);
+				$teams[$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id);
 			}
 			return $teams;
 		}

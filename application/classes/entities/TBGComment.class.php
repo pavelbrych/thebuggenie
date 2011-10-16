@@ -81,7 +81,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$comment = TBGContext::factory()->TBGComment($row->get(TBGCommentsTable::ID), $row);
+					$comment = \caspar\core\Caspar::factory()->TBGComment($row->get(TBGCommentsTable::ID), $row);
 					$retval[$comment->getID()] = $comment;
 				}
 				self::$_comment_count[$target_type][$target_id] = count($retval);
@@ -96,7 +96,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$comment = TBGContext::factory()->TBGComment($row->get(TBGCommentsTable::ID), $row);
+					$comment = \caspar\core\Caspar::factory()->TBGComment($row->get(TBGCommentsTable::ID), $row);
 					$retval[$comment->getID()] = $comment;
 				}
 			}
@@ -256,7 +256,7 @@
 		 */
 		public function getUpdatedBy()
 		{
-			return ($this->_updated_by instanceof TBGUser) ? $this->_updated_by : TBGContext::factory()->TBGUser($this->_updated_by);
+			return ($this->_updated_by instanceof TBGUser) ? $this->_updated_by : \caspar\core\Caspar::factory()->TBGUser($this->_updated_by);
 		}
 		
 		/**
@@ -268,7 +268,7 @@
 		{
 			try
 			{
-				return ($this->_posted_by instanceof TBGUser) ? $this->_posted_by : TBGContext::factory()->TBGUser($this->_posted_by);
+				return ($this->_posted_by instanceof TBGUser) ? $this->_posted_by : \caspar\core\Caspar::factory()->TBGUser($this->_posted_by);
 			}
 			catch (Exception $e)
 			{

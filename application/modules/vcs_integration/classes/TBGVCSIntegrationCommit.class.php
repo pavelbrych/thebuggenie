@@ -247,7 +247,7 @@
 				{
 					foreach ($res->getAllRows() as $row)
 					{
-						$this->_files[] = TBGContext::factory()->TBGVCSIntegrationFile($row->get(TBGVCSIntegrationFilesTable::ID), $row);
+						$this->_files[] = \caspar\core\Caspar::factory()->TBGVCSIntegrationFile($row->get(TBGVCSIntegrationFilesTable::ID), $row);
 					}
 				}
 			}
@@ -264,7 +264,7 @@
 				{
 					foreach ($res->getAllRows() as $row)
 					{
-						$this->_issues[] = TBGContext::factory()->TBGIssue($row->get(TBGVCSIntegrationIssueLinksTable::ISSUE_NO));
+						$this->_issues[] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGVCSIntegrationIssueLinksTable::ISSUE_NO));
 					}
 				}
 			}
@@ -289,7 +289,7 @@
 			
 			foreach (TBGVCSIntegrationCommitsTable::getTable()->getCommitsByProject($id, $limit, $offset)->getAllRows() as $row)
 			{
-				$data[] = TBGContext::factory()->TBGVCSIntegrationCommit($row->get(TBGVCSIntegrationCommitsTable::ID), $row);
+				$data[] = \caspar\core\Caspar::factory()->TBGVCSIntegrationCommit($row->get(TBGVCSIntegrationCommitsTable::ID), $row);
 			}
 			return $data;
 		}

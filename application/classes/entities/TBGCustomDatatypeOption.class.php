@@ -37,7 +37,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$key][$row_id] = TBGContext::factory()->TBGCustomDatatypeOption($row_id, $row);
+						self::$_items[$key][$row_id] = \caspar\core\Caspar::factory()->TBGCustomDatatypeOption($row_id, $row);
 					}
 				}
 			}
@@ -57,7 +57,7 @@
 			$row = \b2db\Core::getTable('TBGCustomFieldOptionsTable')->getByValueAndKey($value, $key);
 			if ($row)
 			{
-				return TBGContext::factory()->TBGCustomDatatypeOption($row->get(TBGCustomFieldOptionsTable::ID), $row);
+				return \caspar\core\Caspar::factory()->TBGCustomDatatypeOption($row->get(TBGCustomFieldOptionsTable::ID), $row);
 			}
 			return null;
 		}

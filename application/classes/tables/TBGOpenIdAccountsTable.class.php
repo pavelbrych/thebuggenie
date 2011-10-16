@@ -31,9 +31,9 @@
 		const EMAIL = 'openid_accounts.email';
 		const UID = 'openid_accounts.uid';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::IDENTITY, 300);
 			parent::_addVarchar(self::IDENTITY_HASH, 300);
 			parent::_addVarchar(self::EMAIL, 300);

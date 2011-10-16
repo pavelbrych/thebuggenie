@@ -31,9 +31,9 @@
 		const ADDED = 'issuetags.added';
 		const SCOPE = 'issuetags.scope';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::ISSUE_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
 			parent::_addVarchar(self::TAG_NAME, 50);
 			parent::_addInteger(self::ADDED, 10);

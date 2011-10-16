@@ -41,9 +41,9 @@
 			return Core::getTable('TBGVotesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TARGET, 10);
 			parent::_addInteger(self::VOTE, 2);
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);

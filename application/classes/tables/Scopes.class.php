@@ -41,9 +41,8 @@
 		const NAME = 'scopes.name';
 		const ADMINISTRATOR = 'scopes.administrator';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
 			parent::_addBoolean(self::ENABLED, false);
 			parent::_addBoolean(self::CUSTOM_WORKFLOWS_ENABLED, true);
 			parent::_addBoolean(self::UPLOADS_ENABLED, true);
@@ -59,10 +58,10 @@
 
 		protected function _migrateData(\b2db\Table $old_table)
 		{
-			$crit = \thebuggenie\tables\ScopeHostnames::getTable()->getCriteria();
+			$crit = $this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames')->getCriteria();
 			$crit->addInsert(\thebuggenie\tables\ScopeHostnames::HOSTNAME, '*');
 			$crit->addInsert(\thebuggenie\tables\ScopeHostnames::SCOPE_ID, 1);
-			\thebuggenie\tables\ScopeHostnames::getTable()->doInsert($crit);
+			$this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames')->doInsert($crit);
 
 			$crit = $this->getCriteria();
 			$crit->addUpdate(self::NAME, 'Default scope');
@@ -72,7 +71,7 @@
 		public function getByHostname($hostname)
 		{
 			$crit = $this->getCriteria();
-			$crit->addJoin(\thebuggenie\tables\ScopeHostnames::getTable(), \thebuggenie\tables\ScopeHostnames::SCOPE_ID, self::ID);
+			$crit->addJoin($this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames'), \thebuggenie\tables\ScopeHostnames::SCOPE_ID, self::ID);
 			$crit->addWhere(\thebuggenie\tables\ScopeHostnames::HOSTNAME, $hostname);
 			$row = $this->doSelectOne($crit);
 			return $row;
@@ -88,7 +87,7 @@
 			$crit = $this->getCriteria();
 			if ($hostname !== null)
 			{
-				$crit->addJoin(\thebuggenie\tables\ScopeHostnames::getTable(), \thebuggenie\tables\ScopeHostnames::SCOPE_ID, self::ID);
+				$crit->addJoin($this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames'), \thebuggenie\tables\ScopeHostnames::SCOPE_ID, self::ID);
 				$crit->addWhere(\thebuggenie\tables\ScopeHostnames::HOSTNAME, $hostname);
 				$crit->addOr(self::ID, 1);
 				$crit->addOrderBy(self::ID, 'desc');

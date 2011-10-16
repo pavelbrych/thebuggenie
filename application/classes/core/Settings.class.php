@@ -1,6 +1,10 @@
 <?php
 
 	namespace thebuggenie\core;
+	
+	use caspar\core\Logging,
+		caspar\core\Caspar,
+		caspar\core\Cache;
 
 	/**
 	 * Settings class
@@ -121,14 +125,14 @@
 				if (self::$_settings === null)
 					self::$_settings = array();
 				
-				if (!Caspar::isInstallmode() && $uid == 0 && self::$_settings = Cache::get(Cache::KEY_SETTINGS))
+				if (!Context::isInstallmode() && $uid == 0 && self::$_settings = Cache::get(Cache::KEY_SETTINGS))
 				{
 					Logging::log('Using cached settings');
 				}
 				else
 				{
 					Logging::log('Settings not cached or install mode enabled. Retrieving from database');
-					if ($res = \thebuggenie\tables\Settings::getTable()->getSettingsForScope(Caspar::getScope()->getID(), $uid))
+					if ($res = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Settings')->getSettingsForScope(Context::getScope()->getID(), $uid))
 					{
 						$cc = 0;
 						while ($row = $res->getNextRow())
@@ -136,16 +140,16 @@
 							$cc++;
 							self::$_settings[$row->get(\thebuggenie\tables\Settings::MODULE)][$row->get(\thebuggenie\tables\Settings::NAME)][$row->get(\thebuggenie\tables\Settings::UID)] = $row->get(\thebuggenie\tables\Settings::VALUE);
 						}
-						if ($cc == 0 && !Caspar::isInstallmode() && $uid == 0)
+						if ($cc == 0 && !Context::isInstallmode() && $uid == 0)
 						{
 							Logging::log('There were no settings stored in the database!', 'main', Logging::LEVEL_FATAL);
-							throw new TBGSettingsException('Could not retrieve settings from database (no settings stored)');
+							throw new TBGSettings\Exception('Could not retrieve settings from database (no settings stored)');
 						}
 					}
-					elseif (!Caspar::isInstallmode() && $uid == 0)
+					elseif (!Context::isInstallmode() && $uid == 0)
 					{
 						Logging::log('Settings could not be retrieved from the database!', 'main', Logging::LEVEL_FATAL);
-						throw new TBGSettingsException('Could not retrieve settings from database');
+						throw new TBGSettings\Exception('Could not retrieve settings from database');
 					}
 					self::$_loadedsettings[$uid] = true;
 					Logging::log('Retrieved');
@@ -158,7 +162,7 @@
 
 		public static function deleteModuleSettings($module_name, $scope)
 		{
-			if ($scope == Caspar::getScope()->getID())
+			if ($scope == Context::getScope()->getID())
 			{
 				if (array_key_exists($module_name, self::$_settings))
 				{
@@ -172,19 +176,19 @@
 		{
 			if ($scope == 0 && $name != 'defaultscope' && $module == 'core')
 			{
-				if (($scope = Caspar::getScope()) instanceof TBGScope)
+				if (($scope = Context::getScope()) instanceof TBGScope)
 				{
 					$scope = $scope->getID();
 				}
 				else
 				{
-					throw new Exception('No scope loaded, cannot autoload it');
+					throw new \Exception('No scope loaded, cannot autoload it');
 				}
 			}
 
 			\b2db\Core::getTable('\thebuggenie\tables\Settings')->saveSetting($name, $module, $value, $uid, $scope);
 			
-			if ($scope != 0 && ((!Caspar::getScope() instanceof TBGScope) || $scope == Caspar::getScope()->getID()))
+			if ($scope != 0 && ((!Context::getScope() instanceof TBGScope) || $scope == Context::getScope()->getID()))
 			{
 				self::$_settings[$module][$name][$uid] = $value;
 			}
@@ -198,7 +202,7 @@
 	
 		public static function get($name, $module = 'core', $scope = null, $uid = 0)
 		{
-			if (Caspar::isInstallmode() && !Caspar::getScope() instanceof TBGScope)
+			if (Context::isInstallmode() && !Context::getScope() instanceof TBGScope)
 			{
 				return null;
 			}
@@ -206,11 +210,11 @@
 			{
 				$scope = $scope->getID();
 			}
-			if (!Caspar::getScope() instanceof TBGScope)
+			if (!Context::getScope() instanceof Scope)
 			{
-				throw new Exception('The Bug Genie is not installed correctly');
+				throw new \Exception('The Bug Genie is not installed correctly');
 			}
-			if ($scope != Caspar::getScope()->getID() && $scope !== null)
+			if ($scope != Context::getScope()->getID() && $scope !== null)
 			{
 				$setting = self::_loadSetting($name, $module, $scope);
 				return $setting[$uid];
@@ -230,7 +234,7 @@
 			if (!array_key_exists($name, self::$_settings[$module]))
 			{
 				return null;
-				//self::$_settings[$name] = self::_loadSetting($name, $module, Caspar::getScope()->getID());
+				//self::$_settings[$name] = self::_loadSetting($name, $module, Context::getScope()->getID());
 			}
 			if ($uid !== 0 && array_key_exists($uid, self::$_settings[$module][$name]))
 			{
@@ -276,7 +280,7 @@
 		 */
 		public static function getDefaultScope()
 		{
-			throw new Exception("This function is deprecated. Default scope is always 1");
+			throw new \Exception("This function is deprecated. Default scope is always 1");
 			if (self::$_defaultscope === null)
 			{
 				$row = \b2db\Core::getTable('\thebuggenie\tables\Settings')->getDefaultScope();
@@ -287,8 +291,8 @@
 		
 		public static function deleteSetting($name, $module = 'core', $scope = null, $uid = null)
 		{
-			$scope = ($scope === null) ? Caspar::getScope()->getID() : $scope;
-			$uid = ($uid === null) ? Caspar::getUser()->getID() : $uid;
+			$scope = ($scope === null) ? Context::getScope()->getID() : $scope;
+			$uid = ($uid === null) ? Context::getUser()->getID() : $uid;
 
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(\thebuggenie\tables\Settings::NAME, $name);
@@ -307,7 +311,7 @@
 			$crit->addWhere(\thebuggenie\tables\Settings::MODULE, $module);
 			if ($scope == 0)
 			{
-				throw new Exception('BUGS has not been correctly installed. Please check that the default scope exists');
+				throw new \Exception('BUGS has not been correctly installed. Please check that the default scope exists');
 			}
 			$crit->addWhere(\thebuggenie\tables\Settings::SCOPE, $scope);
 			$res = \b2db\Core::getTable('\thebuggenie\tables\Settings')->doSelect($crit);
@@ -368,9 +372,9 @@
 				case self::FAVICON_CUSTOM_URL:
 					return self::get(self::SETTING_FAVICON_URL);
 				case self::FAVICON_PUBLIC:
-					return Caspar::getTBGPath()."favicon.png";
+					return Context::getTBGPath()."favicon.png";
 				default:
-					return Caspar::getTBGPath()."iconsets/".TBGSettings::getThemeName()."/favicon.png";
+					return Context::getTBGPath()."iconsets/".TBGSettings::getThemeName()."/favicon.png";
 			}
 		}
 		
@@ -470,7 +474,7 @@
 			{
 				return Caspar::factory()->TBGGroup(self::get(self::SETTING_USER_GROUP));
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				return null;
 			}
@@ -511,7 +515,7 @@
 			{
 				return Caspar::factory()->Userstate(self::get(self::SETTING_ONLINESTATE));
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				return null;
 			}
@@ -523,7 +527,7 @@
 			{
 				return Caspar::factory()->Userstate(self::get(self::SETTING_OFFLINESTATE));
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				return null;
 			}
@@ -541,7 +545,7 @@
 			{
 				return Caspar::factory()->Userstate(self::get(self::SETTING_AWAYSTATE));
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
 				return null;
 			}
@@ -549,7 +553,7 @@
 		
 		public static function getURLhost()
 		{
-			return Caspar::getScope()->getCurrentHostname();
+			return Context::getScope()->getCurrentHostname();
 		}
 		
 		public static function getGMToffset()
@@ -559,17 +563,17 @@
 		
 		public static function getUserTimezone()
 		{
-			return self::get(self::SETTING_USER_TIMEZONE, 'core', null, Caspar::getUser()->getID());
+			return self::get(self::SETTING_USER_TIMEZONE, 'core', null, Context::getUser()->getID());
 		}
 		
 		public static function getUserLanguage()
 		{
-			return self::get(self::SETTING_USER_LANGUAGE, 'core', null, Caspar::getUser()->getID());
+			return self::get(self::SETTING_USER_LANGUAGE, 'core', null, Context::getUser()->getID());
 		}
 		
 		public static function isUploadsEnabled()
 		{
-			return (bool) (Caspar::getScope()->isUploadsEnabled() && self::get(self::SETTING_ENABLE_UPLOADS));
+			return (bool) (Context::getScope()->isUploadsEnabled() && self::get(self::SETTING_ENABLE_UPLOADS));
 		}
 
 		public static function getUploadsMaxSize($bytes = false)
@@ -611,12 +615,12 @@
 
 		public static function isInfoBoxVisible($key)
 		{
-			return !(bool) self::get(self::INFOBOX_PREFIX . $key, 'core', Caspar::getScope()->getID(), Caspar::getUser()->getID());
+			return !(bool) self::get(self::INFOBOX_PREFIX . $key, 'core', Context::getScope()->getID(), Context::getUser()->getID());
 		}
 
 		public static function hideInfoBox($key)
 		{
-			self::saveSetting(self::INFOBOX_PREFIX . $key, 1, 'core', Caspar::getScope()->getID(), Caspar::getUser()->getID());
+			self::saveSetting(self::INFOBOX_PREFIX . $key, 1, 'core', Context::getScope()->getID(), Context::getUser()->getID());
 		}
 		
 		public static function showInfoBox($key)

@@ -45,25 +45,11 @@
 		static protected $_b2db = array();
 		
 		/**
-		 * Outdated modules
-		 * 
-		 * @var array
-		 */
-		static protected $_outdated_modules;
-
-		/**
 		 * The current user
 		 *
 		 * @var User
 		 */
 		static protected $_user;
-		
-		/**
-		 * List of modules 
-		 * 
-		 * @var array
-		 */
-		static protected $_modules;
 		
 		/**
 		 * List of permissions
@@ -101,20 +87,6 @@
 		 * @var string
 		 */
 		static protected $_stripped_tbgpath;
-		
-		/**
-		 * Whether we're in installmode or not
-		 * 
-		 * @var boolean
-		 */
-		static protected $_installmode = false;
-		
-		/**
-		 * Whether we're in upgrademode or not
-		 * 
-		 * @var boolean
-		 */
-		static protected $_upgrademode = false;
 		
 		/**
 		 * The i18n object
@@ -196,16 +168,6 @@
 		static protected $_minifyoff = true;
 
 		/**
-		 * Returns whether or not we're in install mode
-		 * 
-		 * @return boolean
-		 */
-		public static function isInstallmode()
-		{
-			return self::$_installmode;
-		}
-		
-		/**
 		 * Returns whether or minify is disabled
 		 * 
 		 * @return boolean
@@ -213,16 +175,6 @@
 		public static function isMinifyDisabled()
 		{
 			return self::$_minifyoff;
-		}
-
-		/**
-		 * Returns whether or not we're in upgrade mode
-		 * 
-		 * @return boolean
-		 */
-		public static function isUpgrademode()
-		{
-			return self::$_upgrademode;
 		}
 
 		/**
@@ -356,7 +308,7 @@
 		{
 			if (!self::$_routing)
 			{
-				self::$_routing = new Routing();
+				self::$_routing = new Routing(self::$_configuration['routes']);
 			}
 			return self::$_routing;
 		}
@@ -448,16 +400,6 @@
 			return round((self::$_loadend - self::$_loadstart), $precision);
 		}
 		
-		public static function checkInstallMode()
-		{
-			if (!is_readable(THEBUGGENIE_PATH . 'installed'))
-				self::$_installmode = true;
-			elseif (is_readable(THEBUGGENIE_PATH . 'upgrade'))
-				self::$_installmode = self::$_upgrademode = true;
-			elseif (!\b2db\Core::isInitialized())
-				throw new \Exception("The Bug Genie seems installed, but B2DB isn't configured. This usually indicates an error with the installation. Try removing the file ".THEBUGGENIE_PATH."installed and try again.");
-		}
-
 		protected static function setupI18n()
 		{
 			if (self::isCLI())
@@ -584,6 +526,9 @@
 		 */
 		public static function factory()
 		{
+			if (!self::$_factory instanceof Factory) {
+				self::$_factory = new Factory();
+			}
 			return self::$_factory;
 		}
 
@@ -736,104 +681,6 @@
 		public static function setUser(User $user)
 		{
 			self::$_user = $user;
-		}
-		
-		/**
-		 * Loads and initializes all modules
-		 */
-		public static function loadModules()
-		{
-			Logging::log('Loading modules');
-			if (self::$_modules === null)
-			{
-				self::$_modules = array();
-				if (self::isInstallmode()) return;
-
-				if (!Cache::has(Cache::KEY_MODULE_PATHS) || !Cache::has(Cache::KEY_MODULES))
-				{
-					$modules = array();
-
-					Logging::log('getting modules from database');
-					$module_paths = array();
-
-					if ($res = \thebuggenie\tables\Modules::getTable()->getAll())
-					{
-						while ($moduleRow = $res->getNextRow())
-						{
-							$module_name = $moduleRow->get(\thebuggenie\tables\Modules::MODULE_NAME);
-							$modules[$module_name] = $moduleRow;
-							$moduleClassPath = THEBUGGENIE_MODULES_PATH . $module_name . DS . "classes" . DS;
-							try
-							{
-								self::addAutoloaderClassPath($moduleClassPath);
-								$module_paths[] = $moduleClassPath;
-								if (file_exists($moduleClassPath . 'B2DB'))
-								{
-									self::addAutoloaderClassPath($moduleClassPath . 'B2DB' . DS);
-									$module_paths[] = $moduleClassPath . 'B2DB' . DS;
-								}
-							}
-							catch (Exception $e) { } // ignore "dir not exists" errors
-						}
-					}
-					Logging::log('done (getting modules from database)');
-					Cache::add(Cache::KEY_MODULE_PATHS, $module_paths);
-					Logging::log('setting up module objects');
-					foreach ($modules as $module_name => $moduleRow)
-					{
-						$classname = "\\thebuggenie\\modules\\{$module_name}\\" . $moduleRow->get(\thebuggenie\tables\Modules::CLASSNAME);
-						if ($classname != '' && $classname != '\\caspar\\core\\Module')
-						{
-							if (class_exists($classname))
-							{
-								self::$_modules[$module_name] = new $classname($moduleRow->get(\thebuggenie\tables\Modules::ID), $moduleRow);
-							}
-							else
-							{
-								Logging::log('Cannot load module "' . $module_name . '" as class "' . $classname . '", the class is not defined in the classpaths.', 'modules', Logging::LEVEL_WARNING_RISK);
-								Logging::log('Removing module "' . $module_name . '" as it cannot be loaded', 'modules', Logging::LEVEL_NOTICE);
-								TBGModule::removeModule($moduleRow->get(\thebuggenie\tables\Modules::ID));
-							}
-						}
-						else
-						{
-							throw new \Exception('Cannot load module "' . $module_name . '" as class TBGModule - modules should extend the TBGModule class with their own class.');
-						}
-					}
-					Cache::add(Cache::KEY_MODULES, self::$_modules);
-					Logging::log('done (setting up module objects)');
-				}
-				else
-				{
-					Logging::log('using cached modules');
-					$module_paths = Cache::get(Cache::KEY_MODULE_PATHS);
-					foreach ($module_paths as $path)
-					{
-						self::addAutoloaderClassPath($path);
-					}
-					self::$_modules = Cache::get(Cache::KEY_MODULES);
-					Logging::log('done (using cached modules)');
-				}
-
-				Logging::log('initializing modules');
-				if (!empty(self::$_modules))
-				{
-					foreach (self::$_modules as $module_name => $module)
-					{
-						$module->initialize();
-					}
-					Logging::log('done (initializing modules)');
-				}
-				else
-				{
-					Logging::log('no modules found');
-				}
-			}
-			else
-			{
-				Logging::log('Modules already loaded', 'core', Logging::LEVEL_FATAL);
-			}
-			Logging::log('...done');
 		}
 		
 		/**
@@ -1965,12 +1812,12 @@
 		{
 			Logging::log('Dispatching');
 			try {
-				if (($route = self::getRouting()->getRouteFromUrl(self::getRequest()->getParameter('url', null, false))) || self::isInstallmode()) {
-					if (self::isUpgrademode()) {
-						$route = array('module' => 'installation', 'action' => 'upgrade');
-					} elseif (self::isInstallmode()) {
-						$route = array('module' => 'installation', 'action' => 'installIntro');
-					}
+				if (($route = self::getRouting()->getRouteFromUrl(self::getRequest()->getParameter('url', null, false))) /*|| self::isInstallmode()*/) {
+//					if (self::isUpgrademode()) {
+//						$route = array('module' => 'installation', 'action' => 'upgrade');
+//					} elseif (self::isInstallmode()) {
+//						$route = array('module' => 'installation', 'action' => 'installIntro');
+//					}
 					if (self::$_redirect_login) {
 						Logging::log('An error occurred setting up the user object, redirecting to login', 'main', Logging::LEVEL_NOTICE);
 						self::setMessage('login_message_err', self::geti18n()->__('Please log in'));
@@ -2464,26 +2311,77 @@
 
 		public static function loadConfiguration()
 		{
-			Logging::log('Loading caspar settings');
+			Logging::log('Loading Caspar configuration');
 			self::$_ver_mj = 1;
 			self::$_ver_mn = 0;
 			self::$_ver_rev = '0-dev';
 			self::$_ver_name = 'Ninja';
 			if (self::$_configuration = Cache::get(Cache::KEY_SETTINGS) || self::$_configuration = Cache::fileGet(Cache::KEY_SETTINGS)) {
-				Logging::log('Using cached settings');
+				Logging::log('Using cached configuration');
 			} else {
-				Logging::log('Settings not cached. Retrieving settings from configuration');
-				self::$_configuration = \Spyc::YAMLLoad(\CASPAR_PATH . 'configuration' . \DIRECTORY_SEPARATOR . 'caspar.yml', true);
-				Logging::log('Settings retrieved');
+				Logging::log('Configuration not cached. Retrieving configuration from file');
+				self::$_configuration = \Spyc::YAMLLoad(\CASPAR_PATH . 'configuration' . \DS . 'caspar.yml', true);
 				Cache::add(Cache::KEY_SETTINGS, self::$_configuration);
 				Cache::fileAdd(Cache::KEY_SETTINGS, self::$_configuration);
+				Logging::log('Configuration loaded');
 			}
+			if ($b2db_config = Cache::get(Cache::KEY_B2DB_CONFIG) || $b2db_config = Cache::fileGet(Cache::KEY_B2DB_CONFIG)) {
+				Logging::log('Using cached b2db settings');
+			} else {
+				Logging::log('B2DB settings not cached. Retrieving settings from configuration file');
+				$b2db_config_file = \CASPAR_PATH . 'configuration' . \DS . 'b2db.yml';
+				if (file_exists($b2db_config_file)) {
+					$b2db_config = \Spyc::YAMLLoad($b2db_config_file, true);
+					Cache::add(Cache::KEY_SETTINGS, $b2db_config);
+					Cache::fileAdd(Cache::KEY_SETTINGS, $b2db_config);
+				}
+				Logging::log('Configuration loaded');
+			}
+			self::$_configuration['b2db'] = $b2db_config;
+		}
+		
+		public static function loadRoutes()
+		{
+			if ($routes = Cache::get(Cache::KEY_ROUTES_ALL) || $routes = Cache::fileGet(Cache::KEY_ROUTES_ALL)) {
+				Logging::log('Using cached routes');
+			} else {
+				$routes = array();
+				if ($routes_premodules = Cache::get(Cache::KEY_ROUTES_PREMODULES) || $routes_premodules = Cache::fileGet(Cache::KEY_ROUTES_PREMODULES)) {
+					Logging::log('Using cached premodule routes');
+				} else {
+					$routes_premodules = \Spyc::YAMLLoad(\CASPAR_PATH . 'configuration' . \DIRECTORY_SEPARATOR . 'routes_premodules.yml', true);
+					foreach ($routes_premodules as $route => $details) {
+						if (is_array($details) && array_key_exists('url', $details))
+							$routes_premodules[$route] = Routing::generateRoute($details);
+						else
+							unset($routes_premodules[$route]);
+					}
+					Cache::add(Cache::KEY_ROUTES_PREMODULES, $routes_premodules);
+					Cache::fileAdd(Cache::KEY_ROUTES_PREMODULES, $routes_premodules);
+				}
+				$routes = array_merge($routes, $routes_premodules);
+				if ($routes_postmodules = Cache::get(Cache::KEY_ROUTES_POSTMODULES) || $routes_postmodules = Cache::fileGet(Cache::KEY_ROUTES_POSTMODULES)) {
+					Logging::log('Using cached postmodule routes');
+				} else {
+					$routes_postmodules = \Spyc::YAMLLoad(\CASPAR_PATH . 'configuration' . \DIRECTORY_SEPARATOR . 'routes_postmodules.yml', true);
+					foreach ($routes_postmodules as $route => $details) {
+						if (is_array($details) && array_key_exists('url', $details))
+							$routes_postmodules[$route] = Routing::generateRoute($details);
+						else
+							unset($routes_postmodules[$route]);
+					}
+					Cache::add(Cache::KEY_ROUTES_POSTMODULES, $routes_postmodules);
+					Cache::fileAdd(Cache::KEY_ROUTES_POSTMODULES, $routes_postmodules);
+				}
+				$routes = array_merge($routes, $routes_postmodules);
+			}
+			self::$_configuration['routes'] = $routes;
 		}
 
 		public static function getB2DBInstance($config = 'default')
 		{
 			\b2db\Core::setCachePath(\CASPAR_CACHE_PATH);
-			if (!array_key_exists(self::$_b2db[$config])) {
+			if (!array_key_exists($config, self::$_b2db)) {
 				$configuration = self::$_configuration['b2db'][$config];
 				Logging::log('Initializing B2DB');
 				$b2db = \b2db\Core::getInstance($configuration);
@@ -2493,6 +2391,8 @@
 				self::$_b2db[$config] = $b2db;
 				Logging::log('...done');
 			}
+			
+			return self::$_b2db[$config];
 		}
 
 		public static function initialize()
@@ -2518,7 +2418,10 @@
 			
 			require CASPAR_APPLICATION_PATH . 'bootstrap.inc.php';
 
+			self::loadRoutes();
+			
 			Logging::log('Caspar framework loaded');
+			$event = Event::createNew('caspar/core', 'post_initialize')->trigger();
 		}
 
 		public static function isMaintenanceModeEnabled()

@@ -35,9 +35,9 @@
 		const DATA = 'vcsintegration_commits.data';
 		const PROJECT_ID = 'vcsintegration_commits.project_id';
 					
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addText(self::LOG, false);
 			parent::_addVarchar(self::OLD_REV, 40);
 			parent::_addVarchar(self::NEW_REV, 40);

@@ -83,7 +83,7 @@
 		{
 			if (!$this->_scope instanceof Scope)
 			{
-				$this->_scope = Caspar::factory()->manufacture("\\caspar\\core\\Scope", $this->_scope);
+				$this->_scope = \caspar\core\Caspar::factory()->manufacture("\\thebuggenie\\core\\Scope", $this->_scope);
 			}
 			return $this->_scope;
 		}
@@ -115,9 +115,9 @@
 
 		protected function _preInitialize()
 		{
-			if (Caspar::getScope() instanceof Scope)
+			if (Context::getScope() instanceof Scope)
 			{
-				$this->_scope = Caspar::getScope();
+				$this->_scope = Context::getScope();
 			}
 		}
 

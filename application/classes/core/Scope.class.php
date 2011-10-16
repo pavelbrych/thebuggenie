@@ -1,6 +1,8 @@
 <?php
 
 	namespace thebuggenie\core;
+	
+	use caspar\core\Caspar;
 
 	/**
 	 * The scope class
@@ -98,7 +100,7 @@
 			if ($this->_hostnames === null)
 			{
 				if ($this->_id)
-					$this->_hostnames = \thebuggenie\tables\ScopeHostnames::getTable()->getHostnamesForScope($this->getID());
+					$this->_hostnames = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\ScopeHostnames')->getHostnamesForScope($this->getID());
 				else
 					$this->_hostnames = array();
 			}
@@ -154,19 +156,19 @@
 
 		protected function _postSave($is_new)
 		{
-			\thebuggenie\tables\ScopeHostnames::getTable()->saveScopeHostnames($this->getHostnames(), $this->getID());
+			Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\ScopeHostnames')->saveScopeHostnames($this->getHostnames(), $this->getID());
 			// Load fixtures for this scope if it's a new scope
 			if ($is_new)
 			{
 				if ($this->getID() != 1)
 				{
-					$prev_scope = Caspar::getScope();
+					$prev_scope = Context::getScope();
 					Caspar::setScope($this);
 				}
 				$this->loadFixtures();
 				if ($this->getID() != 1)
 				{
-					TBGModule::installModule('publish', $this);
+					TBGModule::installModule('publish', $t46his);
 					Caspar::setScope($prev_scope);
 				}
 			}

@@ -71,7 +71,7 @@
 					{
 						try
 						{
-							$retarr[$id] = TBGContext::factory()->$function($id);
+							$retarr[$id] = \caspar\core\Caspar::factory()->$function($id);
 						}
 						catch (Exception $e)
 						{

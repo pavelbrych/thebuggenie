@@ -91,9 +91,9 @@
 			return Core::getTable('TBGLogTable');
 		}
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TARGET, 10);
 			parent::_addInteger(self::TARGET_TYPE, 3);
 			parent::_addInteger(self::CHANGE_TYPE, 3);

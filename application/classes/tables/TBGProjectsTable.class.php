@@ -62,9 +62,9 @@
 		const PARENT_PROJECT_ID = 'projects.parent';
 		const ARCHIVED = 'projects.archived';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addVarchar(self::KEY, 100);
 			parent::_addVarchar(self::PREFIX, 5, '');
@@ -246,7 +246,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$return_array[$row->get(self::ID)] = TBGContext::factory()->TBGProject($row->get(self::ID), $row);
+					$return_array[$row->get(self::ID)] = \caspar\core\Caspar::factory()->TBGProject($row->get(self::ID), $row);
 				}
 			}
 			return $return_array;

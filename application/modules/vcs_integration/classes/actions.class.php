@@ -56,7 +56,7 @@
 				$branch = null;
 			}
 			
-			$project = TBGContext::factory()->TBGProject($project_id);
+			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 			
 			if (!$project)
 			{
@@ -121,7 +121,7 @@
 				
 			$passkey = TBGContext::getRequest()->getParameter('passkey');
 			$project_id = urldecode(TBGContext::getRequest()->getParameter('project_id'));
-			$project = TBGContext::factory()->TBGProject($project_id);
+			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 			
 			// Validate access
 			if (!$project)
@@ -241,7 +241,7 @@
 			
 			$passkey = TBGContext::getRequest()->getParameter('passkey');
 			$project_id = urldecode(TBGContext::getRequest()->getParameter('project_id'));
-			$project = TBGContext::factory()->TBGProject($project_id);
+			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 			
 			// Validate access
 			if (!$project)

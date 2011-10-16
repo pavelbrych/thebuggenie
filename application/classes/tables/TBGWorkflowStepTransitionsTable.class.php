@@ -41,9 +41,9 @@
 			return Core::getTable('TBGWorkflowStepTransitionsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_ID, TBGWorkflowsTable::getTable(), TBGWorkflowsTable::ID);
 			parent::_addForeignKeyColumn(self::FROM_STEP_ID, TBGWorkflowStepsTable::getTable(), TBGWorkflowStepsTable::ID);
@@ -79,11 +79,11 @@
 				{
 					if ($type == 'step')
 					{
-						$return_array[$row->get(self::TRANSITION_ID)] = TBGContext::factory()->TBGWorkflowTransition($row->get(self::TRANSITION_ID), $row);
+						$return_array[$row->get(self::TRANSITION_ID)] = \caspar\core\Caspar::factory()->TBGWorkflowTransition($row->get(self::TRANSITION_ID), $row);
 					}
 					else
 					{
-						$return_array[$row->get(self::FROM_STEP_ID)] = TBGContext::factory()->TBGWorkflowStep($row->get(self::FROM_STEP_ID), $row);
+						$return_array[$row->get(self::FROM_STEP_ID)] = \caspar\core\Caspar::factory()->TBGWorkflowStep($row->get(self::FROM_STEP_ID), $row);
 					}
 				}
 			}

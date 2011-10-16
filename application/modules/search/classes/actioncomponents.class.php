@@ -108,7 +108,7 @@
 			}
 			$request->setParameter('search', $this->search);
 			
-			$search = TBGContext::factory()->manufacture('searchActions', uniqid(rand(), true));
+			$search = \caspar\core\Caspar::factory()->manufacture('searchActions', uniqid(rand(), true));
 			$search->runFindIssues($request);
 			$this->issues = $search->issues;
 			$this->title = $search->searchtitle;

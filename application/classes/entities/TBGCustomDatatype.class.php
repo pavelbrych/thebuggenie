@@ -62,7 +62,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_types[$row->get(TBGCustomFieldsTable::FIELD_KEY)] = TBGContext::factory()->TBGCustomDatatype($row_id, $row);
+						self::$_types[$row->get(TBGCustomFieldsTable::FIELD_KEY)] = \caspar\core\Caspar::factory()->TBGCustomDatatype($row_id, $row);
 					}
 				}
 			}
@@ -137,7 +137,7 @@
 			$row = \b2db\Core::getTable('TBGCustomFieldsTable')->getByKey($key);
 			if ($row)
 			{
-				return TBGContext::factory()->TBGCustomDatatype($row->get(TBGCustomFieldsTable::ID), $row);
+				return \caspar\core\Caspar::factory()->TBGCustomDatatype($row->get(TBGCustomFieldsTable::ID), $row);
 			}
 			return null;
 		}

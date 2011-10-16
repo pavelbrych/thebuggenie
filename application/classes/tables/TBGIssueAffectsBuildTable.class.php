@@ -42,9 +42,9 @@
 			return Core::getTable('TBGIssueAffectsBuildTable');
 		}
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addBoolean(self::CONFIRMED);
 			parent::_addForeignKeyColumn(self::BUILD, Core::getTable('TBGBuildsTable'), TBGBuildsTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUE, TBGIssuesTable::getTable(), TBGIssuesTable::ID);

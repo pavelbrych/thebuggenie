@@ -34,9 +34,9 @@
 		const REPORTABLE = 'issuefields.is_reportable';
 		const REQUIRED = 'issuefields.required';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::FIELD_KEY, 100);
 			parent::_addBoolean(self::REQUIRED);
 			parent::_addBoolean(self::REPORTABLE);

@@ -33,9 +33,9 @@
 		const CUSTOMFIELDS_KEY = 'customfieldoptions.customfield_key';
 		const SCOPE = 'customfieldoptions.scope';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addVarchar(self::OPTION_VALUE, 100);
 			parent::_addVarchar(self::ITEMDATA, 100);

@@ -52,7 +52,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$scheme = TBGContext::factory()->TBGWorkflowScheme($row->get(TBGWorkflowSchemesTable::ID), $row);
+						$scheme = \caspar\core\Caspar::factory()->TBGWorkflowScheme($row->get(TBGWorkflowSchemesTable::ID), $row);
 						
 						if (self::$_core_scheme === null)
 							self::$_core_scheme = $scheme;

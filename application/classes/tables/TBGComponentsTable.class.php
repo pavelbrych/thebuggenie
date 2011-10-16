@@ -35,9 +35,9 @@
 		const LEAD_BY = 'components.leader';
 		const LEAD_TYPE = 'components.leader_type';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addInteger(self::VERSION_MAJOR, 3);
 			parent::_addInteger(self::VERSION_MINOR, 3);

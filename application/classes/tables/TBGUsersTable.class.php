@@ -59,9 +59,9 @@
 			return $res;
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			
 			parent::_addVarchar(self::UNAME, 50);
 			parent::_addVarchar(self::PASSWORD, 100);
@@ -203,7 +203,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$users[$row->get(self::ID)] = TBGContext::factory()->TBGUser($row->get(self::ID));
+					$users[$row->get(self::ID)] = \caspar\core\Caspar::factory()->TBGUser($row->get(self::ID));
 				}
 			}
 

@@ -492,7 +492,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+						$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 						if ($project->hasAccess() && !$project->isDeleted())
 						{
 							self::$_projects[$project->getKey()] = $project;
@@ -727,7 +727,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 					if ($project->hasAccess() && $project->isDeleted() == 0)
 					{
 						return $row->get(TBGProjectsTable::ID);
@@ -797,7 +797,7 @@
 		{
 			if ($row = TBGProjectsTable::getTable()->getByPrefix($prefix))
 			{
-				return TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+				return \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 			}
 			return null;
 		}
@@ -1499,7 +1499,7 @@
 			$users = array();
 			foreach (array_keys($this->_assignees['users']) as $user_id)
 			{
-				$users[$user_id] = TBGContext::factory()->TBGUser($user_id);
+				$users[$user_id] = \caspar\core\Caspar::factory()->TBGUser($user_id);
 			}
 			return $users;
 		}
@@ -1510,7 +1510,7 @@
 			$teams = array();
 			foreach (array_keys($this->_assignees['teams']) as $team_id)
 			{
-				$teams[$team_id] = TBGContext::factory()->TBGTeam($team_id);
+				$teams[$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id);
 			}
 			return $teams;
 		}
@@ -1602,7 +1602,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_unassignedissues[$row->get(TBGIssuesTable::ID)] = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+						$this->_unassignedissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
 					}
 				}
 			}
@@ -1632,7 +1632,7 @@
 					{
 						while ($row = $res->getNextRow())
 						{
-							$this->_unassignedstories[$row->get(TBGIssuesTable::ID)] = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+							$this->_unassignedstories[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
 						}
 					}
 				}
@@ -1675,7 +1675,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$milestone = TBGContext::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+						$milestone = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
 						if ($milestone->hasAccess())
 						{
 							$this->_visible_milestones[$milestone->getID()] = $milestone;
@@ -1807,7 +1807,7 @@
 						try
 						{
 							$i_id = $row->get(TBGVisibleIssueTypesTable::ISSUETYPE_ID);
-							$this->_visible_issuetypes[$i_id] = TBGContext::factory()->TBGIssuetype($i_id);
+							$this->_visible_issuetypes[$i_id] = \caspar\core\Caspar::factory()->TBGIssuetype($i_id);
 						}
 						catch (Exception $e)
 						{
@@ -2136,7 +2136,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$issue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID));;
+					$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));;
 					if (!$merged)
 					{
 						$retval[$row->get(TBGIssuesTable::ISSUE_TYPE)]['issues'][] = $issue;
@@ -2504,7 +2504,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentissues[$recentissue->getID()] = $recentissue;
@@ -2527,7 +2527,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentdocumentationrequests[$recentissue->getID()] = $recentissue;
@@ -2550,7 +2550,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentenhancements[$recentissue->getID()] = $recentissue;
@@ -2573,7 +2573,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentfeatures[$recentissue->getID()] = $recentissue;
@@ -2596,7 +2596,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentideas[$recentissue->getID()] = $recentissue;
@@ -2619,7 +2619,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentsupportrequests[$recentissue->getID()] = $recentissue;
@@ -2642,7 +2642,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recenttasks[$recentissue->getID()] = $recentissue;
@@ -2665,7 +2665,7 @@
 					{
 						try
 						{
-							$recentissue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentdeveloperreports[$recentissue->getID()] = $recentissue;
@@ -3041,7 +3041,7 @@
 
 				foreach ($res->getAllRows() as $row)
 				{
-					$this->_children[] = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$this->_children[] = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 				}
 			}
 		}

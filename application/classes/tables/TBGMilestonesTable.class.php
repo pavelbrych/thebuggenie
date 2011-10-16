@@ -35,9 +35,9 @@
 		const STARTING = 'milestones.startingdate';
 		const SCHEDULED = 'milestones.scheduleddate';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addText(self::DESCRIPTION, false);
 			parent::_addInteger(self::REACHED, 10);

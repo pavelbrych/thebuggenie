@@ -44,9 +44,9 @@
 			return Core::getTable('TBGLinksTable');
 		}
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::URL, 300);
 			parent::_addInteger(self::LINK_ORDER, 3);
 			parent::_addVarchar(self::TARGET_TYPE, 30);

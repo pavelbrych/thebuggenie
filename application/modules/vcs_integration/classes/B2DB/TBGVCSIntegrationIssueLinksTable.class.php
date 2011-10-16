@@ -30,9 +30,9 @@
 		const ISSUE_NO = 'vcsintegration_issuelinks.issue_no';
 		const COMMIT_ID = 'vcsintegration_issuelinks.commit_id';
 					
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUE_NO, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
 			parent::_addForeignKeyColumn(self::COMMIT_ID, TBGVCSIntegrationCommitsTable::getTable(), TBGVCSIntegrationCommitsTable::ID);

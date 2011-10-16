@@ -43,9 +43,9 @@
 			return Core::getTable('TBGCustomFieldsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::FIELD_NAME, 100);
 			parent::_addVarchar(self::FIELD_KEY, 100);
 			parent::_addVarchar(self::FIELD_DESCRIPTION, 200);

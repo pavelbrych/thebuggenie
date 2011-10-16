@@ -272,7 +272,7 @@
 		{
 			if ($row = TBGUsersTable::getTable()->getByUsername($username, $scope))
 			{
-				return TBGContext::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
+				return \caspar\core\Caspar::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
 			}
 			return null;
 		}
@@ -290,7 +290,7 @@
 			$user = null;
 			if ($user_id = TBGOpenIdAccountsTable::getTable()->getUserIDfromIdentity($identity))
 			{
-				$user = TBGContext::factory()->TBGUser($user_id);
+				$user = \caspar\core\Caspar::factory()->TBGUser($user_id);
 			}
 			elseif (!TBGSettings::isUsingExternalAuthenticationBackend())
 			{
@@ -319,7 +319,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_users[$row->get(TBGUsersTable::ID)] = TBGContext::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
+						self::$_users[$row->get(TBGUsersTable::ID)] = \caspar\core\Caspar::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
 					}
 				}
 			}
@@ -531,7 +531,7 @@
 					{
 						throw new Exception('This account has been suspended');
 					}
-					$user = TBGContext::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
+					$user = \caspar\core\Caspar::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
 					
 					if ($external == false)
 					{
@@ -827,7 +827,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$team = TBGContext::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
+						$team = \caspar\core\Caspar::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
 						if ($team->isOndemand())
 						{
 							$this->teams['ondemand'][$team->getID()] = $team;
@@ -869,7 +869,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->clients[$row->get(TBGClientsTable::ID)] = TBGContext::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
+						$this->clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
 					}
 				}
 				TBGLogging::log('...done (Populating user clients)');
@@ -934,7 +934,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->userassigned[$row->get(TBGIssuesTable::ID)] = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$this->userassigned[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 					}
 					ksort($this->userassigned, SORT_NUMERIC);
 				}
@@ -957,7 +957,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->teamassigned[$team_id][$row->get(TBGIssuesTable::ID)] = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$this->teamassigned[$team_id][$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 					}
 				}
 				ksort($this->teamassigned[$team_id], SORT_NUMERIC);
@@ -977,7 +977,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_starredissues[$row->get(TBGIssuesTable::ID)] = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$this->_starredissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 					}
 					ksort($this->_starredissues, SORT_NUMERIC);
 				}
@@ -1032,7 +1032,7 @@
 				$crit->addInsert(TBGUserIssuesTable::SCOPE, TBGContext::getScope()->getID());
 				
 				\b2db\Core::getTable('TBGUserIssuesTable')->doInsert($crit);
-				$issue = TBGContext::factory()->TBGIssue($issue_id);
+				$issue = \caspar\core\Caspar::factory()->TBGIssue($issue_id);
 				$this->_starredissues[$issue->getID()] = $issue;
 				ksort($this->_starredissues);
 				TBGLogging::log('Starred');
@@ -1073,7 +1073,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_friends[$row->get(TBGBuddiesTable::BID)] = TBGContext::factory()->TBGUser($row->get(TBGBuddiesTable::BID));
+						$this->_friends[$row->get(TBGBuddiesTable::BID)] = \caspar\core\Caspar::factory()->TBGUser($row->get(TBGBuddiesTable::BID));
 					}
 				}
 			}
@@ -1693,7 +1693,7 @@
 			if (!$res || count($res) > 1) return false;
 			$row = $res->getNextRow();
 			
-			return TBGContext::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
+			return \caspar\core\Caspar::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
 		}
 
 		/**
@@ -1712,7 +1712,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$retarr[$row->get(TBGUsersTable::ID)] = TBGContext::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
+					$retarr[$row->get(TBGUsersTable::ID)] = \caspar\core\Caspar::factory()->TBGUser($row->get(TBGUsersTable::ID), $row);
 				}
 			}
 			return $retarr;
@@ -1821,7 +1821,7 @@
 			$retval = null;
 			if ($project_id !== null)
 			{
-				if (is_numeric($project_id)) $project_id = TBGContext::factory()->TBGProject($project_id);
+				if (is_numeric($project_id)) $project_id = \caspar\core\Caspar::factory()->TBGProject($project_id);
 			
 				if ($project_id->isArchived()): return false; endif;
 				
@@ -2079,7 +2079,7 @@
 				{
 					try
 					{
-						$this->_associated_projects[$project_id] = TBGContext::factory()->TBGProject($project_id);
+						$this->_associated_projects[$project_id] = \caspar\core\Caspar::factory()->TBGProject($project_id);
 					}
 					catch (Exception $e) { }
 				}
@@ -2122,7 +2122,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$issue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+					$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 					$retval[$issue->getID()] = $issue;
 				}
 			}

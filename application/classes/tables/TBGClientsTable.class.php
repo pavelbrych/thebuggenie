@@ -43,9 +43,9 @@
 			return Core::getTable('TBGClientsTable');
 		}
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			
 			parent::_addVarchar(self::NAME, 50);
 			parent::_addVarchar(self::WEBSITE, 200);

@@ -384,7 +384,7 @@
 		protected function _upgradeFrom3dot0()
 		{
 			// Add new tables
-			\thebuggenie\tables\ScopeHostnames::getTable()->create();
+			Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\ScopeHostnames')->create();
 			
 			// Add classpath for existing old tables used for upgrade
 			TBGContext::addAutoloaderClassPath(THEBUGGENIE_MODULES_PATH . 'installation' . DS . 'classes' . DS . 'upgrade_3.0');

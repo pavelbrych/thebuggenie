@@ -39,19 +39,6 @@
 		protected $_tables = array();
 		
 		/**
-		 * Loads a table and adds it to the B2DBObject stack
-		 * 
-		 * @param Table $tbl_name
-		 * 
-		 * @return Table
-		 */
-		public function loadNewTable(Table $table)
-		{
-			$this->_tables[\get_class($table)] = $table;
-			return $table;
-		}
-
-		/**
 		 * Add a table alias to alias counter
 		 *
 		 * @return integer
@@ -77,7 +64,7 @@
 			if (!isset($this->_tables[$tbl_name])) {
 				try {
 					if (!\class_exists($tbl_name)) throw new Exception("Class $tbl_name does not exist, cannot load it");
-					$this->loadNewTable(new $tbl_name());
+					$this->_tables[$tbl_name] = new $tbl_name($this);
 					if (!isset($this->_tables[$tbl_name])) throw new Exception('Table ' . $tbl_name . ' is not loaded');
 				} catch (\Exception $e) {
 					throw $e;

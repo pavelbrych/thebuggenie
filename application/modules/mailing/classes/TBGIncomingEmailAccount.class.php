@@ -50,7 +50,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$accounts[] = TBGContext::factory()->TBGIncomingEmailAccount($row->get(TBGIncomingEmailAccountTable::ID), $row);
+					$accounts[] = \caspar\core\Caspar::factory()->TBGIncomingEmailAccount($row->get(TBGIncomingEmailAccountTable::ID), $row);
 				}
 			}
 			
@@ -64,7 +64,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$accounts[] = TBGContext::factory()->TBGIncomingEmailAccount($row->get(TBGIncomingEmailAccountTable::ID), $row);
+					$accounts[] = \caspar\core\Caspar::factory()->TBGIncomingEmailAccount($row->get(TBGIncomingEmailAccountTable::ID), $row);
 				}
 			}
 			

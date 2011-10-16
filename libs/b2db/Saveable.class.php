@@ -2,7 +2,8 @@
 
 	namespace b2db;
 	
-	use caspar\core\Logging;
+	use caspar\core\Logging,
+		caspar\core\Caspar;
 
 	/**
 	 * B2DB Saveable class, active record implementation for B2DB
@@ -43,7 +44,7 @@
 		public function getB2DBTable()
 		{
 			$b2dbtablename = $this->getB2DBTableName();
-			return $b2dbtablename::getTable();
+			return Caspar::getB2DBInstance()->getTable($b2dbtablename);
 		}
 
 		protected function _getForeignClassForProperty($property_name)

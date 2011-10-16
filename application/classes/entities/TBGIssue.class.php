@@ -588,7 +588,7 @@
 					if ($project->usePrefix()) return null;
 					if ($row = TBGIssuesTable::getTable()->getByProjectIDAndIssueNo($project->getID(), (integer) $issue_no))
 					{
-						$theIssue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$theIssue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 					}
 				}
 				catch (Exception $e)
@@ -602,7 +602,7 @@
 				TBGLogging::log('exploding');
 				if (count($issue_no) == 2 && $row = TBGIssuesTable::getTable()->getByPrefixAndIssueNo($issue_no[0], $issue_no[1]))
 				{
-					$theIssue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+					$theIssue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 					if (!$theIssue->getProject()->usePrefix())
 					{
 						return null;
@@ -624,7 +624,7 @@
 				{
 					try
 					{
-						$issue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
 						if (!$issue->hasAccess() || $issue->getProject()->isDeleted()) continue;
 						$issues[] = $issue;
 					}
@@ -769,7 +769,7 @@
 		{
 			if (is_numeric($this->_workflow_step_id))
 			{
-				$this->_workflow_step_id = TBGContext::factory()->TBGWorkflowStep($this->_workflow_step_id);
+				$this->_workflow_step_id = \caspar\core\Caspar::factory()->TBGWorkflowStep($this->_workflow_step_id);
 			}
 			return $this->_workflow_step_id;
 		}
@@ -838,8 +838,8 @@
 					{
 						try
 						{
-							$this->_editions[$row->get(TBGIssueAffectsEditionTable::ID)] = array(	'edition' => TBGContext::factory()->TBGEdition($row->get(TBGIssueAffectsEditionTable::EDITION)),
-														'status' => TBGContext::factory()->TBGStatus($row->get(TBGIssueAffectsEditionTable::STATUS), $row),
+							$this->_editions[$row->get(TBGIssueAffectsEditionTable::ID)] = array(	'edition' => \caspar\core\Caspar::factory()->TBGEdition($row->get(TBGIssueAffectsEditionTable::EDITION)),
+														'status' => \caspar\core\Caspar::factory()->TBGStatus($row->get(TBGIssueAffectsEditionTable::STATUS), $row),
 														'confirmed' => (bool) $row->get(TBGIssueAffectsEditionTable::CONFIRMED),
 														'a_id' => $row->get(TBGIssueAffectsEditionTable::ID));
 						}
@@ -853,8 +853,8 @@
 					{
 						try
 						{
-							$this->_builds[$row->get(TBGIssueAffectsBuildTable::ID)] = array(	'build' => TBGContext::factory()->TBGBuild($row->get(TBGIssueAffectsBuildTable::BUILD)),
-														'status' => TBGContext::factory()->TBGStatus($row->get(TBGIssueAffectsBuildTable::STATUS), $row),
+							$this->_builds[$row->get(TBGIssueAffectsBuildTable::ID)] = array(	'build' => \caspar\core\Caspar::factory()->TBGBuild($row->get(TBGIssueAffectsBuildTable::BUILD)),
+														'status' => \caspar\core\Caspar::factory()->TBGStatus($row->get(TBGIssueAffectsBuildTable::STATUS), $row),
 														'confirmed' => (bool) $row->get(TBGIssueAffectsBuildTable::CONFIRMED),
 														'a_id' => $row->get(TBGIssueAffectsBuildTable::ID));
 						}
@@ -868,8 +868,8 @@
 					{
 						try
 						{
-							$this->_components[$row->get(TBGIssueAffectsComponentTable::ID)] = array(	'component' => TBGContext::factory()->TBGComponent($row->get(TBGIssueAffectsComponentTable::COMPONENT)),
-															'status' => TBGContext::factory()->TBGStatus($row->get(TBGIssueAffectsComponentTable::STATUS), $row),
+							$this->_components[$row->get(TBGIssueAffectsComponentTable::ID)] = array(	'component' => \caspar\core\Caspar::factory()->TBGComponent($row->get(TBGIssueAffectsComponentTable::COMPONENT)),
+															'status' => \caspar\core\Caspar::factory()->TBGStatus($row->get(TBGIssueAffectsComponentTable::STATUS), $row),
 															'confirmed' => (bool) $row->get(TBGIssueAffectsComponentTable::CONFIRMED),
 															'a_id' => $row->get(TBGIssueAffectsComponentTable::ID));
 						}
@@ -949,7 +949,7 @@
 			{
 				try
 				{
-					$this->_duplicate_of = TBGContext::factory()->TBGIssue($this->_duplicate_of);
+					$this->_duplicate_of = \caspar\core\Caspar::factory()->TBGIssue($this->_duplicate_of);
 				}
 				catch (Exception $e) 
 				{
@@ -1420,7 +1420,7 @@
 			{
 				try
 				{
-					$this->_issuetype = TBGContext::factory()->TBGIssuetype($this->_issuetype);
+					$this->_issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($this->_issuetype);
 				}
 				catch (Exception $e) 
 				{
@@ -1669,12 +1669,12 @@
 						{
 							if ($row->get(TBGIssueRelationsTable::PARENT_ID) == $this->getID())
 							{
-								$issue = TBGContext::factory()->TBGIssue($row->get(TBGIssueRelationsTable::CHILD_ID));
+								$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssueRelationsTable::CHILD_ID));
 								$this->_child_issues[$row->get(TBGIssueRelationsTable::ID)] = $issue;
 							}
 							else
 							{
-								$issue = TBGContext::factory()->TBGIssue($row->get(TBGIssueRelationsTable::PARENT_ID));
+								$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssueRelationsTable::PARENT_ID));
 								$this->_parent_issues[$row->get(TBGIssueRelationsTable::ID)] = $issue;
 							}
 						}
@@ -1701,7 +1701,7 @@
 					{
 						try
 						{
-							$issue = TBGContext::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+							$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
 							$this->_duplicate_issues[$row->get(TBGIssuesTable::ID)] = $issue;
 						}
 						catch (Exception $e) 
@@ -1830,7 +1830,7 @@
 					{
 						while ($row = $resultset->getNextRow())
 						{
-							$this->_tasks[$row->get(TBGIssueTasksTable::ID)] = TBGContext::factory()->task($row->get(TBGIssueTasksTable::ID), $row);
+							$this->_tasks[$row->get(TBGIssueTasksTable::ID)] = \caspar\core\Caspar::factory()->task($row->get(TBGIssueTasksTable::ID), $row);
 						}
 					}
 				}
@@ -1996,7 +1996,7 @@
 			{
 				try
 				{
-					$this->_reproducability = TBGContext::factory()->TBGReproducability($this->_reproducability);
+					$this->_reproducability = \caspar\core\Caspar::factory()->TBGReproducability($this->_reproducability);
 				}
 				catch (Exception $e)
 				{
@@ -2027,7 +2027,7 @@
 			{
 				try
 				{
-					$this->_priority = TBGContext::factory()->TBGPriority($this->_priority);
+					$this->_priority = \caspar\core\Caspar::factory()->TBGPriority($this->_priority);
 				}
 				catch (Exception $e)
 				{
@@ -2135,7 +2135,7 @@
 			{
 				try
 				{
-					$this->_milestone = TBGContext::factory()->TBGMilestone($this->_milestone);
+					$this->_milestone = \caspar\core\Caspar::factory()->TBGMilestone($this->_milestone);
 				}
 				catch (Exception $e)
 				{
@@ -2173,7 +2173,7 @@
 		{
 			if ($row = \b2db\Core::getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $issue_id))
 			{
-				$related_issue = TBGContext::factory()->TBGIssue($issue_id);
+				$related_issue = \caspar\core\Caspar::factory()->TBGIssue($issue_id);
 				if ($row->get(TBGIssueRelationsTable::PARENT_ID) == $this->getID())
 				{
 					$this->_removeChildIssue($related_issue, $row->get(TBGIssueRelationsTable::ID));
@@ -2292,11 +2292,11 @@
 				{
 					if ($this->_assigned_type == TBGIdentifiableClass::TYPE_USER)
 					{
-						$this->_assigned_to = TBGContext::factory()->TBGUser($this->_assigned_to);
+						$this->_assigned_to = \caspar\core\Caspar::factory()->TBGUser($this->_assigned_to);
 					}
 					elseif ($this->_assigned_type == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$this->_assigned_to = TBGContext::factory()->TBGTeam($this->_assigned_to);
+						$this->_assigned_to = \caspar\core\Caspar::factory()->TBGTeam($this->_assigned_to);
 					}
 				}
 				catch (Exception $e)
@@ -2383,11 +2383,11 @@
 				{
 					if ($this->_owner_type == TBGIdentifiableClass::TYPE_USER)
 					{
-						$this->_owner = TBGContext::factory()->TBGUser($this->_owner);
+						$this->_owner = \caspar\core\Caspar::factory()->TBGUser($this->_owner);
 					}
 					elseif ($this->_owner_type == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$this->_owner = TBGContext::factory()->TBGTeam($this->_owner);
+						$this->_owner = \caspar\core\Caspar::factory()->TBGTeam($this->_owner);
 					}
 				}
 				catch (Exception $e)
@@ -2463,7 +2463,7 @@
 			{
 				try
 				{
-					$this->_posted_by = TBGContext::factory()->TBGUser($this->_posted_by);
+					$this->_posted_by = \caspar\core\Caspar::factory()->TBGUser($this->_posted_by);
 				}
 				catch (Exception $e)
 				{
@@ -3246,7 +3246,7 @@
 				{
 					$this->addLogEntry(TBGLogTable::LOG_AFF_ADD, TBGContext::getI18n()->__("'%release_name%' added", array('%release_name%' => $build->getName())));
 					$this->addSystemComment(TBGContext::getI18n()->__("Affected releases"), TBGContext::getI18n()->__('\'\'\'%release_name%\'\'\' is now affected by this issue', array('%release_name%' => $build->getName())), TBGContext::getUser()->getID());
-					return array('a_id' => $retval, 'build' => $build, 'confirmed' => 0, 'status' => TBGContext::factory()->TBGStatus(20));
+					return array('a_id' => $retval, 'build' => $build, 'confirmed' => 0, 'status' => \caspar\core\Caspar::factory()->TBGStatus(20));
 				}
 			}
 			return false;
@@ -3268,7 +3268,7 @@
 				{
 					$this->addLogEntry(TBGLogTable::LOG_AFF_ADD, TBGContext::getI18n()->__("'%edition_name%' added", array('%edition_name%' => $edition->getName())));
 					$this->addSystemComment(TBGContext::getI18n()->__("Affected editions"), TBGContext::getI18n()->__('\'\'\'%edition_name%\'\'\' is now affected by this issue', array('%edition_name%' => $edition->getName())), TBGContext::getUser()->getID());
-					return array('a_id' => $retval, 'edition' => $edition, 'confirmed' => 0, 'status' => TBGContext::factory()->TBGStatus(20));
+					return array('a_id' => $retval, 'edition' => $edition, 'confirmed' => 0, 'status' => \caspar\core\Caspar::factory()->TBGStatus(20));
 				}
 			}
 			return false;
@@ -3290,7 +3290,7 @@
 				{
 					$this->addLogEntry(TBGLogTable::LOG_AFF_ADD, TBGContext::getI18n()->__("'%component_name%' added", array('%component_name%' => $component->getName())));
 					$this->addSystemComment(TBGContext::getI18n()->__("Affected components"), TBGContext::getI18n()->__('\'\'\'%component_name%\'\'\' is now affected by this issue', array('%component_name%' => $component->getName())), TBGContext::getUser()->getID());
-					return array('a_id' => $retval, 'component' => $component, 'confirmed' => 0, 'status' => TBGContext::factory()->TBGStatus(20));
+					return array('a_id' => $retval, 'component' => $component, 'confirmed' => 0, 'status' => \caspar\core\Caspar::factory()->TBGStatus(20));
 				}
 			}
 			return false;
@@ -4041,16 +4041,16 @@
 							switch ($customdatatype->getType())
 							{
 								case TBGCustomDatatype::EDITIONS_CHOICE:
-									$option_object = TBGContext::factory()->TBGEdition($this->getCustomField($key));
+									$option_object = \caspar\core\Caspar::factory()->TBGEdition($this->getCustomField($key));
 									break;
 								case TBGCustomDatatype::COMPONENTS_CHOICE:
-									$option_object = TBGContext::factory()->TBGComponent($this->getCustomField($key));
+									$option_object = \caspar\core\Caspar::factory()->TBGComponent($this->getCustomField($key));
 									break;
 								case TBGCustomDatatype::RELEASES_CHOICE:
-									$option_object = TBGContext::factory()->TBGBuild($this->getCustomField($key));
+									$option_object = \caspar\core\Caspar::factory()->TBGBuild($this->getCustomField($key));
 									break;
 								case TBGCustomDatatype::STATUS_CHOICE:
-									$option_object = TBGContext::factory()->TBGStatus($this->getCustomField($key));
+									$option_object = \caspar\core\Caspar::factory()->TBGStatus($this->getCustomField($key));
 									break;
 							}
 						}
@@ -4120,7 +4120,7 @@
 						case '_category':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGCategory($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Not determined');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGCategory($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Not determined');
 							}
 							else
 							{
@@ -4180,7 +4180,7 @@
 						case '_status':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGStatus($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGStatus($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
 							{
@@ -4194,7 +4194,7 @@
 						case '_reproducability':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGReproducability($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGReproducability($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
 							{
@@ -4209,7 +4209,7 @@
 						case '_priority':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGPriority($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGPriority($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
 							{
@@ -4228,9 +4228,9 @@
 								{
 									$old_identifiable = null;
 									if ($this->getChangedPropertyOriginal('_assigned_type') == TBGIdentifiableClass::TYPE_USER)
-										$old_identifiable = TBGContext::factory()->TBGUser($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->TBGUser($value['original_value']);
 									elseif ($this->getChangedPropertyOriginal('_assigned_type') == TBGIdentifiableClass::TYPE_TEAM)
-										$old_identifiable = TBGContext::factory()->TBGTeam($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->TBGTeam($value['original_value']);
 									$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 								}
 								else
@@ -4251,7 +4251,7 @@
 							}
 							break;
 						case '_posted_by':
-							$old_identifiable = ($value['original_value']) ? TBGContext::factory()->TBGUser($value['original_value']) : TBGContext::getI18n()->__('Unknown');
+							$old_identifiable = ($value['original_value']) ? \caspar\core\Caspar::factory()->TBGUser($value['original_value']) : TBGContext::getI18n()->__('Unknown');
 							$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 							$new_name = $this->getPostedBy()->getName();
 							
@@ -4261,7 +4261,7 @@
 						case '_being_worked_on_by_user':
 							if ($value['original_value'] != 0)
 							{
-								$old_identifiable = TBGContext::factory()->TBGUser($value['original_value']);
+								$old_identifiable = \caspar\core\Caspar::factory()->TBGUser($value['original_value']);
 								$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
@@ -4281,9 +4281,9 @@
 								{
 									$old_identifiable = null;
 									if ($this->getChangedPropertyOriginal('_owner_type') == TBGIdentifiableClass::TYPE_USER)
-										$old_identifiable = TBGContext::factory()->TBGUser($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->TBGUser($value['original_value']);
 									elseif ($this->getChangedPropertyOriginal('_owner_type') == TBGIdentifiableClass::TYPE_TEAM)
-										$old_identifiable = TBGContext::factory()->TBGTeam($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->TBGTeam($value['original_value']);
 									$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 								}
 								else
@@ -4304,7 +4304,7 @@
 						case '_resolution':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGResolution($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGResolution($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
 							{
@@ -4318,7 +4318,7 @@
 						case '_severity':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGSeverity($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGSeverity($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
 							{
@@ -4332,7 +4332,7 @@
 						case '_milestone':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGMilestone($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Not determined');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGMilestone($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Not determined');
 							}
 							else
 							{
@@ -4346,7 +4346,7 @@
 						case '_issuetype':
 							if ($value['original_value'] != 0)
 							{
-								$old_name = ($old_item = TBGContext::factory()->TBGIssuetype($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
+								$old_name = ($old_item = \caspar\core\Caspar::factory()->TBGIssuetype($value['original_value'])) ? $old_item->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
 							{
@@ -4477,15 +4477,15 @@
 											switch ($customdatatype->getType())
 											{
 												case TBGCustomDatatype::EDITIONS_CHOICE:
-													$old_object = TBGContext::factory()->TBGEdition($value['original_value']);
+													$old_object = \caspar\core\Caspar::factory()->TBGEdition($value['original_value']);
 													break;
 												case TBGCustomDatatype::COMPONENTS_CHOICE:
-													$old_object = TBGContext::factory()->TBGComponent($value['original_value']);
+													$old_object = \caspar\core\Caspar::factory()->TBGComponent($value['original_value']);
 													break;
 												case TBGCustomDatatype::RELEASES_CHOICE:
-													$old_object = TBGContext::factory()->TBGBuild($value['original_value']);
+													$old_object = \caspar\core\Caspar::factory()->TBGBuild($value['original_value']);
 												case TBGCustomDatatype::STATUS_CHOICE:
-													$old_object = TBGContext::factory()->TBGStatus($value['original_value']);
+													$old_object = \caspar\core\Caspar::factory()->TBGStatus($value['original_value']);
 													break;
 											}
 										}
@@ -4495,15 +4495,15 @@
 											switch ($customdatatype->getType())
 											{
 												case TBGCustomDatatype::EDITIONS_CHOICE:
-													$new_object = TBGContext::factory()->TBGEdition($this->getCustomField($key));
+													$new_object = \caspar\core\Caspar::factory()->TBGEdition($this->getCustomField($key));
 													break;
 												case TBGCustomDatatype::COMPONENTS_CHOICE:
-													$new_object = TBGContext::factory()->TBGComponent($this->getCustomField($key));
+													$new_object = \caspar\core\Caspar::factory()->TBGComponent($this->getCustomField($key));
 													break;
 												case TBGCustomDatatype::RELEASES_CHOICE:
-													$new_object = TBGContext::factory()->TBGBuild($this->getCustomField($key));
+													$new_object = \caspar\core\Caspar::factory()->TBGBuild($this->getCustomField($key));
 												case TBGCustomDatatype::STATUS_CHOICE:
-													$new_object = TBGContext::factory()->TBGStatus($this->getCustomField($key));
+													$new_object = \caspar\core\Caspar::factory()->TBGStatus($this->getCustomField($key));
 													break;
 											}
 										}
@@ -4570,7 +4570,7 @@
 
 				foreach (array_keys($related_issues_to_save) as $i_id)
 				{
-					$related_issue = TBGContext::factory()->TBGIssue($i_id);
+					$related_issue = \caspar\core\Caspar::factory()->TBGIssue($i_id);
 					$related_issue->save();
 				}
 			}

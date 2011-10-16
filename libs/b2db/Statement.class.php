@@ -43,20 +43,23 @@
 
 		protected $insert_id = null;
 		
+		protected $_connection;
+		
 		public $custom_sql = '';
 
 		/**
 		 * Returns a statement
 		 *
 		 * @param Criteria $crit
+		 * @param Connection $connection
 		 *
 		 * @return Statement
 		 */
-		public static function getPreparedStatement($crit)
+		public static function getPreparedStatement($crit, $connection)
 		{
 			try
 			{
-				$statement = new Statement($crit);
+				$statement = new Statement($crit, $connection);
 			}
 			catch (\Exception $e)
 			{
@@ -66,7 +69,7 @@
 			return $statement;
 		}
 
-		public function __construct($crit)
+		public function __construct($crit, $connection)
 		{
 			try
 			{
@@ -75,6 +78,7 @@
 				else
 					$this->custom_sql = $crit;
 				
+				$this->_connection = $connection;
 				$this->_prepare();
 			}
 			catch (\Exception $e)
@@ -118,14 +122,14 @@
 				}
 				if ($this->getCriteria() instanceof Criteria && $this->getCriteria()->action == 'insert')
 				{
-					if (Core::getDBtype() == 'mysql')
+					if ($this->_connection->getDBtype() == 'mysql')
 					{
-						$this->insert_id = Core::getDBLink()->lastInsertId();
+						$this->insert_id = $this->_connection->getDBLink()->lastInsertId();
 					}
-					elseif (Core::getDBtype() == 'pgsql')
+					elseif ($this->_connection->getDBtype() == 'pgsql')
 					{
-						Logging::log('sequence: ' . Core::getTablePrefix() . $this->getCriteria()->getTable()->getB2DBName() . '_id_seq', 'b2db');
-						$this->insert_id = Core::getDBLink()->lastInsertId(Core::getTablePrefix() . $this->getCriteria()->getTable()->getB2DBName() . '_id_seq');
+						Logging::log('sequence: ' . $this->_connection->getTablePrefix() . $this->getCriteria()->getTable()->getB2DBName() . '_id_seq', 'b2db');
+						$this->insert_id = $this->_connection->getDBLink()->lastInsertId($this->_connection->getTablePrefix() . $this->getCriteria()->getTable()->getB2DBName() . '_id_seq');
 						Logging::log('id is: ' . $this->insert_id, 'b2db');
 					}
 				}
@@ -209,17 +213,17 @@
 		{
 			try
 			{
-				if (!Core::getDBLink() instanceof \PDO)
+				if (!$this->_connection->getDBLink() instanceof \PDO)
 				{
 					throw new Exception('Connection not up, can\'t prepare the statement');
 				}
 				if ($this->crit instanceof Criteria)
 				{
-					$this->statement = Core::getDBLink()->prepare($this->crit->getSQL());
+					$this->statement = $this->_connection->getDBLink()->prepare($this->crit->getSQL());
 				}
 				else
 				{
-					$this->statement = Core::getDBLink()->prepare($this->custom_sql);
+					$this->statement = $this->_connection->getDBLink()->prepare($this->custom_sql);
 				}
 			}
 			catch (\Exception $e)

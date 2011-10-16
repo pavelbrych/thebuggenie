@@ -30,9 +30,9 @@
 		const EDITION = 'editioncomponents.edition';
 		const COMPONENT = 'editioncomponents.component';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::EDITION, Core::getTable('TBGEditionsTable'), TBGEditionsTable::ID);
 			parent::_addForeignKeyColumn(self::COMPONENT, Core::getTable('TBGComponentsTable'), TBGComponentsTable::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);

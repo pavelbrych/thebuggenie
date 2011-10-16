@@ -36,9 +36,9 @@
 		const DATE = 'vcsintegration.date';
 		const ACTION = 'vcsintegration.action';
 					
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addText(self::FILE_NAME, false);
 			parent::_addText(self::LOG, false);
 			parent::_addVarchar(self::OLD_REV, 40);

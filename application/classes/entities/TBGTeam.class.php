@@ -47,7 +47,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_teams[$row->get(TBGTeamsTable::ID)] = TBGContext::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
+						self::$_teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
 					}
 				}
 			}
@@ -120,7 +120,7 @@
 				$this->_members = array();
 				foreach (TBGTeamMembersTable::getTable()->getUIDsForTeamID($this->getID()) as $uid)
 				{
-					$this->_members[$uid] = TBGContext::factory()->TBGUser($uid);
+					$this->_members[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
 				}
 			}
 			return $this->_members;
@@ -154,7 +154,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$teams[$row->get(TBGTeamsTable::ID)] = TBGContext::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
+					$teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
 				}
 			}
 			return $teams;
@@ -192,7 +192,7 @@
 				$project_ids = array_merge(array_keys($projects), array_keys($edition_projects), array_keys($component_projects));
 				foreach ($project_ids as $project_id)
 				{
-					$this->_associated_projects[$project_id] = TBGContext::factory()->TBGProject($project_id);
+					$this->_associated_projects[$project_id] = \caspar\core\Caspar::factory()->TBGProject($project_id);
 				}
 			}
 			

@@ -40,7 +40,7 @@
 					$states = array();
 					while ($row = $res->getNextRow())
 					{
-						$states[$row->get(TBGUserStateTable::ID)] = TBGContext::factory()->TBGUserstate($row->get(TBGUserStateTable::ID), $row);
+						$states[$row->get(TBGUserStateTable::ID)] = \caspar\core\Caspar::factory()->TBGUserstate($row->get(TBGUserStateTable::ID), $row);
 					}
 					TBGCache::add(TBGCache::KEY_USERSTATES_CACHE, $states);
 				}

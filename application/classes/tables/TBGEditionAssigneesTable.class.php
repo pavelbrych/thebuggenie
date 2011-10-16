@@ -32,9 +32,9 @@
 		const EDITION_ID = 'editionassignees.edition_id';
 		const TARGET_TYPE = 'editionassignees.target_type';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addInteger(self::TARGET_TYPE, 5);
 			parent::_addForeignKeyColumn(self::EDITION_ID, Core::getTable('TBGEditionsTable'), TBGEditionsTable::ID);
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
@@ -91,7 +91,7 @@
 			{
 				foreach ($res->getNextRow() as $row)
 				{
-					$projects[$row->get(TBGEditionsTable::PROJECT)] = TBGContext::factory()->TBGProject($row->get(TBGEditionsTable::PROJECT)); 
+					$projects[$row->get(TBGEditionsTable::PROJECT)] = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGEditionsTable::PROJECT)); 
 				}
 			}
 			return $projects;
@@ -107,7 +107,7 @@
 			{
 				foreach ($res->getNextRow() as $row)
 				{
-					$projects[$row->get(TBGEditionsTable::PROJECT)] = TBGContext::factory()->TBGProject($row->get(TBGEditionsTable::PROJECT)); 
+					$projects[$row->get(TBGEditionsTable::PROJECT)] = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGEditionsTable::PROJECT)); 
 				}
 			}
 			return $projects;

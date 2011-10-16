@@ -42,7 +42,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = TBGContext::factory()->TBGCategory($row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->TBGCategory($row_id, $row);
 					}
 				}
 			}

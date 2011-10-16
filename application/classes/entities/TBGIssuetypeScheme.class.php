@@ -52,7 +52,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$scheme = TBGContext::factory()->TBGIssuetypeScheme($row->get(TBGIssuetypeSchemesTable::ID), $row);
+						$scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme($row->get(TBGIssuetypeSchemesTable::ID), $row);
 						
 						if (self::$_core_scheme === null)
 							self::$_core_scheme = $scheme;

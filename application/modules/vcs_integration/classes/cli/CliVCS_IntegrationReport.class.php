@@ -37,7 +37,7 @@
 		public function do_execute()
 		{
 			/* Prepare variables */
-			$project = TBGContext::factory()->TBGProject($this->getProvidedArgument('projectid'));
+			$project = \caspar\core\Caspar::factory()->TBGProject($this->getProvidedArgument('projectid'));
 			
 			if (!($project instanceof TBGProject))
 			{

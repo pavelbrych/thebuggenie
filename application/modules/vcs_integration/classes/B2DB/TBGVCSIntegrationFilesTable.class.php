@@ -31,9 +31,9 @@
 		const FILE_NAME = 'vcsintegration_files.file_name';
 		const ACTION = 'vcsintegration_files.action';
 					
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addText(self::FILE_NAME, false);
 			parent::_addVarchar(self::ACTION, 1);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(),  TBGScopesTable::ID);

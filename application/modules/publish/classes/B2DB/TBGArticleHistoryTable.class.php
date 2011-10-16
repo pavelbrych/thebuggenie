@@ -29,9 +29,9 @@
 			return Core::getTable('TBGArticleHistoryTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::ARTICLE_NAME, 255);
 			parent::_addText(self::OLD_CONTENT, false);
 			parent::_addText(self::NEW_CONTENT, false);
@@ -115,7 +115,7 @@
 				$retval = array();
 				while ($row = $res->getNextRow())
 				{
-					$author = ($row->get(self::AUTHOR)) ? TBGContext::factory()->TBGUser($row->get(self::AUTHOR)) : null;
+					$author = ($row->get(self::AUTHOR)) ? \caspar\core\Caspar::factory()->TBGUser($row->get(self::AUTHOR)) : null;
 					$retval[$row->get(self::REVISION)] = array('old_content' => $row->get(self::OLD_CONTENT), 'new_content' => $row->get(self::NEW_CONTENT), 'date' => $row->get(self::DATE), 'author' => $author);
 				}
 

@@ -3,7 +3,8 @@
 	namespace application\modules\main;
 
 	use caspar\core\Request,
-		thebuggenie\core\Context;
+		thebuggenie\core\Context,
+		thebuggenie\entities\Project;
 	
 	/**
 	 * actions for the main module
@@ -15,7 +16,7 @@
 		 * The currently selected project in actions where there is one
 		 *
 		 * @access protected
-		 * @property TBGProject $selected_project
+		 * @property thebuggenie\entities\Project $selected_project
 		 */
 
 		public function preExecute(Request $request, $action)
@@ -24,7 +25,7 @@
 				if ($project_key = $request->getParameter('project_key'))
 					$this->selected_project = \thebuggenie\entities\Project::getByKey($project_key);
 				elseif ($project_id = (int) $request->getParameter('project_id'))
-					$this->selected_project = Context::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
+					$this->selected_project = Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 				
 				Context::setCurrentProject($this->selected_project);
 			} catch (\Exception $e) {}
@@ -45,7 +46,7 @@
 				$issue = \TBGIssue::getIssueFromLink($issue_no);
 				if ($issue instanceof \TBGIssue)
 				{
-					if (!$this->selected_project instanceof TBGProject || $issue->getProjectID() != $this->selected_project->getID())
+					if (!$this->selected_project instanceof thebuggenie\entities\Project || $issue->getProjectID() != $this->selected_project->getID())
 					{
 						$issue = null;
 					}
@@ -143,7 +144,7 @@
 			{
 				foreach ($issues as $starred_issue)
 				{
-					if (!$starred_issue instanceof \TBGIssue || !$starred_issue->getProject() instanceof TBGProject || !$this->selected_project instanceof TBGProject) continue;
+					if (!$starred_issue instanceof \TBGIssue || !$starred_issue->getProject() instanceof thebuggenie\entities\Project || !$this->selected_project instanceof thebuggenie\entities\Project) continue;
 					if ($starred_issue->isOpen() && $starred_issue->getProject()->getID() == $this->selected_project->getID())
 					{
 						$issuelist[$starred_issue->getID()] = array('url' => Context::getRouting()->generate('viewissue', array('project_key' => $this->selected_project->getKey(), 'issue_no' => $starred_issue->getFormattedIssueNo())), 'title' => $starred_issue->getFormattedTitle(true, true));
@@ -185,7 +186,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e) { }
 			}
@@ -193,7 +194,7 @@
 			{
 				try
 				{
-					$project = Context::factory()->TBGProject($project_id);
+					$project = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $project_id);
 				}
 				catch (Exception $e) { }
 			}
@@ -203,7 +204,7 @@
 				return $this->return404(Context::getI18n()->__('Cannot find the issue specified'));
 			}
 
-			if (!$project instanceof TBGProject)
+			if (!$project instanceof thebuggenie\entities\Project)
 			{
 				return $this->return404(Context::getI18n()->__('Cannot find the project specified'));
 			}
@@ -237,20 +238,20 @@
 		 */
 		public function runIndex(Request $request)
 		{
-			if (\TBGSettings::isSingleProjectTracker())
+			if (\thebuggenie\core\Settings::isSingleProjectTracker())
 			{
-				if (($projects = \TBGProject::getAll()) && $project = array_shift($projects))
+				if (($projects = \thebuggenie\entities\Project::getAll()) && $project = array_shift($projects))
 				{
 					$this->forward(Context::getRouting()->generate('project_dashboard', array('project_key' => $project->getKey())));
 				}
 			}
 			$this->forward403unless(Context::getUser()->hasPageAccess('home'));
 			$this->links = Context::getMainLinks();
-			$this->show_project_list = \TBGSettings::isFrontpageProjectListVisible();
-			$this->show_project_config_link = Context::getUser()->canAccessConfigurationPage(\TBGSettings::CONFIGURATION_SECTION_PROJECTS);
+			$this->show_project_list = \thebuggenie\core\Settings::isFrontpageProjectListVisible();
+			$this->show_project_config_link = Context::getUser()->canAccessConfigurationPage(\thebuggenie\core\Settings::CONFIGURATION_SECTION_PROJECTS);
 			if ($this->show_project_list)
 			{
-				$this->projects = \TBGProject::getAllRootProjects(false);
+				$this->projects = \thebuggenie\entities\Project::getAllRootProjects(false);
 				$this->project_count = count($this->projects);
 			}
 		}
@@ -263,9 +264,9 @@
 		public function runDashboard(Request $request)
 		{
 			$this->forward403unless(!Context::getUser()->isThisGuest() && Context::getUser()->hasPageAccess('dashboard'));
-			if (\TBGSettings::isSingleProjectTracker())
+			if (\thebuggenie\core\Settings::isSingleProjectTracker())
 			{
-				if (($projects = \TBGProject::getAll()) && $project = array_shift($projects))
+				if (($projects = \thebuggenie\entities\Project::getAll()) && $project = array_shift($projects))
 				{
 					Context::setCurrentProject($project);
 				}
@@ -331,8 +332,8 @@
 			$this->client = null;
 			try
 			{
-				$this->client = Context::factory()->TBGClient($request->getParameter('client_id'));
-				$projects = \TBGProject::getAllByClientID($this->client->getID());
+				$this->client = Caspar::factory()->TBGClient($request->getParameter('client_id'));
+				$projects = \thebuggenie\entities\Project::getAllByClientID($this->client->getID());
 				
 				$final_projects = array();
 				
@@ -361,12 +362,12 @@
 		{
 			try
 			{
-				$this->team = Context::factory()->TBGTeam($request->getParameter('team_id'));
+				$this->team = Caspar::factory()->TBGTeam($request->getParameter('team_id'));
 				$this->forward403Unless($this->team->hasAccess());
 				
-				$own = \TBGProject::getAllByOwner($this->team);
-				$leader = \TBGProject::getAllByLeader($this->team);
-				$qa = \TBGProject::getAllByQaResponsible($this->team);
+				$own = \thebuggenie\entities\Project::getAllByOwner($this->team);
+				$leader = \thebuggenie\entities\Project::getAllByLeader($this->team);
+				$qa = \thebuggenie\entities\Project::getAllByQaResponsible($this->team);
 				$proj = $this->team->getAssociatedProjects();
 				
 				$projects = array_unique(array_merge($proj, $own, $leader, $qa));
@@ -422,7 +423,7 @@
 				Context::getUser()->setOffline();
 			}
 			Context::logout();
-			$this->forward(Context::getRouting()->generate(\TBGSettings::getLogoutReturnRoute()));
+			$this->forward(Context::getRouting()->generate(\thebuggenie\core\Settings::getLogoutReturnRoute()));
 		}
 		
 		/**
@@ -519,13 +520,13 @@
 						}
 						else
 						{
-							if (\TBGSettings::get('returnfromlogin') == 'referer')
+							if (\thebuggenie\core\Settings::get('returnfromlogin') == 'referer')
 							{
 								$forward_url = $request->getParameter('tbg3_referer', Context::getRouting()->generate('dashboard'));
 							}
 							else
 							{
-								$forward_url = Context::getRouting()->generate(\TBGSettings::get('returnfromlogin'));
+								$forward_url = Context::getRouting()->generate(\thebuggenie\core\Settings::get('returnfromlogin'));
 							}
 						}
 					}
@@ -600,10 +601,10 @@
 						$email_ok = true;
 					}
 					
-					if ($email_ok && \TBGSettings::get('limit_registration') != '')
+					if ($email_ok && \thebuggenie\core\Settings::get('limit_registration') != '')
 					{
 
-						$allowed_domains = preg_replace('/[[:space:]]*,[[:space:]]*/' ,'|', \TBGSettings::get('limit_registration'));
+						$allowed_domains = preg_replace('/[[:space:]]*,[[:space:]]*/' ,'|', \thebuggenie\core\Settings::get('limit_registration'));
 						if (preg_match('/@(' . $allowed_domains . ')$/i', $email) == false)
 						{							
 							array_push($fields, 'email_address', 'email_confirm');					
@@ -650,7 +651,7 @@
 					$user->setUsername($username);
 					$user->setRealname($realname);
 					$user->setBuddyname($buddyname);
-					$user->setGroup(\TBGSettings::getDefaultGroup());
+					$user->setGroup(\thebuggenie\core\Settings::getDefaultGroup());
 					$user->setEnabled();
 					$user->setPassword($password);
 					$user->setEmail($email);
@@ -846,15 +847,15 @@
 			try
 			{
 				if ($project_key = $request->getParameter('project_key'))
-					$this->selected_project = \TBGProject::getByKey($project_key);
+					$this->selected_project = \thebuggenie\entities\Project::getByKey($project_key);
 				elseif ($project_id = $request->getParameter('project_id'))
-					$this->selected_project = Context::factory()->TBGProject($project_id);
+					$this->selected_project = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $project_id);
 			}
 			catch (Exception $e) {}
 			
-			if ($this->selected_project instanceof TBGProject)
+			if ($this->selected_project instanceof thebuggenie\entities\Project)
 				Context::setCurrentProject($this->selected_project);
-			if ($this->selected_project instanceof TBGProject)
+			if ($this->selected_project instanceof thebuggenie\entities\Project)
 				$this->issuetypes = $this->selected_project->getIssuetypeScheme()->getIssuetypes();
 			else
 				$this->issuetypes = \TBGIssuetype::getAll();
@@ -869,7 +870,7 @@
 				{
 					try
 					{
-						$this->selected_issuetype = Context::factory()->TBGIssuetype($this->issuetype_id);
+						$this->selected_issuetype = Caspar::factory()->TBGIssuetype($this->issuetype_id);
 					}
 					catch (Exception $e) {}
 				}
@@ -883,7 +884,7 @@
 		protected function _postIssueValidation(Request $request, &$errors, &$permission_errors)
 		{
 			$i18n = Context::getI18n();
-			if (!$this->selected_project instanceof TBGProject) $errors['project'] = $i18n->__('You have to select a valid project');
+			if (!$this->selected_project instanceof thebuggenie\entities\Project) $errors['project'] = $i18n->__('You have to select a valid project');
 			if (!$this->selected_issuetype instanceof \TBGIssuetype) $errors['issuetype'] = $i18n->__('You have to select a valid issue type');
 			if (empty($errors))
 			{
@@ -894,11 +895,11 @@
 				$this->selected_reproduction_steps = $request->getRawParameter('reproduction_steps', null, false);
 
 				if ($edition_id = (int) $request->getParameter('edition_id'))
-					$this->selected_edition = Context::factory()->TBGEdition($edition_id);
+					$this->selected_edition = Caspar::factory()->TBGEdition($edition_id);
 				if ($build_id = (int) $request->getParameter('build_id'))
-					$this->selected_build = Context::factory()->TBGBuild($build_id);
+					$this->selected_build = Caspar::factory()->TBGBuild($build_id);
 				if ($component_id = (int) $request->getParameter('component_id'))
-					$this->selected_component = Context::factory()->TBGComponent($component_id);
+					$this->selected_component = Caspar::factory()->TBGComponent($component_id);
 
 				if (trim($this->title) == '' || $this->title == $this->default_title)
 					$errors['title'] = true;
@@ -917,22 +918,22 @@
 					$errors['component'] = true;
 
 				if ($category_id = (int) $request->getParameter('category_id'))
-					$this->selected_category = Context::factory()->TBGCategory($category_id);
+					$this->selected_category = Caspar::factory()->TBGCategory($category_id);
 
 				if ($status_id = (int) $request->getParameter('status_id'))
-					$this->selected_status = Context::factory()->TBGStatus($status_id);
+					$this->selected_status = Caspar::factory()->TBGStatus($status_id);
 
 				if ($reproducability_id = (int) $request->getParameter('reproducability_id'))
-					$this->selected_reproducability = Context::factory()->TBGReproducability($reproducability_id);
+					$this->selected_reproducability = Caspar::factory()->TBGReproducability($reproducability_id);
 
 				if ($resolution_id = (int) $request->getParameter('resolution_id'))
-					$this->selected_resolution = Context::factory()->TBGResolution($resolution_id);
+					$this->selected_resolution = Caspar::factory()->TBGResolution($resolution_id);
 
 				if ($severity_id = (int) $request->getParameter('severity_id'))
-					$this->selected_severity = Context::factory()->TBGSeverity($severity_id);
+					$this->selected_severity = Caspar::factory()->TBGSeverity($severity_id);
 
 				if ($priority_id = (int) $request->getParameter('priority_id'))
-					$this->selected_priority = Context::factory()->TBGPriority($priority_id);
+					$this->selected_priority = Caspar::factory()->TBGPriority($priority_id);
 
 				if ($request->getParameter('estimated_time'))
 					$this->selected_estimated_time = $request->getParameter('estimated_time');
@@ -1108,7 +1109,7 @@
 
 			$this->_loadSelectedProjectAndIssueTypeFromRequestForReportIssueAction($request);
 			
-			$this->forward403unless(Context::getCurrentProject() instanceof TBGProject && Context::getCurrentProject()->hasAccess() && Context::getUser()->canReportIssues(Context::getCurrentProject()));
+			$this->forward403unless(Context::getCurrentProject() instanceof thebuggenie\entities\Project && Context::getCurrentProject()->hasAccess() && Context::getUser()->canReportIssues(Context::getCurrentProject()));
 			
 			if ($request->isMethod(Request::POST))
 			{
@@ -1170,7 +1171,7 @@
 		 */
 		public function runReportIssueGetFields(Request $request)
 		{
-			if (!$this->selected_project instanceof TBGProject)
+			if (!$this->selected_project instanceof thebuggenie\entities\Project)
 			{
 				return $this->renderText('invalid project');
 			}
@@ -1194,7 +1195,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1233,7 +1234,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1321,10 +1322,10 @@
 								switch ($request->getParameter('identifiable_type'))
 								{
 									case TBGIdentifiableClass::TYPE_USER:
-										$identified = Context::factory()->TBGUser($request->getParameter('value'));
+										$identified = Caspar::factory()->TBGUser($request->getParameter('value'));
 										break;
 									case TBGIdentifiableClass::TYPE_TEAM:
-										$identified = Context::factory()->TBGTeam($request->getParameter('value'));
+										$identified = Caspar::factory()->TBGTeam($request->getParameter('value'));
 										break;
 								}
 								if ($identified instanceof TBGIdentifiableClass)
@@ -1351,7 +1352,7 @@
 						}
 						elseif ($request->getParameter('field') == 'posted_by')
 						{
-							$identified = Context::factory()->TBGUser($request->getParameter('value'));
+							$identified = Caspar::factory()->TBGUser($request->getParameter('value'));
 							if ($identified instanceof TBGIdentifiableClass)
 							{
 								$issue->setPostedBy($identified);
@@ -1458,7 +1459,7 @@
 							$parameter_id = $request->getParameter($parameter_id_name);
 							if ($parameter_id !== 0)
 							{
-								$is_valid = ($is_pain) ? in_array($parameter_id, array_keys(\TBGIssue::getPainTypesOrLabel($parameter_name))) : ($parameter_id == 0 || (($parameter = Context::factory()->$lab_function_name($parameter_id)) instanceof TBGIdentifiableClass));
+								$is_valid = ($is_pain) ? in_array($parameter_id, array_keys(\TBGIssue::getPainTypesOrLabel($parameter_name))) : ($parameter_id == 0 || (($parameter = Caspar::factory()->$lab_function_name($parameter_id)) instanceof TBGIdentifiableClass));
 							}
 							if ($parameter_id == 0 || ($parameter_id !== 0 && $is_valid))
 							{
@@ -1493,7 +1494,7 @@
 									if ($classname == '\TBGIssuetype')
 									{
 										Context::loadLibrary('ui');
-										$field['src'] = htmlspecialchars(Context::getTBGPath() . 'themes/' . \TBGSettings::getThemeName() . '/' . $issue->getIssuetype()->getIcon() . '_small.png');
+										$field['src'] = htmlspecialchars(Context::getTBGPath() . 'themes/' . \thebuggenie\core\Settings::getThemeName() . '/' . $issue->getIssuetype()->getIcon() . '_small.png');
 									}
 									return ($parameter_id == 0) ? $this->renderJSON(array('changed' => true, 'field' => array('id' => 0))) : $this->renderJSON(array('changed' => true, 'visible_fields' => $visible_fields, 'field' => $field));
 								}
@@ -1622,7 +1623,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1694,7 +1695,7 @@
 					break;
 				case 'issuetype':
 					$issue->revertIssuetype();
-					$field = ($issue->getIssuetype() instanceof \TBGIssuetype) ? array('id' => $issue->getIssuetype()->getID(), 'name' => $issue->getIssuetype()->getName(), 'src' => htmlspecialchars(Context::getTBGPath() . 'themes/' . \TBGSettings::getThemeName() . '/' . $issue->getIssuetype()->getIcon() . '_small.png')) : array('id' => 0);
+					$field = ($issue->getIssuetype() instanceof \TBGIssuetype) ? array('id' => $issue->getIssuetype()->getID(), 'name' => $issue->getIssuetype()->getName(), 'src' => htmlspecialchars(Context::getTBGPath() . 'themes/' . \thebuggenie\core\Settings::getThemeName() . '/' . $issue->getIssuetype()->getIcon() . '_small.png')) : array('id' => 0);
 					$visible_fields = ($issue->getIssuetype() instanceof \TBGIssuetype) ? $issue->getProject()->getVisibleFieldsArray($issue->getIssuetype()->getID()) : array();
 					return $this->renderJSON(array('ok' => true, 'field' => $field, 'visible_fields' => $visible_fields));
 					break;
@@ -1772,7 +1773,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1799,7 +1800,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1840,7 +1841,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1853,7 +1854,7 @@
 			}
 			try
 			{
-				$issue2 = Context::factory()->TBGIssue($request->getParameter('duplicate_issue'));
+				$issue2 = Caspar::factory()->TBGIssue($request->getParameter('duplicate_issue'));
 			}
 			catch (Exception $e)
 			{
@@ -1897,7 +1898,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1929,7 +1930,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1960,7 +1961,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1991,7 +1992,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2042,7 +2043,7 @@
 		 */		
 		public function runHideInfobox(Request $request)
 		{
-			\TBGSettings::hideInfoBox($request->getParameter('key'));
+			\thebuggenie\core\Settings::hideInfoBox($request->getParameter('key'));
 			return $this->renderJSON(array('hidden' => true));
 		}
 
@@ -2055,15 +2056,15 @@
 			TBGLogging::log('status was: ' . (int) $status['finished']. ', pct: '. (int) $status['percent']);
 			if (array_key_exists('file_id', $status) && $request->getParameter('mode') == 'issue')
 			{
-				$file = Context::factory()->TBGFile($status['file_id']);
+				$file = Caspar::factory()->TBGFile($status['file_id']);
 				$status['content_uploader'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'uploaded_files', 'mode' => 'issue', 'issue_id' => $request->getParameter('issue_id'), 'file' => $file));
 				$status['content_inline'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'viewissue_files', 'mode' => 'issue', 'issue_id' => $request->getParameter('issue_id'), 'file' => $file));
-				$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 				$status['attachmentcount'] = count($issue->getFiles()) + count($issue->getLinks());
 			}
 			elseif (array_key_exists('file_id', $status) && $request->getParameter('mode') == 'article')
 			{
-				$file = Context::factory()->TBGFile($status['file_id']);
+				$file = Caspar::factory()->TBGFile($status['file_id']);
 				$status['content_uploader'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'article_'.mb_strtolower(urldecode($request->getParameter('article_name'))).'_files', 'mode' => 'article', 'article_name' => $request->getParameter('article_name'), 'file' => $file));
 				$status['content_inline'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'article_'.mb_strtolower(urldecode($request->getParameter('article_name'))).'_files', 'mode' => 'article', 'article_name' => $request->getParameter('article_name'), 'file' => $file));
 				$article = TBGWikiArticle::getByName($request->getParameter('article_name'));
@@ -2086,7 +2087,7 @@
 
 			if ($request->getParameter('mode') == 'issue')
 			{
-				$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 				$canupload = (bool) ($issue instanceof \TBGIssue && $issue->hasAccess() && $issue->canAttachFiles());
 			}
 			elseif ($request->getParameter('mode') == 'article')
@@ -2176,7 +2177,7 @@
 				switch ($request->getParameter('mode'))
 				{
 					case 'issue':
-						$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+						$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 						if ($issue->canRemoveAttachments() && (int) $request->getParameter('file_id', 0))
 						{
 							\b2db\Core::getTable('\TBGIssueFilesTable')->removeByIssueIDAndFileID($issue->getID(), (int) $request->getParameter('file_id'));
@@ -2188,7 +2189,7 @@
 						$article = TBGWikiArticle::getByName($request->getParameter('article_name'));
 						if ($article instanceof TBGWikiArticle && $article->canEdit() && (int) $request->getParameter('file_id', 0))
 						{
-							$article->removeFile(Context::factory()->TBGFile((int) $request->getParameter('file_id')));
+							$article->removeFile(Caspar::factory()->TBGFile((int) $request->getParameter('file_id')));
 							return $this->renderJSON(array('failed' => false, 'file_id' => $request->getParameter('file_id'), 'attachmentcount' => count($article->getFiles()), 'message' => Context::getI18n()->__('The attachment has been removed')));
 						}
 						return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You can not remove items from this issue')));
@@ -2213,9 +2214,9 @@
 				$this->getResponse()->addHeader('Content-disposition: '.(($request->getParameter('mode') == 'download') ? 'attachment' : 'inline').'; filename="'.$file->get(TBGFilesTable::ORIGINAL_FILENAME).'"');
 				$this->getResponse()->addHeader('Content-type: '.$file->get(TBGFilesTable::CONTENT_TYPE).'; charset=UTF-8');
 				$this->getResponse()->renderHeaders();
-				if (\TBGSettings::getUploadStorage() == 'files')
+				if (\thebuggenie\core\Settings::getUploadStorage() == 'files')
 				{
-					echo fpassthru(fopen(\TBGSettings::getUploadsLocalpath().$file->get(TBGFilesTable::REAL_FILENAME), 'r'));
+					echo fpassthru(fopen(\thebuggenie\core\Settings::getUploadsLocalpath().$file->get(TBGFilesTable::REAL_FILENAME), 'r'));
 					exit();
 				}
 				else
@@ -2230,7 +2231,7 @@
 
 		public function runAttachLinkToIssue(Request $request)
 		{
-			$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 			if ($issue instanceof \TBGIssue && $issue->canAttachLinks())
 			{
 				if ($request->getParameter('link_url') != '')
@@ -2245,7 +2246,7 @@
 
 		public function runRemoveLinkFromIssue(Request $request)
 		{
-			$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 			if ($issue instanceof \TBGIssue && $issue->canRemoveAttachments())
 			{
 				if ($request->getParameter('link_id') != 0)
@@ -2276,7 +2277,7 @@
 		
 		public function runDeleteComment(Request $request)
 		{
-			$comment = Context::factory()->TBGComment($request->getParameter('comment_id'));
+			$comment = Caspar::factory()->TBGComment($request->getParameter('comment_id'));
 			if ($comment instanceof TBGcomment)
 			{							
 				if (!$comment->canUserDeleteComment())
@@ -2286,7 +2287,7 @@
 				else
 				{
 					unset($comment);
-					$comment = Context::factory()->TBGComment((int) $request->getParameter('comment_id'));
+					$comment = Caspar::factory()->TBGComment((int) $request->getParameter('comment_id'));
 					$comment->delete();
 					return $this->renderJSON(array('title' => Context::getI18n()->__('Comment deleted!')));
 				}
@@ -2300,7 +2301,7 @@
 		public function runUpdateComment(Request $request)
 		{
 			Context::loadLibrary('ui');
-			$comment = Context::factory()->TBGComment($request->getParameter('comment_id'));
+			$comment = Caspar::factory()->TBGComment($request->getParameter('comment_id'));
 			if ($comment instanceof TBGcomment)
 			{							
 				if (!$comment->canUserEditComment())
@@ -2377,7 +2378,7 @@
 						$this->comment_lines = array();
 						$this->comment = '';
 						TBGEvent::listen('core', '\TBGIssue::save', array($this, 'listenIssueSaveAddComment'));
-						$issue = Context::factory()->TBGIssue($request->getParameter('comment_applies_id'));
+						$issue = Caspar::factory()->TBGIssue($request->getParameter('comment_applies_id'));
 						$issue->save(false);
 					}
 
@@ -2399,7 +2400,7 @@
 					switch ($comment_applies_type)
 					{
 						case TBGComment::TYPE_ISSUE:
-							$comment_html = $this->getTemplateHTML('main/comment', array('comment' => $comment, 'issue' => Context::factory()->TBGIssue($request->getParameter('comment_applies_id'))));
+							$comment_html = $this->getTemplateHTML('main/comment', array('comment' => $comment, 'issue' => Caspar::factory()->TBGIssue($request->getParameter('comment_applies_id'))));
 							break;
 						case TBGComment::TYPE_ARTICLE:
 							$comment_html = $this->getTemplateHTML('main/comment', array('comment' => $comment));
@@ -2410,7 +2411,7 @@
 					
 					if ($comment_applies_type == TBGComment::TYPE_ISSUE)
 					{
-						$issue = Context::factory()->TBGIssue($request->getParameter('comment_applies_id'));
+						$issue = Caspar::factory()->TBGIssue($request->getParameter('comment_applies_id'));
 						TBGEvent::createNew('core', 'TBGComment::createNew', $issue, array('comment' => $comment))->trigger();
 						$issue->save();
 					}
@@ -2438,7 +2439,7 @@
 
 		public function runListProjects(Request $request)
 		{
-			$projects = \TBGProject::getAll();
+			$projects = \thebuggenie\entities\Project::getAll();
 
 			$return_array = array();
 			foreach ($projects as $project)
@@ -2513,7 +2514,7 @@
 					case 'milestone':
 						$return_array['description'] = Context::getI18n()->__('Select from available project milestones');
 						$return_array['type'] = 'choice';
-						if ($this->selected_project instanceof TBGProject)
+						if ($this->selected_project instanceof thebuggenie\entities\Project)
 						{
 							$milestones = $this->selected_project->getAllMilestones();
 							foreach ($milestones as $milestone)
@@ -2539,7 +2540,7 @@
 				$template_name = null;
 				if ($request->hasParameter('issue_id'))
 				{
-					$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+					$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 					$options = array('issue' => $issue);
 				}
 				else
@@ -2552,7 +2553,7 @@
 						$template_name = 'main/usercard';
 						if ($user_id = $request->getParameter('user_id'))
 						{
-							$user = Context::factory()->TBGUser($user_id);
+							$user = Caspar::factory()->TBGUser($user_id);
 							$options['user'] = $user;
 						}
 						break;
@@ -2563,7 +2564,7 @@
 						$options['mandatory'] = false;
 						break;
 					case 'workflow_transition':
-						$transition = Context::factory()->TBGWorkflowTransition($request->getParameter('transition_id'));
+						$transition = Caspar::factory()->TBGWorkflowTransition($request->getParameter('transition_id'));
 						$template_name = $transition->getTemplate();
 						$options['transition'] = $transition;
 						$options['issues'] = array();
@@ -2588,23 +2589,23 @@
 						break;
 					case 'milestone':
 						$template_name = 'project/milestone';
-						$options['project'] = Context::factory()->TBGProject($request->getParameter('project_id'));
+						$options['project'] = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						if ($request->hasParameter('milestone_id'))
-							$options['milestone'] = Context::factory()->TBGMilestone($request->getParameter('milestone_id'));
+							$options['milestone'] = Caspar::factory()->TBGMilestone($request->getParameter('milestone_id'));
 						break;
 					case 'project_build':
 						$template_name = 'configuration/build';
-						$options['project'] = Context::factory()->TBGProject($request->getParameter('project_id'));
+						$options['project'] = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						if ($request->hasParameter('build_id'))
-							$options['build'] = Context::factory()->TBGBuild($request->getParameter('build_id'));
+							$options['build'] = Caspar::factory()->TBGBuild($request->getParameter('build_id'));
 						break;
 					case 'project_icons':
 						$template_name = 'configuration/projecticons';
-						$options['project'] = Context::factory()->TBGProject($request->getParameter('project_id'));
+						$options['project'] = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						break;
 					case 'project_workflow':
 						$template_name = 'configuration/projectworkflow';
-						$options['project'] = Context::factory()->TBGProject($request->getParameter('project_id'));
+						$options['project'] = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						break;
 					case 'markasduplicate_issue':
 						$template_name = 'main/markasduplicate';
@@ -2613,22 +2614,22 @@
 						break;
 					case 'project_config':
 						$template_name = 'configuration/projectconfig_container';
-						$project = Context::factory()->TBGProject($request->getParameter('project_id'));
+						$project = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						$options['project'] = $project;
 						$options['section'] = $request->getParameter('section', 'info');
 						if ($request->hasParameter('edition_id'))
 						{
-							$edition = Context::factory()->TBGEdition($request->getParameter('edition_id'));
+							$edition = Caspar::factory()->TBGEdition($request->getParameter('edition_id'));
 							$options['edition'] = $edition;
 							$options['selected_section'] = $request->getParameter('section', 'general');
 						}
 						break;
 					case 'issue_add_item':
-						$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+						$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 						$template_name = 'main/issueadditem';
 						break;
 					case 'client_users':
-						$options['client'] = Context::factory()->TBGClient($request->getParameter('client_id'));
+						$options['client'] = Caspar::factory()->TBGClient($request->getParameter('client_id'));
 						$template_name = 'main/clientusers';
 						break;
 					case 'dashboard_config':
@@ -2692,7 +2693,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2739,7 +2740,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2779,7 +2780,7 @@
 			{
 				try
 				{
-					$issue = Context::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->TBGIssue($issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2811,7 +2812,7 @@
 				{
 					try
 					{
-						$related_issue = Context::factory()->TBGIssue((int) $issue_id);
+						$related_issue = Caspar::factory()->TBGIssue((int) $issue_id);
 						if ($mode == 'relate_children')
 						{
 							$issue->addChildIssue($related_issue);
@@ -2848,7 +2849,7 @@
 		public function runVoteForIssue(Request $request)
 		{
 			$i18n = Context::getI18n();
-			$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 			$vote_direction = $request->getParameter('vote');
 			if ($issue instanceof \TBGIssue && !$issue->hasUserVoted(Context::getUser()->getID(), ($vote_direction == 'up')))
 			{
@@ -2862,7 +2863,7 @@
 		{
 			try
 			{
-				$friend_user = Context::factory()->TBGUser($request->getParameter('user_id'));
+				$friend_user = Caspar::factory()->TBGUser($request->getParameter('user_id'));
 				$mode = $request->getParameter('mode');
 				if ($mode == 'add')
 				{
@@ -2889,7 +2890,7 @@
 			Context::loadLibrary('ui');
 			try
 			{
-				$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 				
 				if (!$issue->canEditIssue())
 				{
@@ -3002,7 +3003,7 @@
 			Context::loadLibrary('ui');
 			try
 			{
-				$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 				
 				if (!$issue->canEditIssue())
 				{
@@ -3097,8 +3098,8 @@
 			Context::loadLibrary('ui');
 			try
 			{
-				$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
-				$status = Context::factory()->TBGStatus($request->getParameter('status_id'));
+				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+				$status = Caspar::factory()->TBGStatus($request->getParameter('status_id'));
 				if (!$issue->canEditIssue())
 				{
 					$this->getResponse()->setHttpStatus(400);
@@ -3168,7 +3169,7 @@
 			Context::loadLibrary('ui');
 			try
 			{
-				$issue = Context::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 				$statuses = TBGStatus::getAll();
 
 				switch ($request->getParameter('item_type'))
@@ -3186,7 +3187,7 @@
 						}
 
 						
-						$edition = Context::factory()->TBGEdition($request->getParameter('which_item_edition'));
+						$edition = Caspar::factory()->TBGEdition($request->getParameter('which_item_edition'));
 						
 						if (\TBGIssueAffectsEditionTable::getTable()->getByIssueIDandEditionID($issue->getID(), $edition->getID()))
 						{
@@ -3216,7 +3217,7 @@
 							return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You are not allowed to do this')));
 						}
 						
-						$component = Context::factory()->TBGComponent($request->getParameter('which_item_component'));
+						$component = Caspar::factory()->TBGComponent($request->getParameter('which_item_component'));
 						
 						if (\TBGIssueAffectsComponentTable::getTable()->getByIssueIDandComponentID($issue->getID(), $component->getID()))
 						{
@@ -3246,7 +3247,7 @@
 							return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You are not allowed to do this')));
 						}
 						
-						$build = Context::factory()->TBGBuild($request->getParameter('which_item_build'));
+						$build = Caspar::factory()->TBGBuild($request->getParameter('which_item_build'));
 
 						
 						if (\TBGIssueAffectsBuildTable::getTable()->getByIssueIDandBuildID($issue->getID(), $build->getID()))
@@ -3365,11 +3366,11 @@
 			$this->getResponse()->setContentType('image/png');
 			$this->getResponse()->setDecoration(TBGResponse::DECORATE_NONE);
 			$chain = str_split($_SESSION['activation_number'],1);
-			$size = getimagesize(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . \TBGSettings::getThemeName() . DS . 'numbers/0.png');
+			$size = getimagesize(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . \thebuggenie\core\Settings::getThemeName() . DS . 'numbers/0.png');
 			$captcha = imagecreatetruecolor($size[0]*sizeof($chain), $size[1]);
 			foreach ($chain as $n => $number)
 			{
-				$pic = imagecreatefrompng(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . \TBGSettings::getThemeName() . DS . 'numbers/' . $number . '.png');
+				$pic = imagecreatefrompng(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . \thebuggenie\core\Settings::getThemeName() . DS . 'numbers/' . $number . '.png');
 				imagecopymerge($captcha, $pic, $size[0]*$n, 0, 0, 0, imagesx($pic), imagesy($pic), 100);
 				imagedestroy($pic);
 			}
@@ -3386,12 +3387,12 @@
 				case 'assigned_to':
 					if ($request->getParameter('identifiable_type') == TBGIdentifiableClass::TYPE_USER)
 					{
-						$identifiable = Context::factory()->TBGUser($request->getParameter('value'));
+						$identifiable = Caspar::factory()->TBGUser($request->getParameter('value'));
 						$content = $this->getComponentHTML('main/userdropdown', array('user' => $identifiable));
 					}
 					elseif ($request->getParameter('identifiable_type') == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$identifiable = Context::factory()->TBGTeam($request->getParameter('value'));
+						$identifiable = Caspar::factory()->TBGTeam($request->getParameter('value'));
 						$content = $this->getComponentHTML('main/teamdropdown', array('team' => $identifiable));
 					}
 					

@@ -1,12 +1,12 @@
 <?php
 
-	$routes[] = array('project_open_issues', '/:project_key/issues/open/*', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES, 'search' => true));
-	$routes[] = array('project_closed_issues', '/:project_key/issues/closed/*', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES, 'search' => true));
-	$routes[] = array('project_milestone_todo_list', '/:project_key/issues/todo/*', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO, 'search' => true));
-	$routes[] = array('project_most_voted_issues', '/:project_key/issues/mostvoted/*', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED, 'search' => true));
-	$routes[] = array('project_my_teams_assigned_issues', '/:project_key/issues/my/assigned/teams', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES, 'search' => true));
-	$routes[] = array('project_my_assigned_issues', '/:project_key/issues/my/assigned/*', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES, 'search' => true));
-	$routes[] = array('project_my_reported_issues', '/:project_key/issues/my/*', 'search', 'findIssues', array('predefined_search' => TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES, 'search' => true));
+	$routes[] = array('project_open_issues', '/:project_key/issues/open/*', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES, 'search' => true));
+	$routes[] = array('project_closed_issues', '/:project_key/issues/closed/*', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES, 'search' => true));
+	$routes[] = array('project_milestone_todo_list', '/:project_key/issues/todo/*', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO, 'search' => true));
+	$routes[] = array('project_most_voted_issues', '/:project_key/issues/mostvoted/*', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_PROJECT_MOST_VOTED, 'search' => true));
+	$routes[] = array('project_my_teams_assigned_issues', '/:project_key/issues/my/assigned/teams', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES, 'search' => true));
+	$routes[] = array('project_my_assigned_issues', '/:project_key/issues/my/assigned/*', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES, 'search' => true));
+	$routes[] = array('project_my_reported_issues', '/:project_key/issues/my/*', 'search', 'findIssues', array('predefined_search' => \caspar\core\Caspar::PREDEFINED_SEARCH_MY_REPORTED_ISSUES, 'search' => true));
 	$routes[] = array('viewissue_find_issue', '/:project_key/findissues/:type', 'main', 'findIssue', array('format' => 'json'));
 	$routes[] = array('viewissue_relate_issues', '/:project_key/issues/:issue_id/relate', 'main', 'relateIssues', array('format' => 'json'));
 	$routes[] = array('closeissue', '/:project_key/issues/:issue_id/close', 'main', 'closeIssue');
@@ -69,5 +69,5 @@
 
 	foreach ($routes as $route)
 	{
-		call_user_func_array(array(TBGContext::getRouting(), 'addRoute'), $route);
+		call_user_func_array(array(\caspar\core\Caspar::getRouting(), 'addRoute'), $route);
 	}

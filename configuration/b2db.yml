@@ -1,0 +1,6 @@
+default:
+  hostname: localhost
+  username: root
+  password: pooWZLX1
+  dsn: "mysql:host=localhost;dbname=thebuggenie_com"
+  tableprefix: tbg3_

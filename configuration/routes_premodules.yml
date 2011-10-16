@@ -1,0 +1,1148 @@
+serve:
+  url: /serve
+  module: main
+  action: serve
+
+home:
+  url: /
+  module: main
+  action: index
+
+upgrade:
+  url: /upgrade
+  module: installation
+  action: upgrade
+
+attach_link:
+  url: /attach/link/to/:target_type/:target_id
+  module: main
+  action: attachLink
+
+remove_link:
+  url: /upload/remove/link/:link_id/from/other/:target_type/:target_id
+  module: main
+  action: removeLink
+
+client_dashboard:
+  url: /clients/:client_id
+  module: main
+  action: clientdashboard
+
+team_dashboard:
+  url: /teams/:team_id
+  module: main
+  action: teamdashboard
+
+dashboard:
+  url: /dashboard
+  module: main
+  action: dashboard
+
+dashboard_save:
+  url: /dashboard/save/:target_type/:tid
+  module: main
+  action: dashboardSave
+
+dashboard_view:
+  url: /dashboard/get/view
+  module: main
+  action: dashboardView
+
+get_javascript:
+  url: /js/:js_file
+  module: main
+  action: index
+
+login:
+  url: /do/login
+  module: main
+  action: doLogin
+
+login_page:
+  url: /login
+  module: main
+  action: login
+
+login_section:
+  url: /login/section/:section/*
+  module: main
+  action: login
+
+register:
+  url: /do/register
+  module: main
+  action: register
+
+activate:
+  url: /activate/:user/:key
+  module: main
+  action: activate
+
+reset_password:
+  url: /reset/password/:user/:reset_hash
+  module: main
+  action: reset
+
+logout:
+  url: /logout
+  module: main
+  action: logout
+
+hide_infobox:
+  url: /hide/infobox/:key
+  module: main
+  action: hideInfobox
+
+getreportissuefields:
+  url: /reportissue/get/fields/for/project/:project_key
+  module: main
+  action: reportIssueGetFields
+
+search_paginated:
+  url: /issues/paginated/*
+  module: search
+  action: findIssuesPaginated
+
+search_add_filter:
+  url: /issues/add/filter/*
+  module: search
+  action: addFilter
+
+search_save_column_settings:
+  url: /search/save/columnsettings
+  module: search
+  action: saveColumnSettings
+
+my_teams_assigned_issues:
+  url: /issues/my/assigned/teams/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 4, search: true}
+
+my_assigned_issues:
+  url: /issues/my/assigned/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 3, search: true}
+
+my_reported_issues:
+  url: /issues/my/*
+  module: search
+  action: findIssues
+  parameters: {predefined_search: 5, search: true}
+
+issues_bulk_update:
+  url: /issues/bulk
+  module: search
+  action: bulkUpdateIssues
+
+search:
+  url: /issues/*
+  module: search
+  action: findIssues
+
+quicksearch:
+  url: /quicksearch/*
+  module: search
+  action: findIssues
+  parameters: {quicksearch: true, issues_per_page: 6}
+
+opensearch:
+  url: /opensearch.xml
+  module: search
+  action: opensearch
+  parameters: {format: 'xml'}
+
+about:
+  url: /about
+  module: main
+  action: about
+
+list_projects:
+  url: /list/projects/:format
+  module: main
+  action: listProjects
+
+list_issuetypes:
+  url: /list/issuetypes/:format
+  module: main
+  action: listIssuetypes
+
+list_fieldvalues:
+  url: /list/fieldvalues/for/field/:field_key/:format/*
+  module: main
+  action: listFieldvalues
+
+get_partial_for_backdrop:
+  url: /get/partials/:key/*
+  module: main
+  action: getBackdropPartial
+
+issue_upload:
+  url: /upload/to/issue/:issue_id
+  module: main
+  action: upload
+  parameters: {mode: 'issue'}
+
+article_upload:
+  url: /upload/to/article/:article_name
+  module: main
+  action: upload
+  parameters: {mode: 'article'}
+
+showfile:
+  url: /files/show/:id
+  module: main
+  action: getFile
+  parameters: {mode: 'show'}
+
+downloadfile:
+  url: /files/download/:id
+  module: main
+  action: getFile
+  parameters: {mode: 'download'}
+
+issue_upload_status:
+  url: /upload/get/status/for/issue/:issue_id
+  module: main
+  action: getUploadStatus
+  parameters: {mode: 'issue'}
+
+article_upload_status:
+  url: /upload/get/status/for/article/:article_name
+  module: main
+  action: getUploadStatus
+  parameters: {mode: 'article'}
+
+issue_detach_file:
+  url: /upload/detach/file/:file_id/from/issue/:issue_id
+  module: main
+  action: detachFile
+  parameters: {mode: 'issue'}
+
+article_detach_file:
+  url: /upload/detach/file/:file_id/from/article/:article_name
+  module: main
+  action: detachFile
+  parameters: {mode: 'article'}
+
+issue_attach_link:
+  url: /update/attach/link/to/issue/:issue_id/*
+  module: main
+  action: attachLinkToIssue
+  csrf_enabled: 1
+
+issue_vote:
+  url: /vote/for/issue/:issue_id/:vote
+  module: main
+  action: voteForIssue
+
+issue_remove_link:
+  url: /upload/remove/link/:link_id/from/issue/:issue_id
+  module: main
+  action: removeLinkFromIssue
+
+upload_status:
+  url: /upload/get/status/for/:mode
+  module: main
+  action: getUploadStatus
+
+upload:
+  url: /upload/:mode
+  module: main
+  action: upload
+
+account_change_password:
+  url: /account/change/password/*
+  module: main
+  action: accountChangePassword
+  csrf_enabled: 1
+
+account_check_username:
+  url: /account/check/username
+  module: main
+  action: accountCheckUsername
+  csrf_enabled: 1
+
+account_save_information:
+  url: /account/save/information/*
+  module: main
+  action: myAccount
+  parameters: {mode: 'information'}
+  csrf_enabled: 1
+
+account_save_settings:
+  url: /account/save/settings/*
+  module: main
+  action: myAccount
+  parameters: {mode: 'settings'}
+  csrf_enabled: 1
+
+account_save_module_settings:
+  url: /account/save/module/:target_module/settings/*
+  module: main
+  action: myAccount
+  parameters: {mode: 'module'}
+  csrf_enabled: 1
+
+account:
+  url: /account/*
+  module: main
+  action: myAccount
+
+toggle_friend:
+  url: /friends/:mode/:user_id
+  module: main
+  action: toggleFriend
+
+configure:
+  url: /configure
+  module: configuration
+  action: index
+  parameters: {section: 0}
+
+configure_update_check:
+  url: /configure/check/updates
+  module: configuration
+  action: checkUpdates
+
+configure_authentication:
+  url: /configure/authentication
+  module: configuration
+  action: configureAuthentication
+  parameters: {config_module: 'core', section: 17}
+
+configure_authentication_pt2:
+  url: /configure/authentication/save
+  module: configuration
+  action: saveAuthentication
+  parameters: {config_module: 'core', section: 17}
+
+configure_projects:
+  url: /configure/projects
+  module: configuration
+  action: configureProjects
+  parameters: {config_module: 'core', section: 10}
+
+configure_projects_add_project:
+  url: /configure/projects/add/new
+  module: configuration
+  action: addProject
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_settings:
+  url: /configure/project/:project_id/settings
+  module: configuration
+  action: configureProjectSettings
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_archive:
+  url: /configure/project/:project_id/archive
+  module: configuration
+  action: archiveProject
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_unarchive:
+  url: /configure/project/:project_id/unarchive
+  module: configuration
+  action: unarchiveProject
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_delete:
+  url: /configure/project/:project_id/delete
+  module: configuration
+  action: deleteProject
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_developers:
+  url: /configure/project/:project_id/developers
+  module: configuration
+  action: configureProjectDevelopers
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_set_leadby:
+  url: /configure/project/:project_id/set/:field/*
+  module: configuration
+  action: setItemLead
+  parameters: {config_module: 'core', section: 10, item_type: 'project'}
+
+configure_project_get_updated_key:
+  url: /configure/project/:project_id/get/updated/key
+  module: configuration
+  action: getUpdatedProjectKey
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_find_assignee:
+  url: /configure/project/:project_id/find/assignee/by/*
+  module: configuration
+  action: findAssignee
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_add_assignee:
+  url: /configure/project/:project_id/add/:assignee_type/:assignee_id/*
+  module: configuration
+  action: assignToProject
+  parameters: {config_module: 'core', section: 10, mode: 'user'}
+
+configure_project_remove_assignee:
+  url: /configure/project/:project_id/remove/assignee/:assignee_type/:assignee_id/*
+  module: configuration
+  action: unassignFromProject
+  parameters: {config_module: 'core', section: 10, mode: 'user'}
+
+configure_projects_add_edition:
+  url: /configure/project/:project_id/add/edition
+  module: configuration
+  action: addEdition
+  parameters: {config_module: 'core', section: 10}
+
+configure_projects_add_component:
+  url: /configure/project/:project_id/add/component
+  module: configuration
+  action: addComponent
+  parameters: {config_module: 'core', section: 10}
+
+configure_projects_build:
+  url: /configure/project/:project_id/build
+  module: configuration
+  action: projectBuild
+  parameters: {config_module: 'core', section: 10}
+
+configure_projects_icons:
+  url: /configure/project/:project_id/icons
+  module: configuration
+  action: projectIcons
+  parameters: {config_module: 'core', section: 10}
+
+configure_projects_workflow:
+  url: /configure/project/:project_id/workflow
+  module: configuration
+  action: projectWorkflow
+  parameters: {config_module: 'core', section: 10}
+
+configure_projects_workflow_table:
+  url: /configure/project/:project_id/workflow/get/table
+  module: configuration
+  action: projectWorkflowTable
+  parameters: {config_module: 'core', section: 10}
+
+configure_build_action:
+  url: /configure/build/:build_id/do/:build_action
+  module: configuration
+  action: buildAction
+  parameters: {config_module: 'core', section: 10}
+
+configure_edition_set_leadby:
+  url: /configure/project/:project_id/edition/:edition_id/set/:field/*
+  module: configuration
+  action: setItemLead
+  parameters: {config_module: 'core', section: 10, item_type: 'edition'}
+
+configure_edition_add_build:
+  url: /configure/project/:project_id/edition/:edition_id/add/build
+  module: configuration
+  action: addBuild
+  parameters: {config_module: 'core', section: 10}
+
+configure_edition_add_component:
+  url: /configure/project/:project_id/edition/:edition_id/add/component/:component_id
+  module: configuration
+  action: editEditionComponent
+  parameters: {config_module: 'core', section: 10, mode: 'add'}
+
+configure_edition_remove_component:
+  url: /configure/project/:project_id/edition/:edition_id/remove/component/:component_id
+  module: configuration
+  action: editEditionComponent
+  parameters: {config_module: 'core', section: 10, mode: 'remove'}
+
+configure_update_component:
+  url: /configure/component/:component_id/update
+  module: configuration
+  action: editComponent
+  parameters: {config_module: 'core', section: 10, mode: 'update'}
+
+configure_component_set_assignedto:
+  url: /configure/project/:project_id/component/:component_id/set/:field/*
+  module: configuration
+  action: setItemLead
+  parameters: {config_module: 'core', section: 10, item_type: 'component'}
+
+configure_delete_component:
+  url: /configure/component/:component_id/delete
+  module: configuration
+  action: editComponent
+  parameters: {config_module: 'core', section: 10, mode: 'delete'}
+
+configure_delete_edition:
+  url: /configure/edition/:edition_id/delete
+  module: configuration
+  action: deleteEdition
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_editions_components:
+  url: /configure/project/:project_id/editions_and_components
+  module: configuration
+  action: configureProjectEditionsAndComponents
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_other:
+  url: /configure/project/:project_id/other
+  module: configuration
+  action: configureProjectOther
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_updateother:
+  url: /configure/project/:project_id/update/other
+  module: configuration
+  action: configureProjectUpdateOther
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_edition:
+  url: /configure/project/:project_id/edition/:edition_id
+  module: configuration
+  action: configureProjectEdition
+  parameters: {config_module: 'core', section: 10, format: 'json'}
+
+configure_project:
+  url: /configure/project/:project_id/hierarchy
+  module: configuration
+  action: configureProject
+  parameters: {config_module: 'core', section: 10, format: 'json'}
+
+configure_settings:
+  url: /configure/settings
+  module: configuration
+  action: settings
+  parameters: {config_module: 'core', section: 12}
+
+configure_scopes:
+  url: /configure/scopes
+  module: configuration
+  action: scopes
+  parameters: {config_module: 'core', section: 14}
+
+configure_scope:
+  url: /configure/scope/:id
+  module: configuration
+  action: scope
+  parameters: {config_module: 'core', section: 14}
+
+configure_workflow:
+  url: /configure/workflow
+  module: configuration
+  action: configureWorkflows
+  parameters: {config_module: 'core', section: 1}
+
+configure_workflow_copy_workflow:
+  url: /configure/workflow/copy/workflow/:workflow_id
+  module: configuration
+  action: configureWorkflowSteps
+  parameters: {config_module: 'core', section: 1, mode: 'copy_workflow', format: 'json'}
+
+configure_workflow_delete_workflow:
+  url: /configure/workflow/delete/workflow/:workflow_id
+  module: configuration
+  action: configureWorkflowSteps
+  parameters: {config_module: 'core', section: 1, mode: 'delete_workflow', format: 'json'}
+
+configure_workflow_schemes:
+  url: /configure/workflow/schemes
+  module: configuration
+  action: configureWorkflowSchemes
+  parameters: {config_module: 'core', section: 1}
+
+configure_workflow_copy_scheme:
+  url: /configure/workflow/copy/scheme/:scheme_id
+  module: configuration
+  action: configureWorkflowScheme
+  parameters: {config_module: 'core', section: 1, mode: 'copy_scheme', format: 'json'}
+
+configure_workflow_delete_scheme:
+  url: /configure/workflow/delete/scheme/:scheme_id
+  module: configuration
+  action: configureWorkflowScheme
+  parameters: {config_module: 'core', section: 1, mode: 'delete_scheme', format: 'json'}
+
+configure_workflow_scheme:
+  url: /configure/workflow/scheme/:scheme_id
+  module: configuration
+  action: configureWorkflowScheme
+  parameters: {config_module: 'core', section: 1}
+
+configure_workflow_steps:
+  url: /configure/workflow/:workflow_id/steps
+  module: configuration
+  action: configureWorkflowSteps
+  parameters: {config_module: 'core', section: 1}
+
+configure_workflow_step:
+  url: /configure/workflow/:workflow_id/step/:step_id
+  module: configuration
+  action: configureWorkflowStep
+  parameters: {config_module: 'core', section: 1}
+
+configure_workflow_add_transition:
+  url: /configure/workflow/:workflow_id/add/transition/to/step/:step_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'add'}
+
+configure_workflow_add_step:
+  url: /configure/workflow/:workflow_id/add/step
+  module: configuration
+  action: configureWorkflowStep
+  parameters: {config_module: 'core', section: 1, mode: 'edit'}
+
+configure_workflow_delete_step_transitions:
+  url: /configure/workflow/:workflow_id/delete/all/outgoing/transitions/from/step/:step_id
+  module: configuration
+  action: configureWorkflowStep
+  parameters: {config_module: 'core', section: 1, mode: 'delete_outgoing_transitions'}
+
+configure_workflow_delete_transition:
+  url: /configure/workflow/:workflow_id/delete/transition/:transition_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'delete'}
+
+configure_workflow_delete_step:
+  url: /configure/workflow/:workflow_id/delete/step/:step_id
+  module: configuration
+  action: configureWorkflowStep
+  parameters: {config_module: 'core', section: 1, mode: 'delete'}
+
+configure_workflow_transition:
+  url: /configure/workflow/:workflow_id/transition/:transition_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1}
+
+configure_workflow_transition_add_validation_rule:
+  url: /configure/workflow/:workflow_id/transition/:transition_id/add/:postorpre/validationrule
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'new_validation_rule'}
+
+configure_workflow_transition_update_validation_rule:
+  url: /configure/workflow/:workflow_id/transition/:transition_id/validationrule/:rule_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'update_validation_rule'}
+
+configure_workflow_transition_delete_validation_rule:
+  url: /configure/workflow/:workflow_id/transition/:transition_id/delete/validationrule/:rule_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'delete_validation_rule'}
+
+configure_workflow_transition_add_action:
+  url: /configure/workflow/:workflow_id/transition/:transition_id/add/action
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'new_action'}
+
+configure_workflow_transition_update_action:
+  url: /configure/workflow/:workflow_id/transition/:transition_id/action/:action_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'update_action'}
+
+configure_workflow_transition_delete_action:
+  url: /configure/workflow/:workflow_id/transition/:transition_id/delete/action/:action_id
+  module: configuration
+  action: configureWorkflowTransition
+  parameters: {config_module: 'core', section: 1, mode: 'delete_action'}
+
+configure_workflow_workflows:
+  url: /configure/workflow/workflows
+  module: configuration
+  action: configureWorkflows
+  parameters: {config_module: 'core', section: 1}
+
+configure_files:
+  url: /configure/files
+  module: configuration
+  action: configureUploads
+  parameters: {config_module: 'core', section: 3}
+
+configure_permissions:
+  url: /configure/permissions
+  module: configuration
+  action: configurePermissions
+  parameters: {config_module: 'core', section: 5}
+
+configure_permissions_get_configurator:
+  url: /configure/permissions/get/configurator/*
+  module: configuration
+  action: getPermissionsConfigurator
+  parameters: {config_module: 'core', section: 5}
+
+configure_permissions_get_permissions:
+  url: /configure/permissions/get/permissions/*
+  module: configuration
+  action: getPermissionsInfo
+  parameters: {config_module: 'core', section: 5}
+
+permissions_set_denied:
+  url: /configure/permissions/set/permission/denied/for/:target_module/:key/:target_id/:target_type/:item_id/:template_mode
+  module: configuration
+  action: setPermission
+  parameters: {config_module: 'core', section: 5, mode: 'denied'}
+
+permissions_set_allowed:
+  url: /configure/permissions/set/permission/allowed/for/:target_module/:key/:target_id/:target_type/:item_id/:template_mode
+  module: configuration
+  action: setPermission
+  parameters: {config_module: 'core', section: 5, mode: 'allowed'}
+
+permissions_set_unset:
+  url: /configure/permissions/unset/permission/for/:target_module/:key/:target_id/:target_type/:item_id/:template_mode
+  module: configuration
+  action: setPermission
+  parameters: {config_module: 'core', section: 5, mode: 'unset'}
+
+configure_import:
+  url: /configure/import
+  module: configuration
+  action: import
+  parameters: {config_module: 'core', section: 16}
+
+configure_projects_add_milestone:
+  url: /configure/project/:project_id/add/milestone
+  module: configuration
+  action: addMilestone
+  parameters: {config_module: 'core', section: 10}
+
+configure_project_milestone_action:
+  url: /configure/project/:project_id/milestone/:milestone_id/do/:milestone_action
+  module: configuration
+  action: milestoneAction
+  parameters: {config_module: 'core', section: 10}
+
+configure_issuetypes:
+  url: /configure/issuetypes
+  module: configuration
+  action: configureIssuetypes
+  parameters: {config_module: 'core', section: 6}
+
+configure_issuetypes_add:
+  url: /configure/issuefields/add/issuetype
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'add'}
+
+configure_issuetypes_delete:
+  url: /configure/issuefields/delete/issuetype/:id
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'delete'}
+
+configure_issuetypes_getoptions_for_scheme:
+  url: /configure/issuetypes/get/options/for/:id/and/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypesGetOptionsForScheme
+  parameters: {config_module: 'core', section: 6}
+
+configure_issuetypes_update_choices_for_scheme:
+  url: /configure/issuetypes/update/choices/for/:id/and/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'updatechoices'}
+
+configure_issuetypes_disable_issuetype_for_scheme:
+  url: /configure/issuetypes/disable/:id/for/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'toggletype', state: 'disable'}
+
+configure_issuetypes_enable_issuetype_for_scheme:
+  url: /configure/issuetypes/enable/:id/for/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'toggletype', state: 'enable'}
+
+configure_issuetypes_update_issuetype:
+  url: /configure/issuefields/update/issuetype/:id
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'update'}
+
+configure_issuetypes_update_issuetype_for_scheme:
+  url: /configure/issuefields/update/issuetype/:id/for/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypesAction
+  parameters: {config_module: 'core', section: 6, mode: 'update'}
+
+configure_issuetypes_schemes:
+  url: /configure/issuetypes/schemes
+  module: configuration
+  action: configureIssuetypes
+  parameters: {config_module: 'core', section: 6, mode: 'schemes'}
+
+configure_issuetypes_scheme:
+  url: /configure/issuetypes/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypes
+  parameters: {config_module: 'core', section: 6, mode: 'scheme'}
+
+configure_issuetypes_copy_scheme:
+  url: /configure/issuetypes/copy/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypes
+  parameters: {config_module: 'core', section: 6, mode: 'copy_scheme', format: 'json'}
+
+configure_issuetypes_delete_scheme:
+  url: /configure/issuetypes/delete/scheme/:scheme_id
+  module: configuration
+  action: configureIssuetypes
+  parameters: {config_module: 'core', section: 6, mode: 'delete_scheme', format: 'json'}
+
+configure_issuefields:
+  url: /configure/issuefields
+  module: configuration
+  action: configureIssuefields
+  parameters: {config_module: 'core', section: 4}
+
+configure_issuefields_getoptions:
+  url: /configure/issuefields/get/options/for/:type
+  module: configuration
+  action: configureIssuefieldsGetOptions
+  parameters: {config_module: 'core', section: 4}
+
+configure_issuefields_edit:
+  url: /configure/issuefields/edit/:type/:id
+  module: configuration
+  action: configureIssuefieldsAction
+  parameters: {config_module: 'core', section: 4, mode: 'edit'}
+
+configure_issuefields_add:
+  url: /configure/issuefields/add/:type
+  module: configuration
+  action: configureIssuefieldsAction
+  parameters: {config_module: 'core', section: 4, mode: 'add'}
+
+configure_issuefields_delete:
+  url: /configure/issuefields/delete/:type/:id
+  module: configuration
+  action: configureIssuefieldsAction
+  parameters: {config_module: 'core', section: 4, mode: 'delete'}
+
+configure_issuefields_getpermissions:
+  url: /configure/issuefields/get/permissions/for/:type/:id
+  module: configuration
+  action: configureIssuefieldsGetPermissions
+  parameters: {config_module: 'core', section: 4}
+
+configure_issuefields_add_customtype:
+  url: /configure/issuefields/add/custom/type
+  module: configuration
+  action: configureIssuefieldsCustomTypeAction
+  parameters: {config_module: 'core', section: 4, mode: 'add'}
+
+configure_issuefields_update_customtype:
+  url: /configure/issuefields/update/custom/type/:type
+  module: configuration
+  action: configureIssuefieldsCustomTypeAction
+  parameters: {config_module: 'core', section: 4, mode: 'update'}
+
+configure_issuefields_delete_customtype:
+  url: /configure/issuefields/delete/custom/type/:type
+  module: configuration
+  action: configureIssuefieldsCustomTypeAction
+  parameters: {config_module: 'core', section: 4, mode: 'delete'}
+
+configure_users_find_user:
+  url: /configure/users/find/users/*
+  module: configuration
+  action: findUsers
+  parameters: {config_module: 'core', section: 2}
+
+configure_users_add_user:
+  url: /configure/users/add/user
+  module: configuration
+  action: addUser
+  parameters: {config_module: 'core', section: 2}
+
+configure_users_edit_user_form:
+  url: /configure/users/edit/user/:user_id/form
+  module: configuration
+  action: getUserEditForm
+  parameters: {config_module: 'core', section: 2}
+
+configure_users_add_group:
+  url: /configure/users/add/group
+  module: configuration
+  action: addGroup
+  parameters: {config_module: 'core', section: 2, format: 'json', mode: 'new'}
+
+configure_users_clone_group:
+  url: /configure/users/clone/group/:group_id
+  module: configuration
+  action: addGroup
+  parameters: {config_module: 'core', section: 2, format: 'json', mode: 'clone'}
+
+configure_users_delete_group:
+  url: /configure/users/delete/group/:group_id
+  module: configuration
+  action: deleteGroup
+  parameters: {config_module: 'core', section: 2, format: 'json'}
+
+configure_users_get_group_members:
+  url: /configure/users/get/members/in/group/:group_id
+  module: configuration
+  action: getGroupMembers
+  parameters: {config_module: 'core', section: 2, format: 'json'}
+
+configure_users_add_team:
+  url: /configure/users/add/team
+  module: configuration
+  action: addTeam
+  parameters: {config_module: 'core', section: 2, format: 'json', mode: 'new'}
+
+configure_users_clone_team:
+  url: /configure/users/clone/team/:team_id
+  module: configuration
+  action: addTeam
+  parameters: {config_module: 'core', section: 2, format: 'json', mode: 'clone'}
+
+configure_users_delete_team:
+  url: /configure/users/delete/team/:team_id
+  module: configuration
+  action: deleteTeam
+  parameters: {config_module: 'core', section: 2, format: 'json'}
+
+configure_users_get_team_members:
+  url: /configure/users/get/members/in/team/:team_id
+  module: configuration
+  action: getTeamMembers
+  parameters: {config_module: 'core', section: 2, format: 'json'}
+
+configure_users_add_client:
+  url: /configure/users/add/client
+  module: configuration
+  action: addClient
+  parameters: {config_module: 'core', section: 2, format: 'json', mode: 'new'}
+
+configure_users_edit_client:
+  url: /configure/users/edit/client/:client_id
+  module: configuration
+  action: editClient
+  parameters: {config_module: 'core', section: 2, format: 'json', mode: 'edit'}
+
+configure_users_delete_client:
+  url: /configure/users/delete/client/:client_id
+  module: configuration
+  action: deleteClient
+  parameters: {config_module: 'core', section: 2, format: 'json'}
+
+configure_users_get_client_members:
+  url: /configure/users/get/members/in/client/:client_id
+  module: configuration
+  action: getClientMembers
+  parameters: {config_module: 'core', section: 2, format: 'json'}
+
+configure_users_update_user:
+  url: /configure/users/update/user/:user_id
+  module: configuration
+  action: updateUser
+  parameters: {config_module: 'core', section: 2}
+
+configure_users_delete_user:
+  url: /configure/users/delete/user/:user_id
+  module: configuration
+  action: deleteUser
+  parameters: {config_module: 'core', section: 2}
+
+configure_users:
+  url: /configure/users/*
+  module: configuration
+  action: configureUsers
+  parameters: {config_module: 'core', section: 2}
+
+configure_modules:
+  url: /configure/modules
+  module: configuration
+  action: configureModules
+  parameters: {config_module: 'core', section: 15}
+
+configure_disable_module:
+  url: /configure/modules/disable/:module_key
+  module: configuration
+  action: moduleAction
+  parameters: {config_module: 'core', section: 15, mode: 'disable'}
+
+configure_enable_module:
+  url: /configure/modules/enable/:module_key
+  module: configuration
+  action: moduleAction
+  parameters: {config_module: 'core', section: 15, mode: 'enable'}
+
+configure_uninstall_module:
+  url: /configure/modules/uninstall/:module_key
+  module: configuration
+  action: moduleAction
+  parameters: {config_module: 'core', section: 15, mode: 'uninstall'}
+
+configure_install_module:
+  url: /configure/modules/install
+  module: configuration
+  action: moduleAction
+  parameters: {config_module: 'core', section: 15, mode: 'install'}
+
+configure_update_module:
+  url: /configure/modules/update
+  module: configuration
+  action: moduleAction
+  parameters: {config_module: 'core', section: 15, mode: 'update'}
+
+configure_upload_module:
+  url: /configure/modules/upload
+  module: configuration
+  action: moduleAction
+  parameters: {config_module: 'core', section: 15, mode: 'upload'}
+
+configure_module:
+  url: /configure/module/:config_module
+  module: configuration
+  action: configureModule
+  parameters: {config_module: 'core', section: 15}
+
+configure_get_permissions:
+  url: /configure/permissions/:permissions_type/for/:permissions_target_type/:permissions_target
+  module: configuration
+  action: getPermissions
+  parameters: {config_module: 'core', section: 5}
+
+configure_import_csv:
+  url: /configure/import/:type/from/csv
+  module: configuration
+  action: importCSV
+  parameters: {config_module: 'core', section: 16}
+
+configure_do_import_csv:
+  url: /configure/do/import/:type/from/csv
+  module: configuration
+  action: doImportCSV
+  parameters: {config_module: 'core', section: 16}
+
+comment_delete:
+  url: /comment/delete/:comment_id
+  module: main
+  action: deleteComment
+
+comment_update:
+  url: /comment/update/:comment_id
+  module: main
+  action: updateComment
+
+comment_add:
+  url: /comment/add/for/module/:comment_module/item/type/:comment_applies_type/id/:comment_applies_id
+  module: main
+  action: addComment
+
+confirm_affected:
+  url: /issue/:issue_id/confirm/:affected_type/:affected_id
+  module: main
+  action: toggleaffectedconfirmed
+
+remove_affected:
+  url: /issue/:issue_id/remove/:affected_type/:affected_id
+  module: main
+  action: removeaffected
+
+status_affected:
+  url: /issue/:issue_id/set/:affected_type/:affected_id/status/:status_id
+  module: main
+  action: statusaffected
+
+add_affected:
+  url: /project/:project_key/issue/:issue_id/add/affected
+  module: main
+  action: addaffected
+
+move_issue:
+  url: /issue/:issue_id/move
+  module: main
+  action: moveIssue
+
+captcha:
+  url: /captcha/*
+  module: main
+  action: captcha
+
+publish:
+  url: /wiki
+  module: publish
+  action: showArticle
+  parameters: {article_name: 'MainPage'}
+
+publish_article_new:
+  url: /wiki/new
+  module: publish
+  action: editArticle
+  parameters: {article_name: 'NewArticle'}
+
+publish_article_revision:
+  url: /wiki/:article_name/revision/:revision
+  module: publish
+  action: showArticle
+
+publish_article_edit:
+  url: /wiki/:article_name/edit
+  module: publish
+  action: editArticle
+
+publish_article_permissions:
+  url: /wiki/:article_name/permissions
+  module: publish
+  action: articlePermissions
+
+publish_article_attachments:
+  url: /wiki/:article_name/attachments
+  module: publish
+  action: articleAttachments
+
+publish_article_delete:
+  url: /wiki/:article_name/delete
+  module: publish
+  action: deleteArticle
+
+publish_article_save:
+  url: /wiki/savearticle
+  module: publish
+  action: saveArticle
+
+publish_article_history:
+  url: /wiki/:article_name/history
+  module: publish
+  action: articleHistory
+  parameters: {history_action: 'list'}
+
+publish_article_diff:
+  url: /wiki/:article_name/diff
+  module: publish
+  action: articleHistory
+  parameters: {history_action: 'diff'}
+
+publish_article_restore:
+  url: /wiki/:article_name/revert/to/revision/:revision
+  module: publish
+  action: articleHistory
+  parameters: {history_action: 'revert'}
+
+publish_find_project_articles:
+  url: /wiki/:project_key/find/*
+  module: publish
+  action: findArticles
+
+publish_find_articles:
+  url: /wiki/find/*
+  module: publish
+  action: findArticles
+
+publish_article:
+  url: /wiki/:article_name
+  module: publish
+  action: showArticle
+

@@ -41,9 +41,9 @@
 			return Core::getTable('TBGWorkflowsTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addVarchar(self::NAME, 200);
 			parent::_addText(self::DESCRIPTION, false);

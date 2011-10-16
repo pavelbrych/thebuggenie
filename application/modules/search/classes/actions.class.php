@@ -1,6 +1,6 @@
 <?php
 
-	namespace thebuggenie\modules\search;
+	namespace application\modules\search;
 
 	/**
 	 * actions for the search module

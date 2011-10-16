@@ -37,7 +37,7 @@
 					
 					if ($row instanceof \b2db\Row)
 					{
-						$project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+						$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 						
 						if ($project instanceof TBGProject)
 							$this->forward403unless($project->hasAccess());
@@ -54,10 +54,10 @@
 					{
 						$row = TBGProjectsTable::getTable()->getByKey($project_key);
 						
-						$this->selected_project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+						$this->selected_project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 					}
 					elseif ($project_id = (int) $request->getParameter('project_id'))
-						$this->selected_project = TBGContext::factory()->TBGProject($project_id);
+						$this->selected_project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 
 					if ($this->selected_project instanceof TBGProject)
 						$this->forward403unless($this->selected_project->hasAccess());

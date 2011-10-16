@@ -32,11 +32,10 @@
 		const SCOPE_ID = 'scopehostnames.scope_id';
 		const HOSTNAME = 'scopehostnames.hostname';
 		
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
 			parent::_addVarchar(self::HOSTNAME, 200, '');
-			parent::_addForeignKeyColumn(self::SCOPE_ID, Scopes::getTable(), Scopes::ID);
+			parent::_addForeignKeyColumn(self::SCOPE_ID, $this->_connection->getTable('\\thebuggenie\\tables\Scopes'), Scopes::ID);
 		}
 
 		public function addHostnameToScope($hostname, $scope_id)

@@ -69,7 +69,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_clients[$row->get(TBGClientsTable::ID)] = TBGContext::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
+						self::$_clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
 					}
 				}
 			}
@@ -198,7 +198,7 @@
 				$this->_members = array();
 				foreach (TBGClientMembersTable::getTable()->getUIDsForClientID($this->getID()) as $uid)
 				{
-					$this->_members[$uid] = TBGContext::factory()->TBGUser($uid);
+					$this->_members[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
 				}
 			}
 			return $this->_members;
@@ -233,7 +233,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$clients[$row->get(TBGClientsTable::ID)] = TBGContext::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
+					$clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
 				}
 			}
 			return $clients;

@@ -85,7 +85,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$edition = TBGContext::factory()->TBGEdition($row->get(TBGEditionsTable::ID), $row);
+						$edition = \caspar\core\Caspar::factory()->TBGEdition($row->get(TBGEditionsTable::ID), $row);
 						self::$_editions[$project_id][$edition->getID()] = $edition;
 					}
 				}
@@ -117,7 +117,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_components[$row->get(TBGEditionComponentsTable::COMPONENT)] = TBGContext::factory()->TBGComponent($row->get(TBGEditionComponentsTable::COMPONENT));
+						$this->_components[$row->get(TBGEditionComponentsTable::COMPONENT)] = \caspar\core\Caspar::factory()->TBGComponent($row->get(TBGEditionComponentsTable::COMPONENT));
 					}
 				}
 			}
@@ -240,7 +240,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_builds[$row->get(TBGBuildsTable::ID)] = TBGContext::factory()->TBGBuild($row->get(TBGBuildsTable::ID), $row);
+						$this->_builds[$row->get(TBGBuildsTable::ID)] = \caspar\core\Caspar::factory()->TBGBuild($row->get(TBGBuildsTable::ID), $row);
 					}
 				}
 			}
@@ -360,7 +360,7 @@
 			$users = array();
 			foreach (array_keys($this->_assignees['users']) as $user_id)
 			{
-				$users[$user_id] = TBGContext::factory()->TBGUser($user_id);
+				$users[$user_id] = \caspar\core\Caspar::factory()->TBGUser($user_id);
 			}
 			return $users;
 		}
@@ -371,7 +371,7 @@
 			$teams = array();
 			foreach (array_keys($this->_assignees['teams']) as $team_id)
 			{
-				$teams[$team_id] = TBGContext::factory()->TBGTeam($team_id);
+				$teams[$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id);
 			}
 			return $teams;
 		}

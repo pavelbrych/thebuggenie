@@ -26,11 +26,11 @@
 		protected $current_route_action = null;
 		protected $current_route_csrf_enabled = null;
 
-		public function __construct($current_module = null, $current_action = null, $current_name = null)
+		public function __construct($routes = array())
 		{
-			if ($current_module !== null) $this->current_route_module = $current_module;
-			if ($current_action !== null) $this->current_route_action = $current_action;
-			if ($current_name !== null) $this->current_route_name = $current_name;
+			foreach ($routes as $route => $details) {
+				$this->addRoute($route, $details);
+			}
 		}
 
 		/**
@@ -53,8 +53,20 @@
 			return $this->routes;
 		}
 		
-		public function addRoute($name, $route, $module, $action, $params = array(), $csrf_enabled = false)
+		public function addRoute($route, $details)
 		{
+			$this->routes[$route] = $details;
+		}
+		
+		public static function generateRoute($details)
+		{
+			$route = $details['url'];
+			$module = $details['module'];
+			$action = $details['action'];
+			
+			$params = (array_key_exists('parameters', $details)) ? $details['parameters'] : array();
+			$csrf_enabled = (array_key_exists('csrf_enabled', $details)) ? (bool) $details['csrf_enabled'] : false;
+			
 			$names = array();
 			$names_hash = array();
 			$r = null;
@@ -62,7 +74,7 @@
 			if (($route == '') || ($route == '/'))
 			{
 				$regexp = '/^[\/]*$/';
-				$this->routes[$name] = array($route, $regexp, array(), array(), $module, $action, $params, $csrf_enabled);
+				$generated_route = array($route, $regexp, array(), array(), $module, $action, $params, $csrf_enabled);
 			}
 			else
 			{
@@ -131,8 +143,9 @@
 				}
 				$regexp = '#^'.join('', $parsed).$regexp_suffix.'$#';
 					
-				$this->routes[$name] = array($route, $regexp, $names, $names_hash, $module, $action, $params, $csrf_enabled);
+				$generated_route = array($route, $regexp, $names, $names_hash, $module, $action, $params, $csrf_enabled);
 			}
+			return $generated_route;
 		}
 
 		/**
@@ -413,7 +426,7 @@
 			if (!isset($this->routes[$name]))
 			{
 				Logging::log("The route '$name' does not exist", 'routing', Logging::LEVEL_FATAL);
-				throw new Exception("The route '$name' does not exist");
+				throw new \Exception("The route '$name' does not exist");
 			}
 
 			list($url, $regexp, $names, $names_hash, $action, $module, $defaults, $csrf_enabled) = $this->routes[$name];
@@ -425,7 +438,7 @@
 			{
 				if (!isset($params[$tmp]) && !isset($defaults[$tmp]))
 				{
-					throw new Exception(sprintf('Route named "%s" have a mandatory "%s" parameter', $name, $tmp));
+					throw new \Exception(sprintf('Route named "%s" have a mandatory "%s" parameter', $name, $tmp));
 				}
 			}
 	

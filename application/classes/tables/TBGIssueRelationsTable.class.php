@@ -31,9 +31,9 @@
 		const CHILD_ID = 'issuerelations.child_id';
 		const MUSTFIX = 'issuerelations.mustfix';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addBoolean(self::MUSTFIX);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::PARENT_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);

@@ -6,6 +6,9 @@
 
 	error_reporting(E_ALL | E_NOTICE | E_STRICT);
 	date_default_timezone_set('UTC');
+	mb_internal_encoding("UTF-8");
+	mb_language('uni');
+	mb_http_output("UTF-8");
 
 	define('CASPAR_CORE_PATH', CASPAR_PATH . 'caspar' . DS . 'core' . DS);
 	define('CASPAR_LIB_PATH', CASPAR_PATH . 'libs' . DS);
@@ -27,6 +30,7 @@
 
 	// Set core autoloader paths
 	caspar\core\Caspar::autoloadNamespace('caspar\\core', CASPAR_CORE_PATH);
+	caspar\core\Caspar::autoloadNamespace('thebuggenie\\core', CASPAR_PATH . 'application' . DS . 'classes' . DS . 'core' . DS);
 	caspar\core\Caspar::autoloadNamespace('application\\modules', CASPAR_MODULES_PATH);
 	caspar\core\Caspar::addAutoloaderClassPath(CASPAR_LIB_PATH);
 

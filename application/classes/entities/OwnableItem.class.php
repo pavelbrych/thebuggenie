@@ -80,11 +80,11 @@
 				{
 					if ($this->$type_field == TBGIdentifiableClass::TYPE_USER)
 					{
-						$this->$field = TBGContext::factory()->TBGUser($this->$field);
+						$this->$field = \caspar\core\Caspar::factory()->TBGUser($this->$field);
 					}
 					elseif ($this->$type_field == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$this->$field = TBGContext::factory()->TBGTeam($this->$field);
+						$this->$field = \caspar\core\Caspar::factory()->TBGTeam($this->$field);
 					}
 				}
 				catch (Exception $e)

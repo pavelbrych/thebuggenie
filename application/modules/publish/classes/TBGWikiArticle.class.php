@@ -370,7 +370,7 @@
 				{
 					while ($row = $history->getNextRow())
 					{
-						$author = ($row->get(TBGArticleHistoryTable::AUTHOR)) ? TBGContext::factory()->TBGUser($row->get(TBGArticleHistoryTable::AUTHOR)) : null;
+						$author = ($row->get(TBGArticleHistoryTable::AUTHOR)) ? \caspar\core\Caspar::factory()->TBGUser($row->get(TBGArticleHistoryTable::AUTHOR)) : null;
 						$this->_history[$row->get(TBGArticleHistoryTable::REVISION)] = array('old_content' => $row->get(TBGArticleHistoryTable::OLD_CONTENT), 'new_content' => $row->get(TBGArticleHistoryTable::NEW_CONTENT), 'change_reason' => $row->get(TBGArticleHistoryTable::REASON), 'updated' => $row->get(TBGArticleHistoryTable::DATE), 'author' => $author);
 					}
 				}
@@ -448,7 +448,7 @@
 			{
 				try
 				{
-					$this->_author = TBGContext::factory()->TBGUser($this->_author);
+					$this->_author = \caspar\core\Caspar::factory()->TBGUser($this->_author);
 				}
 				catch (Exception $e)
 				{
@@ -628,7 +628,7 @@
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 					if ($project instanceof TBGProject)
 					{
 						if ($project->isArchived())
@@ -651,7 +651,7 @@
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 					if ($project instanceof TBGProject)
 					{
 						if ($project->isArchived())
@@ -679,7 +679,7 @@
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = TBGContext::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
 					if ($project instanceof TBGProject)
 					{
 						if (!$project->hasAccess())

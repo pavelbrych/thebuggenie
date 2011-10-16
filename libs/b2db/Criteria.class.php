@@ -38,6 +38,8 @@
 		 * @var Table
 		 */
 		protected $fromtable;
+		
+		protected $_connection;
 
 		protected $limit = null;
 		protected $offset = null;
@@ -80,12 +82,13 @@
 		 *
 		 * @return Base2DBCriteria
 		 */
-		public function __construct($table = null, $setupjointable = false)
+		public function __construct($table = null, $connection = null, $setupjointable = false)
 		{
 			if ($table !== null)
 			{
 				$this->setFromTable($table, $setupjointable);
 			}
+			$this->_connection = $connection;
 			return $this;
 		}
 
@@ -159,7 +162,7 @@
 
 		protected function _addSelectionColumn($column, $alias = '', $special = '', $variable = '', $additional = '')
 		{
-			$this->selections[Core::getTablePrefix() . $column] = array('column' => $column, 'alias' => $alias, 'special' => $special, 'variable' => $variable, 'additional' => $additional);
+			$this->selections[$this->_connection->getTablePrefix() . $column] = array('column' => $column, 'alias' => $alias, 'special' => $special, 'variable' => $variable, 'additional' => $additional);
 		}
 
 		/**
@@ -644,11 +647,11 @@
 		{
 			if (is_bool($value))
 			{
-				if (Core::getDBtype() == 'mysql')
+				if ($this->_connection->getDBtype() == 'mysql')
 				{
 					$this->values[] = (int) $value;
 				}
-				elseif (Core::getDBtype() == 'pgsql')
+				elseif ($this->_connection->getDBtype() == 'pgsql')
 				{
 					$this->values[] = ($value) ? 'true' : 'false';
 				}
@@ -727,7 +730,7 @@
 		protected function _generateDeleteSQL()
 		{
 			$sql = 'DELETE FROM ';
-			$sql .= Core::getTablePrefix() . $this->fromtable->getB2DBName();
+			$sql .= $this->_connection->getTablePrefix() . $this->fromtable->getB2DBName();
 
 			return $sql;
 		}
@@ -740,28 +743,28 @@
 		protected function _generateInsertSQL()
 		{
 			$sql = 'INSERT INTO ';
-			if (Core::getDBtype() == 'mysql') $sql .= "`";
-			$sql .= Core::getTablePrefix() . $this->fromtable->getB2DBName();
-			if (Core::getDBtype() == 'mysql') $sql .= "`";
+			if ($this->_connection->getDBtype() == 'mysql') $sql .= "`";
+			$sql .= $this->_connection->getTablePrefix() . $this->fromtable->getB2DBName();
+			if ($this->_connection->getDBtype() == 'mysql') $sql .= "`";
 			$sql .= ' (';
 			$first_ins = true;
 			foreach ($this->criterias as $a_crit)
 			{
 				$sql .= (!$first_ins) ? ', ' : '';
-				if (Core::getDBtype() == 'pgsql')
+				if ($this->_connection->getDBtype() == 'pgsql')
 				{
 					$sql .= '"';
 				}
-				elseif (Core::getDBtype() == 'mysql')
+				elseif ($this->_connection->getDBtype() == 'mysql')
 				{
 					$sql .= '`';
 				}
 				$sql .= mb_substr($a_crit['column'], mb_strpos($a_crit['column'], '.') + 1);
-				if (Core::getDBtype() == 'pgsql')
+				if ($this->_connection->getDBtype() == 'pgsql')
 				{
 					$sql .= '"';
 				}
-				elseif (Core::getDBtype() == 'mysql')
+				elseif ($this->_connection->getDBtype() == 'mysql')
 				{
 					$sql .= '`';
 				}
@@ -796,15 +799,15 @@
 		protected function _generateUpdateSQL()
 		{
 			$sql = 'UPDATE ';
-			$sql .= Core::getTablePrefix() . $this->fromtable->getB2DBName();
+			$sql .= $this->_connection->getTablePrefix() . $this->fromtable->getB2DBName();
 			$sql .= ' SET ';
 			$first_upd = true;
 			foreach ($this->updates as $an_upd)
 			{
 				$sql .= (!$first_upd) ? ', ' : '';
-				if (Core::getDBtype() == 'mysql') $sql .= '`';
+				if ($this->_connection->getDBtype() == 'mysql') $sql .= '`';
 				$sql .= mb_substr($an_upd['column'], mb_strpos($an_upd['column'], '.') + 1);
-				if (Core::getDBtype() == 'mysql') $sql .= '`';
+				if ($this->_connection->getDBtype() == 'mysql') $sql .= '`';
 				$sql .= self::DB_EQUALS;
 				$sql .= '?';
 				$this->_addValue($an_upd['value']);
@@ -828,7 +831,7 @@
 			}
 			if ($this->customsel)
 			{
-				if ($this->distinct && Core::getDBtype() == 'pgsql')
+				if ($this->distinct && $this->_connection->getDBtype() == 'pgsql')
 				{
 					foreach ($this->sort_orders as $a_sort)
 					{
@@ -1195,10 +1198,10 @@
 		 */
 		protected function _generateJoinSQL()
 		{
-			$sql = ' FROM ' . Core::getTablePrefix() . $this->fromtable->getB2DBName() . ' ' . $this->fromtable->getB2DBAlias();
+			$sql = ' FROM ' . $this->_connection->getTablePrefix() . $this->fromtable->getB2DBName() . ' ' . $this->fromtable->getB2DBAlias();
 			foreach ($this->jointables as $a_jt)
 			{
-				$sql .= ' ' . $a_jt['jointype'] . ' ' . Core::getTablePrefix() . $a_jt['jointable']->getB2DBName() . ' ' . $a_jt['jointable']->getB2DBAlias();
+				$sql .= ' ' . $a_jt['jointype'] . ' ' . $this->_connection->getTablePrefix() . $a_jt['jointable']->getB2DBName() . ' ' . $a_jt['jointable']->getB2DBAlias();
 				$sql .= ' ON (' . $a_jt['col1'] . self::DB_EQUALS . $a_jt['col2'];
 				foreach ($a_jt['criterias'] as $a_crit)
 				{

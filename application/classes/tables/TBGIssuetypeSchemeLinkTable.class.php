@@ -32,9 +32,9 @@
 		const REPORTABLE = 'issuetype_scheme_link.reportable';
 		const REDIRECT_AFTER_REPORTING = 'issuetype_scheme_link.redirect_after_reporting';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, TBGIssuetypeSchemesTable::getTable(), TBGIssuetypeSchemesTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUETYPE_ID, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
 			parent::_addBoolean(self::REPORTABLE, true);
@@ -56,7 +56,7 @@
 					try
 					{
 						$i_id = $row->get(self::ISSUETYPE_ID);
-						$issuetype = TBGContext::factory()->TBGIssuetype($i_id, $row);
+						$issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($i_id, $row);
 					}
 					catch (Exception $e)
 					{

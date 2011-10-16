@@ -66,7 +66,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$action = TBGContext::factory()->TBGWorkflowTransitionAction($row->get(TBGWorkflowTransitionActionsTable::ID), $row);
+					$action = \caspar\core\Caspar::factory()->TBGWorkflowTransitionAction($row->get(TBGWorkflowTransitionActionsTable::ID), $row);
 					$actions[$action->getActionType()] = $action;
 				}
 			}
@@ -133,13 +133,13 @@
 					break;
 				case self::ACTION_SET_STATUS:
 					if ($this->getTargetValue())
-						$issue->setStatus(TBGContext::factory()->TBGStatus((int) $this->getTargetValue()));
+						$issue->setStatus(\caspar\core\Caspar::factory()->TBGStatus((int) $this->getTargetValue()));
 					else
 						$issue->setStatus($request->getParameter('status_id'));
 					break;
 				case self::ACTION_SET_MILESTONE:
 					if ($this->getTargetValue())
-						$issue->setMilestone(TBGContext::factory()->TBGMilestone((int) $this->getTargetValue()));
+						$issue->setMilestone(\caspar\core\Caspar::factory()->TBGMilestone((int) $this->getTargetValue()));
 					else
 						$issue->setMilestone($request->getParameter('milestone_id'));
 					break;
@@ -148,7 +148,7 @@
 					break;
 				case self::ACTION_SET_PRIORITY:
 					if ($this->getTargetValue())
-						$issue->setPriority(TBGContext::factory()->TBGPriority((int) $this->getTargetValue()));
+						$issue->setPriority(\caspar\core\Caspar::factory()->TBGPriority((int) $this->getTargetValue()));
 					else
 						$issue->setPriority($request->getParameter('priority_id'));
 					break;
@@ -172,7 +172,7 @@
 					break;
 				case self::ACTION_SET_RESOLUTION:
 					if ($this->getTargetValue())
-						$issue->setResolution(TBGContext::factory()->TBGResolution((int) $this->getTargetValue()));
+						$issue->setResolution(\caspar\core\Caspar::factory()->TBGResolution((int) $this->getTargetValue()));
 					else
 						$issue->setResolution($request->getParameter('resolution_id'));
 					break;
@@ -181,7 +181,7 @@
 					break;
 				case self::ACTION_SET_REPRODUCABILITY:
 					if ($this->getTargetValue())
-						$issue->setReproducability(TBGContext::factory()->TBGReproducability((int) $this->getTargetValue()));
+						$issue->setReproducability(\caspar\core\Caspar::factory()->TBGReproducability((int) $this->getTargetValue()));
 					else
 						$issue->setReproducability($request->getParameter('reproducability_id'));
 					break;
@@ -191,7 +191,7 @@
 				case self::ACTION_ASSIGN_ISSUE:
 					if ($this->getTargetValue())
 					{
-						$issue->setAssignee(TBGContext::factory()->TBGUser((int) $this->getTargetValue()));
+						$issue->setAssignee(\caspar\core\Caspar::factory()->TBGUser((int) $this->getTargetValue()));
 					}
 					else
 					{
@@ -199,10 +199,10 @@
 						switch ($request->getParameter('assignee_type'))
 						{
 							case TBGIdentifiableClass::TYPE_USER:
-								$assignee = TBGContext::factory()->TBGUser($request->getParameter('assignee_id'));
+								$assignee = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('assignee_id'));
 								break;
 							case TBGIdentifiableClass::TYPE_TEAM:
-								$assignee = TBGContext::factory()->TBGTeam($request->getParameter('assignee_id'));
+								$assignee = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('assignee_id'));
 								break;
 						}
 						if ((bool) $request->getParameter('assignee_teamup', false))

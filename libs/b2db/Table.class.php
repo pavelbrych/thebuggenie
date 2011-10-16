@@ -18,8 +18,9 @@
 	 * @package b2db
 	 * @subpackage core
 	 */
-	class Table
+	abstract class Table
 	{
+		protected $_connection;
 		protected $b2db_name;
 		protected $id_column;
 		protected $b2db_alias;
@@ -32,28 +33,21 @@
 
 		public function __clone()
 		{
-			$this->b2db_alias = $this->b2db_name . Core::addAlias();
+			$this->b2db_alias = $this->b2db_name . $this->_connection->addAlias();
 		}
 		
-		public function __construct($b2db_name, $id_column)
+		public function __construct(Connection $b2db)
 		{
-			$this->b2db_name = $b2db_name;
-			$this->b2db_alias = $b2db_name . Core::addAlias();
-			$this->id_column = $id_column;
-			$this->_addInteger($id_column, 10, 0, true, true, true);
+			$this->_connection = $b2db;
+			$this->b2db_name = static::B2DBNAME;
+			$this->b2db_alias = static::B2DBNAME . $this->_connection->addAlias();
+			$this->id_column = static::ID;
+			$this->_addInteger(static::ID, 10, 0, true, true, true);
+			$this->_setup();
 		}
+		
+		abstract protected function _setup();
 
-		/**
-		 * Return an instance of this table
-		 * 
-		 * @return Table 
-		 */
-		public static function getTable()
-		{
-			$tablename = \get_called_class();
-			return Core::getTable($tablename);
-		}
-		
 		protected function _addColumn($column, $details)
 		{
 			$this->_columns[$column] = $details;
@@ -168,7 +162,7 @@
 		protected function getQC()
 		{
 			$qc = '`';
-			switch (Core::getDBtype())
+			switch ($this->_connection->getDBtype())
 			{
 				case 'pgsql':
 					$qc = '"';
@@ -268,14 +262,14 @@
 				$crit->setFromTable($this);
 				$crit->generateSelectSQL(true);
 	
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 				$resultSet = $statement->performQuery();
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -310,9 +304,9 @@
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -334,16 +328,16 @@
 			{
 				$crit->setFromTable($this);
 				$crit->generateCountSQL();
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$resultset = $statement->performQuery();
 				$cnt = count($resultset);
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -374,15 +368,15 @@
 				$crit->setupJoinTables($join);
 				$crit->generateSelectSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$resultset = $statement->performQuery();
 			}
 			catch (Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -410,14 +404,14 @@
 				$crit->setLimit(1);
 				$crit->generateSelectSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 				$resultset = $statement->performQuery();
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -443,15 +437,15 @@
 				$crit->setFromTable($this);
 				$crit->generateInsertSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$resultset = $statement->performQuery('insert');
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -477,15 +471,15 @@
 				$crit->setFromTable($this);
 				$crit->generateUpdateSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$res = $statement->performQuery('update');
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -514,15 +508,15 @@
 				$crit->setLimit(1);
 				$crit->generateUpdateSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$resultset = $statement->performQuery('update');
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -548,16 +542,16 @@
 				$crit->setFromTable($this);
 				$crit->generateDeleteSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$resultset = $statement->performQuery('delete');
 				return $resultset;
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -583,16 +577,16 @@
 				$crit->addWhere($this->id_column, $id);
 				$crit->generateDeleteSQL();
 				
-				$statement = Statement::getPreparedStatement($crit);
+				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 	
 				$resultset = $statement->performQuery('delete');
 				return $resultset;
 			}
 			catch (\Exception $e)
 			{
-				if (Core::throwExceptionAsHTML())
+				if ($this->_connection->throwExceptionAsHTML())
 				{
-					Core::fatalError($e);
+					$this->_connection->fatalError($e);
 					exit();
 				}
 				else
@@ -619,7 +613,7 @@
 				{
 					echo $sql;
 				}
-				$statement = Statement::getPreparedStatement($sql);
+				$statement = Statement::getPreparedStatement($sql, $this->_connection);
 				$res = $statement->performQuery('create');
 			}
 			catch (\Exception $e)
@@ -641,13 +635,13 @@
 			foreach ($this->_indexes as $index_name => $details)
 			{
 				$sql = '';
-				switch (Core::getDBtype())
+				switch ($this->_connection->getDBtype())
 				{
 					case 'pgsql':
-						$sql .= " CREATE INDEX " . Core::getTablePrefix() . $this->b2db_name . "_{$index_name} ON " . $this->_getTableNameSQL() . " (";
+						$sql .= " CREATE INDEX " . $this->_connection->getTablePrefix() . $this->b2db_name . "_{$index_name} ON " . $this->_getTableNameSQL() . " (";
 						break;
 					case 'mysql':
-						$sql .= " ALTER TABLE " . $this->_getTableNameSQL() . " ADD INDEX " . Core::getTablePrefix() . $this->b2db_name . "_{$index_name}(";
+						$sql .= " ALTER TABLE " . $this->_getTableNameSQL() . " ADD INDEX " . $this->_connection->getTablePrefix() . $this->b2db_name . "_{$index_name}(";
 						break;
 				}
 				$index_column_sqls = array();
@@ -658,7 +652,7 @@
 				$sql .= join (', ', $index_column_sqls);
 				$sql .= ");";
 				
-				$statement = Statement::getPreparedStatement($sql);
+				$statement = Statement::getPreparedStatement($sql, $this->_connection);
 				$res = $statement->performQuery('create index');
 			}
 		}
@@ -666,7 +660,7 @@
 		protected function _dropToSQL()
 		{
 			$sql = '';
-			$sql .= 'DROP TABLE IF EXISTS ' . Core::getTablePrefix() . $this->b2db_name;
+			$sql .= 'DROP TABLE IF EXISTS ' . $this->_connection->getTablePrefix() . $this->b2db_name;
 			return $sql;
 		}
 
@@ -680,7 +674,7 @@
 			try
 			{
 				$sql = $this->_dropToSQL();
-				$statement = Statement::getPreparedStatement($sql);
+				$statement = Statement::getPreparedStatement($sql, $this->_connection);
 				$res = $statement->performQuery('drop');
 			}
 			catch (\Exception $e)
@@ -699,7 +693,7 @@
 		 */
 		public function getCriteria($setupjointables = false)
 		{
-			$crit = new Criteria($this, $setupjointables);
+			$crit = new Criteria($this, $this->_connection, $setupjointables);
 			return $crit;
 		}
 		
@@ -775,11 +769,11 @@
 			switch ($column['type'])
 			{
 				case 'integer':
-					if (Core::getDBtype() == 'pgsql' && isset($column['auto_inc']) && $column['auto_inc'] == true)
+					if ($this->_connection->getDBtype() == 'pgsql' && isset($column['auto_inc']) && $column['auto_inc'] == true)
 					{
 						$fsql .= 'SERIAL';
 					}
-					elseif (Core::getDBtype() == 'pgsql')
+					elseif ($this->_connection->getDBtype() == 'pgsql')
 					{
 						$fsql .= 'INTEGER';
 					}
@@ -787,21 +781,21 @@
 					{
 						$fsql .= 'INTEGER(' . $column['length'] . ')';
 					}
-					if ($column['unsigned'] && Core::getDBtype() != 'pgsql') $fsql .= ' UNSIGNED';
+					if ($column['unsigned'] && $this->_connection->getDBtype() != 'pgsql') $fsql .= ' UNSIGNED';
 					break;
 				case 'varchar':
 					$fsql .= 'VARCHAR(' . $column['length'] . ')';
 					break;
 				case 'float':
 					$fsql .= 'FLOAT(' . $column['precision'] . ')';
-					if ($column['unsigned'] && Core::getDBtype() != 'pgsql') $fsql .= ' UNSIGNED';
+					if ($column['unsigned'] && $this->_connection->getDBtype() != 'pgsql') $fsql .= ' UNSIGNED';
 					break;
 				case 'blob':
-					if (Core::getDBtype() == 'mysql')
+					if ($this->_connection->getDBtype() == 'mysql')
 					{
 						$fsql .= 'LONGBLOB';
 					}
-					elseif (Core::getDBtype() == 'pgsql')
+					elseif ($this->_connection->getDBtype() == 'pgsql')
 					{
 						$fsql .= 'BYTEA';
 					}
@@ -818,11 +812,11 @@
 			if ($column['not_null']) $fsql .= ' NOT NULL';
 			if ($column['type'] != 'text')
 			{
-				if (isset($column['auto_inc']) && $column['auto_inc'] == true && Core::getDBtype() != 'pgsql')
+				if (isset($column['auto_inc']) && $column['auto_inc'] == true && $this->_connection->getDBtype() != 'pgsql')
 				{
 					$fsql .= ' AUTO_INCREMENT';
 				}
-				elseif (isset($column['default_value']) && $column['default_value'] !== null && !(isset($column['auto_inc']) && $column['auto_inc'] == true && Core::getDBtype() == 'pgsql'))
+				elseif (isset($column['default_value']) && $column['default_value'] !== null && !(isset($column['auto_inc']) && $column['auto_inc'] == true && $this->_connection->getDBtype() == 'pgsql'))
 				{
 					if (is_int($column['default_value']))
 					{
@@ -848,7 +842,7 @@
 		protected function _getTableNameSQL()
 		{
 			$qc = $this->getQC();
-			$sql = $qc . Core::getTablePrefix() . $this->b2db_name . $qc;
+			$sql = $qc . $this->_connection->getTablePrefix() . $this->b2db_name . $qc;
 
 			return $sql;
 		}
@@ -867,8 +861,8 @@
 			$sql .= join(",\n", $field_sql);
 			$sql .= ", PRIMARY KEY ($qc" . $this->_getRealColumnFieldName($this->id_column) . "$qc) ";
 			$sql .= ') ';
-			if (Core::getDBtype() != 'pgsql') $sql .= 'AUTO_INCREMENT=' . $this->_autoincrement_start_at . ' ';
-			if (Core::getDBtype() != 'pgsql') $sql .= 'CHARACTER SET ' . $this->_charset;
+			if ($this->_connection->getDBtype() != 'pgsql') $sql .= 'AUTO_INCREMENT=' . $this->_autoincrement_start_at . ' ';
+			if ($this->_connection->getDBtype() != 'pgsql') $sql .= 'CHARACTER SET ' . $this->_charset;
 
 			return $sql;
 		}
@@ -887,7 +881,7 @@
 		{
 			$sql = 'ALTER TABLE ' . $this->_getTableNameSQL();
 			$qc = $this->getQC();
-			switch (Core::getDBtype())
+			switch ($this->_connection->getDBtype())
 			{
 				case 'mysql':
 					$sql .= ' MODIFY ';
@@ -941,9 +935,9 @@
 
 			if (count($sqls))
 			{
-				foreach ($sqls as $sqlStmt)
+				foreach ($sqls as $sql)
 				{
-					$statement = Statement::getPreparedStatement($sqlStmt);
+					$statement = Statement::getPreparedStatement($sql, $this->_connection);
 					$res = $statement->performQuery('alter');
 				}
 			}
@@ -959,9 +953,9 @@
 
 			if (count($sqls))
 			{
-				foreach ($sqls as $sqlStmt)
+				foreach ($sqls as $sql)
 				{
-					$statement = Statement::getPreparedStatement($sqlStmt);
+					$statement = Statement::getPreparedStatement($sql, $this->_connection);
 					$res = $statement->performQuery('alter');
 				}
 			}

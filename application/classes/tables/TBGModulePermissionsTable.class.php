@@ -33,9 +33,9 @@
 		const TID = 'modulepermissions.tid';
 		const ALLOWED = 'modulepermissions.allowed';
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::MODULE_NAME, 50);
 			parent::_addBoolean(self::ALLOWED);
 			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);

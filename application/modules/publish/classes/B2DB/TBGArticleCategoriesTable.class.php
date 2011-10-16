@@ -25,9 +25,9 @@
 			return Core::getTable('TBGArticleCategoriesTable');
 		}
 
-		public function __construct()
+		protected function _setup()
 		{
-			parent::__construct(self::B2DBNAME, self::ID);
+			
 			parent::_addVarchar(self::ARTICLE_NAME, 300);
 			parent::_addBoolean(self::ARTICLE_IS_CATEGORY);
 			parent::_addVarchar(self::CATEGORY_NAME, 300);

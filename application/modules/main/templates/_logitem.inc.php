@@ -25,7 +25,7 @@
 			<?php if ((!isset($include_issue_title) || $include_issue_title) && (isset($include_user) && $include_user == true)): ?>
 				<br>
 				<span class="user">
-					<?php if (($user = TBGContext::factory()->TBGUser($log_action['user_id'])) instanceof TBGUser): ?>
+					<?php if (($user = \caspar\core\Caspar::factory()->TBGUser($log_action['user_id'])) instanceof TBGUser): ?>
 						<?php if ($log_action['change_type'] != TBGLogTable::LOG_COMMENT): ?>
 							<?php echo $user->getUsername(); ?>
 						<?php else: ?>
@@ -54,7 +54,7 @@
 						}
 						break;
 					case TBGLogTable::LOG_COMMENT:
-						$comment = TBGContext::factory()->TBGComment((int) $log_action['text']);
+						$comment = \caspar\core\Caspar::factory()->TBGComment((int) $log_action['text']);
 						echo '<div class="timeline_inline_details">';
 						echo nl2br(tbg_truncateText(tbg_decodeUTF8($comment->getContent()), 300));
 						echo '</div>';
