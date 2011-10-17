@@ -256,7 +256,7 @@
 				{
 					if (($tablename = mb_substr($table_class_file, 0, mb_strpos($table_class_file, '.'))) != '') 
 					{
-						\b2db\Core::getTable($tablename)->create();
+						Caspar::getB2DBInstance()->getTable($tablename)->create();
 						$tables_created[] = $tablename;
 					}
 				}
@@ -285,10 +285,10 @@
 		{
 			try
 			{
-				TBGLogging::log('Initializing language support');
+				\caspar\core\Logging::log('Initializing language support');
 				TBGContext::reinitializeI18n('en_US');
 
-				TBGLogging::log('Loading fixtures for default scope');
+				\caspar\core\Logging::log('Loading fixtures for default scope');
 				$scope = new TBGScope();
 				$scope->addHostname('*');
 				$scope->setName('The default scope');
@@ -296,7 +296,7 @@
 				TBGContext::setScope($scope);
 				$scope->save();
 				
-				TBGLogging::log('Setting up default users and groups');
+				\caspar\core\Logging::log('Setting up default users and groups');
 				TBGSettings::saveSetting('language', 'en_US', 'core', 1);
 
 				$this->htaccess_error = false;
@@ -418,9 +418,9 @@
 				}
 			}
 			
-			$ut = TBGUsersTable::getTable();
+			$ut = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users');
 			$crit = $ut->getCriteria();
-			$crit->addUpdate(TBGUsersTable::PRIVATE_EMAIL, true);
+			$crit->addUpdate(\thebuggenie\tables\Users::PRIVATE_EMAIL, true);
 			$ut->doUpdate($crit);
 			
 			// Add default gravatar setting
@@ -450,7 +450,7 @@
 			// Upgrade existing tables
 			TBGProjectsTable::getTable()->upgrade(TBGProjectsTable3dot1::getTable());
 			TBGBuildsTable::getTable()->upgrade(TBGBuildsTable3dot1::getTable());
-			TBGUsersTable::getTable()->upgrade(TBGUsersTable3dot1::getTable());
+			Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->upgrade(TBGUsersTable3dot1::getTable());
 			
 			// Create new tables
 			TBGDashboardViewsTable::getTable()->create();

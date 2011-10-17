@@ -354,7 +354,7 @@
 					{
 						if (($tablename = mb_substr($table_class_file, 0, mb_strpos($table_class_file, '.'))) != '')
 						{
-							\b2db\Core::getTable($tablename)->create();
+							Caspar::getB2DBInstance()->getTable($tablename)->create();
 							$this->cliEcho("Creating table {$tablename}\n", 'white', 'bold');
 						}
 					}

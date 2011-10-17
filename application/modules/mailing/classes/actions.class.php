@@ -71,7 +71,7 @@
 					else
 					{
 						TBGContext::setMessage('module_error', TBGContext::getI18n()->__('The email was not sent'));
-						TBGContext::setMessage('module_error_details', TBGLogging::getMessagesForCategory('mailing', TBGLogging::LEVEL_NOTICE));
+						TBGContext::setMessage('module_error_details', \caspar\core\Logging::getMessagesForCategory('mailing', \caspar\core\Logging::LEVEL_NOTICE));
 					}
 				}
 				catch (Exception $e)

@@ -29,7 +29,7 @@
 			
 			parent::_addText(self::MESSAGE);
 			parent::_addInteger(self::DATE, 10);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function addMailToQueue(TBGMimemail $mail)
@@ -38,7 +38,7 @@
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::MESSAGE, $message);
 			$crit->addInsert(self::DATE, time());
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$res = $this->doInsert($crit);
 
@@ -48,7 +48,7 @@
 		public function getQueuedMessages($limit = null)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			if ($limit !== null)
 			{
 				$crit->setLimit($limit);
@@ -74,7 +74,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ID, (array) $ids, Criteria::DB_IN);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$res = $this->doDelete($crit);
 		}

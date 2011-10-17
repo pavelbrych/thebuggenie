@@ -39,14 +39,14 @@
 			parent::_addForeignKeyColumn(self::ISSUETYPE_ID, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
 			parent::_addBoolean(self::REPORTABLE, true);
 			parent::_addBoolean(self::REDIRECT_AFTER_REPORTING, true);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getByIssuetypeSchemeID($issuetype_scheme_id)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $issuetype_scheme_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$return_array = array();
 			if ($res = $this->doSelect($crit))
@@ -73,7 +73,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 		}
 		
@@ -81,14 +81,14 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_ID, $type_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 		}
 
 		public function associateIssuetypeWithScheme($issuetype_id, $scheme_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::ISSUETYPE_ID, $issuetype_id);
 			$crit->addInsert(self::ISSUETYPE_SCHEME_ID, $scheme_id);
 			$this->doInsert($crit);
@@ -97,7 +97,7 @@
 		public function unAssociateIssuetypeWithScheme($issuetype_id, $scheme_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::ISSUETYPE_ID, $issuetype_id);
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
 			$this->doDelete($crit);
@@ -108,7 +108,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $issuetype_scheme_id);
 			$crit->addWhere(self::ISSUETYPE_ID, $issuetype_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addUpdate(self::REDIRECT_AFTER_REPORTING, $redirected);
 			$this->doUpdate($crit);
 		}
@@ -118,7 +118,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $issuetype_scheme_id);
 			$crit->addWhere(self::ISSUETYPE_ID, $issuetype_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addUpdate(self::REPORTABLE, $reportable);
 			$this->doUpdate($crit);
 		}

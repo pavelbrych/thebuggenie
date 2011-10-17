@@ -51,13 +51,13 @@
 			parent::_addVarchar(self::FIELD_DESCRIPTION, 200);
 			parent::_addText(self::FIELD_INSTRUCTIONS);
 			parent::_addInteger(self::FIELD_TYPE);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getAll()
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$res = $this->doSelect($crit);
 			$retval = array();
@@ -77,7 +77,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::FIELD_KEY, $key);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			return $this->doCount($crit);
 		}
@@ -86,7 +86,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::FIELD_KEY, $key);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			return $this->doSelectOne($crit);
 		}
@@ -105,7 +105,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ID, $id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$row = $this->doSelectOne($crit);
 			if ($row instanceof \b2db\Row)

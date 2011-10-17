@@ -111,7 +111,7 @@
 			if (!array_key_exists($project_id, self::$_project_builds))
 			{
 				self::$_project_builds[$project_id] = array();
-				if ($res = \b2db\Core::getTable('TBGBuildsTable')->getByProjectID($project_id))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->getByProjectID($project_id))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -139,7 +139,7 @@
 			if (!array_key_exists($edition_id, self::$_edition_builds))
 			{
 				self::$_edition_builds[$edition_id] = array();
-				if ($res = \b2db\Core::getTable('TBGBuildsTable')->getByEditionID($project_id))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->getByEditionID($project_id))
 				{
 					$build = \caspar\core\Caspar::factory()->TBGBuild($row->get(TBGBuildsTable::ID), $row);
 					self::$_edition_builds[$edition_id][$build->getID()] = $build;
@@ -173,7 +173,7 @@
 		{
 			if ($is_new)
 			{
-				TBGContext::setPermission("canseebuild", $this->getID(), "core", 0, TBGContext::getUser()->getGroup()->getID(), 0, true);
+				TBGContext::setPermission("canseebuild", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
 				TBGEvent::createNew('core', 'TBGBuild::createNew', $this)->trigger();
 			}
 		}
@@ -285,13 +285,13 @@
 		{
 			if ($this->isEditionBuild())
 			{
-				\b2db\Core::getTable('TBGBuildsTable')->clearDefaultsByEditionID($this->getParent()->getID());
+				Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->clearDefaultsByEditionID($this->getParent()->getID());
 			}
 			else
 			{
-				\b2db\Core::getTable('TBGBuildsTable')->clearDefaultsByProjectID($this->getParent()->getID());
+				Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->clearDefaultsByProjectID($this->getParent()->getID());
 			}
-			$res = \b2db\Core::getTable('TBGBuildsTable')->setDefaultBuild($this->getID());
+			$res = Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->setDefaultBuild($this->getID());
 			$this->_isdefault = true;
 		}
 		
@@ -300,7 +300,7 @@
 		 */
 		protected function _preDelete()
 		{
-			\b2db\Core::getTable('TBGIssueAffectsBuildTable')->deleteByBuildID($this->getID());
+			Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->deleteByBuildID($this->getID());
 		}
 		
 		/**
@@ -317,7 +317,7 @@
 		{
 			if ($this->isEditionBuild())
 			{
-				$res = \b2db\Core::getTable('TBGIssueAffectsEditionTable')->getOpenAffectedIssuesByEditionID($this->getParent()->getID(), $limit_status, $limit_category, $limit_issuetype);
+				$res = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsEditionTable')->getOpenAffectedIssuesByEditionID($this->getParent()->getID(), $limit_status, $limit_category, $limit_issuetype);
 			}
 			else
 			{
@@ -330,7 +330,7 @@
 				while ($row = $res->getNextRow())
 				{
 					$issue_id = $row->get(TBGIssuesTable::ID);
-					if (\b2db\Core::getTable('TBGIssueAffectsBuildTable')->setIssueAffected($issue_id, $this->getID()))
+					if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->setIssueAffected($issue_id, $this->getID()))
 					{
 						$retval = true;
 					}
@@ -346,7 +346,7 @@
 		 */
 		public function hasAccess()
 		{
-			return (($this->getProject() instanceof TBGProject && $this->getProject()->canSeeAllBuilds()) || TBGContext::getUser()->hasPermission('canseebuild', $this->getID()));
+			return (($this->getProject() instanceof TBGProject && $this->getProject()->canSeeAllBuilds()) || \caspar\core\Caspar::getUser()->hasPermission('canseebuild', $this->getID()));
 		}
 
 		/**

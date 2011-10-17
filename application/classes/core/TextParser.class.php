@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\core;
+
 	/**
 	 * Text parser class
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage main
 	 */
-	class TBGTextParser
+	class TextParser
 	{
 
 		protected static $additional_regexes = null;
@@ -583,7 +585,7 @@
 				case 'NUMBEROFARTICLES':
 					return 0;
 				case 'PAGENAME':
-					return TBGContext::getResponse()->getPage();
+					return \caspar\core\Caspar::getResponse()->getPage();
 				case 'NAMESPACE':
 					return 'None';
 				case 'TOC':

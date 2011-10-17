@@ -101,8 +101,8 @@
 			parent::_addText(self::PREVIOUS_VALUE, false);
 			parent::_addText(self::CURRENT_VALUE, false);
 			parent::_addInteger(self::TIME, 10);
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function createNew($target, $target_type, $change_type, $text = null, $uid = 0, $time = null)
@@ -124,7 +124,7 @@
 				$crit->addInsert(self::TIME, $time);
 			}
 			$crit->addInsert(self::UID, $uid);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doInsert($crit);
 			return $res->getInsertID();
 		}
@@ -247,7 +247,7 @@
 				$crit->addWhere(TBGIssuesTable::DELETED, false);
 				$crit->addJoin(TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID, TBGIssuesTable::ISSUE_TYPE, array(), Criteria::DB_LEFT_JOIN, $joinedtable);
 				$crit->addWhere(TBGIssueTypesTable::ICON, 'bug_report');
-				$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$ctn = $crit->returnCriterion(self::TIME, NOW - (86400 * ($cc + 1)), Criteria::DB_GREATER_THAN_EQUAL);
 				$ctn->addWhere(self::TIME, NOW - (86400 * $cc), Criteria::DB_LESS_THAN_EQUAL);
 				$crit->addWhere($ctn);

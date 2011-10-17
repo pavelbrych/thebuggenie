@@ -46,7 +46,7 @@
 		protected function _setup()
 		{
 			
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_ID, TBGWorkflowsTable::getTable(), TBGWorkflowsTable::ID);
 			parent::_addVarchar(self::NAME, 200);
 			parent::_addText(self::DESCRIPTION, false);
@@ -56,7 +56,7 @@
 
 		public function createNew($workflow_id, $name, $description, $to_step_id, $template, $scope = null)
 		{
-			$scope = ($scope !== null) ? $scope : TBGContext::getScope()->getID();
+			$scope = ($scope !== null) ? $scope : \thebuggenie\core\Context::getScope()->getID();
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::SCOPE, $scope);
 			$crit->addInsert(self::WORKFLOW_ID, $workflow_id);
@@ -73,7 +73,7 @@
 		protected function _deleteByTypeID($type, $id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere((($type == 'step') ? self::OUTGOING_STEP_ID : self::WORKFLOW_ID), $id);
 			return $this->doDelete($crit);
 		}
@@ -81,7 +81,7 @@
 		protected function _countByTypeID($type, $id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere((($type == 'step') ? self::OUTGOING_STEP_ID : self::WORKFLOW_ID), $id);
 			return $this->doCount($crit);
 		}
@@ -89,7 +89,7 @@
 		protected function _getByTypeID($type, $id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere((($type == 'step') ? self::OUTGOING_STEP_ID : self::WORKFLOW_ID), $id);
 
 			$return_array = array();

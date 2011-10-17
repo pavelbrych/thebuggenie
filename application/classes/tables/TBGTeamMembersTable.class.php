@@ -44,9 +44,9 @@
 		{
 			
 			
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addForeignKeyColumn(self::TID, Core::getTable('TBGTeamsTable'), TBGTeamsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getUIDsForTeamID($team_id)
@@ -119,7 +119,7 @@
 				$crit = $this->getCriteria();
 				$crit->addInsert(self::UID, $uid);
 				$crit->addInsert(self::TID, $new_team_id);
-				$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$this->doInsert($crit);
 			}
 		}
@@ -134,7 +134,7 @@
 		public function addUserToTeam($user_id, $team_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::TID, $team_id);
 			$crit->addInsert(self::UID, $user_id);
 			$this->doInsert($crit);

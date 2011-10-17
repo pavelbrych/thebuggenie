@@ -34,7 +34,7 @@
 		public static function getAllByProjectID($project_id)
 		{
 			$retval = array();
-			if ($res = \b2db\Core::getTable('TBGComponentsTable')->getByProjectID($project_id))
+			if ($res = Caspar::getB2DBInstance()->getTable('TBGComponentsTable')->getByProjectID($project_id))
 			{
 				while ($row = $res->getNextRow())
 				{
@@ -52,7 +52,7 @@
 		{
 			if ($is_new)
 			{
-				TBGContext::setPermission("canseecomponent", $this->getID(), "core", 0, TBGContext::getUser()->getGroup()->getID(), 0, true);
+				TBGContext::setPermission("canseecomponent", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
 				TBGEvent::createNew('core', 'TBGComponent::createNew', $this)->trigger();
 			}
 		}
@@ -84,7 +84,7 @@
 		{
 			$crit = new \b2db\Criteria();
 			$crit->addUpdate(TBGComponentsTable::NAME, $name);
-			$res = \b2db\Core::getTable('TBGComponentsTable')->doUpdateById($crit, $this->getID());
+			$res = Caspar::getB2DBInstance()->getTable('TBGComponentsTable')->doUpdateById($crit, $this->getID());
 			
 			$this->_name = $name;
 		}
@@ -93,14 +93,14 @@
 		{
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(TBGIssueAffectsComponentTable::COMPONENT, $this->getID());
-			\b2db\Core::getTable('TBGIssueAffectsComponentTable')->doDelete($crit);
+			Caspar::getB2DBInstance()->getTable('TBGIssueAffectsComponentTable')->doDelete($crit);
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(TBGEditionComponentsTable::COMPONENT, $this->getID());
-			\b2db\Core::getTable('TBGEditionComponentsTable')->doDelete($crit);
+			Caspar::getB2DBInstance()->getTable('TBGEditionComponentsTable')->doDelete($crit);
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(TBGComponentAssigneesTable::COMPONENT_ID, $this->getID());
-			$crit->addWhere(TBGComponentAssigneesTable::SCOPE, TBGContext::getScope()->getID());
-			\b2db\Core::getTable('TBGComponentAssigneesTable')->doDelete($crit);
+			$crit->addWhere(TBGComponentAssigneesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
+			Caspar::getB2DBInstance()->getTable('TBGComponentAssigneesTable')->doDelete($crit);
 		}
 		
 		protected function _populateAssignees()
@@ -128,7 +128,7 @@
 			$users = array();
 			foreach (array_keys($this->_assignees['users']) as $user_id)
 			{
-				$users[$user_id] = \caspar\core\Caspar::factory()->TBGUser($user_id);
+				$users[$user_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $user_id);
 			}
 			return $users;
 		}
@@ -139,7 +139,7 @@
 			$teams = array();
 			foreach (array_keys($this->_assignees['teams']) as $team_id)
 			{
-				$teams[$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id);
+				$teams[$team_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id);
 			}
 			return $teams;
 		}
@@ -151,7 +151,7 @@
 		 */
 		public function hasAccess()
 		{
-			return ($this->getProject()->canSeeAllComponents() || TBGContext::getUser()->hasPermission('canseecomponent', $this->getID()));
+			return ($this->getProject()->canSeeAllComponents() || \caspar\core\Caspar::getUser()->hasPermission('canseecomponent', $this->getID()));
 		}
 		
 	}

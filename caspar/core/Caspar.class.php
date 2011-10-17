@@ -453,7 +453,6 @@
 					Event::createNew('core', 'post_login', self::getUser())->trigger();
 
 					Logging::log('loaded');
-					self::cacheAllPermissions();
 				}
 			}
 			catch (Exception $e)
@@ -461,8 +460,10 @@
 				Logging::log("Something happened while setting up user: ". $e->getMessage(), 'main', Logging::LEVEL_WARNING);
 				if (!self::isCLI() && (self::getRouting()->getCurrentRouteModule() != 'main' || self::getRouting()->getCurrentRouteAction() != 'register1' && self::getRouting()->getCurrentRouteAction() != 'register2' && self::getRouting()->getCurrentRouteAction() != 'activate' && self::getRouting()->getCurrentRouteAction() != 'reset_password' && self::getRouting()->getCurrentRouteAction() != 'captcha' && self::getRouting()->getCurrentRouteAction() != 'login' && self::getRouting()->getCurrentRouteAction() != 'getBackdropPartial' && self::getRouting()->getCurrentRouteAction() != 'serve' && self::getRouting()->getCurrentRouteAction() != 'doLogin'))
 					self::$_redirect_login = true;
-				else
-					self::$_user = self::factory()->User(Settings::getDefaultUserID());
+				else {
+					$classname = self::$_configuration['core']['user_classname'];
+					self::$_user = new $classname();
+				}
 			}
 			Logging::log('...done');
 		}
@@ -639,7 +640,8 @@
 		{
 			try
 			{
-				self::$_user = ($user === null) ? User::loginCheck(self::getRequest()->getParameter('tbg3_username'), self::getRequest()->getParameter('tbg3_password')) : $user;
+				$classname = self::$_configuration['core']['user_classname'];
+				self::$_user = ($user === null) ? $classname::loginCheck(self::getRequest()->getParameter('tbg3_username'), self::getRequest()->getParameter('tbg3_password')) : $user;
 				if (self::$_user->isAuthenticated())
 				{
 					if (self::$_user->isOffline() || self::$_user->isAway())
@@ -647,13 +649,7 @@
 						self::$_user->setOnline();
 					}
 					self::$_user->updateLastSeen();
-					self::$_user->setTimezone(Settings::getUserTimezone());
-					self::$_user->setLanguage(Settings::getUserLanguage());
-					self::$_user->save();
-					if (!(self::$_user->getGroup() instanceof TBGGroup))
-					{
-						throw new \Exception('This user account belongs to a group that does not exist anymore. <br>Please contact the system administrator.');
-					}
+					Event::createNew('core', 'post_loaduser', self::$_user)->trigger();
 				}
 			}
 			catch (Exception $e)
@@ -670,6 +666,9 @@
 		 */
 		public static function getUser()
 		{
+			if (!self::$_user instanceof self::$_configuration['core']['user_classname']) {
+				self::initializeUser();
+			}
 			return self::$_user;
 		}
 		
@@ -830,7 +829,7 @@
 	
 			$permissions = array();
 
-			if ($res = \b2db\Core::getTable('TBGPermissionsTable')->doSelect($crit))
+			if ($res = Caspar::getB2DBInstance()->getTable('TBGPermissionsTable')->doSelect($crit))
 			{
 				while ($row = $res->getNextRow())
 				{
@@ -859,7 +858,7 @@
 				if (!$permissions = Cache::fileGet(Cache::KEY_PERMISSIONS_CACHE))
 				{
 					Logging::log('starting to cache access permissions');
-					if ($res = \b2db\Core::getTable('TBGPermissionsTable')->getAll())
+					if ($res = Caspar::getB2DBInstance()->getTable('TBGPermissionsTable')->getAll())
 					{
 						while ($row = $res->getNextRow())
 						{
@@ -928,7 +927,7 @@
 		{
 			if ($scope === null) $scope = self::getScope()->getID();
 			
-			\b2db\Core::getTable('TBGPermissionsTable')->removeSavedPermission($uid, $gid, $tid, $module, $permission_type, $target_id, $scope);
+			Caspar::getB2DBInstance()->getTable('TBGPermissionsTable')->removeSavedPermission($uid, $gid, $tid, $module, $permission_type, $target_id, $scope);
 			
 			if ($recache) self::cacheAllPermissions();
 		}
@@ -1786,7 +1785,7 @@
 				$tbg_summary['db_timing'] = \b2db\Core::getSQLTiming();
 			}
 			$tbg_summary['load_time'] = ($load_time >= 1) ? round($load_time, 2) . ' seconds' : round($load_time * 1000, 1) . 'ms';
-			$tbg_summary['scope_id'] = self::getScope() instanceof TBGScope ? self::getScope()->getID() : 'unknown';
+			$tbg_summary['scope_id'] = self::getScope() instanceof \thebuggenie\core\Scope ? self::getScope()->getID() : 'unknown';
 			self::ping();
 		}
 		
@@ -1799,7 +1798,7 @@
 		{
 			if (!$links = Cache::get('core_main_links'))
 			{
-				$links = \b2db\Core::getTable('TBGLinksTable')->getMainLinks();
+				$links = Caspar::getB2DBInstance()->getTable('TBGLinksTable')->getMainLinks();
 				Cache::add('core_main_links', $links);
 			}
 			return $links;
@@ -2050,12 +2049,12 @@
 				$report_description = null;
 				if ($exception instanceof \Exception)
 				{
-					if ($exception instanceof TBGActionNotFoundException)
+					if ($exception instanceof ActionNotFoundException)
 					{
 						echo "<h3>Could not find the specified action</h3>";
 						$report_description = "Could not find the specified action";
 					}
-					elseif ($exception instanceof TBGTemplateNotFoundException)
+					elseif ($exception instanceof TemplateNotFoundException)
 					{
 						echo "<h3>Could not find the template file for the specified action</h3>";
 						$report_description = "Could not find the template file for the specified action";
@@ -2346,34 +2345,30 @@
 				Logging::log('Using cached routes');
 			} else {
 				$routes = array();
-				if ($routes_premodules = Cache::get(Cache::KEY_ROUTES_PREMODULES) || $routes_premodules = Cache::fileGet(Cache::KEY_ROUTES_PREMODULES)) {
-					Logging::log('Using cached premodule routes');
-				} else {
-					$routes_premodules = \Spyc::YAMLLoad(\CASPAR_PATH . 'configuration' . \DIRECTORY_SEPARATOR . 'routes_premodules.yml', true);
-					foreach ($routes_premodules as $route => $details) {
-						if (is_array($details) && array_key_exists('url', $details))
-							$routes_premodules[$route] = Routing::generateRoute($details);
-						else
-							unset($routes_premodules[$route]);
+				$files = array(\CASPAR_PATH . 'configuration' . \DS . 'routes_premodules.yml' => Cache::KEY_ROUTES_PREMODULES);
+				$iterator = new \DirectoryIterator(CASPAR_MODULES_PATH);
+				foreach ($iterator as $fileinfo) {
+					if ($fileinfo->isDir()) {
+						$files[$fileinfo->getPathname() . \DS . 'configuration' . \DS . 'routes.yml'] = Cache::KEY_ROUTES_ALL . '_' . $fileinfo->getBasename();
 					}
-					Cache::add(Cache::KEY_ROUTES_PREMODULES, $routes_premodules);
-					Cache::fileAdd(Cache::KEY_ROUTES_PREMODULES, $routes_premodules);
 				}
-				$routes = array_merge($routes, $routes_premodules);
-				if ($routes_postmodules = Cache::get(Cache::KEY_ROUTES_POSTMODULES) || $routes_postmodules = Cache::fileGet(Cache::KEY_ROUTES_POSTMODULES)) {
-					Logging::log('Using cached postmodule routes');
-				} else {
-					$routes_postmodules = \Spyc::YAMLLoad(\CASPAR_PATH . 'configuration' . \DIRECTORY_SEPARATOR . 'routes_postmodules.yml', true);
-					foreach ($routes_postmodules as $route => $details) {
-						if (is_array($details) && array_key_exists('url', $details))
-							$routes_postmodules[$route] = Routing::generateRoute($details);
-						else
-							unset($routes_postmodules[$route]);
+				$files[\CASPAR_PATH . 'configuration' . \DS . 'routes_postmodules.yml'] = Cache::KEY_ROUTES_POSTMODULES;
+				foreach ($files as $filename => $cachekey) {
+					if ($route_entries = Cache::get($cachekey) || $route_entries = Cache::fileGet($cachekey)) {
+						Logging::log('Using cached route entry for ' . $filename);
+					} else {
+						$route_entries = \Spyc::YAMLLoad($filename, true);
+						foreach ($route_entries as $route => $details) {
+							if (is_array($details) && array_key_exists('url', $details))
+								$route_entries[$route] = Routing::generateRoute($details);
+							else
+								unset($route_entries[$route]);
+						}
+						Cache::add($cachekey, $route_entries);
+						Cache::fileAdd($cachekey, $route_entries);
 					}
-					Cache::add(Cache::KEY_ROUTES_POSTMODULES, $routes_postmodules);
-					Cache::fileAdd(Cache::KEY_ROUTES_POSTMODULES, $routes_postmodules);
+					$routes = array_merge($routes, $route_entries);
 				}
-				$routes = array_merge($routes, $routes_postmodules);
 			}
 			self::$_configuration['routes'] = $routes;
 		}

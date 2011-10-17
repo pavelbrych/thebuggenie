@@ -66,10 +66,10 @@
 								<td class="config_explanation" colspan="2">
 									<?php echo __('Enter the maximum allowed file size for uploads here. Remember that this value cannot be higher than the current php max_upload_size or post_max_size, both defined in php.ini.'); ?>
 									<u><?php echo __('Currently, these values are max_upload_size: %ini_max_upload_size% and post_max_size: %ini_post_max_size%.', array('%ini_max_upload_size%' => '<b>' . (int) ini_get('upload_max_filesize') . __('MB') . '</b>', '%ini_post_max_size%' => '<b>' . (int) ini_get('post_max_size') . __('MB') . '</b>')); ?></u>
-									<?php if (TBGContext::getScope()->getMaxUploadLimit()): ?>
+									<?php if (\thebuggenie\core\Context::getScope()->getMaxUploadLimit()): ?>
 									<br>
 									<br>
-									<b><?php echo __('Also note that there is a total upload limit on this instance, which is %limit% MB.', array('%limit%' => '<u>' . TBGContext::getScope()->getMaxUploadLimit() . '</u>')); ?><br></b>
+									<b><?php echo __('Also note that there is a total upload limit on this instance, which is %limit% MB.', array('%limit%' => '<u>' . \thebuggenie\core\Context::getScope()->getMaxUploadLimit() . '</u>')); ?><br></b>
 									<br>
 									<?php endif; ?>
 								</td>

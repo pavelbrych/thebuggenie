@@ -5,7 +5,7 @@
 
 		protected static $_items = null;
 		
-		protected $_itemtype = TBGDatatype::STATUS;
+		protected $_itemtype = \thebuggenie\entities\Datatype::STATUS;
 		
 		public static function loadFixtures(TBGScope $scope)
 		{
@@ -97,7 +97,7 @@
 		
 		public function hasLinkedWorkflowStep()
 		{
-			return (bool) \b2db\Core::getTable('TBGWorkflowStepsTable')->countByStatusID($this->getID());
+			return (bool) Caspar::getB2DBInstance()->getTable('TBGWorkflowStepsTable')->countByStatusID($this->getID());
 		}
 		
 		public function canBeDeleted()

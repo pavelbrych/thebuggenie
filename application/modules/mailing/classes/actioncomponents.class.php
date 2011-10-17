@@ -38,7 +38,7 @@
 			$this->general_settings = $general_settings;
 			$this->issues_settings = $issues_settings;
 
-			$this->uid = TBGContext::getUser()->getID();
+			$this->uid = \caspar\core\Caspar::getUser()->getID();
 		}
 		
 		public function componentEditIncomingEmailAccount()

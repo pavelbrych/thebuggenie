@@ -143,13 +143,13 @@
 						if ($cc == 0 && !Context::isInstallmode() && $uid == 0)
 						{
 							Logging::log('There were no settings stored in the database!', 'main', Logging::LEVEL_FATAL);
-							throw new TBGSettings\Exception('Could not retrieve settings from database (no settings stored)');
+							throw new \Exception('Could not retrieve settings from database (no settings stored)');
 						}
 					}
 					elseif (!Context::isInstallmode() && $uid == 0)
 					{
 						Logging::log('Settings could not be retrieved from the database!', 'main', Logging::LEVEL_FATAL);
-						throw new TBGSettings\Exception('Could not retrieve settings from database');
+						throw new \Exception('Could not retrieve settings from database');
 					}
 					self::$_loadedsettings[$uid] = true;
 					Logging::log('Retrieved');
@@ -176,7 +176,7 @@
 		{
 			if ($scope == 0 && $name != 'defaultscope' && $module == 'core')
 			{
-				if (($scope = Context::getScope()) instanceof TBGScope)
+				if (($scope = Context::getScope()) instanceof \thebuggenie\core\Scope)
 				{
 					$scope = $scope->getID();
 				}
@@ -186,9 +186,9 @@
 				}
 			}
 
-			\b2db\Core::getTable('\thebuggenie\tables\Settings')->saveSetting($name, $module, $value, $uid, $scope);
+			Caspar::getB2DBInstance()->getTable('\thebuggenie\tables\Settings')->saveSetting($name, $module, $value, $uid, $scope);
 			
-			if ($scope != 0 && ((!Context::getScope() instanceof TBGScope) || $scope == Context::getScope()->getID()))
+			if ($scope != 0 && ((!Context::getScope() instanceof \thebuggenie\core\Scope) || $scope == Context::getScope()->getID()))
 			{
 				self::$_settings[$module][$name][$uid] = $value;
 			}
@@ -202,11 +202,11 @@
 	
 		public static function get($name, $module = 'core', $scope = null, $uid = 0)
 		{
-			if (Context::isInstallmode() && !Context::getScope() instanceof TBGScope)
+			if (Context::isInstallmode() && !Context::getScope() instanceof \thebuggenie\core\Scope)
 			{
 				return null;
 			}
-			if ($scope instanceof TBGScope)
+			if ($scope instanceof \thebuggenie\core\Scope)
 			{
 				$scope = $scope->getID();
 			}
@@ -283,7 +283,7 @@
 			throw new \Exception("This function is deprecated. Default scope is always 1");
 			if (self::$_defaultscope === null)
 			{
-				$row = \b2db\Core::getTable('\thebuggenie\tables\Settings')->getDefaultScope();
+				$row = Caspar::getB2DBInstance()->getTable('\thebuggenie\tables\Settings')->getDefaultScope();
 				self::$_defaultscope = Caspar::factory()->TBGScope($row->get(\thebuggenie\tables\Settings::VALUE));
 			}
 			return self::$_defaultscope;
@@ -292,7 +292,7 @@
 		public static function deleteSetting($name, $module = 'core', $scope = null, $uid = null)
 		{
 			$scope = ($scope === null) ? Context::getScope()->getID() : $scope;
-			$uid = ($uid === null) ? Context::getUser()->getID() : $uid;
+			$uid = ($uid === null) ? Caspar::getUser()->getID() : $uid;
 
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(\thebuggenie\tables\Settings::NAME, $name);
@@ -300,7 +300,7 @@
 			$crit->addWhere(\thebuggenie\tables\Settings::SCOPE, $scope);
 			$crit->addWhere(\thebuggenie\tables\Settings::UID, $uid);
 			
-			\b2db\Core::getTable('\thebuggenie\tables\Settings')->doDelete($crit);
+			Caspar::getB2DBInstance()->getTable('\thebuggenie\tables\Settings')->doDelete($crit);
 			unset(self::$_settings[$name][$uid]);
 		}
 	
@@ -314,7 +314,7 @@
 				throw new \Exception('BUGS has not been correctly installed. Please check that the default scope exists');
 			}
 			$crit->addWhere(\thebuggenie\tables\Settings::SCOPE, $scope);
-			$res = \b2db\Core::getTable('\thebuggenie\tables\Settings')->doSelect($crit);
+			$res = Caspar::getB2DBInstance()->getTable('\thebuggenie\tables\Settings')->doSelect($crit);
 			if ($res)
 			{
 				$retarr = array();
@@ -337,7 +337,7 @@
 
 		public static function getAdminGroup()
 		{
-			return Caspar::factory()->TBGGroup((int) self::get(self::SETTING_ADMIN_GROUP));
+			return Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', (int) self::get(self::SETTING_ADMIN_GROUP));
 		}
 		
 		public static function isRegistrationEnabled()
@@ -466,13 +466,13 @@
 		/**
 		 * Return the default user group
 		 *
-		 * @return TBGGroup
+		 * @return \thebuggenie\entities\Group
 		 */
 		public static function getDefaultGroup()
 		{
 			try
 			{
-				return Caspar::factory()->TBGGroup(self::get(self::SETTING_USER_GROUP));
+				return Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', self::get(self::SETTING_USER_GROUP));
 			}
 			catch (\Exception $e)
 			{
@@ -563,12 +563,12 @@
 		
 		public static function getUserTimezone()
 		{
-			return self::get(self::SETTING_USER_TIMEZONE, 'core', null, Context::getUser()->getID());
+			return self::get(self::SETTING_USER_TIMEZONE, 'core', null, Caspar::getUser()->getID());
 		}
 		
 		public static function getUserLanguage()
 		{
-			return self::get(self::SETTING_USER_LANGUAGE, 'core', null, Context::getUser()->getID());
+			return self::get(self::SETTING_USER_LANGUAGE, 'core', null, Caspar::getUser()->getID());
 		}
 		
 		public static function isUploadsEnabled()
@@ -615,12 +615,12 @@
 
 		public static function isInfoBoxVisible($key)
 		{
-			return !(bool) self::get(self::INFOBOX_PREFIX . $key, 'core', Context::getScope()->getID(), Context::getUser()->getID());
+			return !(bool) self::get(self::INFOBOX_PREFIX . $key, 'core', Context::getScope()->getID(), Caspar::getUser()->getID());
 		}
 
 		public static function hideInfoBox($key)
 		{
-			self::saveSetting(self::INFOBOX_PREFIX . $key, 1, 'core', Context::getScope()->getID(), Context::getUser()->getID());
+			self::saveSetting(self::INFOBOX_PREFIX . $key, 1, 'core', Context::getScope()->getID(), Caspar::getUser()->getID());
 		}
 		
 		public static function showInfoBox($key)
@@ -665,7 +665,7 @@
 		
 		public static function isUsingExternalAuthenticationBackend()
 		{
-			if (TBGSettings::getAuthenticationBackend() !== null && TBGSettings::getAuthenticationBackend() !== 'tbg'): return true; else: return false; endif;
+			return (bool) (self::getAuthenticationBackend() !== null && self::getAuthenticationBackend() !== 'tbg');
 		}
 
 	}

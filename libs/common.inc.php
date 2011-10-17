@@ -202,9 +202,9 @@
 				break;
 			case 21:
 				$tstring = (TBGContext::isCLI()) ? strftime('%a, %d %b %Y %H:%M:%S GMT', $tstamp) : strftime(TBGContext::getI18n()->getDateTimeFormat(17), $tstamp);
-				if (TBGContext::getUser()->getTimezone() > 0) $tstring .= '+';
-				if (TBGContext::getUser()->getTimezone() < 0) $tstring .= '-';
-				if (TBGContext::getUser()->getTimezone() != 0) $tstring .= TBGContext::getUser()->getTimezone();
+				if (\caspar\core\Caspar::getUser()->getTimezone() > 0) $tstring .= '+';
+				if (\caspar\core\Caspar::getUser()->getTimezone() < 0) $tstring .= '-';
+				if (\caspar\core\Caspar::getUser()->getTimezone() != 0) $tstring .= \caspar\core\Caspar::getUser()->getTimezone();
 				break;
 			case 22:
 				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(15), $tstamp);
@@ -333,12 +333,12 @@
 
 	function tbg_get_breadcrumblinks($type, $project = null)
 	{
-		return TBGContext::getResponse()->getPredefinedBreadcrumbLinks($type, $project);
+		return \caspar\core\Caspar::getResponse()->getPredefinedBreadcrumbLinks($type, $project);
 	}
 
 	function tbg_get_javascripts()
 	{
-		$tbg_response = TBGContext::getResponse();
+		$tbg_response = \caspar\core\Caspar::getResponse();
 //		$tbg_response->addJavascript('jquery-1.6.2.min.js');
 		$tbg_response->addJavascript('prototype.js');
 		$tbg_response->addJavascript('builder.js');
@@ -371,7 +371,7 @@
 
 	function tbg_get_stylesheets()
 	{
-		$tbg_response = TBGContext::getResponse();
+		$tbg_response = \caspar\core\Caspar::getResponse();
 		$cssstrings = array();
 		$sepcss = array();
 

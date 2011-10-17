@@ -35,7 +35,7 @@
 			
 			parent::_addForeignKeyColumn(self::ISSUETYPE_ID, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
 			parent::_addForeignKeyColumn(self::PROJECT_ID, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function getAllByProjectID($project_id)
@@ -60,7 +60,7 @@
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::PROJECT_ID, $project_id);
 			$crit->addInsert(self::ISSUETYPE_ID, $issuetype_id);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doInsert($crit);
 			return true;
 		}
@@ -69,7 +69,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_ID, $issuetype_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$this->doDelete($crit);
 			return true;
 		}

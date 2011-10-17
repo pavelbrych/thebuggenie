@@ -1,8 +1,8 @@
 <?php
 
 	$tbg_response->setTitle(__('Configure users, teams and groups'));
-	$users_text = (TBGContext::getScope()->getMaxUsers()) ? __('Users (%num%/%max%)', array('%num%' => '<span id="current_user_num_count">'.TBGUser::getUsersCount().'</span>', '%max%' => TBGContext::getScope()->getMaxUsers())) : __('Users');
-	$teams_text = (TBGContext::getScope()->getMaxTeams()) ? __('Teams (%num%/%max%)', array('%num%' => '<span id="current_team_num_count">'.TBGTeam::getTeamsCount().'</span>', '%max%' => TBGContext::getScope()->getMaxTeams())) : __('Teams');
+	$users_text = (\thebuggenie\core\Context::getScope()->getMaxUsers()) ? __('Users (%num%/%max%)', array('%num%' => '<span id="current_user_num_count">'.TBGUser::getUsersCount().'</span>', '%max%' => \thebuggenie\core\Context::getScope()->getMaxUsers())) : __('Users');
+	$teams_text = (\thebuggenie\core\Context::getScope()->getMaxTeams()) ? __('Teams (%num%/%max%)', array('%num%' => '<span id="current_team_num_count">'.TBGTeam::getTeamsCount().'</span>', '%max%' => \thebuggenie\core\Context::getScope()->getMaxTeams())) : __('Teams');
 
 ?>
 <table style="table-layout: fixed; width: 100%" cellpadding=0 cellspacing=0>
@@ -50,7 +50,7 @@
 								</form>
 							</td>
 						</tr>
-						<tr id="adduser_div"<?php if (!TBGContext::getScope()->hasUsersAvailable()): ?> style="display: none;"<?php endif; ?>>
+						<tr id="adduser_div"<?php if (!\thebuggenie\core\Context::getScope()->hasUsersAvailable()): ?> style="display: none;"<?php endif; ?>>
 							<td style="padding: 3px;"><label for="adduser_username"><?php echo __('Enter username'); ?>:</label></td>
 							<td style="padding: 3px;">
 								<form action="<?php echo make_url('configure_users_add_user'); ?>" method="post" onsubmit="TBG.Config.User.add('<?php echo make_url('configure_users_add_user'); ?>');return false;" id="createuser_form">
@@ -86,7 +86,7 @@
 					</div>
 				</div>
 				<div id="tab_teams_pane" style="display: none; padding-top: 0; width: 750px;">
-					<div class="rounded_box yellow borderless" style="margin-top: 5px; padding: 7px;<?php if (!TBGContext::getScope()->hasTeamsAvailable()): ?> display: none;<?php endif; ?>" id="add_team_div">
+					<div class="rounded_box yellow borderless" style="margin-top: 5px; padding: 7px;<?php if (!\thebuggenie\core\Context::getScope()->hasTeamsAvailable()): ?> display: none;<?php endif; ?>" id="add_team_div">
 						<form id="create_team_form" action="<?php echo make_url('configure_users_add_team'); ?>" method="post" accept-charset="<?php echo TBGSettings::getCharset(); ?>" onsubmit="createTeam('<?php echo make_url('configure_users_add_team'); ?>');return false;">
 							<label for="team_name"><?php echo __('Create a new team'); ?></label>
 							<input type="text" id="team_name" name="team_name">

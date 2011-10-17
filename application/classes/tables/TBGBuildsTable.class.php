@@ -55,7 +55,7 @@
 			parent::_addForeignKeyColumn(self::PROJECT, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
 			parent::_addForeignKeyColumn(self::FILE_ID, TBGFilesTable::getTable(), TBGFilesTable::ID);
 			parent::_addForeignKeyColumn(self::MILESTONE, TBGMilestonesTable::getTable(), TBGMilestonesTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function getByProjectID($project_id)
@@ -84,7 +84,7 @@
 		public function getByID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$row = $this->doSelectById($id, $crit);
 			return $row;
 		}
@@ -93,7 +93,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addUpdate(self::IS_DEFAULT, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::PROJECT, $project_id);
 			$res = $this->doUpdate($crit);
 		}
@@ -102,7 +102,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addUpdate(self::IS_DEFAULT, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::EDITION, $edition_id);
 			$res = $this->doUpdate($crit);
 		}

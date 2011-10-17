@@ -46,7 +46,7 @@
 		protected function _setup()
 		{
 			
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addVarchar(self::PRE_OR_POST, 4);
 			parent::_addVarchar(self::RULE, 100);
 			parent::_addVarchar(self::RULE_VALUE, 200);
@@ -57,7 +57,7 @@
 		public function getByTransitionID($transition_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::TRANSITION_ID, $transition_id);
 			
 			$actions = array('pre' => array(), 'post' => array());

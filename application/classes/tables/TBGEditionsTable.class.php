@@ -59,7 +59,7 @@
 			parent::_addBoolean(self::PLANNED_RELEASED);
 			parent::_addBoolean(self::LOCKED);
 			parent::_addForeignKeyColumn(self::PROJECT, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function getByProjectID($project_id)

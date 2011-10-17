@@ -75,7 +75,7 @@
 						}
 						catch (Exception $e)
 						{
-							TBGLogging::log("Changed item of type {$class}, id {$id} is invalid - unsetting", 'main', TBGLogging::LEVEL_NOTICE);
+							\caspar\core\Logging::log("Changed item of type {$class}, id {$id} is invalid - unsetting", 'main', \caspar\core\Logging::LEVEL_NOTICE);
 							unset($_SESSION['changeableitems'][$class][$id]);
 						}
 					}

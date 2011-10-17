@@ -35,7 +35,7 @@
 		{
 			
 			parent::_addBoolean(self::MUSTFIX);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::PARENT_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
 			parent::_addForeignKeyColumn(self::CHILD_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
 		}
@@ -70,7 +70,7 @@
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::CHILD_ID, $issue_id);
 			$crit->addInsert(self::PARENT_ID, $parent_id);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doInsert($crit);
 			return $res;
 		}
@@ -80,7 +80,7 @@
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::PARENT_ID, $issue_id);
 			$crit->addInsert(self::CHILD_ID, $child_id);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doInsert($crit);
 			return $res;
 		}

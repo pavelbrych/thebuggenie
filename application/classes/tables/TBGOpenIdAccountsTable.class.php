@@ -37,7 +37,7 @@
 			parent::_addVarchar(self::IDENTITY, 300);
 			parent::_addVarchar(self::IDENTITY_HASH, 300);
 			parent::_addVarchar(self::EMAIL, 300);
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 		}
 		
 		public function addIdentity($identity, $email, $user_id)

@@ -36,20 +36,20 @@
 		
 		public function runAddCommit(Request $request)
 		{
-			TBGContext::getResponse()->setContentType('text/plain');
-			TBGContext::getResponse()->renderHeaders();
+			\caspar\core\Caspar::getResponse()->setContentType('text/plain');
+			\caspar\core\Caspar::getResponse()->renderHeaders();
 			
 			/* Prepare variables */
-			$passkey = TBGContext::getRequest()->getParameter('passkey');
-			$project_id = urldecode(TBGContext::getRequest()->getParameter('project_id'));
-			$author = trim(html_entity_decode(urldecode(TBGContext::getRequest()->getParameter('author')), ENT_QUOTES), '"');
-			$new_rev = TBGContext::getRequest()->getParameter('rev');
-			$commit_msg = trim(html_entity_decode(urldecode(TBGContext::getRequest()->getParameter('commit_msg')), ENT_QUOTES), '"');
-			$changed = trim(html_entity_decode(urldecode(TBGContext::getRequest()->getParameter('changed')), ENT_QUOTES), '"');
+			$passkey = \caspar\core\Caspar::getRequest()->getParameter('passkey');
+			$project_id = urldecode(\caspar\core\Caspar::getRequest()->getParameter('project_id'));
+			$author = trim(html_entity_decode(urldecode(\caspar\core\Caspar::getRequest()->getParameter('author')), ENT_QUOTES), '"');
+			$new_rev = \caspar\core\Caspar::getRequest()->getParameter('rev');
+			$commit_msg = trim(html_entity_decode(urldecode(\caspar\core\Caspar::getRequest()->getParameter('commit_msg')), ENT_QUOTES), '"');
+			$changed = trim(html_entity_decode(urldecode(\caspar\core\Caspar::getRequest()->getParameter('changed')), ENT_QUOTES), '"');
 			
-			if (TBGContext::getRequest()->hasParameter('branch'))
+			if (\caspar\core\Caspar::getRequest()->hasParameter('branch'))
 			{
-				$branch = trim(html_entity_decode(urldecode(TBGContext::getRequest()->getParameter('branch')), ENT_QUOTES), '"');
+				$branch = trim(html_entity_decode(urldecode(\caspar\core\Caspar::getRequest()->getParameter('branch')), ENT_QUOTES), '"');
 			}
 			else
 			{
@@ -77,23 +77,23 @@
 			}
 			
 			// Obtain previous revision
-			if (!TBGContext::getRequest()->hasParameter('oldrev'))
+			if (!\caspar\core\Caspar::getRequest()->hasParameter('oldrev'))
 			{
 				$old_rev = $new_rev - 1;
 			}
 			else
 			{
-				$old_rev = TBGContext::getRequest()->getParameter('oldrev'); // for git, etc. which use hashes
+				$old_rev = \caspar\core\Caspar::getRequest()->getParameter('oldrev'); // for git, etc. which use hashes
 			}
 			
 			// Obtain date timestamp
-			if (!TBGContext::getRequest()->hasParameter('date'))
+			if (!\caspar\core\Caspar::getRequest()->hasParameter('date'))
 			{
 				$date = null;
 			}
 			else
 			{
-				$date = TBGContext::getRequest()->getParameter('date'); // posix timestamp of commit
+				$date = \caspar\core\Caspar::getRequest()->getParameter('date'); // posix timestamp of commit
 			}
 			
 			// Validate fields
@@ -116,11 +116,11 @@
 		
 		public function runAddCommitGithub(Request $request)
 		{
-			TBGContext::getResponse()->setContentType('text/plain');
-			TBGContext::getResponse()->renderHeaders();
+			\caspar\core\Caspar::getResponse()->setContentType('text/plain');
+			\caspar\core\Caspar::getResponse()->renderHeaders();
 				
-			$passkey = TBGContext::getRequest()->getParameter('passkey');
-			$project_id = urldecode(TBGContext::getRequest()->getParameter('project_id'));
+			$passkey = \caspar\core\Caspar::getRequest()->getParameter('passkey');
+			$project_id = urldecode(\caspar\core\Caspar::getRequest()->getParameter('project_id'));
 			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 			
 			// Validate access
@@ -143,7 +143,7 @@
 			}
 			
 			// Validate data
-			$data = html_entity_decode(TBGContext::getRequest()->getParameter('payload'));
+			$data = html_entity_decode(\caspar\core\Caspar::getRequest()->getParameter('payload'));
 			if (empty($data) || $data == null)
 			{
 				die('Error: No payload was provided');
@@ -236,11 +236,11 @@
 		
 		public function runAddCommitGitorious(Request $request)
 		{
-			TBGContext::getResponse()->setContentType('text/plain');
-			TBGContext::getResponse()->renderHeaders();
+			\caspar\core\Caspar::getResponse()->setContentType('text/plain');
+			\caspar\core\Caspar::getResponse()->renderHeaders();
 			
-			$passkey = TBGContext::getRequest()->getParameter('passkey');
-			$project_id = urldecode(TBGContext::getRequest()->getParameter('project_id'));
+			$passkey = \caspar\core\Caspar::getRequest()->getParameter('passkey');
+			$project_id = urldecode(\caspar\core\Caspar::getRequest()->getParameter('project_id'));
 			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
 			
 			// Validate access
@@ -263,7 +263,7 @@
 			}
 			
 			// Validate data
-			$data = html_entity_decode(TBGContext::getRequest()->getParameter('payload', null, false));
+			$data = html_entity_decode(\caspar\core\Caspar::getRequest()->getParameter('payload', null, false));
 			if (empty($data) || $data == null)
 			{
 				die('Error: No payload was provided');

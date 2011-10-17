@@ -40,14 +40,14 @@
 		{
 			parent::__construct(self::B2DBNAME, self::ID);
 			parent::_addForeignKeyColumn(self::ISSUE_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
-			parent::_addForeignKeyColumn(self::EDITED_BY, TBGUsersTable::getTable(), TBGUsersTable::ID);
+			parent::_addForeignKeyColumn(self::EDITED_BY, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addInteger(self::EDITED_AT, 10);
 			parent::_addInteger(self::SPENT_MONTHS, 10);
 			parent::_addInteger(self::SPENT_WEEKS, 10);
 			parent::_addInteger(self::SPENT_DAYS, 10);
 			parent::_addInteger(self::SPENT_HOURS, 10);
 			parent::_addFloat(self::SPENT_POINTS);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function saveSpentTime($issue_id, $months, $weeks, $days, $hours, $points)
@@ -60,8 +60,8 @@
 			$crit->addInsert(self::SPENT_POINTS, $points);
 			$crit->addInsert(self::ISSUE_ID, $issue_id);
 			$crit->addInsert(self::EDITED_AT, time());
-			$crit->addInsert(self::EDITED_BY, TBGContext::getUser()->getID());
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::EDITED_BY, \caspar\core\Caspar::getUser()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$this->doInsert($crit);
 		}
 
@@ -101,7 +101,7 @@
 
 				$crit = $this->getCriteria();
 				$crit->addWhere(self::EDITED_AT, $enddate, \b2db\Criteria::DB_LESS_THAN_EQUAL);
-				$crit->addJoin(\b2db\Core::getTable('TBGIssueRelationsTable'), TBGIssueRelationsTable::PARENT_ID, self::ISSUE_ID);
+				$crit->addJoin(Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable'), TBGIssueRelationsTable::PARENT_ID, self::ISSUE_ID);
 				$crit->addWhere(TBGIssueRelationsTable::PARENT_ID, $issue_ids, \b2db\Criteria::DB_IN);
 				$crit->addOrderBy(self::EDITED_AT, \b2db\Criteria::SORT_ASC);
 				$res = $this->doSelect($crit);

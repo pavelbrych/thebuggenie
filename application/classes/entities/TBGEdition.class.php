@@ -60,7 +60,7 @@
 		{
 			if ($is_new)
 			{
-				TBGContext::setPermission("canseeedition", $this->getID(), "core", 0, TBGContext::getUser()->getGroup()->getID(), 0, true);
+				TBGContext::setPermission("canseeedition", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
 				TBGEvent::createNew('core', 'TBGEdition::createNew', $this)->trigger();
 			}
 		}
@@ -81,7 +81,7 @@
 			if (!array_key_exists($project_id, self::$_editions))
 			{
 				self::$_editions[$project_id] = array();
-				if ($res = \b2db\Core::getTable('TBGEditionsTable')->getByProjectID($project_id))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGEditionsTable')->getByProjectID($project_id))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -113,7 +113,7 @@
 			if ($this->_components === null)
 			{
 				$this->_components = array();
-				if ($res = \b2db\Core::getTable('TBGEditionComponentsTable')->getByEditionID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGEditionComponentsTable')->getByEditionID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -171,7 +171,7 @@
 			{
 				$c_id = $c_id->getID();
 			}
-			return \b2db\Core::getTable('TBGEditionComponentsTable')->addEditionComponent($this->getID(), $c_id);
+			return Caspar::getB2DBInstance()->getTable('TBGEditionComponentsTable')->addEditionComponent($this->getID(), $c_id);
 		}
 		
 		/**
@@ -185,7 +185,7 @@
 			{
 				$c_id = $c_id->getID();
 			}
-			\b2db\Core::getTable('TBGEditionComponentsTable')->removeEditionComponent($this->getID(), $c_id);
+			Caspar::getB2DBInstance()->getTable('TBGEditionComponentsTable')->removeEditionComponent($this->getID(), $c_id);
 		}
 		
 		/**
@@ -236,7 +236,7 @@
 			if ($this->_builds === null)
 			{
 				$this->_builds = array();
-				if ($res = \b2db\Core::getTable('TBGBuildsTable')->getByEditionID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->getByEditionID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -360,7 +360,7 @@
 			$users = array();
 			foreach (array_keys($this->_assignees['users']) as $user_id)
 			{
-				$users[$user_id] = \caspar\core\Caspar::factory()->TBGUser($user_id);
+				$users[$user_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $user_id);
 			}
 			return $users;
 		}
@@ -371,7 +371,7 @@
 			$teams = array();
 			foreach (array_keys($this->_assignees['teams']) as $team_id)
 			{
-				$teams[$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id);
+				$teams[$team_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id);
 			}
 			return $teams;
 		}
@@ -398,7 +398,7 @@
 
 		public function _preDelete()
 		{
-			\b2db\Core::getTable('TBGEditionAssigneesTable')->deleteByEditionID($this->getID());
+			Caspar::getB2DBInstance()->getTable('TBGEditionAssigneesTable')->deleteByEditionID($this->getID());
 		}
 		
 		/**
@@ -408,7 +408,7 @@
 		 */
 		public function hasAccess()
 		{
-			return ($this->getProject()->canSeeAllEditions() || TBGContext::getUser()->hasPermission('canseeedition', $this->getID()));
+			return ($this->getProject()->canSeeAllEditions() || \caspar\core\Caspar::getUser()->hasPermission('canseeedition', $this->getID()));
 		}
 		
 	}

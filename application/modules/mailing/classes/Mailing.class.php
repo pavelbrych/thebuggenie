@@ -1,6 +1,8 @@
 <?php
 
 	namespace application\modules\mailing;
+	
+	use caspar\core\Event;
 
 	class Mailing extends \thebuggenie\core\Module
 	{
@@ -85,20 +87,20 @@
 
 		protected function _addListeners()
 		{
-			TBGEvent::listen('core', 'TBGUser::createNew', array($this, 'listen_registerUser'));
-			TBGEvent::listen('core', 'password_reset', array($this, 'listen_forgottenPassword'));
-			TBGEvent::listen('core', 'login_form_pane', array($this, 'listen_loginPane'));
-			TBGEvent::listen('core', 'login_form_tab', array($this, 'listen_loginTab'));
-			//TBGEvent::listen('core', 'TBGIssue::save', array($this, 'listen_issueSave'));
-			TBGEvent::listen('core', 'TBGIssue::createNew', array($this, 'listen_issueCreate'));
-			TBGEvent::listen('core', 'TBGUser::createNew', array($this, 'listen_createUser'));
-			TBGEvent::listen('core', 'TBGComment::createNew', array($this, 'listen_TBGComment_createNew'));
-			TBGEvent::listen('core', 'header_begins', array($this, 'listen_headerBegins'));
-			TBGEvent::listen('core', 'viewissue', array($this, 'listen_viewissue'));
-			TBGEvent::listen('core', 'user_dropdown_anon', array($this, 'listen_userDropdownAnon'));
-			TBGEvent::listen('core', 'config_project_tabs', array($this, 'listen_projectconfig_tab'));
-			TBGEvent::listen('core', 'config_project_panes', array($this, 'listen_projectconfig_panel'));
-			TBGEvent::listen('core', 'get_backdrop_partial', array($this, 'listen_get_backdrop_partial'));
+			Event::listen('core', 'TBGUser::createNew', array($this, 'listen_registerUser'));
+			Event::listen('core', 'password_reset', array($this, 'listen_forgottenPassword'));
+			Event::listen('core', 'login_form_pane', array($this, 'listen_loginPane'));
+			Event::listen('core', 'login_form_tab', array($this, 'listen_loginTab'));
+			//Event::listen('core', 'TBGIssue::save', array($this, 'listen_issueSave'));
+			Event::listen('core', 'TBGIssue::createNew', array($this, 'listen_issueCreate'));
+			Event::listen('core', 'TBGUser::createNew', array($this, 'listen_createUser'));
+			Event::listen('core', 'TBGComment::createNew', array($this, 'listen_TBGComment_createNew'));
+			Event::listen('core', 'header_begins', array($this, 'listen_headerBegins'));
+			Event::listen('core', 'viewissue', array($this, 'listen_viewissue'));
+			Event::listen('core', 'user_dropdown_anon', array($this, 'listen_userDropdownAnon'));
+			Event::listen('core', 'config_project_tabs', array($this, 'listen_projectconfig_tab'));
+			Event::listen('core', 'config_project_panes', array($this, 'listen_projectconfig_panel'));
+			Event::listen('core', 'get_backdrop_partial', array($this, 'listen_get_backdrop_partial'));
 		}
 
 		protected function _addRoutes()
@@ -194,7 +196,7 @@
 			return $this->getSetting('from_name');
 		}
 
-		public function listen_createUser(TBGEvent $event)
+		public function listen_createUser(Event $event)
 		{
 			$uid = $event->getSubject()->getID();
 			$settings = array(self::NOTIFY_ISSUE_ASSIGNED_UPDATED, self::NOTIFY_ISSUE_ONCE, self::NOTIFY_ISSUE_POSTED_UPDATED, self::NOTIFY_ISSUE_PROJECT_ASSIGNED, self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, self::NOTIFY_ISSUE_TEAMASSIGNED_UPDATED, self::NOTIFY_ISSUE_COMMENTED_ON);
@@ -203,7 +205,7 @@
 				$this->saveSetting($setting, 1, $uid);
 		}
 		
-		public function listen_registerUser(TBGEvent $event)
+		public function listen_registerUser(Event $event)
 		{
 			if ($this->isActivationNeeded())
 			{
@@ -233,7 +235,7 @@
 			}
 		}
 
-		public function listen_loginPane(TBGEvent $event)
+		public function listen_loginPane(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -241,7 +243,7 @@
 			}
 		}
 
-		public function listen_loginTab(TBGEvent $event)
+		public function listen_loginTab(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -249,7 +251,7 @@
 			}
 		}			
 		
-		public function listen_forgottenPassword(TBGEvent $event)
+		public function listen_forgottenPassword(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -260,12 +262,12 @@
 			}
 		}
 		
-		public function listen_headerBegins(TBGEvent $event)
+		public function listen_headerBegins(Event $event)
 		{
 
 		}
 		
-		public function listen_userDropdownAnon(TBGEvent $event)
+		public function listen_userDropdownAnon(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -307,7 +309,7 @@
 		protected function _getIssueRelatedUsers(TBGIssue $issue)
 		{
 			$uids = array();
-			$cu = TBGContext::getUser()->getID();
+			$cu = \caspar\core\Caspar::getUser()->getID();
 			$ns = $this->getSetting(self::NOTIFY_ISSUE_UPDATED_SELF, $cu);
 	
 			// Add all users who's marked this issue as interesting
@@ -398,7 +400,7 @@
 			
 			foreach ($issue->getProject()->getAssignedTeams() as $team_id => $assignments)
 			{
-				foreach (\caspar\core\Caspar::factory()->TBGTeam($team_id)->getMembers() as $member)
+				foreach (\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id)->getMembers() as $member)
 				{
 					if ($member->getID() == $cu && !$ns) continue;
 					if (!$this->getSetting(self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, $member->getID())) continue;
@@ -407,7 +409,7 @@
 			}
 			foreach ($issue->getProject()->getAssignedUsers() as $user_id => $assignments)
 			{
-				$member = \caspar\core\Caspar::factory()->TBGUser($user_id);
+				$member = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $user_id);
 				if (!($member->getID() == $cu && !$ns) && !(!$this->getSetting(self::NOTIFY_ISSUE_PROJECT_ASSIGNED, $member->getID())))
 					$uids[$member->getID()] = $member->getID();
 			}
@@ -446,7 +448,7 @@
 				}
 				foreach ($edition_list['edition']->getAssignedTeams() as $team_id => $assignments)
 				{
-					foreach (\caspar\core\Caspar::factory()->TBGTeam($team_id)->getMembers() as $member)
+					foreach (\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id)->getMembers() as $member)
 					{
 						if ($member->getID() == $cu && !$ns) continue;
 						if (!$this->getSetting(self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, $member->getID())) continue;
@@ -455,7 +457,7 @@
 				}
 				foreach ($edition_list['edition']->getAssignedUsers() as $user_id => $assignments)
 				{
-					$member = \caspar\core\Caspar::factory()->TBGUser($user_id);
+					$member = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $user_id);
 					if ($member->getID() == $cu && !$ns) continue;
 					if (!$this->getSetting(self::NOTIFY_ISSUE_PROJECT_ASSIGNED, $member->getID())) continue;
 					$uids[$member->getID()] = $member->getID();
@@ -467,7 +469,7 @@
 			{
 				foreach ($component_list['component']->getAssignedTeams() as $team_id => $assignments)
 				{
-					foreach (\caspar\core\Caspar::factory()->TBGTeam($team_id)->getMembers() as $member)
+					foreach (\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id)->getMembers() as $member)
 					{
 						if ($member->getID() == $cu && !$ns) continue;
 						if (!$this->getSetting(self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, $member->getID())) continue;
@@ -476,7 +478,7 @@
 				}
 				foreach ($component_list['component']->getAssignedUsers() as $user_id => $assignments)
 				{
-					$member = \caspar\core\Caspar::factory()->TBGUser($user_id);
+					$member = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $user_id);
 					if ($member->getID() == $cu && !$ns) continue;
 					if (!$this->getSetting(self::NOTIFY_ISSUE_PROJECT_ASSIGNED, $member->getID())) continue;
 					$uids[$member->getID()] = $member->getID();
@@ -497,13 +499,13 @@
 						$this->saveSetting(self::NOTIFY_ISSUE_ONCE . '_' . $issue->getID(), 1, $uid);
 					}
 				}
-				$uids[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
+				$uids[$uid] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 			}
 			
 			return $uids;
 		}
 		
-		public function listen_viewissue(TBGEvent $event)
+		public function listen_viewissue(Event $event)
 		{
 			if ($this->getSetting(self::NOTIFY_ISSUE_ONCE))
 			{
@@ -511,7 +513,7 @@
 			}
 		}
 		
-		public function listen_issueCreate(TBGEvent $event)
+		public function listen_issueCreate(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -549,35 +551,35 @@
 						}
 						catch (Exception $e)
 						{
-							$this->log("There was an error when trying to send email to some recipients:\n" . $e->getMessage(), TBGLogging::LEVEL_NOTICE);
+							$this->log("There was an error when trying to send email to some recipients:\n" . $e->getMessage(), \caspar\core\Logging::LEVEL_NOTICE);
 						}
 					}
 				}
 			}
 		}
 
-		public function listen_projectconfig_tab(TBGEvent $event)
+		public function listen_projectconfig_tab(Event $event)
 		{
 			TBGActionComponent::includeTemplate('mailing/projectconfig_tab', array('selected_tab' => $event->getParameter('selected_tab')));
 		}
 		
-		public function listen_get_backdrop_partial(TBGEvent $event)
+		public function listen_get_backdrop_partial(Event $event)
 		{
 			if ($event->getSubject() == 'mailing_editincomingemailaccount')
 			{
-				$account = new TBGIncomingEmailAccount(TBGContext::getRequest()->getParameter('account_id'));
+				$account = new TBGIncomingEmailAccount(\caspar\core\Caspar::getRequest()->getParameter('account_id'));
 				$event->addToReturnList($account, 'account');
 				$event->setReturnValue('mailing/editincomingemailaccount');
 				$event->setProcessed();
 			}
 		}
 		
-		public function listen_projectconfig_panel(TBGEvent $event)
+		public function listen_projectconfig_panel(Event $event)
 		{
 			TBGActionComponent::includeTemplate('mailing/projectconfig_panel', array('selected_tab' => $event->getParameter('selected_tab'), 'access_level' => $event->getParameter('access_level'), 'project' => $event->getParameter('project')));
 		}
 		
-		public function listen_TBGComment_createNew(TBGEvent $event)
+		public function listen_TBGComment_createNew(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -609,7 +611,7 @@
 			}
 		}
 		
-		public function listen_issueSave(TBGEvent $event)
+		public function listen_issueSave(Event $event)
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
@@ -782,7 +784,7 @@
 		public function postAccountSettings(\caspar\core\Request $request)
 		{
 			$settings = array(self::NOTIFY_ISSUE_ASSIGNED_UPDATED, self::NOTIFY_ISSUE_ONCE, self::NOTIFY_ISSUE_POSTED_UPDATED, self::NOTIFY_ISSUE_PROJECT_ASSIGNED, self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, self::NOTIFY_ISSUE_TEAMASSIGNED_UPDATED, self::NOTIFY_ISSUE_UPDATED_SELF, self::NOTIFY_ISSUE_COMMENTED_ON);
-			$uid = TBGContext::getUser()->getID();
+			$uid = \caspar\core\Caspar::getUser()->getID();
 			foreach ($settings as $setting)
 			{
 				$this->saveSetting($setting, (int) $request->getParameter($setting, 0), $uid);
@@ -813,7 +815,7 @@
 		protected function addDefaultSettingsToAllUsers()
 		{
 			$settings = array(self::NOTIFY_ISSUE_ASSIGNED_UPDATED, self::NOTIFY_ISSUE_ONCE, self::NOTIFY_ISSUE_POSTED_UPDATED, self::NOTIFY_ISSUE_PROJECT_ASSIGNED, self::NOTIFY_ISSUE_RELATED_PROJECT_TEAMASSIGNED, self::NOTIFY_ISSUE_TEAMASSIGNED_UPDATED, self::NOTIFY_ISSUE_COMMENTED_ON);
-			foreach (TBGUsersTable::getTable()->getAllUserIDs() as $uid)
+			foreach (Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getAllUserIDs() as $uid)
 			{
 				foreach ($settings as $setting)
 				{
@@ -972,20 +974,20 @@
 								case 'resolution':
 									if (($resolution = TBGResolution::getResolutionByKeyish($val)) instanceof TBGResolution)
 									{
-										TBGContext::getRequest()->setParameter('resolution_id', $resolution->getID());
+										\caspar\core\Caspar::getRequest()->setParameter('resolution_id', $resolution->getID());
 									}
 									break;
 								case 'status':
 									if (($status = TBGStatus::getStatusByKeyish($val)) instanceof TBGStatus)
 									{
-										TBGContext::getRequest()->setParameter('status_id', $status->getID());
+										\caspar\core\Caspar::getRequest()->setParameter('status_id', $status->getID());
 									}
 									break;
 							}
 						}
 					}
-					TBGContext::getRequest()->setParameter('comment_body', join("\n", $lines));
-					return $transition->transitionIssueToOutgoingStepFromRequest($issue, TBGContext::getRequest());
+					\caspar\core\Caspar::getRequest()->setParameter('comment_body', join("\n", $lines));
+					return $transition->transitionIssueToOutgoingStepFromRequest($issue, \caspar\core\Caspar::getRequest());
 				}
 			}
 		}

@@ -42,14 +42,14 @@
 			$i18n = TBGContext::getI18n();
 			$config_sections = array();
 
-			if (TBGContext::getUser()->getScope()->getID() == 1)
+			if (\caspar\core\Caspar::getUser()->getScope()->getID() == 1)
 				$config_sections[TBGSettings::CONFIGURATION_SECTION_SCOPES] = array('route' => 'configure_scopes', 'description' => $i18n->__('Scopes'), 'icon' => 'scopes', 'module' => 'core');
 
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_SETTINGS] = array('route' => 'configure_settings', 'description' => $i18n->__('Settings'), 'icon' => 'general', 'module' => 'core');
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_PERMISSIONS] = array('route' => 'configure_permissions', 'description' => $i18n->__('Permissions'), 'icon' => 'permissions', 'module' => 'core');
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_AUTHENTICATION] = array('route' => 'configure_authentication', 'description' => $i18n->__('Authentication'), 'icon' => 'authentication', 'module' => 'core');
 
-			if (TBGContext::getScope()->isUploadsEnabled())
+			if (\thebuggenie\core\Context::getScope()->isUploadsEnabled())
 				$config_sections[TBGSettings::CONFIGURATION_SECTION_UPLOADS] = array('route' => 'configure_files', 'description' => $i18n->__('Uploads &amp; attachments'), 'icon' => 'files', 'module' => 'core');
 			
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_IMPORT] = array('route' => 'configure_import', 'description' => $i18n->__('Import data'), 'icon' => 'import', 'module' => 'core');
@@ -93,7 +93,7 @@
 				}
 				else
 				{
-					$this->selected_subsection = TBGContext::getRequest()->getParameter('config_module');
+					$this->selected_subsection = \caspar\core\Caspar::getRequest()->getParameter('config_module');
 				}
 			}
 
@@ -104,7 +104,7 @@
 			$this->items = array();
 			$this->showitems = true;
 			$this->iscustom = false;
-			$types = TBGDatatype::getTypes();
+			$types = \thebuggenie\entities\Datatype::getTypes();
 
 			if (array_key_exists($this->type, $types))
 			{
@@ -127,7 +127,7 @@
 		{
 			$this->issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($this->id);
 			$this->scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme($this->scheme_id);
-			$this->builtinfields = TBGDatatype::getAvailableFields(true);
+			$this->builtinfields = \thebuggenie\entities\Datatype::getAvailableFields(true);
 			$this->customtypes = TBGCustomDatatype::getAll();
 			$this->visiblefields = $this->scheme->getVisibleFieldsForIssuetype($this->issuetype);
 		}
@@ -198,13 +198,13 @@
 
 		public function componentProjectConfig_Container()
 		{
-			$this->access_level = (TBGContext::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
+			$this->access_level = (\caspar\core\Caspar::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
 			$this->section = isset($this->section) ? $this->section : 'info';
 		}
 
 		public function componentProjectConfig()
 		{
-			$this->access_level = (TBGContext::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
+			$this->access_level = (\caspar\core\Caspar::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
 			$this->statustypes = TBGStatus::getAll();
 			$this->selected_tab = isset($this->section) ? $this->section : 'info';
 		}
@@ -226,20 +226,20 @@
 
 		public function componentProjectEdition()
 		{
-			$this->access_level = (TBGContext::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
+			$this->access_level = (\caspar\core\Caspar::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
 		}
 		
 		public function componentWorkflowtransitionaction()
 		{
 			$available_assignees = array();
-			foreach (TBGContext::getUser()->getTeams() as $team)
+			foreach (\caspar\core\Caspar::getUser()->getTeams() as $team)
 			{
 				foreach ($team->getMembers() as $user)
 				{
 					$available_assignees[$user->getID()] = $user;
 				}
 			}
-			foreach (TBGContext::getUser()->getFriends() as $user)
+			foreach (\caspar\core\Caspar::getUser()->getFriends() as $user)
 			{
 				$available_assignees[$user->getID()] = $user;
 			}
@@ -248,7 +248,7 @@
 		
 		public function componentBuildbox()
 		{
-			$this->access_level = (TBGContext::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
+			$this->access_level = (\caspar\core\Caspar::getUser()->canSaveConfiguration(TBGSettings::CONFIGURATION_SECTION_PROJECTS)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
 		}
 		
 		public function componentBuild()
@@ -258,7 +258,7 @@
 				$this->build = new TBGBuild();
 				$this->build->setProject(TBGContext::getCurrentProject());
 				$this->build->setName(TBGContext::getI18n()->__('%project_name% version 0.0.0', array('%project_name%' => $this->project->getName())));
-				if (TBGContext::getRequest()->getParameter('edition_id') && $edition = \caspar\core\Caspar::factory()->TBGEdition(TBGContext::getRequest()->getParameter('edition_id')))
+				if (\caspar\core\Caspar::getRequest()->getParameter('edition_id') && $edition = \caspar\core\Caspar::factory()->TBGEdition(\caspar\core\Caspar::getRequest()->getParameter('edition_id')))
 				{
 					$this->build->setEdition($edition);
 				}

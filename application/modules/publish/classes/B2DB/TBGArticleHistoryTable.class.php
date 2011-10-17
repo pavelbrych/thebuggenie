@@ -38,8 +38,8 @@
 			parent::_addVarchar(self::REASON, 255);
 			parent::_addInteger(self::DATE, 10);
 			parent::_addInteger(self::REVISION, 10);
-			parent::_addForeignKeyColumn(self::AUTHOR, TBGUsersTable::getTable(), TBGUsersTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::AUTHOR, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		protected function _getNextRevisionNumberForArticle($article_name)
@@ -76,7 +76,7 @@
 				$crit->addInsert(self::REASON, $reason);
 			}
 			
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::DATE, time());
 
 			$res = $this->doInsert($crit);
@@ -100,7 +100,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ARTICLE_NAME, $article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$ctn = $crit->returnCriterion(self::REVISION, $from_revision);
 			if ($to_revision !== null)
 			{
@@ -115,7 +115,7 @@
 				$retval = array();
 				while ($row = $res->getNextRow())
 				{
-					$author = ($row->get(self::AUTHOR)) ? \caspar\core\Caspar::factory()->TBGUser($row->get(self::AUTHOR)) : null;
+					$author = ($row->get(self::AUTHOR)) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $row->get(self::AUTHOR)) : null;
 					$retval[$row->get(self::REVISION)] = array('old_content' => $row->get(self::OLD_CONTENT), 'new_content' => $row->get(self::NEW_CONTENT), 'date' => $row->get(self::DATE), 'author' => $author);
 				}
 
@@ -131,7 +131,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ARTICLE_NAME, $article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::REVISION, $revision, Criteria::DB_GREATER_THAN);
 			$res = $this->doDelete($crit);
 		}

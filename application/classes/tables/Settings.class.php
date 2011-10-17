@@ -73,7 +73,7 @@
 			if ($res instanceof \b2db\Row)
 			{
 				$theID = $res->get(self::ID);
-				$crit2 = new Criteria();
+				$crit2 = $this->getCriteria();
 				$crit2->addWhere(self::NAME, $name);
 				$crit2->addWhere(self::MODULE, $module);
 				$crit2->addWhere(self::UID, $uid);

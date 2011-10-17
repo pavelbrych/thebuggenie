@@ -198,7 +198,7 @@
 			TBGSettings::loadSettings();
 			
 			// Load group, users and permissions fixtures
-			TBGGroup::loadFixtures($this);
+			\thebuggenie\entities\Group::loadFixtures($this);
 
 			// Load initial teams
 			TBGTeam::loadFixtures($this);
@@ -210,7 +210,7 @@
 			list($b_id, $f_id, $e_id, $t_id, $u_id, $i_id) = TBGIssuetype::loadFixtures($this);
 			$scheme = TBGIssuetypeScheme::loadFixtures($this);
 			TBGIssueFieldsTable::getTable()->loadFixtures($this, $scheme, $b_id, $f_id, $e_id, $t_id, $u_id, $i_id);
-			TBGDatatype::loadFixtures($this);
+			\thebuggenie\entities\Datatype::loadFixtures($this);
 			
 			// Set up workflows
 			TBGWorkflow::loadFixtures($this);

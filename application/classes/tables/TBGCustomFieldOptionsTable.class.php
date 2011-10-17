@@ -41,12 +41,12 @@
 			parent::_addVarchar(self::ITEMDATA, 100);
 			parent::_addInteger(self::SORT_ORDER, 100);
 			parent::_addVarchar(self::CUSTOMFIELDS_KEY, 100);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function createNew($key, $name, $value, $itemdata = null, $scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 
 			$trans = Core::startTransaction();
 			$crit = $this->getCriteria();
@@ -75,7 +75,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::CUSTOMFIELDS_KEY, $key);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addOrderBy(self::SORT_ORDER, Criteria::SORT_ASC);
 			
 			$res = $this->doSelect($crit);
@@ -98,7 +98,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::CUSTOMFIELDS_KEY, $key);
 			$crit->addWhere(self::OPTION_VALUE, $value);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$row = $this->doSelectOne($crit);
 
@@ -120,7 +120,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::CUSTOMFIELDS_KEY, $key);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 		
 			$res = $this->doSelect($crit);
 			

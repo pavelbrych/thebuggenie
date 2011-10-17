@@ -56,7 +56,7 @@
 		 */
 		public function getByCommitID($id, $scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			$crit->addWhere(self::COMMIT_ID, $id);

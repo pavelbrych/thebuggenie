@@ -265,11 +265,11 @@
 				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 				$resultSet = $statement->performQuery();
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -302,11 +302,11 @@
 				$crit->setLimit(1);
 				return $this->doSelectOne($crit, $join);
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -333,11 +333,11 @@
 				$resultset = $statement->performQuery();
 				$cnt = count($resultset);
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -374,9 +374,9 @@
 			}
 			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -407,11 +407,11 @@
 				$statement = Statement::getPreparedStatement($crit, $this->_connection);
 				$resultset = $statement->performQuery();
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -441,11 +441,11 @@
 	
 				$resultset = $statement->performQuery('insert');
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -475,11 +475,11 @@
 	
 				$res = $statement->performQuery('update');
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -512,11 +512,11 @@
 	
 				$resultset = $statement->performQuery('update');
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -547,11 +547,11 @@
 				$resultset = $statement->performQuery('delete');
 				return $resultset;
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -572,8 +572,7 @@
 		{
 			try
 			{
-				$crit = new Criteria();
-				$crit->setFromTable($this);
+				$crit = $this->getCriteria();
 				$crit->addWhere($this->id_column, $id);
 				$crit->generateDeleteSQL();
 				
@@ -582,11 +581,11 @@
 				$resultset = $statement->performQuery('delete');
 				return $resultset;
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
-				if ($this->_connection->throwExceptionAsHTML())
+				if (Core::throwExceptionAsHTML())
 				{
-					$this->_connection->fatalError($e);
+					Core::fatalError($e);
 					exit();
 				}
 				else
@@ -616,7 +615,7 @@
 				$statement = Statement::getPreparedStatement($sql, $this->_connection);
 				$res = $statement->performQuery('create');
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
 				throw new Exception('Error creating table ' . $this->getB2DBName() . ': ' . $e->getMessage() . '. SQL was: ' . $sql);
 			}
@@ -677,7 +676,7 @@
 				$statement = Statement::getPreparedStatement($sql, $this->_connection);
 				$res = $statement->performQuery('drop');
 			}
-			catch (\Exception $e)
+			catch (Exception $e)
 			{
 				throw new Exception('Error dropping table ' . $this->getB2DBName() . ': ' . $e->getMessage() . '. SQL was: ' . $sql);
 			}

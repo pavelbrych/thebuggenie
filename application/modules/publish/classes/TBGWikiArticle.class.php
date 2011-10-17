@@ -109,7 +109,7 @@
 		protected function _preSave($is_new)
 		{
 			$this->_date = NOW;
-			$this->_author = TBGContext::getUser();
+			$this->_author = \caspar\core\Caspar::getUser();
 		}
 		
 		public static function findArticlesByContentAndProject($content, $project, $limit = 5, $offset = 0)
@@ -162,7 +162,7 @@
 
 		public static function createNew($name, $content, $published, $scope = null, $options = array())
 		{
-			$user_id = (TBGContext::getUser() instanceof TBGUser) ? TBGContext::getUser()->getID() : 0;
+			$user_id = (\caspar\core\Caspar::getUser() instanceof TBGUser) ? \caspar\core\Caspar::getUser()->getID() : 0;
 
 			$article = new TBGWikiArticle();
 			$article->setName($name);
@@ -370,7 +370,7 @@
 				{
 					while ($row = $history->getNextRow())
 					{
-						$author = ($row->get(TBGArticleHistoryTable::AUTHOR)) ? \caspar\core\Caspar::factory()->TBGUser($row->get(TBGArticleHistoryTable::AUTHOR)) : null;
+						$author = ($row->get(TBGArticleHistoryTable::AUTHOR)) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $row->get(TBGArticleHistoryTable::AUTHOR)) : null;
 						$this->_history[$row->get(TBGArticleHistoryTable::REVISION)] = array('old_content' => $row->get(TBGArticleHistoryTable::OLD_CONTENT), 'new_content' => $row->get(TBGArticleHistoryTable::NEW_CONTENT), 'change_reason' => $row->get(TBGArticleHistoryTable::REASON), 'updated' => $row->get(TBGArticleHistoryTable::DATE), 'author' => $author);
 					}
 				}
@@ -385,14 +385,14 @@
 
 		public function doSave($options = array(), $reason = null)
 		{	
-			if (TBGArticlesTable::getTable()->doesNameConflictExist($this->_name, $this->_id, TBGContext::getScope()->getID()))
+			if (TBGArticlesTable::getTable()->doesNameConflictExist($this->_name, $this->_id, \thebuggenie\core\Context::getScope()->getID()))
 			{
 				if (!array_key_exists('overwrite', $options) || !$options['overwrite'])
 				{
 					throw new Exception(TBGContext::getI18n()->__('Another article with this name already exists'));
 				}
 			}
-			$user_id = (TBGContext::getUser() instanceof TBGUser) ? TBGContext::getUser()->getID() : 0;
+			$user_id = (\caspar\core\Caspar::getUser() instanceof TBGUser) ? \caspar\core\Caspar::getUser()->getID() : 0;
 
 			if (!isset($options['revert']) || !$options['revert'])
 			{
@@ -448,7 +448,7 @@
 			{
 				try
 				{
-					$this->_author = \caspar\core\Caspar::factory()->TBGUser($this->_author);
+					$this->_author = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->_author);
 				}
 				catch (Exception $e)
 				{

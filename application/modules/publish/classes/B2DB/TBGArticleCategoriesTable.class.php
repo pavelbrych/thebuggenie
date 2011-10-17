@@ -31,14 +31,14 @@
 			parent::_addVarchar(self::ARTICLE_NAME, 300);
 			parent::_addBoolean(self::ARTICLE_IS_CATEGORY);
 			parent::_addVarchar(self::CATEGORY_NAME, 300);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function deleteCategoriesByArticle($article_name)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ARTICLE_NAME, $article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 		}
 
@@ -48,7 +48,7 @@
 			$crit->addInsert(self::ARTICLE_NAME, $article_name);
 			$crit->addInsert(self::ARTICLE_IS_CATEGORY, $is_category);
 			$crit->addInsert(self::CATEGORY_NAME, $category_name);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doInsert($crit);
 		}
 
@@ -56,7 +56,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ARTICLE_NAME, $article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addOrderBy(self::CATEGORY_NAME, Criteria::SORT_ASC);
 			$res = $this->doSelect($crit);
 
@@ -68,7 +68,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::CATEGORY_NAME, $category_name);
 			$crit->addWhere(self::ARTICLE_IS_CATEGORY, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addOrderBy(self::ARTICLE_NAME, Criteria::SORT_ASC);
 			$res = $this->doSelect($crit);
 
@@ -80,7 +80,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::CATEGORY_NAME, $category_name);
 			$crit->addWhere(self::ARTICLE_IS_CATEGORY, true);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addOrderBy(self::CATEGORY_NAME, Criteria::SORT_ASC);
 			$res = $this->doSelect($crit);
 

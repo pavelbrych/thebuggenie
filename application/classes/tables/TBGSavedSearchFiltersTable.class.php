@@ -22,14 +22,14 @@
 			parent::_addVarchar(self::VALUE, 200);
 			parent::_addVarchar(self::OPERATOR, 40);
 			parent::_addVarchar(self::FILTER_KEY, 100);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::SEARCH_ID, Core::getTable('TBGSavedSearchesTable'), TBGSavedSearchesTable::ID);
 		}
 
 		public function getFiltersBySavedSearchID($savedsearch_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::SEARCH_ID, $savedsearch_id);
 
 			$retarr = array();
@@ -49,7 +49,7 @@
 		protected function _saveFilterForSavedSearch($saved_search_id, $filter_key, $value, $operator)
 		{
 			$crit = $this->getCriteria();
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::SEARCH_ID, $saved_search_id);
 			$crit->addInsert(self::FILTER_KEY, $filter_key);
 			$crit->addInsert(self::VALUE, $value);
@@ -60,7 +60,7 @@
 		public function deleteBySearchID($saved_search_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::SEARCH_ID, $saved_search_id);
 			$this->doDelete($crit);
 		}

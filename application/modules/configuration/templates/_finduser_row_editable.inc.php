@@ -32,7 +32,7 @@
 				<td><label for="user_<?php echo $user->getID(); ?>_group"><?php echo __('In group'); ?></label></td>
 				<td>
 					<select name="group" id="user_<?php echo $user->getID(); ?>_group">
-						<?php foreach (TBGGroup::getAll() as $group): ?>
+						<?php foreach (\thebuggenie\entities\Group::getAll() as $group): ?>
 							<option value="<?php echo $group->getID(); ?>"<?php if ($user->getGroupID() == $group->getID()): ?> selected<?php endif; ?>><?php echo $group->getName(); ?></option>
 						<?php endforeach; ?>
 					</select>

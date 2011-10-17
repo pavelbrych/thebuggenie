@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\entities;
+
 	/**
 	 * Generic datatype class
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage main
 	 */
-	abstract class TBGDatatypeBase extends TBGIdentifiableClass
+	abstract class DatatypeBase extends \thebuggenie\core\IdentifiableClass
 	{
 
 		/**

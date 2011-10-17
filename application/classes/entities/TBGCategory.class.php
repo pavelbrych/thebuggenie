@@ -5,7 +5,7 @@
 
 		protected static $_items = null;
 		
-		protected $_itemtype = TBGDatatype::CATEGORY;
+		protected $_itemtype = \thebuggenie\entities\Datatype::CATEGORY;
 
 		public static function loadFixtures(TBGScope $scope)
 		{

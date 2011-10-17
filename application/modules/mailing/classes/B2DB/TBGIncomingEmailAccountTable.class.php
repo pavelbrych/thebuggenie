@@ -47,7 +47,7 @@
 			parent::_addInteger(self::TIME_LAST_FETCHED);
 			parent::_addBoolean(self::SSL);
 			parent::_addBoolean(self::KEEP_EMAIL);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::PROJECT, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUETYPE, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
 		}

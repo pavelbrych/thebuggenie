@@ -33,14 +33,14 @@
 		protected function _setup()
 		{
 			
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addVarchar(self::NAME, 200);
 			parent::_addText(self::DESCRIPTION, false);
 		}
 
 		public function getAll($scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			$crit->addOrderBy(self::ID, Criteria::SORT_ASC);
@@ -53,7 +53,7 @@
 		public function getByID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$row = $this->doSelectById($id, $crit, 'none');
 			return $row;
 		}

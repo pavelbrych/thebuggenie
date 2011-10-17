@@ -44,7 +44,7 @@
 		protected function _setup()
 		{
 			
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_ID, TBGWorkflowsTable::getTable(), TBGWorkflowsTable::ID);
 			parent::_addForeignKeyColumn(self::FROM_STEP_ID, TBGWorkflowStepsTable::getTable(), TBGWorkflowStepsTable::ID);
 			parent::_addForeignKeyColumn(self::TRANSITION_ID, TBGWorkflowTransitionsTable::getTable(), TBGWorkflowTransitionsTable::ID);
@@ -53,7 +53,7 @@
 		protected function _deleteByTypeID($type, $id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere((($type == 'step') ? self::FROM_STEP_ID : self::TRANSITION_ID), $id);
 			return $this->doDelete($crit);
 		}
@@ -61,7 +61,7 @@
 		protected function _countByTypeID($type, $id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere((($type == 'step') ? self::FROM_STEP_ID : self::TRANSITION_ID), $id);
 			return $this->doCount($crit);
 		}
@@ -69,7 +69,7 @@
 		protected function _getByTypeID($type, $id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere((($type == 'step') ? self::FROM_STEP_ID : self::TRANSITION_ID), $id);
 
 			$return_array = array();
@@ -114,7 +114,7 @@
 		public function addNew($from_step_id, $transition_id, $workflow_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::FROM_STEP_ID, $from_step_id);
 			$crit->addInsert(self::TRANSITION_ID, $transition_id);
 			$crit->addInsert(self::WORKFLOW_ID, $workflow_id);
@@ -124,7 +124,7 @@
 		public function copyByWorkflowIDs($old_workflow_id, $new_workflow_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::WORKFLOW_ID, $old_workflow_id);
 			
 			if ($res = $this->doSelect($crit))

@@ -5,7 +5,7 @@
 
 		protected static $_items = null;
 		
-		protected $_itemtype = TBGDatatype::PRIORITY;
+		protected $_itemtype = \thebuggenie\entities\Datatype::PRIORITY;
 
 		public static function loadFixtures(TBGScope $scope)
 		{

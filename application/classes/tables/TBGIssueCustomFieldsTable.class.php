@@ -47,14 +47,14 @@
 			parent::_addForeignKeyColumn(self::ISSUE_ID, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
 			parent::_addForeignKeyColumn(self::CUSTOMFIELDS_ID, Core::getTable('TBGCustomFieldsTable'), TBGCustomFieldsTable::ID);
 			parent::_addText(self::OPTION_VALUE, false);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getAllValuesByIssueID($issue_id)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUE_ID, $issue_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$res = $this->doSelect($crit, false);
 
@@ -67,7 +67,7 @@
 //			$crit->addJoin(Core::getTable('TBGCustomFieldOptionsTable'), TBGCustomFieldOptionsTable::ID, self::OPTION_VALUE);
 			$crit->addWhere(self::ISSUE_ID, $issue_id);
 			$crit->addWhere(self::CUSTOMFIELDS_ID, $customdatatype_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$row = $this->doSelectOne($crit);
 
@@ -94,7 +94,7 @@
 				$crit->addInsert(self::ISSUE_ID, $issue_id);
 				$crit->addInsert(self::OPTION_VALUE, $option_id);
 				$crit->addInsert(self::CUSTOMFIELDS_ID, $customdatatype_id);
-				$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$res = $this->doInsert($crit);
 			}
 		}
@@ -103,7 +103,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::CUSTOMFIELDS_ID, $id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$res = $this->doSelect($crit);
 			

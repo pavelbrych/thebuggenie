@@ -53,7 +53,7 @@
 		<?php else: ?>
 			$('adduser_div').show();
 		<?php endif; ?>
-		<?php if (TBGContext::getScope()->getMaxUsers()): ?>
+		<?php if (\thebuggenie\core\Context::getScope()->getMaxUsers()): ?>
 			$('current_user_num_count').update(<?php echo $total_count; ?>);
 		<?php endif; ?>
 	</script>

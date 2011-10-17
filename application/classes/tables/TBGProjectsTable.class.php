@@ -90,7 +90,7 @@
 			parent::_addInteger(self::QA, 10);
 			parent::_addInteger(self::QA_TYPE, 3);
 			parent::_addBoolean(self::LOCKED);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_SCHEME_ID, TBGWorkflowSchemesTable::getTable(), TBGWorkflowSchemesTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, TBGIssuetypeSchemesTable::getTable(), TBGIssuetypeSchemesTable::ID);
 			parent::_addForeignKeyColumn(self::CLIENT, TBGClientsTable::getTable(), TBGClientsTable::ID);
@@ -106,7 +106,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addUpdate(self::IS_DEFAULT, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doUpdate($crit);
 		}
 		
@@ -126,7 +126,7 @@
 			}
 			$crit->addInsert(self::NAME, $name);
 			$crit->addInsert(self::KEY, mb_strtolower(str_replace(' ', '', $name)));
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::WORKFLOW_SCHEME_ID, 1);
 			$res = $this->doInsert($crit);
 			return $res->getInsertID();
@@ -136,7 +136,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::PREFIX, $prefix);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$row = $this->doSelectOne($crit);
 			return $row;
 		}
@@ -145,7 +145,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addOrderBy(self::NAME, Criteria::SORT_ASC);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doSelect($crit);
 			return $res;
 		}
@@ -163,7 +163,7 @@
 		public function getByID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$row = $this->doSelectById($id, $crit, false);
 			return $row;
 		}
@@ -171,7 +171,7 @@
 		public function getByClientID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::CLIENT, $id);
 			$row = $this->doSelect($crit, false);
 			return $row;
@@ -180,7 +180,7 @@
 		public function getByParentID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::PARENT_PROJECT_ID, $id);
 			$row = $this->doSelect($crit, false);
 			return $row;
@@ -189,7 +189,7 @@
 		public function getByKey($key)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::KEY, $key);
 			$crit->addWhere(self::KEY, '', Criteria::DB_NOT_EQUALS);
 			$row = $this->doSelectOne($crit, false);
@@ -199,7 +199,7 @@
 		public function countByIssuetypeSchemeID($scheme_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
 			$crit->addWhere(self::DELETED, false);
 			$crit->addWhere(self::ARCHIVED, false);
@@ -210,7 +210,7 @@
 		public function countByWorkflowSchemeID($scheme_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::WORKFLOW_SCHEME_ID, $scheme_id);
 			$crit->addWhere(self::DELETED, false);
 			$crit->addWhere(self::ARCHIVED, false);
@@ -220,7 +220,7 @@
 		
 		public function countProjects($scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			$crit->addWhere(self::DELETED, false);
@@ -234,10 +234,10 @@
 			$crit = $this->getCriteria();
 			$ctn = $crit->returnCriterion(self::LEAD_BY, $user_id);
 			$ctn->addWhere(self::LEAD_TYPE, TBGIdentifiableClass::TYPE_USER);
-			$ctn->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$ctn->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere($ctn);
 			$ctn = $crit->returnCriterion(self::OWNER, $user_id);
-			$ctn->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$ctn->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$ctn->addWhere(self::OWNER_TYPE, TBGIdentifiableClass::TYPE_USER);
 			$crit->addOr($ctn);
 			
@@ -263,7 +263,7 @@
 			$crit = $this->getCriteria();
 			
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addUpdate(self::ISSUETYPE_SCHEME_ID, $default_scheme_id);
 			
 			$res = $this->doUpdate($crit);

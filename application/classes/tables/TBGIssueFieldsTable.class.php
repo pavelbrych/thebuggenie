@@ -43,7 +43,7 @@
 			parent::_addBoolean(self::ADDITIONAL);
 			parent::_addForeignKeyColumn(self::ISSUETYPE_ID, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
 			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, TBGIssuetypeSchemesTable::getTable(), TBGIssuetypeSchemesTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function getSchemeVisibleFieldsArrayByIssuetypeID($scheme_id, $issuetype_id)
@@ -65,21 +65,21 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
 			$crit->addWhere(self::ISSUETYPE_ID, $issuetype_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 		}
 		
 		public function copyBySchemeIDs($from_scheme_id, $to_scheme_id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $from_scheme_id);
 			if ($res = $this->doSelect($crit))
 			{
 				while ($row = $res->getNextRow())
 				{
 					$crit2 = $this->getCriteria();
-					$crit2->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+					$crit2->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 					$crit2->addInsert(self::ISSUETYPE_SCHEME_ID, $to_scheme_id);
 					$crit2->addInsert(self::FIELD_KEY, $row->get(self::FIELD_KEY));
 					$crit2->addInsert(self::ADDITIONAL, $row->get(self::ADDITIONAL));
@@ -110,7 +110,7 @@
 				$crit->addInsert(self::REQUIRED, true);
 			}
 
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$this->doInsert($crit);
 		}
 
@@ -119,7 +119,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
 			$crit->addWhere(self::ISSUETYPE_ID, $issuetype_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doSelect($crit);
 			return $res;
 		}
@@ -128,7 +128,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ISSUETYPE_SCHEME_ID, $scheme_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 		}
 

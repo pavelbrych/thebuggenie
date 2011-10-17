@@ -33,7 +33,7 @@
 		protected function _setup()
 		{
 			
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::ISSUE_NO, TBGIssuesTable::getTable(), TBGIssuesTable::ID);
 			parent::_addForeignKeyColumn(self::COMMIT_ID, TBGVCSIntegrationCommitsTable::getTable(), TBGVCSIntegrationCommitsTable::ID);
 		}
@@ -55,7 +55,7 @@
 		 */
 		public function getByCommitID($id, $scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			$crit->addWhere(self::COMMIT_ID, $id);
@@ -72,7 +72,7 @@
 		 */
 		public function getByIssueID($id, $scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			$crit->addWhere(self::ISSUE_NO, $id);

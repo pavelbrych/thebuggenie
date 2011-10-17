@@ -729,6 +729,7 @@
 		 */
 		protected function _generateDeleteSQL()
 		{
+			if (!is_object($this->_connection)) throw new \Exception('!');
 			$sql = 'DELETE FROM ';
 			$sql .= $this->_connection->getTablePrefix() . $this->fromtable->getB2DBName();
 

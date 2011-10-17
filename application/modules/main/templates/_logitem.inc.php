@@ -25,7 +25,7 @@
 			<?php if ((!isset($include_issue_title) || $include_issue_title) && (isset($include_user) && $include_user == true)): ?>
 				<br>
 				<span class="user">
-					<?php if (($user = \caspar\core\Caspar::factory()->TBGUser($log_action['user_id'])) instanceof TBGUser): ?>
+					<?php if (($user = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $log_action['user_id'])) instanceof TBGUser): ?>
 						<?php if ($log_action['change_type'] != TBGLogTable::LOG_COMMENT): ?>
 							<?php echo $user->getUsername(); ?>
 						<?php else: ?>

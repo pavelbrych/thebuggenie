@@ -37,9 +37,9 @@
 			
 			parent::_addInteger(self::TARGET_TYPE, 5);
 			parent::_addForeignKeyColumn(self::COMPONENT_ID, Core::getTable('TBGComponentsTable'), TBGComponentsTable::ID);
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addForeignKeyColumn(self::TID, Core::getTable('TBGTeamsTable'), TBGTeamsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function getByComponentIDs($component_ids)
@@ -135,7 +135,7 @@
 				}
 				$crit->addInsert(self::COMPONENT_ID, $component_id);
 				$crit->addInsert(self::TARGET_TYPE, $role);
-				$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				try
 				{
 					$res = $this->doInsert($crit);

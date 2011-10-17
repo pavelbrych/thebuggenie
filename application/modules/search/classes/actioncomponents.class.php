@@ -117,7 +117,7 @@
 		
 		public function componentSidebar()
 		{
-			$savedsearches = \b2db\Core::getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(TBGContext::getUser()->getID(), (TBGContext::isProjectContext()) ? TBGContext::getCurrentProject()->getID() : 0);
+			$savedsearches = Caspar::getB2DBInstance()->getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(\caspar\core\Caspar::getUser()->getID(), (TBGContext::isProjectContext()) ? TBGContext::getCurrentProject()->getID() : 0);
 			foreach ($savedsearches['user'] as $a_savedsearch)
 				$this->getResponse()->addFeed(make_url('search', array('saved_search' => $a_savedsearch->get(TBGSavedSearchesTable::ID), 'search' => true, 'format' => 'rss')), __($a_savedsearch->get(TBGSavedSearchesTable::NAME)));
 
@@ -137,23 +137,23 @@
 		{
 			switch (true)
 			{
-				case TBGContext::getRequest()->hasParameter('quicksearch'):
-					$searchfor = TBGContext::getRequest()->getParameter('searchfor');
+				case \caspar\core\Caspar::getRequest()->hasParameter('quicksearch'):
+					$searchfor = \caspar\core\Caspar::getRequest()->getParameter('searchfor');
 					$project_key = (TBGContext::getCurrentProject() instanceof TBGProject) ? TBGContext::getCurrentProject()->getKey() : 0;
 					$this->csv_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => $project_key, 'quicksearch' => 'true', 'format' => 'csv')).'?searchfor='.$searchfor;
 					$this->rss_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => $project_key, 'quicksearch' => 'true', 'format' => 'rss')).'?searchfor='.$searchfor;
 					break;
-				case TBGContext::getRequest()->hasParameter('predefined_search'):
-					$searchno = TBGContext::getRequest()->getParameter('predefined_search');
+				case \caspar\core\Caspar::getRequest()->hasParameter('predefined_search'):
+					$searchno = \caspar\core\Caspar::getRequest()->getParameter('predefined_search');
 					$project_key = (TBGContext::getCurrentProject() instanceof TBGProject) ? TBGContext::getCurrentProject()->getKey() : 0;
 					$url = (TBGContext::getCurrentProject() instanceof TBGProject) ? 'project_issues' : 'search';
 					$this->csv_url = TBGContext::getRouting()->generate($url, array('project_key' => $project_key, 'predefined_search' => $searchno, 'search' => '1', 'format' => 'csv'));
 					$this->rss_url = TBGContext::getRouting()->generate($url, array('project_key' => $project_key, 'predefined_search' => $searchno, 'search' => '1', 'format' => 'rss'));
 					break;
 				default:
-					preg_match('/((?<=\/)issues).+$/i', TBGContext::getRequest()->getQueryString(), $get);
+					preg_match('/((?<=\/)issues).+$/i', \caspar\core\Caspar::getRequest()->getQueryString(), $get);
 					
-					if (!isset($get[0])) preg_match('/((?<=url=)issues).+$/i', TBGContext::getRequest()->getQueryString(), $get);
+					if (!isset($get[0])) preg_match('/((?<=url=)issues).+$/i', \caspar\core\Caspar::getRequest()->getQueryString(), $get);
 
 					if (isset($get[0]))
 					{

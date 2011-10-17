@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\core;
+
 	/**
 	 * Group class
 	 *
@@ -16,12 +18,12 @@
 	 * @package thebuggenie
 	 * @subpackage main
 	 */
-	class TBGGroup extends TBGIdentifiableClass 
+	class Group extends IdentifiableClass 
 	{
 		
-		protected static $_groups = null;
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\Groups';
 		
-		static protected $_b2dbtablename = 'TBGGroupsTable';
+		static protected $_groups = null;
 
 		protected $_members = null;
 
@@ -29,7 +31,7 @@
 
 		public static function doesGroupNameExist($group_name)
 		{
-			return TBGGroupsTable::getTable()->doesGroupNameExist($group_name);
+			return \thebuggenie\entities\GroupsTable::getTable()->doesGroupNameExist($group_name);
 		}
 
 		public static function getAll()
@@ -37,11 +39,11 @@
 			if (self::$_groups === null)
 			{
 				self::$_groups = array();
-				if ($res = TBGGroupsTable::getTable()->getAll())
+				if ($res = \thebuggenie\entities\GroupsTable::getTable()->getAll())
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_groups[$row->get(TBGGroupsTable::ID)] = \caspar\core\Caspar::factory()->TBGGroup($row->get(TBGGroupsTable::ID), $row);
+						self::$_groups[$row->get(\thebuggenie\entities\GroupsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', $row->get(\thebuggenie\entities\GroupsTable::ID), $row);
 					}
 				}
 			}
@@ -68,19 +70,19 @@
 		{
 			$scope_id = $scope->getID();
 
-			$admin_group = new TBGGroup();
+			$admin_group = new \thebuggenie\entities\Group();
 			$admin_group->setName('Administrators');
 			$admin_group->setScope($scope);
 			$admin_group->save();
 			TBGSettings::saveSetting('admingroup', $admin_group->getID(), 'core', $scope_id);
 
-			$user_group = new TBGGroup();
+			$user_group = new \thebuggenie\entities\Group();
 			$user_group->setName('Regular users');
 			$user_group->setScope($scope);
 			$user_group->save();
 			TBGSettings::saveSetting('defaultgroup', $user_group->getID(), 'core', $scope_id);
 
-			$guest_group = new TBGGroup();
+			$guest_group = new \thebuggenie\entities\Group();
 			$guest_group->setName('Guests');
 			$guest_group->setScope($scope);
 			$guest_group->save();
@@ -92,15 +94,15 @@
 		
 		public function _preDelete()
 		{
-			$crit = TBGUsersTable::getTable()->getCriteria();
-			$crit->addWhere(TBGUsersTable::GROUP_ID, $this->getID());
+			$crit = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getCriteria();
+			$crit->addWhere(\thebuggenie\tables\Users::GROUP_ID, $this->getID());
 			
 			if ($this->getID() == TBGSettings::getDefaultGroup()->getID())
-				$crit->addUpdate(TBGUsersTable::GROUP_ID, null);
+				$crit->addUpdate(\thebuggenie\tables\Users::GROUP_ID, null);
 			else
-				$crit->addUpdate(TBGUsersTable::GROUP_ID, TBGSettings::getDefaultGroup()->getID());
+				$crit->addUpdate(\thebuggenie\tables\Users::GROUP_ID, TBGSettings::getDefaultGroup()->getID());
 
-			$res = TBGUsersTable::getTable()->doUpdate($crit);
+			$res = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->doUpdate($crit);
 		}
 
 		/**
@@ -113,12 +115,12 @@
 			if ($this->_members === null)
 			{
 				$this->_members = array();
-				if ($res = TBGUsersTable::getTable()->getUsersByGroupID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getUsersByGroupID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
-						$uid = $row->get(TBGUsersTable::ID);
-						$this->_members[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
+						$uid = $row->get(\thebuggenie\tables\Users::ID);
+						$this->_members[$uid] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 					}
 				}
 			}
@@ -133,7 +135,7 @@
 			}
 			elseif ($this->_num_members === null)
 			{
-				$this->_num_members = TBGUsersTable::getTable()->getNumberOfMembersByGroupID($this->getID());
+				$this->_num_members = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getNumberOfMembersByGroupID($this->getID());
 			}
 
 			return $this->_num_members;

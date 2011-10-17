@@ -24,7 +24,7 @@
 				<?php include_component('configuration/permissionsinfoitem', array('key' => $key, 'target_id' => $target_id, 'type' => 'everyone', 'mode' => $mode, 'item_id' => 0, 'module' => $module, 'access_level' => $access_level)); ?>
 			</td>
 		</tr>
-		<?php $groups = TBGGroup::getAll(); ?>
+		<?php $groups = \thebuggenie\entities\Group::getAll(); ?>
 		<?php $gcount = count($groups); $cc = 1; ?>
 		<?php foreach ($groups as $group): ?>
 			<tr class="hover_highlight">

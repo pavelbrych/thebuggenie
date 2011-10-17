@@ -58,7 +58,7 @@
 			if (self::$_types === null)
 			{
 				self::$_types = array();
-				if ($items = \b2db\Core::getTable('TBGCustomFieldsTable')->getAll())
+				if ($items = Caspar::getB2DBInstance()->getTable('TBGCustomFieldsTable')->getAll())
 				{
 					foreach ($items as $row_id => $row)
 					{
@@ -116,8 +116,8 @@
 		 */
 		public function _preDelete()
 		{
-			$key = \b2db\Core::getTable('TBGCustomFieldsTable')->getKeyFromId($this->getID());
-			\b2db\Core::getTable('TBGCustomFieldOptionsTable')->doDeleteByFieldKey($key);
+			$key = Caspar::getB2DBInstance()->getTable('TBGCustomFieldsTable')->getKeyFromId($this->getID());
+			Caspar::getB2DBInstance()->getTable('TBGCustomFieldOptionsTable')->doDeleteByFieldKey($key);
 		}
 
 		public static function doesKeyExist($key)
@@ -134,7 +134,7 @@
 		 */
 		public static function getByKey($key)
 		{
-			$row = \b2db\Core::getTable('TBGCustomFieldsTable')->getByKey($key);
+			$row = Caspar::getB2DBInstance()->getTable('TBGCustomFieldsTable')->getByKey($key);
 			if ($row)
 			{
 				return \caspar\core\Caspar::factory()->TBGCustomDatatype($row->get(TBGCustomFieldsTable::ID), $row);

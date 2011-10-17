@@ -48,8 +48,8 @@
 		protected function _setup()
 		{
 			
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addVarchar(self::REAL_FILENAME, 250);
 			parent::_addVarchar(self::CONTENT_TYPE, 250);
 			parent::_addVarchar(self::ORIGINAL_FILENAME, 250);
@@ -61,12 +61,12 @@
 		public function saveFile($real_filename, $original_filename, $content_type, $description = null, $content = null)
 		{
 			$crit = $this->getCriteria();
-			$crit->addInsert(self::UID, TBGContext::getUser()->getID());
+			$crit->addInsert(self::UID, \caspar\core\Caspar::getUser()->getID());
 			$crit->addInsert(self::REAL_FILENAME, $real_filename);
 			$crit->addInsert(self::UPLOADED_AT, NOW);
 			$crit->addInsert(self::ORIGINAL_FILENAME, $original_filename);
 			$crit->addInsert(self::CONTENT_TYPE, $content_type);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			if ($description !== null)
 			{
 				$crit->addInsert(self::DESCRIPTION, $description);
@@ -83,7 +83,7 @@
 		public function getByID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$row = $this->doSelectById($id, $crit, false);
 			return $row;
 		}

@@ -187,7 +187,7 @@
 			{
 				case self::RULE_MAX_ASSIGNED_ISSUES:
 					$num_issues = (int) $this->getRuleValue();
-					return ($num_issues) ? (bool) (count(TBGContext::getUser()->getUserAssignedIssues()) < $num_issues) : true;
+					return ($num_issues) ? (bool) (count(\caspar\core\Caspar::getUser()->getUserAssignedIssues()) < $num_issues) : true;
 					break;
 				case self::RULE_STATUS_VALID:
 				case self::RULE_PRIORITY_VALID:

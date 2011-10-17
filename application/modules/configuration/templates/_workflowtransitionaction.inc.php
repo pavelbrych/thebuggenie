@@ -66,7 +66,7 @@
 					<?php elseif ($action->getActionType() == TBGWorkflowTransitionAction::ACTION_SET_REPRODUCABILITY): ?>
 						<?php echo __('Set reproducability to %reproducability%', array('%reproducability%' => '<span id="workflowtransitionaction_'.$action->getID().'_value" style="font-weight: bold;">' . (($action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGReproducability((int) $action->getTargetValue())->getName() : __('Reproducability provided by user')) . '</span>')); ?>
 					<?php elseif ($action->getActionType() == TBGWorkflowTransitionAction::ACTION_ASSIGN_ISSUE): ?>
-						<?php echo __('Assign issue to %user%', array('%user%' => '<span id="workflowtransitionaction_'.$action->getID().'_value" style="font-weight: bold;">' . (($action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGUser((int) $action->getTargetValue())->getNameWithUsername() : __('User specified during transition')) . '</span>')); ?>
+						<?php echo __('Assign issue to %user%', array('%user%' => '<span id="workflowtransitionaction_'.$action->getID().'_value" style="font-weight: bold;">' . (($action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', (int) $action->getTargetValue())->getNameWithUsername() : __('User specified during transition')) . '</span>')); ?>
 					<?php endif; ?>
 				</td>
 				<?php if (!$action->getTransition()->isCore()): ?>

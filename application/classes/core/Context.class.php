@@ -4,6 +4,7 @@
 	
 	use \caspar\core\Caspar,
 		\caspar\core\Cache,
+		\caspar\core\Event,
 		\caspar\core\Logging;
 
 	class Context
@@ -75,7 +76,8 @@
 				if (!self::$_installmode)
 				{
 					self::loadModules();
-					self::initializeUser();
+					Event::listen('core', 'post_login', array('\\thebuggenie\\core\\Context', 'listenCorePostLogin'));
+					Event::listen('core', 'post_loaduser', array('\\thebuggenie\\core\\Context', 'listenCorePostLoadUser'));
 				}
 				else
 				{
@@ -98,6 +100,22 @@
 				if (!self::isCLI() && !self::isInstallmode())
 					throw $e;
 			}
+		}
+		
+		public static function listenCorePostLoadUser(Event $event)
+		{
+			$event->getSubject()->setTimezone(Settings::getUserTimezone());
+			$event->getSubject()->setLanguage(Settings::getUserLanguage());
+			$event->getSubject()->save();
+			if (!($event->getSubject()->getGroup() instanceof \thebuggenie\entities\Group))
+			{
+				throw new \Exception('This user account belongs to a group that does not exist anymore. <br>Please contact the system administrator.');
+			}
+		}
+		
+		public static function listenCorePostLogin(Event $event)
+		{
+			self::cacheAllPermissions();
 		}
 
 		public static function checkInstallMode()
@@ -439,7 +457,7 @@
 							}
 						}
 					}
-					Cache::add(Cache::KEY_MODULES, self::$_modules);
+					Cache::add(self::CACHE_KEY_MODULES, self::$_modules);
 					Logging::log('done (setting up module objects)');
 				}
 				else

@@ -7,7 +7,7 @@
 
 		protected $_key = null;
 		
-		protected $_itemtype = TBGDatatype::RESOLUTION;
+		protected $_itemtype = \thebuggenie\entities\Datatype::RESOLUTION;
 
 		public static function loadFixtures(TBGScope $scope)
 		{

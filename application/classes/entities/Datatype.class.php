@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\entities;
+
 	/**
 	 * Generic datatype class
 	 *
@@ -16,9 +18,9 @@
 	 * @package thebuggenie
 	 * @subpackage main
 	 */
-	abstract class TBGDatatype extends TBGDatatypeBase
+	abstract class Datatype extends DatatypeBase
 	{
-		static protected $_b2dbtablename = 'TBGListTypesTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\ListTypes';
 
 		/**
 		 * Item type status

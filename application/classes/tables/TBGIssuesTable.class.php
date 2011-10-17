@@ -92,7 +92,7 @@
 			parent::_addForeignKeyColumn(self::PROJECT_ID, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
 			parent::_addText(self::DESCRIPTION, false);
 			parent::_addBoolean(self::STATE);
-			parent::_addForeignKeyColumn(self::POSTED_BY, TBGUsersTable::getTable(), TBGUsersTable::ID);
+			parent::_addForeignKeyColumn(self::POSTED_BY, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addInteger(self::OWNER, 10);
 			parent::_addInteger(self::OWNER_TYPE, 2);
 			parent::_addFloat(self::USER_PAIN, 3);
@@ -126,11 +126,11 @@
 			parent::_addBoolean(self::DELETED);
 			parent::_addBoolean(self::BLOCKING);
 			parent::_addBoolean(self::LOCKED);
-			parent::_addForeignKeyColumn(self::BEING_WORKED_ON_BY_USER, TBGUsersTable::getTable(), TBGUsersTable::ID);
+			parent::_addForeignKeyColumn(self::BEING_WORKED_ON_BY_USER, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addInteger(self::BEING_WORKED_ON_BY_USER_SINCE, 10);
 			parent::_addForeignKeyColumn(self::MILESTONE, TBGMilestonesTable::getTable(), TBGMilestonesTable::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_STEP_ID, TBGWorkflowStepsTable::getTable(), TBGWorkflowStepsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public static function getValidSearchFilters()
@@ -143,7 +143,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::PROJECT_ID, $project_id);
 			$crit->addWhere(self::DELETED, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::DELETED, 0);
 
 			$crit2 = clone $crit;
@@ -158,7 +158,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::PROJECT_ID, $project_id);
 			$crit->addWhere(self::DELETED, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::ISSUE_TYPE, $issuetype_id);
 			$crit->addWhere(self::DELETED, 0);
 			
@@ -225,7 +225,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::PROJECT_ID, $project_id);
 			$crit->addWhere(self::DELETED, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			if (!$milestone_id)
 			{
 				$crit->addWhere(self::MILESTONE, null);
@@ -309,7 +309,7 @@
 		public function getByID($id)
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addWhere(self::DELETED, 0);
 			$row = $this->doSelectById($id, $crit, false);
 			return $row;
@@ -830,7 +830,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addUpdate(self::VOTES_TOTAL, $votes_total);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doUpdateById($crit, $issue_id);
 		}
 

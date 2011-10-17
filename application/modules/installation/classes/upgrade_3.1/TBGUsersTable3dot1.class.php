@@ -65,8 +65,8 @@
 			parent::_addBoolean(self::PRIVATE_EMAIL);
 			parent::_addInteger(self::JOINED, 10);
 			parent::_addForeignKeyColumn(self::USERSTATE, TBGUserStateTable::getTable(), TBGUserStateTable::ID);
-			parent::_addForeignKeyColumn(self::GROUP_ID, TBGGroupsTable::getTable(), TBGGroupsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::GROUP_ID, \thebuggenie\entities\GroupsTable::getTable(), \thebuggenie\entities\GroupsTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 	}

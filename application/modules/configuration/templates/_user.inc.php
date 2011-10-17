@@ -87,8 +87,8 @@
 		<td><label for="defaultgroup"><?php echo __('Default user group'); ?></label></td>
 		<td>
 			<select name="<?php echo TBGSettings::SETTING_USER_GROUP; ?>" id="defaultgroup" style="width: 300px;"<?php if ($access_level != TBGSettings::ACCESS_FULL): ?> disabled<?php endif; ?>>
-			<?php foreach (TBGGroup::getAll() as $aGroup): ?>
-				<option value="<?php print $aGroup->getID(); ?>"<?php if (($default_group = TBGSettings::getDefaultGroup()) instanceof TBGGroup && $default_group->getID() == $aGroup->getID()): ?> selected<?php endif; ?>><?php print $aGroup->getName(); ?></option>
+			<?php foreach (\thebuggenie\entities\Group::getAll() as $aGroup): ?>
+				<option value="<?php print $aGroup->getID(); ?>"<?php if (($default_group = TBGSettings::getDefaultGroup()) instanceof \thebuggenie\entities\Group && $default_group->getID() == $aGroup->getID()): ?> selected<?php endif; ?>><?php print $aGroup->getName(); ?></option>
 			<?php endforeach; ?>
 			</select>
 		</td>

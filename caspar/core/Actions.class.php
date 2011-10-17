@@ -34,9 +34,9 @@
 			{
 				$this->getResponse()->ajaxResponseText($code, Caspar::getMessageAndClear('forward'));
 			}
-			TBGLogging::log("Forwarding to url {$url}");
+			\caspar\core\Logging::log("Forwarding to url {$url}");
 			
-			TBGLogging::log('Triggering header redirect function');
+			\caspar\core\Logging::log('Triggering header redirect function');
 			$this->getResponse()->headerRedirect($url, $code);
 		}
 

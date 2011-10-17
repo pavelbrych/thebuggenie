@@ -2,7 +2,7 @@
 
 require THEBUGGENIE_CORE_PATH . 'classes/TBGEvent.class.php';
 
-class TBGLogging
+class \caspar\core\Logging
 {
 	public function log($message, $module = '', $level = '')
 	{

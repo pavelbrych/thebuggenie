@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\tables;
+
 	use b2db\Core,
 		b2db\Criteria,
 		b2db\Criterion;
@@ -20,7 +22,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class TBGUserStateTable extends ScopedTable 
+	class Userstates extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;
@@ -35,20 +37,8 @@
 		const COLOR = 'userstate.itemdata';
 		const ABSENT = 'userstate.is_absent';
 
-		/**
-		 * Return an instance of this table
-		 *
-		 * @return TBGUserStateTable
-		 */
-		public static function getTable()
-		{
-			return Core::getTable('TBGUserStateTable');
-		}
-		
 		protected function _setup()
 		{
-			
-			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addBoolean(self::UNAVAILABLE);
 			parent::_addBoolean(self::BUSY);
@@ -56,13 +46,13 @@
 			parent::_addBoolean(self::MEETING);
 			parent::_addBoolean(self::ABSENT);
 			parent::_addVarchar(self::COLOR, 7, '');
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getAll()
 		{
 			$crit = $this->getCriteria();
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			return $this->doSelect($crit);
 		}

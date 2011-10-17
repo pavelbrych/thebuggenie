@@ -2,7 +2,8 @@
 
 	namespace application\modules\main;
 
-	use caspar\core\Request,
+	use caspar\core\Caspar,
+		caspar\core\Request,
 		thebuggenie\core\Context,
 		thebuggenie\entities\Project;
 	
@@ -39,7 +40,7 @@
 		public function runViewIssue(Request $request)
 		{
 			//TBGEvent::listen('core', 'viewissue', array($this, 'listenViewIssuePostError'));
-			TBGLogging::log('Loading issue');
+			\caspar\core\Logging::log('Loading issue');
 			
 			if ($issue_no = $request->getParameter('issue_no'))
 			{
@@ -53,10 +54,10 @@
 				}
 				else
 				{
-					TBGLogging::log("Issue no [$issue_no] not a valid issue no", 'main', TBGLogging::LEVEL_WARNING_RISK);
+					\caspar\core\Logging::log("Issue no [$issue_no] not a valid issue no", 'main', \caspar\core\Logging::LEVEL_WARNING_RISK);
 				}
 			}
-			TBGLogging::log('done (Loading issue)');
+			\caspar\core\Logging::log('done (Loading issue)');
 			//$this->getResponse()->setPage('viewissue');
 			if ($issue instanceof \TBGIssue && (!$issue->hasAccess() || $issue->isDeleted()))
 				$issue = null;
@@ -138,7 +139,7 @@
 			}
 			
 			$issuelist = array();
-			$issues = Context::getUser()->getStarredIssues();
+			$issues = Caspar::getUser()->getStarredIssues();
 
 			if (count($issues))
 			{
@@ -245,10 +246,10 @@
 					$this->forward(Context::getRouting()->generate('project_dashboard', array('project_key' => $project->getKey())));
 				}
 			}
-			$this->forward403unless(Context::getUser()->hasPageAccess('home'));
+			$this->forward403unless(Caspar::getUser()->hasPageAccess('home'));
 			$this->links = Context::getMainLinks();
 			$this->show_project_list = \thebuggenie\core\Settings::isFrontpageProjectListVisible();
-			$this->show_project_config_link = Context::getUser()->canAccessConfigurationPage(\thebuggenie\core\Settings::CONFIGURATION_SECTION_PROJECTS);
+			$this->show_project_config_link = Caspar::getUser()->canAccessConfigurationPage(\thebuggenie\core\Settings::CONFIGURATION_SECTION_PROJECTS);
 			if ($this->show_project_list)
 			{
 				$this->projects = \thebuggenie\entities\Project::getAllRootProjects(false);
@@ -263,7 +264,7 @@
 		 */
 		public function runDashboard(Request $request)
 		{
-			$this->forward403unless(!Context::getUser()->isThisGuest() && Context::getUser()->hasPageAccess('dashboard'));
+			$this->forward403unless(!Caspar::getUser()->isThisGuest() && Caspar::getUser()->hasPageAccess('dashboard'));
 			if (\thebuggenie\core\Settings::isSingleProjectTracker())
 			{
 				if (($projects = \thebuggenie\entities\Project::getAll()) && $project = array_shift($projects))
@@ -271,7 +272,7 @@
 					Context::setCurrentProject($project);
 				}
 			}
-			$this->views = Context::getUser()->getDashboardViews();
+			$this->views = Caspar::getUser()->getDashboardViews();
 		}
 		
 		/**
@@ -349,7 +350,7 @@
 			catch (Exception $e)
 			{
 				return $this->return404(Context::getI18n()->__('This client does not exist'));
-				TBGLogging::log($e->getMessage(), 'core', TBGLogging::LEVEL_WARNING);
+				\caspar\core\Logging::log($e->getMessage(), 'core', \caspar\core\Logging::LEVEL_WARNING);
 			}
 		}
 		
@@ -385,7 +386,7 @@
 			catch (Exception $e)
 			{
 				return $this->return404(Context::getI18n()->__('This team does not exist'));
-				TBGLogging::log($e->getMessage(), 'core', TBGLogging::LEVEL_WARNING);
+				\caspar\core\Logging::log($e->getMessage(), 'core', \caspar\core\Logging::LEVEL_WARNING);
 			}
 		}
 				
@@ -396,7 +397,7 @@
 		 */
 		public function runAbout(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPageAccess('about'));
+			$this->forward403unless(Caspar::getUser()->hasPageAccess('about'));
 		}
 		
 		/**
@@ -417,10 +418,10 @@
 		 */
 		public function runLogout(Request $request)
 		{
-			if (Context::getUser() instanceof TBGUser)
+			if (Caspar::getUser() instanceof TBGUser)
 			{
-				TBGLogging::log('Setting user logout state');
-				Context::getUser()->setOffline();
+				\caspar\core\Logging::log('Setting user logout state');
+				Caspar::getUser()->setOffline();
 			}
 			Context::logout();
 			$this->forward(Context::getRouting()->generate(\thebuggenie\core\Settings::getLogoutReturnRoute()));
@@ -432,7 +433,7 @@
 		 */
 		public function runLogin(Request $request)
 		{
-			if (!Context::getUser()->isGuest()) return $this->forward(Context::getRouting()->generate('home'));
+			if (!Caspar::getUser()->isGuest()) return $this->forward(Context::getRouting()->generate('home'));
 			$this->section = $request->getParameter('section', 'login');
 		}
 		
@@ -569,7 +570,7 @@
 				$security = $request->getParameter('verification_no');
 				$realname = $request->getParameter('realname');
 				
-				$exists = TBGUsersTable::getTable()->getByUsername($username);
+				$exists = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getByUsername($username);
 				
 				$fields = array();
 				
@@ -686,16 +687,16 @@
 		{
 			$this->getResponse()->setPage('login');
 			
-			$row = TBGUsersTable::getTable()->getByUsername(str_replace('%2E', '.', $request->getParameter('user')));
+			$row = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getByUsername(str_replace('%2E', '.', $request->getParameter('user')));
 			if ($row)
 			{
-				if ($row->get(TBGUsersTable::PASSWORD) != $request->getParameter('key'))
+				if ($row->get(\thebuggenie\tables\Users::PASSWORD) != $request->getParameter('key'))
 				{
 					 Context::setMessage('login_message_err', Context::getI18n()->__('This activation link is not valid'));
 				}
 				else
 				{
-					$user = new TBGUser($row->get(TBGUsersTable::ID), $row);
+					$user = new TBGUser($row->get(\thebuggenie\tables\Users::ID), $row);
 					$user->setValidated(true);
 					$user->save();
 					Context::setMessage('login_message', Context::getI18n()->__('Your account has been activated! You can now log in with the username %user% and the password in your activation email.', array('%user%' => $user->getUsername())));
@@ -715,7 +716,7 @@
 		 */
 		public function runMyAccount(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPageAccess('account'));
+			$this->forward403unless(Caspar::getUser()->hasPageAccess('account'));
 			if ($request->isMethod(Request::POST) && $request->hasParameter('mode'))
 			{
 				switch ($request->getParameter('mode'))
@@ -725,28 +726,28 @@
 						{
 							return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('Please fill out all the required fields')));
 						}
-						Context::getUser()->setBuddyname($request->getParameter('buddyname'));
-						Context::getUser()->setRealname($request->getParameter('realname'));
-						Context::getUser()->setHomepage($request->getParameter('homepage'));
-						Context::getUser()->setEmailPrivate((bool) $request->getParameter('email_private'));
+						Caspar::getUser()->setBuddyname($request->getParameter('buddyname'));
+						Caspar::getUser()->setRealname($request->getParameter('realname'));
+						Caspar::getUser()->setHomepage($request->getParameter('homepage'));
+						Caspar::getUser()->setEmailPrivate((bool) $request->getParameter('email_private'));
 
-						if (Context::getUser()->getEmail() != $request->getParameter('email'))
+						if (Caspar::getUser()->getEmail() != $request->getParameter('email'))
 						{
-							if (TBGEvent::createNew('core', 'changeEmail', Context::getUser(), array('email' => $request->getParameter('email')))->triggerUntilProcessed()->isProcessed() == false)
+							if (TBGEvent::createNew('core', 'changeEmail', Caspar::getUser(), array('email' => $request->getParameter('email')))->triggerUntilProcessed()->isProcessed() == false)
 							{
-								Context::getUser()->setEmail($request->getParameter('email'));
+								Caspar::getUser()->setEmail($request->getParameter('email'));
 							}
 						}
 
-						Context::getUser()->save();
+						Caspar::getUser()->save();
 
 						return $this->renderJSON(array('failed' => false, 'title' => Context::getI18n()->__('Account information saved'), 'content' => ''));
 						break;
 					case 'settings':
-						Context::getUser()->setUsesGravatar((bool) $request->getParameter('use_gravatar'));
-						Context::getUser()->setTimezone($request->getParameter('timezone'));
-						Context::getUser()->setLanguage($request->getParameter('profile_language'));
-						Context::getUser()->save();
+						Caspar::getUser()->setUsesGravatar((bool) $request->getParameter('use_gravatar'));
+						Caspar::getUser()->setTimezone($request->getParameter('timezone'));
+						Caspar::getUser()->setLanguage($request->getParameter('profile_language'));
+						Caspar::getUser()->save();
 
 						return $this->renderJSON(array('failed' => false, 'title' => Context::getI18n()->__('Profile settings saved'), 'content' => ''));
 						break;
@@ -780,10 +781,10 @@
 		 */
 		public function runAccountChangePassword(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPageAccess('account'));
+			$this->forward403unless(Caspar::getUser()->hasPageAccess('account'));
 			if ($request->isMethod(Request::POST))
 			{
-				if (Context::getUser()->canChangePassword() == false)
+				if (Caspar::getUser()->canChangePassword() == false)
 				{
 					return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__("You're not allowed to change your password.")));
 				}
@@ -799,7 +800,7 @@
 				{
 					return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('Please enter the new password twice')));
 				}
-				if (!Context::getUser()->hasPassword($request->getParameter('current_password')))
+				if (!Caspar::getUser()->hasPassword($request->getParameter('current_password')))
 				{
 					return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('Please enter your current password')));
 				}
@@ -807,9 +808,9 @@
 				{
 					return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('Please enter the new password twice')));
 				}
-				Context::getUser()->changePassword($request->getParameter('new_password_1'));
-				Context::getUser()->save();
-				$this->getResponse()->setCookie('tbg3_password', Context::getUser()->getHashPassword());
+				Caspar::getUser()->changePassword($request->getParameter('new_password_1'));
+				Caspar::getUser()->save();
+				$this->getResponse()->setCookie('tbg3_password', Caspar::getUser()->getHashPassword());
 				return $this->renderJSON(array('failed' => false, 'title' => Context::getI18n()->__('Your new password has been saved')));
 			}
 		}
@@ -1005,14 +1006,14 @@
 					elseif ($info['required'])
 					{
 						$var_name = "selected_{$field}";
-						if ((in_array($field, TBGDatatype::getAvailableFields(true)) && ($this->$var_name === null || $this->$var_name === 0)) || (!in_array($field, TBGDatatype::getAvailableFields(true)) && !in_array($field, array('pain_bug_type', 'pain_likelihood', 'pain_effect')) && (array_key_exists($field, $selected_customdatatype) && $selected_customdatatype[$field] === null)))
+						if ((in_array($field, \thebuggenie\entities\Datatype::getAvailableFields(true)) && ($this->$var_name === null || $this->$var_name === 0)) || (!in_array($field, \thebuggenie\entities\Datatype::getAvailableFields(true)) && !in_array($field, array('pain_bug_type', 'pain_likelihood', 'pain_effect')) && (array_key_exists($field, $selected_customdatatype) && $selected_customdatatype[$field] === null)))
 						{
 							$errors[$field] = true;
 						}
 					}
 					else
 					{
-						if (in_array($field, TBGDatatype::getAvailableFields(true)))
+						if (in_array($field, \thebuggenie\entities\Datatype::getAvailableFields(true)))
 						{
 							if (!$this->selected_project->fieldPermissionCheck($field, true))
 							{
@@ -1109,7 +1110,7 @@
 
 			$this->_loadSelectedProjectAndIssueTypeFromRequestForReportIssueAction($request);
 			
-			$this->forward403unless(Context::getCurrentProject() instanceof thebuggenie\entities\Project && Context::getCurrentProject()->hasAccess() && Context::getUser()->canReportIssues(Context::getCurrentProject()));
+			$this->forward403unless(Context::getCurrentProject() instanceof thebuggenie\entities\Project && Context::getCurrentProject()->hasAccess() && Caspar::getUser()->canReportIssues(Context::getCurrentProject()));
 			
 			if ($request->isMethod(Request::POST))
 			{
@@ -1207,13 +1208,13 @@
 				return $this->renderText('no issue');
 			}
 			
-			if (Context::getUser()->isIssueStarred($issue_id))
+			if (Caspar::getUser()->isIssueStarred($issue_id))
 			{
-				$retval = !Context::getUser()->removeStarredIssue($issue_id);
+				$retval = !Caspar::getUser()->removeStarredIssue($issue_id);
 			}
 			else
 			{
-				$retval = Context::getUser()->addStarredIssue($issue_id);
+				$retval = Caspar::getUser()->addStarredIssue($issue_id);
 			}
 			return $this->renderText(json_encode(array('starred' => $retval)));
 		}
@@ -1333,11 +1334,11 @@
 									if ((bool) $request->getParameter('teamup', false))
 									{
 										$team = new TBGTeam();
-										$team->setName($identified->getBuddyname() . ' & ' . Context::getUser()->getBuddyname());
+										$team->setName($identified->getBuddyname() . ' & ' . Caspar::getUser()->getBuddyname());
 										$team->setOndemand(true);
 										$team->save();
 										$team->addMember($identified);
-										$team->addMember(Context::getUser());
+										$team->addMember(Caspar::getUser());
 										$identified = $team;
 									}
 									if ($request->getParameter('field') == 'owned_by') $issue->setOwner($identified);
@@ -1821,7 +1822,7 @@
 			}
 			if (trim($request->getParameter('close_comment')) != '')
 			{
-				$issue->addSystemComment(Context::getI18n()->__('Issue closed'), $request->getParameter('close_comment'), Context::getUser()->getID());
+				$issue->addSystemComment(Context::getI18n()->__('Issue closed'), $request->getParameter('close_comment'), Caspar::getUser()->getID());
 			}
 			$issue->close();
 			$issue->save();
@@ -1835,7 +1836,7 @@
 		 */
 		public function runMarkAsDuplicate(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPermission('caneditissue') || Context::getUser()->hasPermission('caneditissuebasic'));
+			$this->forward403unless(Caspar::getUser()->hasPermission('caneditissue') || Caspar::getUser()->hasPermission('caneditissuebasic'));
 			
 			if ($issue_id = $request->getParameter('issue_id'))
 			{
@@ -1870,11 +1871,11 @@
 			}
 			if (trim($request->getParameter('markasduplicate_comment')) != '')
 			{
-				$issue->addSystemComment(Context::getI18n()->__('Issue marked as a duplicate'), $request->getParameter('markasduplicate_comment'), Context::getUser()->getID());
+				$issue->addSystemComment(Context::getI18n()->__('Issue marked as a duplicate'), $request->getParameter('markasduplicate_comment'), Caspar::getUser()->getID());
 			}
 			else
 			{
-				$issue->addSystemComment(Context::getI18n()->__('Issue marked as a duplicate'), Context::getI18n()->__('This issue is now a duplicate of %issue%', array('%issue%' => $issue2->getFormattedIssueNo(true, true))), Context::getUser()->getID());
+				$issue->addSystemComment(Context::getI18n()->__('Issue marked as a duplicate'), Context::getI18n()->__('This issue is now a duplicate of %issue%', array('%issue%' => $issue2->getFormattedIssueNo(true, true))), Caspar::getUser()->getID());
 			}
 			if ($request->hasParameter('set_close'))
 			{
@@ -1892,7 +1893,7 @@
 		 */
 		public function runMarkAsNotDuplicate(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPermission('caneditissue') || Context::getUser()->hasPermission('caneditissuebasic'));
+			$this->forward403unless(Caspar::getUser()->hasPermission('caneditissue') || Caspar::getUser()->hasPermission('caneditissuebasic'));
 			
 			if ($issue_id = $request->getParameter('issue_id'))
 			{
@@ -1913,7 +1914,7 @@
 			$issue->setDuplicateOf(0);
 			$issue->save();
 			
-			$issue->addSystemComment(Context::getI18n()->__('Issue is no longer a duplicate'), Context::getI18n()->__('This issue is no longer a duplicate of any other issues'), Context::getUser()->getID());
+			$issue->addSystemComment(Context::getI18n()->__('Issue is no longer a duplicate'), Context::getI18n()->__('This issue is no longer a duplicate of any other issues'), Caspar::getUser()->getID());
 			$this->forward(Context::getRouting()->generate('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())));
 		}
 		
@@ -1924,7 +1925,7 @@
 		 */
 		public function runMarkAsNotBlocker(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPermission('caneditissue') || Context::getUser()->hasPermission('caneditissuebasic'));
+			$this->forward403unless(Caspar::getUser()->hasPermission('caneditissue') || Caspar::getUser()->hasPermission('caneditissuebasic'));
 
 			if ($issue_id = $request->getParameter('issue_id'))
 			{
@@ -1955,7 +1956,7 @@
 		 */
 		public function runMarkAsBlocker(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPermission('caneditissue') || Context::getUser()->hasPermission('caneditissuebasic'));
+			$this->forward403unless(Caspar::getUser()->hasPermission('caneditissue') || Caspar::getUser()->hasPermission('caneditissuebasic'));
 						
 			if ($issue_id = $request->getParameter('issue_id'))
 			{
@@ -1986,7 +1987,7 @@
 		 */
 		public function runDeleteIssue(Request $request)
 		{
-			$this->forward403unless(Context::getUser()->hasPermission('caneditissue') || Context::getUser()->hasPermission('candeleteissues'));
+			$this->forward403unless(Caspar::getUser()->hasPermission('caneditissue') || Caspar::getUser()->hasPermission('candeleteissues'));
 
 			if ($issue_id = $request->getParameter('issue_id'))
 			{
@@ -2051,9 +2052,9 @@
 		{
 			$id = $request->getParameter('upload_id', 0);
 
-			TBGLogging::log('requesting status for upload with id ' . $id);
+			\caspar\core\Logging::log('requesting status for upload with id ' . $id);
 			$status = $request->getUploadStatus($id);
-			TBGLogging::log('status was: ' . (int) $status['finished']. ', pct: '. (int) $status['percent']);
+			\caspar\core\Logging::log('status was: ' . (int) $status['finished']. ', pct: '. (int) $status['percent']);
 			if (array_key_exists('file_id', $status) && $request->getParameter('mode') == 'issue')
 			{
 				$file = Caspar::factory()->TBGFile($status['file_id']);
@@ -2117,7 +2118,7 @@
 								$issue->attachFile($file);
 								$issue->save();
 								$comment = new TBGComment();
-								$comment->setPostedBy(Context::getUser()->getID());
+								$comment->setPostedBy(Caspar::getUser()->getID());
 								$comment->setTargetID($issue->getID());
 								$comment->setTargetType(TBGComment::TYPE_ISSUE);
 								if ($request->getParameter('comment') != '')
@@ -2165,7 +2166,7 @@
 						break;
 				}
 			}
-			TBGLogging::log('marking upload ' . $request->getParameter('APC_UPLOAD_PROGRESS') . ' as completed with error ' . $this->error);
+			\caspar\core\Logging::log('marking upload ' . $request->getParameter('APC_UPLOAD_PROGRESS') . ' as completed with error ' . $this->error);
 			$request->markUploadAsFinishedWithError($request->getParameter('APC_UPLOAD_PROGRESS'), $this->error);
 			return $this->renderText($request->getParameter('APC_UPLOAD_PROGRESS').': '.$this->error);
 		}
@@ -2180,7 +2181,7 @@
 						$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 						if ($issue->canRemoveAttachments() && (int) $request->getParameter('file_id', 0))
 						{
-							\b2db\Core::getTable('\TBGIssueFilesTable')->removeByIssueIDAndFileID($issue->getID(), (int) $request->getParameter('file_id'));
+							Caspar::getB2DBInstance()->getTable('\TBGIssueFilesTable')->removeByIssueIDAndFileID($issue->getID(), (int) $request->getParameter('file_id'));
 							return $this->renderJSON(array('failed' => false, 'file_id' => $request->getParameter('file_id'), 'attachmentcount' => (count($issue->getFiles()) + count($issue->getLinks())), 'message' => Context::getI18n()->__('The attachment has been removed')));
 						}
 						return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You can not remove items from this issue')));
@@ -2327,7 +2328,7 @@
 					}
 					
 					$comment->setIsPublic($request->getParameter('comment_visibility'));
-					$comment->setUpdatedBy(Context::getUser()->getID());
+					$comment->setUpdatedBy(Caspar::getUser()->getID());
 					$comment->save();
 
 					Context::loadLibrary('common');
@@ -2366,7 +2367,7 @@
 			$comment_applies_type = $request->getParameter('comment_applies_type');
 			try
 			{
-				if (!Context::getUser()->canPostComments())
+				if (!Caspar::getUser()->canPostComments())
 					throw new Exception($i18n->__('You are not allowed to do this'));
 				else
 				{
@@ -2390,7 +2391,7 @@
 					$comment = new TBGComment();
 					$comment->setTitle($i18n->__('Untitled comment'));
 					$comment->setContent($comment_body);
-					$comment->setPostedBy(Context::getUser()->getID());
+					$comment->setPostedBy(Caspar::getUser()->getID());
 					$comment->setTargetID($request->getParameter('comment_applies_id'));
 					$comment->setTargetType($request->getParameter('comment_applies_type'));
 					$comment->setModuleName($request->getParameter('comment_module'));
@@ -2851,7 +2852,7 @@
 			$i18n = Context::getI18n();
 			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
 			$vote_direction = $request->getParameter('vote');
-			if ($issue instanceof \TBGIssue && !$issue->hasUserVoted(Context::getUser()->getID(), ($vote_direction == 'up')))
+			if ($issue instanceof \TBGIssue && !$issue->hasUserVoted(Caspar::getUser()->getID(), ($vote_direction == 'up')))
 			{
 				$issue->vote(($vote_direction == 'up'));
 				return $this->renderJSON(array('content' => $issue->getVotes(), 'message' => $i18n->__('Vote added')));
@@ -2871,11 +2872,11 @@
 					{
 						return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('This user has been deleted')));
 					}
-					Context::getUser()->addFriend($friend_user);
+					Caspar::getUser()->addFriend($friend_user);
 				}
 				else
 				{
-					Context::getUser()->removeFriend($friend_user);
+					Caspar::getUser()->removeFriend($friend_user);
 				}
 				return $this->renderJSON(array('failed' => false, 'mode' => $mode));
 			}

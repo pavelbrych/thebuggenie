@@ -154,14 +154,14 @@
 		 */
 		protected function _permissionCheckWithID($key, $explicit = false)
 		{
-			$retval = TBGContext::getUser()->hasPermission($key, $this->getID(), 'core', true, null);
+			$retval = \caspar\core\Caspar::getUser()->hasPermission($key, $this->getID(), 'core', true, null);
 			if ($explicit)
 			{
-				$retval = ($retval !== null) ? $retval : TBGContext::getUser()->hasPermission($key, 0, 'core', true, null);
+				$retval = ($retval !== null) ? $retval : \caspar\core\Caspar::getUser()->hasPermission($key, 0, 'core', true, null);
 			}
 			else
 			{
-				$retval = ($retval !== null) ? $retval : TBGContext::getUser()->hasPermission($key);
+				$retval = ($retval !== null) ? $retval : \caspar\core\Caspar::getUser()->hasPermission($key);
 			}
 
 			return $retval;
@@ -180,7 +180,7 @@
 		protected function _permissionCheck($key, $exclusive = false)
 		{
 			$retval = null;
-			if ($this->getPostedByID() == TBGContext::getUser()->getID() && !$exclusive)
+			if ($this->getPostedByID() == \caspar\core\Caspar::getUser()->getID() && !$exclusive)
 			{
 				$retval = $this->_permissionCheckWithID($key.'own', true);
 			}
@@ -221,7 +221,7 @@
 		public function canUserEditComment()
 		{
 			if ($this->isSystemComment()) return false;
-			return (bool) ($this->getPostedByID() == TBGContext::getUser()->getID() || $this->_permissionCheck('caneditcomments') || $this->_permissionCheck('canpostseeandeditallcomments', true));
+			return (bool) ($this->getPostedByID() == \caspar\core\Caspar::getUser()->getID() || $this->_permissionCheck('caneditcomments') || $this->_permissionCheck('canpostseeandeditallcomments', true));
 		}
 
 		/**
@@ -231,7 +231,7 @@
 		 */
 		public function canUserDeleteComment()
 		{
-			return (bool) ($this->getPostedByID() == TBGContext::getUser()->getID() || $this->_permissionCheck('candeletecomments') || $this->_permissionCheck('canpostseeandeditallcomments', true));
+			return (bool) ($this->getPostedByID() == \caspar\core\Caspar::getUser()->getID() || $this->_permissionCheck('candeletecomments') || $this->_permissionCheck('canpostseeandeditallcomments', true));
 		}
 
 		public function __toString()
@@ -256,7 +256,7 @@
 		 */
 		public function getUpdatedBy()
 		{
-			return ($this->_updated_by instanceof TBGUser) ? $this->_updated_by : \caspar\core\Caspar::factory()->TBGUser($this->_updated_by);
+			return ($this->_updated_by instanceof TBGUser) ? $this->_updated_by : \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->_updated_by);
 		}
 		
 		/**
@@ -268,7 +268,7 @@
 		{
 			try
 			{
-				return ($this->_posted_by instanceof TBGUser) ? $this->_posted_by : \caspar\core\Caspar::factory()->TBGUser($this->_posted_by);
+				return ($this->_posted_by instanceof TBGUser) ? $this->_posted_by : \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->_posted_by);
 			}
 			catch (Exception $e)
 			{

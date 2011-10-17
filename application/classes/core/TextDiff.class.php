@@ -1,5 +1,7 @@
 <?php
 
+	namespace application\core;
+
 	/**
 	 * Text diff class
 	 *
@@ -16,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage main
 	 */
-	class TBGTextDiff
+	class TextDiff
 	{
 
 		function arrayDiff($old, $new)

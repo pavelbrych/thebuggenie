@@ -147,11 +147,11 @@
 			}
 			if ($retval)
 			{
-				TBGLogging::log("Sending email to {$email->getRecipients()} accepted for delivery OK");
+				\caspar\core\Logging::log("Sending email to {$email->getRecipients()} accepted for delivery OK");
 			}
 			else
 			{
-				TBGLogging::log("Sending email to {$email->getRecipients()} not accepted for delivery", TBGLogging::LEVEL_NOTICE);
+				\caspar\core\Logging::log("Sending email to {$email->getRecipients()} not accepted for delivery", \caspar\core\Logging::LEVEL_NOTICE);
 			}
 			
 			return $retval;

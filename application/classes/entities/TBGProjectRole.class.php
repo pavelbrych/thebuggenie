@@ -5,7 +5,7 @@
 
 		protected static $_items = null;
 		
-		protected $_itemtype = TBGDatatype::PROJECTROLE;
+		protected $_itemtype = \thebuggenie\entities\Datatype::PROJECTROLE;
 
 		public static function loadFixtures(TBGScope $scope)
 		{

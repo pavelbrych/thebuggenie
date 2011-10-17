@@ -18,7 +18,7 @@
 				<?php echo image_tag('debug_time.png', array('style' => 'float: left; margin-right: 5px;')); ?>
 				<?php echo $tbg_summary['load_time']; ?>
 			</td>
-			<td onclick="$('scope_settings').toggle();" style="width: 80px; padding: 3px; cursor: pointer; font-size: 11px; font-family: Ubuntu;" title="Generated hostname: <?php echo implode(', ', TBGContext::getScope()->getHostnames()); ?>">
+			<td onclick="$('scope_settings').toggle();" style="width: 80px; padding: 3px; cursor: pointer; font-size: 11px; font-family: Ubuntu;" title="Generated hostname: <?php echo implode(', ', \thebuggenie\core\Context::getScope()->getHostnames()); ?>">
 				<?php echo image_tag('debug_scope.png', array('style' => 'float: left; margin-right: 5px;')); ?>
 				<b>Scope: </b><?php echo $tbg_summary['scope_id']; ?>
 			</td>
@@ -40,7 +40,7 @@
 	</table>
 </div>
 <div id="scope_settings" style="display: none;">
-	<div style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #DDD; padding: 4px;">Scope <?php echo TBGContext::getScope()->getID(); ?> settings</div>
+	<div style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #DDD; padding: 4px;">Scope <?php echo \thebuggenie\core\Context::getScope()->getID(); ?> settings</div>
 	<div class="log">
 		<?php foreach (TBGSettings::getAll() as $module => $settings): ?>
 			<h3><?php echo $module; ?></h3>
@@ -91,11 +91,11 @@
 	<div style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #DDD; padding: 4px;">Log messages</div>
 	<div class="log">
 	<?php foreach (TBGContext::getI18n()->getMissingStrings() as $text => $t): ?>
-		<?php TBGLogging::log('The text "' . $text . '" does not exist in list of translated strings, and was added automatically', 'i18n', TBGLogging::LEVEL_NOTICE); ?>
+		<?php \caspar\core\Logging::log('The text "' . $text . '" does not exist in list of translated strings, and was added automatically', 'i18n', \caspar\core\Logging::LEVEL_NOTICE); ?>
 	<?php endforeach; ?>
-	<?php foreach (TBGLogging::getEntries() as $entry): ?>
-		<?php $color = TBGLogging::getCategoryColor($entry['category']); ?>
-		<div class="log_<?php echo $entry['category']; ?>"><strong><?php echo mb_strtoupper(TBGLogging::getLevelName($entry['level'])); ?></strong> <strong style="color: #<?php echo $color; ?>">[<?php echo $entry['category']; ?>]</strong> <span style="color: #555; font-size: 10px; font-style: italic;"><?php echo $entry['time']; ?></span>&nbsp;&nbsp;<?php echo $entry['message']; ?></div>
+	<?php foreach (\caspar\core\Logging::getEntries() as $entry): ?>
+		<?php $color = \caspar\core\Logging::getCategoryColor($entry['category']); ?>
+		<div class="log_<?php echo $entry['category']; ?>"><strong><?php echo mb_strtoupper(\caspar\core\Logging::getLevelName($entry['level'])); ?></strong> <strong style="color: #<?php echo $color; ?>">[<?php echo $entry['category']; ?>]</strong> <span style="color: #555; font-size: 10px; font-style: italic;"><?php echo $entry['time']; ?></span>&nbsp;&nbsp;<?php echo $entry['message']; ?></div>
 	<?php endforeach; ?>
 	</div>
 </div>

@@ -188,7 +188,7 @@
 		{
 			if ($is_new)
 			{
-				TBGContext::setPermission("canseemilestone", $this->getID(), "core", 0, TBGContext::getUser()->getGroup()->getID(), 0, true);
+				TBGContext::setPermission("canseemilestone", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
 				TBGEvent::createNew('core', 'TBGMilestone::createNew', $this)->trigger();
 			}
 		}
@@ -751,7 +751,7 @@
 		 */
 		public function hasAccess()
 		{
-			return ($this->getProject()->canSeeAllMilestones() || TBGContext::getUser()->hasPermission('canseemilestone', $this->getID()));
+			return ($this->getProject()->canSeeAllMilestones() || \caspar\core\Caspar::getUser()->hasPermission('canseemilestone', $this->getID()));
 		}
 
 		/**
@@ -821,8 +821,8 @@
 					}
 				}
 				
-				$estimations = \b2db\Core::getTable('TBGIssueEstimates')->getEstimatesByDateAndIssueIDs($this->getStartingDate(), $this->getScheduledDate(), $child_issues);
-				$spent_times = \b2db\Core::getTable('TBGIssueSpentTimes')->getSpentTimesByDateAndIssueIDs($this->getStartingDate(), $this->getScheduledDate(), $child_issues);
+				$estimations = Caspar::getB2DBInstance()->getTable('TBGIssueEstimates')->getEstimatesByDateAndIssueIDs($this->getStartingDate(), $this->getScheduledDate(), $child_issues);
+				$spent_times = Caspar::getB2DBInstance()->getTable('TBGIssueSpentTimes')->getSpentTimesByDateAndIssueIDs($this->getStartingDate(), $this->getScheduledDate(), $child_issues);
 
 				$burndowndata = array();
 				//var_dump($spent_times);var_dump($estimations);die();

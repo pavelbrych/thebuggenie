@@ -1,4 +1,7 @@
 <?php
+
+	namespace application\modules\vcs_integration;
+
 	/**
 	 * Module class, vcs_integration
 	 *
@@ -15,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage vcs_integration
 	 */
-	class TBGVCSIntegration extends TBGModule 
+	class Vcs_integration extends \thebuggenie\core\Module 
 	{
 		const MODE_DISABLED = 0;
 		const MODE_ISSUECOMMITS = 1;
@@ -75,7 +78,7 @@
 
 		protected function _uninstall()
 		{
-			if (TBGContext::getScope()->getID() == 1)
+			if (\thebuggenie\core\Context::getScope()->getID() == 1)
 			{
 				TBGVCSIntegrationCommitsTable::getTable()->drop();
 				TBGVCSIntegrationFilesTable::getTable()->drop();
@@ -83,7 +86,7 @@
 				
 				try
 				{
-					\b2db\Core::getTable('TBGVCSIntegrationTable')->drop();
+					Caspar::getB2DBInstance()->getTable('TBGVCSIntegrationTable')->drop();
 				}
 				catch (Exception $e) { }
 			}
@@ -96,9 +99,9 @@
 			{
 				case "1.0":
 					// Upgrade tables
-					\b2db\Core::getTable('TBGVCSIntegrationCommitsTable')->create();
-					\b2db\Core::getTable('TBGVCSIntegrationFilesTable')->create();
-					\b2db\Core::getTable('TBGVCSIntegrationIssueLinksTable')->create();
+					Caspar::getB2DBInstance()->getTable('TBGVCSIntegrationCommitsTable')->create();
+					Caspar::getB2DBInstance()->getTable('TBGVCSIntegrationFilesTable')->create();
+					Caspar::getB2DBInstance()->getTable('TBGVCSIntegrationIssueLinksTable')->create();
 					
 					// Migrate data from old table to new tables
 					$crit = new \b2db\Criteria();
@@ -140,11 +143,11 @@
 							
 							try
 							{
-								$author = \caspar\core\Caspar::factory()->TBGUser($commit['commit']['author']);
+								$author = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $commit['commit']['author']);
 							}
 							catch (Exception $e)
 							{
-								$author = \caspar\core\Caspar::factory()->TBGUser(TBGSettings::getDefaultUserID());
+								$author = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', TBGSettings::getDefaultUserID());
 							}
 
 							// Add the commit
@@ -460,14 +463,14 @@
 
 				// a)
 				$crit = new \b2db\Criteria();
-				$crit->setFromTable(TBGUsersTable::getTable());
-				$crit->addSelectionColumn(TBGUsersTable::ID);
-				$crit->addWhere(TBGUsersTable::EMAIL, $email);
-				$row = TBGUsersTable::getTable()->doSelectOne($crit);
+				$crit->setFromTable(Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'));
+				$crit->addSelectionColumn(\thebuggenie\tables\Users::ID);
+				$crit->addWhere(\thebuggenie\tables\Users::EMAIL, $email);
+				$row = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->doSelectOne($crit);
 				
 				if ($row != null)
 				{
-					$uid = $row->get(TBGUsersTable::ID);
+					$uid = $row->get(\thebuggenie\tables\Users::ID);
 				}
 				else
 				{
@@ -482,14 +485,14 @@
 			if ($uid == 0)
 			{
 				$crit = new \b2db\Criteria();
-				$crit->setFromTable(TBGUsersTable::getTable());
-				$crit->addSelectionColumn(TBGUsersTable::ID);
-				$crit->addWhere(TBGUsersTable::REALNAME, $author);
-				$row = TBGUsersTable::getTable()->doSelectOne($crit);
+				$crit->setFromTable(Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'));
+				$crit->addSelectionColumn(\thebuggenie\tables\Users::ID);
+				$crit->addWhere(\thebuggenie\tables\Users::REALNAME, $author);
+				$row = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->doSelectOne($crit);
 				
 				if ($row != null)
 				{
-					$uid = $row->get(TBGUsersTable::ID);
+					$uid = $row->get(\thebuggenie\tables\Users::ID);
 				}
 			}
 			
@@ -498,14 +501,14 @@
 			if ($uid == 0)
 			{
 				$crit = new \b2db\Criteria();
-				$crit->setFromTable(TBGUsersTable::getTable());
-				$crit->addSelectionColumn(TBGUsersTable::ID);
-				$crit->addWhere(TBGUsersTable::BUDDYNAME, $author);
-				$row = TBGUsersTable::getTable()->doSelectOne($crit);
+				$crit->setFromTable(Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'));
+				$crit->addSelectionColumn(\thebuggenie\tables\Users::ID);
+				$crit->addWhere(\thebuggenie\tables\Users::BUDDYNAME, $author);
+				$row = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->doSelectOne($crit);
 				
 				if ($row != null)
 				{
-					$uid = $row->get(TBGUsersTable::ID);
+					$uid = $row->get(\thebuggenie\tables\Users::ID);
 				}
 			}
 			
@@ -514,14 +517,14 @@
 			if ($uid == 0)
 			{
 				$crit = new \b2db\Criteria();
-				$crit->setFromTable(TBGUsersTable::getTable());
-				$crit->addSelectionColumn(TBGUsersTable::ID);
-				$crit->addWhere(TBGUsersTable::UNAME, $author);
-				$row = TBGUsersTable::getTable()->doSelectOne($crit);
+				$crit->setFromTable(Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'));
+				$crit->addSelectionColumn(\thebuggenie\tables\Users::ID);
+				$crit->addWhere(\thebuggenie\tables\Users::UNAME, $author);
+				$row = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->doSelectOne($crit);
 				
 				if ($row != null)
 				{
-					$uid = $row->get(TBGUsersTable::ID);
+					$uid = $row->get(\thebuggenie\tables\Users::ID);
 				}
 			}
 			
@@ -532,7 +535,7 @@
 				$uid = TBGSettings::getDefaultUserID();
 			}
 			
-			$user = \caspar\core\Caspar::factory()->TBGUser($uid);
+			$user = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 			
 			$output .= '[VCS '.$project->getKey().'] Commit to be logged by user ' . $user->getName() . "\n";
 

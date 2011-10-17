@@ -103,7 +103,7 @@
 										<option value=<?php echo $anIssuetype->getID(); ?>><?php echo $anIssuetype->getName(); ?></option>
 									<?php endforeach; ?>
 								<?php else: ?>
-									<?php TBGLogging::log('Build ' . $build->getID() . ' does not belong to a project!', 'main', TBGLogging::LEVEL_WARNING_RISK); ?>
+									<?php \caspar\core\Logging::log('Build ' . $build->getID() . ' does not belong to a project!', 'main', \caspar\core\Logging::LEVEL_WARNING_RISK); ?>
 								<?php endif; ?>
 							</select>
 						</td>

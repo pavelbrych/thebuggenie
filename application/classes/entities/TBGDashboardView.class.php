@@ -86,12 +86,12 @@
 																				TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES => TBGContext::geti18n()->__('Closed issues'),
 																				TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED => TBGContext::geti18n()->__('Most voted issues'));
 					$searches[self::VIEW_LOGGED_ACTION] = array( 0 => TBGContext::geti18n()->__("What you've done recently"));
-					if (TBGContext::getUser()->canViewComments())
+					if (\caspar\core\Caspar::getUser()->canViewComments())
 					{
 						$searches[self::VIEW_LAST_COMMENTS] = array( 0 => TBGContext::geti18n()->__('Recent comments'));
 					}
 					$searches[self::VIEW_SAVED_SEARCH] = array();
-					$allsavedsearches = \b2db\Core::getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(TBGContext::getUser()->getID());
+					$allsavedsearches = Caspar::getB2DBInstance()->getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(\caspar\core\Caspar::getUser()->getID());
 					foreach ($allsavedsearches as $savedsearches)
 					{
 						foreach ($savedsearches as $a_savedsearch)
@@ -129,10 +129,10 @@
 
 		public static function setViews($tid, $target_type, $views)
 		{
-			\b2db\Core::getTable('TBGDashboardViewsTable')->clearViews($tid, $target_type);
+			Caspar::getB2DBInstance()->getTable('TBGDashboardViewsTable')->clearViews($tid, $target_type);
 			foreach($views as $key => $view)
 			{
-				\b2db\Core::getTable('TBGDashboardViewsTable')->addView($tid, $target_type, $view);
+				Caspar::getB2DBInstance()->getTable('TBGDashboardViewsTable')->addView($tid, $target_type, $view);
 			}
 		}
 

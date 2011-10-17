@@ -14,7 +14,7 @@
 			// forward 403 if you're not allowed here
 			if ($request->isAjaxCall() == false) // for avoiding empty error when an user disables himself its own permissions
 			{
-				$this->forward403unless(TBGContext::getUser()->canAccessConfigurationPage());
+				$this->forward403unless(\caspar\core\Caspar::getUser()->canAccessConfigurationPage());
 			}
 			
 			$this->access_level = $this->getAccessLevel($request->getParameter('section'), 'core');
@@ -37,14 +37,14 @@
 			$data_config_sections = array();
 			$module_config_sections = array();
 			
-			if (TBGContext::getUser()->getScope()->getID() == 1)
+			if (\caspar\core\Caspar::getUser()->getScope()->getID() == 1)
 				$general_config_sections[TBGSettings::CONFIGURATION_SECTION_SCOPES] = array('route' => 'configure_scopes', 'description' => $i18n->__('Scopes'), 'icon' => 'scopes', 'details' => $i18n->__('Scopes are self-contained Bug Genie environments. Configure them here.'));
 
 			$general_config_sections[TBGSettings::CONFIGURATION_SECTION_SETTINGS] = array('route' => 'configure_settings', 'description' => $i18n->__('Settings'), 'icon' => 'general', 'details' => $i18n->__('Every setting in the bug genie can be adjusted in this section.'));
 			$general_config_sections[TBGSettings::CONFIGURATION_SECTION_PERMISSIONS] = array('route' => 'configure_permissions', 'description' => $i18n->__('Permissions'), 'icon' => 'permissions', 'details' => $i18n->__('Configure permissions in this section'));
 			$general_config_sections[TBGSettings::CONFIGURATION_SECTION_AUTHENTICATION] = array('route' => 'configure_authentication', 'description' => $i18n->__('Authentication'), 'icon' => 'authentication', 'details' => $i18n->__('Configure the authentication method in this section'));
 			
-			if (TBGContext::getScope()->isUploadsEnabled())
+			if (\thebuggenie\core\Context::getScope()->isUploadsEnabled())
 				$general_config_sections[TBGSettings::CONFIGURATION_SECTION_UPLOADS] = array('route' => 'configure_files', 'description' => $i18n->__('Uploads &amp; attachments'), 'icon' => 'files', 'details' => $i18n->__('All settings related to file uploads are controlled from this section.'));
 
 			$data_config_sections[TBGSettings::CONFIGURATION_SECTION_IMPORT] = array('route' => 'configure_import', 'description' => $i18n->__('Import data'), 'icon' => 'import', 'details' => $i18n->__('Import data from CSV files and other sources.'));
@@ -350,7 +350,7 @@
 		 */
 		public function runSettings(Request $request)
 		{
-			if (TBGContext::getRequest()->isMethod(TBGRequest::POST))
+			if (\caspar\core\Caspar::getRequest()->isMethod(TBGRequest::POST))
 			{
 				$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL);
 				$settings = array(TBGSettings::SETTING_THEME_NAME, TBGSettings::SETTING_ALLOW_USER_THEMES, TBGSettings::SETTING_ONLINESTATE, TBGSettings::SETTING_ENABLE_GRAVATARS,
@@ -366,14 +366,14 @@
 				
 				foreach ($settings as $setting)
 				{
-					if (TBGContext::getRequest()->getParameter($setting) !== null)
+					if (\caspar\core\Caspar::getRequest()->getParameter($setting) !== null)
 					{
-						$value = TBGContext::getRequest()->getParameter($setting);
+						$value = \caspar\core\Caspar::getRequest()->getParameter($setting);
 						switch ($setting)
 						{
 							case TBGSettings::SETTING_TBG_NAME:
 							case TBGSettings::SETTING_TBG_TAGLINE:
-								$value = TBGContext::getRequest()->getParameter($setting, null, false);
+								$value = \caspar\core\Caspar::getRequest()->getParameter($setting, null, false);
 								break;
 							case  TBGSettings::SETTING_SYNTAX_HIGHLIGHT_DEFAULT_INTERVAL:
 								if (!is_numeric($value) || $value < 1)
@@ -600,7 +600,7 @@
 		{
 			$i18n = TBGContext::getI18n();
 			$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL);
-			$types = TBGDatatype::getTypes();
+			$types = \thebuggenie\entities\Datatype::getTypes();
 
 			switch ($request->getParameter('mode'))
 			{
@@ -664,7 +664,7 @@
 						}
 						else
 						{
-							\b2db\Core::getTable('TBGCustomFieldOptionsTable')->doDeleteById($request->getParameter('id'));
+							Caspar::getB2DBInstance()->getTable('TBGCustomFieldOptionsTable')->doDeleteById($request->getParameter('id'));
 							return $this->renderJSON(array('failed' => false, 'title' => $i18n->__('The option was deleted')));
 						}
 					}
@@ -793,10 +793,10 @@
 					switch ($assignee_type)
 					{
 						case 'user':
-							$assignee = \caspar\core\Caspar::factory()->TBGUser($assignee_id);
+							$assignee = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $assignee_id);
 							break;
 						case 'team':
-							$assignee = \caspar\core\Caspar::factory()->TBGTeam($assignee_id);
+							$assignee = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $assignee_id);
 							break;
 						default:
 							$this->forward403();
@@ -1008,10 +1008,10 @@
 						switch ($request->getParameter('identifiable_type'))
 						{
 							case TBGIdentifiableClass::TYPE_USER:
-								$identified = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('value'));
+								$identified = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $request->getParameter('value'));
 								break;
 							case TBGIdentifiableClass::TYPE_TEAM:
-								$identified = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('value'));
+								$identified = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $request->getParameter('value'));
 								break;
 						}
 						if ($identified instanceof TBGIdentifiableClass)
@@ -1101,7 +1101,7 @@
 					}
 					else
 					{
-						$this->project->setClient(\caspar\core\Caspar::factory()->TBGClient($request->getParameter('client')));
+						$this->project->setClient(\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $request->getParameter('client')));
 					}
 				}
 
@@ -1176,7 +1176,7 @@
 		{
 			$i18n = TBGContext::getI18n();
 
-			if (!TBGContext::getScope()->hasProjectsAvailable())
+			if (!\thebuggenie\core\Context::getScope()->hasProjectsAvailable())
 			{
 				return $this->renderJSON(array('failed' => true, "error" => $i18n->__("There are no more projects available in this instance")));
 			}
@@ -1189,7 +1189,7 @@
 						$project = new TBGProject();
 						$project->setName($p_name);
 						$project->save();
-						return $this->renderJSON(array('title' => $i18n->__('The project has been added'), 'content' => $this->getTemplateHTML('projectbox', array('project' => $project, 'access_level' => $this->access_level)), 'total_count' => TBGProject::getProjectsCount(), 'more_available' => TBGContext::getScope()->hasProjectsAvailable()));
+						return $this->renderJSON(array('title' => $i18n->__('The project has been added'), 'content' => $this->getTemplateHTML('projectbox', array('project' => $project, 'access_level' => $this->access_level)), 'total_count' => TBGProject::getProjectsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasProjectsAvailable()));
 					}
 					catch (InvalidArgumentException $e)
 					{
@@ -1221,7 +1221,7 @@
 					$p_id = $request->getParameter('project_id');
 					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
-						if (TBGContext::getUser()->canManageProjectReleases($project))
+						if (\caspar\core\Caspar::getUser()->canManageProjectReleases($project))
 						{
 							if (($e_name = $request->getParameter('e_name')) && trim($e_name) != '')
 							{
@@ -1360,7 +1360,7 @@
 		 */
 		public function runGetUserEditForm(Request $request)
 		{
-			return $this->renderJSON(array('failed' => false, "content" => get_template_html('finduser_row_editable', array('user' => \caspar\core\Caspar::factory()->TBGUser($request->getParameter('user_id'))))));
+			return $this->renderJSON(array('failed' => false, "content" => get_template_html('finduser_row_editable', array('user' => \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $request->getParameter('user_id'))))));
 		}	
 			
 		/**
@@ -1379,7 +1379,7 @@
 					$p_id = $request->getParameter('project_id');
 					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
-						if (TBGContext::getUser()->canManageProjectReleases($project))
+						if (\caspar\core\Caspar::getUser()->canManageProjectReleases($project))
 						{
 							if (($b_name = $request->getParameter('build_name')) && trim($b_name) != '')
 							{
@@ -1418,7 +1418,7 @@
 											$build->getFile()->delete();
 											$build->clearFile();
 										}
-										$file = TBGContext::getRequest()->handleUpload('upload_file');
+										$file = \caspar\core\Caspar::getRequest()->handleUpload('upload_file');
 										$build->setFile($file);
 										$build->setFileURL('');
 										break;
@@ -1473,7 +1473,7 @@
 					$p_id = $request->getParameter('project_id');
 					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
-						if (TBGContext::getUser()->canManageProjectReleases($project))
+						if (\caspar\core\Caspar::getUser()->canManageProjectReleases($project))
 						{
 							if (($c_name = $request->getParameter('c_name')) && trim($c_name) != '')
 							{
@@ -1524,7 +1524,7 @@
 					$p_id = $request->getParameter('project_id');
 					if ($project = \caspar\core\Caspar::factory()->TBGProject($p_id))
 					{
-						if (TBGContext::getUser()->canManageProjectReleases($project))
+						if (\caspar\core\Caspar::getUser()->canManageProjectReleases($project))
 						{
 							if (($m_name = $request->getParameter('name')) && trim($m_name) != '')
 							{
@@ -1608,7 +1608,7 @@
 										{
 											if ($request->hasParameter('sch_month') && $request->hasParameter('sch_day') && $request->hasParameter('sch_year'))
 											{
-												$scheduled_date = mktime(23, 59, 59, TBGContext::getRequest()->getParameter('sch_month'), TBGContext::getRequest()->getParameter('sch_day'), TBGContext::getRequest()->getParameter('sch_year'));
+												$scheduled_date = mktime(23, 59, 59, \caspar\core\Caspar::getRequest()->getParameter('sch_month'), \caspar\core\Caspar::getRequest()->getParameter('sch_day'), \caspar\core\Caspar::getRequest()->getParameter('sch_year'));
 												$theMilestone->setScheduledDate($scheduled_date);
 											}
 										}
@@ -1621,7 +1621,7 @@
 										{
 											if ($request->hasParameter('starting_month') && $request->hasParameter('starting_day') && $request->hasParameter('starting_year'))
 											{
-												$starting_date = mktime(0, 0, 1, TBGContext::getRequest()->getParameter('starting_month'), TBGContext::getRequest()->getParameter('starting_day'), TBGContext::getRequest()->getParameter('starting_year'));
+												$starting_date = mktime(0, 0, 1, \caspar\core\Caspar::getRequest()->getParameter('starting_month'), \caspar\core\Caspar::getRequest()->getParameter('starting_day'), \caspar\core\Caspar::getRequest()->getParameter('starting_year'));
 												$theMilestone->setStartingDate($starting_date);
 											}
 										}
@@ -1762,7 +1762,7 @@
 					$theProject = \caspar\core\Caspar::factory()->TBGProject($request->getParameter('project_id'));
 					$theProject->setDeleted();
 					$theProject->save();
-					return $this->renderJSON(array('failed' => false, 'title' => $i18n->__('The project was deleted'), 'total_count' => TBGProject::getProjectsCount(), 'more_available' => TBGContext::getScope()->hasProjectsAvailable()));
+					return $this->renderJSON(array('failed' => false, 'title' => $i18n->__('The project was deleted'), 'total_count' => TBGProject::getProjectsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasProjectsAvailable()));
 				}
 				catch (Exception $e)
 				{
@@ -1819,7 +1819,7 @@
 		public function runUnarchiveProject(Request $request)
 		{
 			// Don't unarchive if we will have too many projects
-			if (!TBGContext::getScope()->hasProjectsAvailable())
+			if (!\thebuggenie\core\Context::getScope()->hasProjectsAvailable())
 			{
 				return $this->renderJSON(array('failed' => true, "error" => $i18n->__("There are no more projects available in this instance")));
 			}
@@ -1898,7 +1898,7 @@
 			}
 			catch (Exception $e)
 			{ throw $e;
-				TBGLogging::log('Trying to run action ' . $request->getParameter('mode') . ' on module ' . $request->getParameter('module_key') . ' made an exception: ' . $e->getMessage(), TBGLogging::LEVEL_FATAL);
+				\caspar\core\Logging::log('Trying to run action ' . $request->getParameter('mode') . ' on module ' . $request->getParameter('module_key') . ' made an exception: ' . $e->getMessage(), \caspar\core\Logging::LEVEL_FATAL);
 				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('This module (%module_name%) does not exist', array('%module_name%' => $request->getParameter('module_key'))));
 			}
 			$this->forward(TBGContext::getRouting()->generate('configure_modules'));
@@ -2002,7 +2002,7 @@
 			}
 			catch (Exception $e)
 			{
-				TBGLogging::log('Trying to configure module ' . $request->getParameter('config_module') . " which isn't configurable", 'main', TBGLogging::LEVEL_FATAL);
+				\caspar\core\Logging::log('Trying to configure module ' . $request->getParameter('config_module') . " which isn't configurable", 'main', \caspar\core\Logging::LEVEL_FATAL);
 				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('The module "%module_name%" is not configurable', array('%module_name%' => $request->getParameter('config_module'))));
 				$this->forward(TBGContext::getRouting()->generate('configure_modules'));
 			}
@@ -2018,7 +2018,7 @@
 
 		public function runConfigureUploads(Request $request)
 		{
-			$this->uploads_enabled = TBGContext::getScope()->isUploadsEnabled();
+			$this->uploads_enabled = \thebuggenie\core\Context::getScope()->isUploadsEnabled();
 			if ($this->uploads_enabled && $request->isMethod(TBGRequest::POST))
 			{
 				$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL);
@@ -2040,9 +2040,9 @@
 
 				foreach ($settings as $setting)
 				{
-					if (TBGContext::getRequest()->hasParameter($setting))
+					if (\caspar\core\Caspar::getRequest()->hasParameter($setting))
 					{
-						TBGSettings::saveSetting($setting, TBGContext::getRequest()->getParameter($setting));
+						TBGSettings::saveSetting($setting, \caspar\core\Caspar::getRequest()->getParameter($setting));
 					}
 				}
 				return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('All settings saved')));
@@ -2065,16 +2065,16 @@
 		
 		public function runSaveAuthentication(Request $request)
 		{
-			if (TBGContext::getRequest()->isMethod(TBGRequest::POST))
+			if (\caspar\core\Caspar::getRequest()->isMethod(TBGRequest::POST))
 			{
 				$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL);
 				$settings = array(TBGSettings::SETTING_AUTH_BACKEND, 'register_message', 'forgot_message', 'changepw_message', 'changedetails_message');
 				
 				foreach ($settings as $setting)
 				{
-					if (TBGContext::getRequest()->getParameter($setting) !== null)
+					if (\caspar\core\Caspar::getRequest()->getParameter($setting) !== null)
 					{
-						$value = TBGContext::getRequest()->getParameter($setting);
+						$value = \caspar\core\Caspar::getRequest()->getParameter($setting);
 						TBGSettings::saveSetting($setting, $value);
 					}
 				}
@@ -2083,7 +2083,7 @@
 		
 		public function runConfigureUsers(Request $request)
 		{
-			$this->groups = TBGGroup::getAll();
+			$this->groups = \thebuggenie\entities\Group::getAll();
 			$this->teams = TBGTeam::getAll();
 			$this->clients = TBGClient::getall();
 			$this->finduser = $request->getParameter('finduser');
@@ -2100,10 +2100,10 @@
 				
 				try
 				{
-					$group = \caspar\core\Caspar::factory()->TBGGroup($request->getParameter('group_id'));
+					$group = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', $request->getParameter('group_id'));
 				}
 				catch (Exception $e) { }
-				if (!$group instanceof TBGGroup)
+				if (!$group instanceof \thebuggenie\entities\Group)
 				{
 					throw new Exception(TBGContext::getI18n()->__("You cannot delete this group"));
 				}
@@ -2128,19 +2128,19 @@
 					{
 						try
 						{
-							$old_group = \caspar\core\Caspar::factory()->TBGGroup($request->getParameter('group_id'));
+							$old_group = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', $request->getParameter('group_id'));
 						}
 						catch (Exception $e) { }
-						if (!$old_group instanceof TBGGroup)
+						if (!$old_group instanceof \thebuggenie\entities\Group)
 						{
 							throw new Exception(TBGContext::getI18n()->__("You cannot clone this group"));
 						}
 					}
-					if (TBGGroup::doesGroupNameExist(trim($group_name)))
+					if (\thebuggenie\entities\Group::doesGroupNameExist(trim($group_name)))
 					{
 						throw new Exception(TBGContext::getI18n()->__("Please enter a group name that doesn't already exist"));
 					}
-					$group = new TBGGroup();
+					$group = new \thebuggenie\entities\Group();
 					$group->setName($group_name);
 					$group->save();
 					if ($mode == 'clone')
@@ -2173,7 +2173,7 @@
 		{
 			try
 			{
-				$group = \caspar\core\Caspar::factory()->TBGGroup((int) $request->getParameter('group_id'));
+				$group = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', (int) $request->getParameter('group_id'));
 				$users = $group->getMembers();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('configuration/groupuserlist', array('users' => $users))));
 			}
@@ -2213,8 +2213,8 @@
 				try
 				{
 					$return_options = array('success' => true);
-					$user = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('user_id'));
-					if ($user->getGroup() instanceof TBGGroup)
+					$user = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $request->getParameter('user_id'));
+					if ($user->getGroup() instanceof \thebuggenie\entities\Group)
 					{
 						$return_options['update_groups'] = array('ids' => array(), 'membercounts' => array());
 						$group_id = $user->getGroup()->getID();
@@ -2245,7 +2245,7 @@
 				$user->save();
 				$return_options['message'] = TBGContext::getI18n()->__('The user was deleted');
 				$return_options['total_count'] = TBGUser::getUsersCount();
-				$return_options['more_available'] = TBGContext::getScope()->hasUsersAvailable();
+				$return_options['more_available'] = \thebuggenie\core\Context::getScope()->hasUsersAvailable();
 				
 				return $this->renderJSON($return_options);
 			}
@@ -2262,7 +2262,7 @@
 			{
 				try
 				{
-					$team = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('team_id'));
+					$team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $request->getParameter('team_id'));
 				}
 				catch (Exception $e) { }
 				if (!$team instanceof TBGTeam)
@@ -2270,7 +2270,7 @@
 					throw new Exception(TBGContext::getI18n()->__("You cannot delete this team"));
 				}
 				$team->delete();
-				return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The team was deleted'), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => TBGContext::getScope()->hasTeamsAvailable()));
+				return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The team was deleted'), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasTeamsAvailable()));
 			}
 			catch (Exception $e)
 			{
@@ -2290,7 +2290,7 @@
 					{
 						try
 						{
-							$old_team = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('team_id'));
+							$old_team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $request->getParameter('team_id'));
 						}
 						catch (Exception $e) { }
 						if (!$old_team instanceof TBGTeam)
@@ -2321,7 +2321,7 @@
 					{
 						$message = TBGContext::getI18n()->__('The team was added');
 					}
-					return $this->renderJSON(array('failed' => false, 'message' => $message, 'content' => $this->getTemplateHTML('configuration/teambox', array('team' => $team)), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => TBGContext::getScope()->hasTeamsAvailable()));
+					return $this->renderJSON(array('failed' => false, 'message' => $message, 'content' => $this->getTemplateHTML('configuration/teambox', array('team' => $team)), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasTeamsAvailable()));
 				}
 				else
 				{
@@ -2339,7 +2339,7 @@
 		{
 			try
 			{
-				$team = \caspar\core\Caspar::factory()->TBGTeam((int) $request->getParameter('team_id'));
+				$team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', (int) $request->getParameter('team_id'));
 				$users = $team->getMembers();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('configuration/teamuserlist', array('users' => $users))));
 			}
@@ -2356,7 +2356,7 @@
 			$findstring = $request->getParameter('findstring');
 			if (mb_strlen($findstring) >= 1)
 			{
-				list ($this->users, $this->total_results) = TBGUsersTable::getTable()->findInConfig($findstring);
+				list ($this->users, $this->total_results) = Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->findInConfig($findstring);
 			}
 			else
 			{
@@ -2383,7 +2383,7 @@
 		{
 			try
 			{
-				if (!TBGContext::getScope()->hasUsersAvailable())
+				if (!\thebuggenie\core\Context::getScope()->hasUsersAvailable())
 				{
 					throw new Exception(TBGContext::getI18n()->__('This instance of The Bug Genie cannot add more users'));
 				}
@@ -2411,7 +2411,7 @@
 				$this->total_results = 1;
 				$this->title = TBGContext::getI18n()->__('User %username% created', array('%username%' => $username));
 				$this->total_count = TBGUser::getUsersCount();
-				$this->more_available = TBGContext::getScope()->hasUsersAvailable();
+				$this->more_available = \thebuggenie\core\Context::getScope()->hasUsersAvailable();
 			}
 			catch (Exception $e)
 			{
@@ -2424,7 +2424,7 @@
 		{
 			try
 			{
-				$user = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('user_id'));
+				$user = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $request->getParameter('user_id'));
 				if ($user instanceof TBGUser)
 				{
 					$testuser = TBGUser::getByUsername($request->getParameter('username'));
@@ -2459,7 +2459,7 @@
 					$return_options = array();
 					try
 					{
-						if ($group = \caspar\core\Caspar::factory()->TBGGroup($request->getParameter('group')))
+						if ($group = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', $request->getParameter('group')))
 						{
 							if ($user->getGroupID() != $group->getID())
 							{
@@ -2481,7 +2481,7 @@
 					{
 						foreach ($request->getParameter('teams', array()) as $team_id => $team)
 						{
-							if ($team = \caspar\core\Caspar::factory()->TBGTeam($team_id))
+							if ($team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id))
 							{
 								$new_teams[] = $team_id;
 								$user->addToTeam($team);
@@ -2498,7 +2498,7 @@
 						$user->clearClients();
 						foreach ($request->getParameter('clients', array()) as $client_id => $client)
 						{
-							if ($client = \caspar\core\Caspar::factory()->TBGClient($client_id))
+							if ($client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $client_id))
 							{
 								$new_clients[] = $client_id;
 								$user->addToClient($client);
@@ -2520,7 +2520,7 @@
 						{
 							if (!$group_id) continue;
 							$return_options['update_groups']['ids'][] = $group_id;
-							$return_options['update_groups']['membercounts'][$group_id] = \caspar\core\Caspar::factory()->TBGGroup($group_id)->getNumberOfMembers();
+							$return_options['update_groups']['membercounts'][$group_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Group', $group_id)->getNumberOfMembers();
 						}
 					}
 					if ($new_teams != $existing_teams)
@@ -2532,7 +2532,7 @@
 						foreach ($teams_to_update as $team_id)
 						{
 							$return_options['update_teams']['ids'][] = $team_id;
-							$return_options['update_teams']['membercounts'][$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id)->getNumberOfMembers();
+							$return_options['update_teams']['membercounts'][$team_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id)->getNumberOfMembers();
 						}
 					}
 					$return_options['failed'] = false;
@@ -2691,7 +2691,7 @@
 			{
 				$this->workflow_scheme = \caspar\core\Caspar::factory()->TBGWorkflowScheme($request->getParameter('scheme_id'));
 				$this->issuetypes = TBGIssuetype::getAll();
-				if (TBGContext::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'copy_scheme')
+				if (\thebuggenie\core\Context::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'copy_scheme')
 				{
 					if ($new_name = $request->getParameter('new_name'))
 					{
@@ -2712,12 +2712,12 @@
 						$this->error = TBGContext::getI18n()->__('Please enter a valid name');
 					}
 				}
-				elseif (TBGContext::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'delete_scheme')
+				elseif (\thebuggenie\core\Context::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'delete_scheme')
 				{
 					$this->workflow_scheme->delete();
 					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The workflow scheme was deleted')));
 				}
-				elseif (TBGContext::getScope()->isCustomWorkflowsEnabled() && $request->isMethod(TBGRequest::POST))
+				elseif (\thebuggenie\core\Context::getScope()->isCustomWorkflowsEnabled() && $request->isMethod(TBGRequest::POST))
 				{
 					foreach ($request->getParameter('workflow_id', array()) as $issuetype_id => $workflow_id)
 					{
@@ -2761,7 +2761,7 @@
 					if ($new_name = $request->getParameter('new_name'))
 					{
 						$new_workflow = $this->workflow->copy($new_name);
-						return $this->renderJSON(array('content' => $this->getTemplateHTML('configuration/workflow', array('workflow' => $new_workflow)), 'total_count' => TBGWorkflow::getCustomWorkflowsCount(), 'more_available' => TBGContext::getScope()->hasCustomWorkflowsAvailable()));
+						return $this->renderJSON(array('content' => $this->getTemplateHTML('configuration/workflow', array('workflow' => $new_workflow)), 'total_count' => TBGWorkflow::getCustomWorkflowsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasCustomWorkflowsAvailable()));
 					}
 					else
 					{
@@ -2771,7 +2771,7 @@
 				elseif ($this->mode == 'delete_workflow')
 				{
 					$this->workflow->delete();
-					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The workflow was deleted'), 'total_count' => TBGWorkflow::getCustomWorkflowsCount(), 'more_available' => TBGContext::getScope()->hasCustomWorkflowsAvailable()));
+					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The workflow was deleted'), 'total_count' => TBGWorkflow::getCustomWorkflowsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasCustomWorkflowsAvailable()));
 				}
 			}
 			catch (Exception $e)
@@ -2876,7 +2876,7 @@
 							switch ($this->action->getActionType())
 							{
 								case TBGWorkflowTransitionAction::ACTION_ASSIGN_ISSUE:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGUser((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('User specified during transition');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('User specified during transition');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_RESOLUTION:
 									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->TBGResolution((int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Resolution specified by user');
@@ -3050,7 +3050,7 @@
 
 		public function getAccessLevel($section, $module)
 		{
-			return (TBGContext::getUser()->canSaveConfiguration($section, $module)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
+			return (\caspar\core\Caspar::getUser()->canSaveConfiguration($section, $module)) ? TBGSettings::ACCESS_FULL : TBGSettings::ACCESS_READ;
 		}
 		
 		public function runAddClient(Request $request)
@@ -3089,7 +3089,7 @@
 			{
 				try
 				{
-					$client = \caspar\core\Caspar::factory()->TBGClient($request->getParameter('client_id'));
+					$client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $request->getParameter('client_id'));
 				}
 				catch (Exception $e) { }
 				if (!$client instanceof TBGClient)
@@ -3120,7 +3120,7 @@
 		{
 			try
 			{
-				$client = \caspar\core\Caspar::factory()->TBGClient((int) $request->getParameter('client_id'));
+				$client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', (int) $request->getParameter('client_id'));
 				$users = $client->getMembers();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('configuration/clientuserlist', array('users' => $users))));
 			}
@@ -3137,7 +3137,7 @@
 			{
 				try
 				{
-					$client = \caspar\core\Caspar::factory()->TBGClient($request->getParameter('client_id'));
+					$client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $request->getParameter('client_id'));
 				}
 				catch (Exception $e) { }
 				if (!$client instanceof TBGClient)
@@ -3501,7 +3501,7 @@
 											case 1:
 												try
 												{
-													\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3511,7 +3511,7 @@
 											case 2:
 												try
 												{
-													\caspar\core\Caspar::factory()->TBGTeam(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3533,7 +3533,7 @@
 									{
 										try
 										{
-											\caspar\core\Caspar::factory()->TBGClient(trim($activerow[$client], '" '));
+											\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', trim($activerow[$client], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -3666,7 +3666,7 @@
 											case 1:
 												try
 												{
-													\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3676,7 +3676,7 @@
 											case 2:
 												try
 												{
-													\caspar\core\Caspar::factory()->TBGTeam(trim($activerow[$identifiableitem[0]], '" '));
+													\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', trim($activerow[$identifiableitem[0]], '" '));
 												}
 												catch (Exception $e)
 												{
@@ -3698,7 +3698,7 @@
 									{
 										try
 										{
-											\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$posted_by], '" '));
+											\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', trim($activerow[$posted_by], '" '));
 										}
 										catch (Exception $e)
 										{
@@ -4100,7 +4100,7 @@
 									$issue->setStatus(trim($activerow[$status], '" '));
 									
 								if ($posted_by !== null)
-									$issue->setPostedBy(\caspar\core\Caspar::factory()->TBGUser(trim($activerow[$posted_by], '"')));
+									$issue->setPostedBy(\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', trim($activerow[$posted_by], '"')));
 								
 								if ($owner !== null && $owner_type !== null)
 								{
@@ -4208,7 +4208,7 @@
 			{
 				$hostname = $request->getParameter('hostname');
 				$scopename = $request->getParameter('name');
-				if (!$hostname || TBGScopesTable::getTable()->getByHostname($hostname) instanceof TBGScope)
+				if (!$hostname || TBGScopesTable::getTable()->getByHostname($hostname) instanceof \thebuggenie\core\Scope)
 				{
 					$this->scope_hostname_error = true;
 				}
@@ -4273,7 +4273,7 @@
 						$this->scope->save();
 
 						$enabled_modules = $request->getParameter('module_enabled');
-						$prev_scope = TBGContext::getScope();
+						$prev_scope = \thebuggenie\core\Context::getScope();
 						foreach ($enabled_modules as $module => $enabled)
 						{
 							if (!TBGContext::getModule($module)->isCore() && !$enabled && array_key_exists($module, $modules))

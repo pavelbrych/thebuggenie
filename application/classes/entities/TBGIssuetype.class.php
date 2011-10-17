@@ -29,7 +29,7 @@
 		 */
 		protected $_task = false;
 		
-		protected $_itemtype = TBGDatatype::ISSUETYPE;
+		protected $_itemtype = \thebuggenie\entities\Datatype::ISSUETYPE;
 		
 		protected $_description;
 		
@@ -179,7 +179,7 @@
 			{
 				$crit = new \b2db\Criteria();
 				$crit->addWhere(TBGIssueTypesTable::ICON, 'task');
-				$crit->addWhere(TBGIssueTypesTable::SCOPE, TBGContext::getScope()->getID());
+				$crit->addWhere(TBGIssueTypesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$row = TBGIssueTypesTable::getTable()->doSelectOne($crit);
 				if ($row instanceof \b2db\Row)
 				{
@@ -210,7 +210,7 @@
 				$crit = TBGIssueTypesTable::getTable()->getCriteria();
 				if ($scope_id === null)
 				{
-					$crit->addWhere(TBGIssueTypesTable::SCOPE, TBGContext::getScope()->getID());
+					$crit->addWhere(TBGIssueTypesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				}
 				else
 				{
@@ -227,7 +227,7 @@
 				}
 				else
 				{
-					TBGLogging::log('There are no issue types', 'main', TBGLogging::LEVEL_NOTICE);
+					\caspar\core\Logging::log('There are no issue types', 'main', \caspar\core\Logging::LEVEL_NOTICE);
 				}
 		
 				self::$_issuetypes = $issuetypes;

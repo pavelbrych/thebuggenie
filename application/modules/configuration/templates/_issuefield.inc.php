@@ -27,7 +27,7 @@
 							<input type="text" name="itemdata" id="<?php echo $type; ?>_<?php echo $item->getID(); ?>_itemdata_input" style="width: 45px;" value="<?php echo $item->getColor(); ?>" onclick="picker.show(this);">
 						</td>
 					<?php endif; ?>
-					<?php if (!array_key_exists($type, TBGDatatype::getTypes())): ?>
+					<?php if (!array_key_exists($type, \thebuggenie\entities\Datatype::getTypes())): ?>
 						<td style="font-size: 14px; width: 70px;">
 							<input type="text" name="value" id="<?php echo $type; ?>_<?php echo $item->getID(); ?>_value_input" style="width: 45px;" value="<?php echo $item->getValue(); ?>">
 						</td>

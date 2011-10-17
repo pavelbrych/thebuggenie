@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\tables;
+
 	use b2db\Core,
 		b2db\Criteria,
 		b2db\Criterion;
@@ -20,7 +22,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class TBGUsersTable extends ScopedTable 
+	class Users extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 2;
@@ -50,7 +52,7 @@
 		
 		public function getAll($scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			
@@ -61,14 +63,12 @@
 
 		protected function _setup()
 		{
-			
-			
 			parent::_addVarchar(self::UNAME, 50);
 			parent::_addVarchar(self::PASSWORD, 100);
 			parent::_addVarchar(self::BUDDYNAME, 50);
 			parent::_addVarchar(self::REALNAME, 100);
 			parent::_addVarchar(self::EMAIL, 200);
-			parent::_addForeignKeyColumn(self::USERSTATE, Core::getTable('TBGUserStateTable'), TBGUserStateTable::ID);
+			parent::_addForeignKeyColumn(self::USERSTATE, $this->_connection->getTable('\\thebuggenie\\tables\Userstates'), \thebuggenie\tables\Userstates::ID);
 			parent::_addBoolean(self::CUSTOMSTATE);
 			parent::_addVarchar(self::HOMEPAGE, 250, '');
 			parent::_addVarchar(self::LANGUAGE, 100, '');
@@ -82,18 +82,17 @@
 			parent::_addBoolean(self::PRIVATE_EMAIL);
 			parent::_addBoolean(self::OPENID_LOCKED);
 			parent::_addInteger(self::JOINED, 10);
-			parent::_addForeignKeyColumn(self::GROUP_ID, TBGGroupsTable::getTable(), TBGGroupsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::GROUP_ID, $this->_connection->getTable('\\thebuggenie\\tables\\Groups'), \thebuggenie\tables\Groups::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getByUsername($username, $scope = null)
 		{
-			$scope = ($scope instanceof TBGScope) ? $scope->getID() : $scope;
+			$scope = ($scope instanceof \thebuggenie\core\Scope) ? $scope->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::UNAME, $username);
 			$crit->addWhere(self::DELETED, false);
-			if ($scope)
-				$crit->addWhere(self::SCOPE, $scope);
+			if ($scope) $crit->addWhere(self::SCOPE, $scope);
 			
 			return $this->doSelectOne($crit);
 		}
@@ -186,7 +185,7 @@
 					break;
 			}
 			$crit->addWhere(self::DELETED, false);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			if ($limit !== null)
 			{
 				$crit->setLimit($limit);
@@ -203,7 +202,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$users[$row->get(self::ID)] = \caspar\core\Caspar::factory()->TBGUser($row->get(self::ID));
+					$users[$row->get(self::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $row->get(self::ID));
 				}
 			}
 
@@ -235,7 +234,7 @@
 
 		public function countUsers($scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			$crit->addWhere(self::DELETED, false);

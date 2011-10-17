@@ -129,7 +129,7 @@
 			switch ($this->_action_type)
 			{
 				case self::ACTION_ASSIGN_ISSUE_SELF:
-					$issue->setAssignee(TBGContext::getUser());
+					$issue->setAssignee(\caspar\core\Caspar::getUser());
 					break;
 				case self::ACTION_SET_STATUS:
 					if ($this->getTargetValue())
@@ -191,7 +191,7 @@
 				case self::ACTION_ASSIGN_ISSUE:
 					if ($this->getTargetValue())
 					{
-						$issue->setAssignee(\caspar\core\Caspar::factory()->TBGUser((int) $this->getTargetValue()));
+						$issue->setAssignee(\caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', (int) $this->getTargetValue()));
 					}
 					else
 					{
@@ -199,20 +199,20 @@
 						switch ($request->getParameter('assignee_type'))
 						{
 							case TBGIdentifiableClass::TYPE_USER:
-								$assignee = \caspar\core\Caspar::factory()->TBGUser($request->getParameter('assignee_id'));
+								$assignee = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $request->getParameter('assignee_id'));
 								break;
 							case TBGIdentifiableClass::TYPE_TEAM:
-								$assignee = \caspar\core\Caspar::factory()->TBGTeam($request->getParameter('assignee_id'));
+								$assignee = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $request->getParameter('assignee_id'));
 								break;
 						}
 						if ((bool) $request->getParameter('assignee_teamup', false))
 						{
 							$team = new TBGTeam();
-							$team->setName($assignee->getBuddyname() . ' & ' . TBGContext::getUser()->getBuddyname());
+							$team->setName($assignee->getBuddyname() . ' & ' . \caspar\core\Caspar::getUser()->getBuddyname());
 							$team->setOndemand(true);
 							$team->save();
 							$team->addMember($assignee);
-							$team->addMember(TBGContext::getUser());
+							$team->addMember(\caspar\core\Caspar::getUser());
 							$assignee = $team;
 						}
 						$issue->setAssignee($assignee);

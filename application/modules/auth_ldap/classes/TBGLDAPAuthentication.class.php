@@ -126,7 +126,7 @@
 			if (!$bind)
 			{
 				ldap_unbind($connection);
-				TBGLogging::log('bind failed: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+				\caspar\core\Logging::log('bind failed: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 				throw new Exception(TBGContext::geti18n()->__('Failed to bind: ').ldap_error($connection));
 			}
 		}
@@ -166,7 +166,7 @@
 			 * otherwise don't touch those variables.
 			 * 
 			 * To log do:
-			 * TBGLogging::log('error goes here', 'ldap', TBGLogging::LEVEL_FATAL);
+			 * \caspar\core\Logging::log('error goes here', 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 			 */
 			try
 			{
@@ -198,7 +198,7 @@
 				
 				if (!$results)
 				{
-					TBGLogging::log('failed to search for user: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+					\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 					throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
 				}
 				
@@ -207,14 +207,14 @@
 				// User does not exist
 				if ($data['count'] == 0)
 				{
-					TBGLogging::log('could not find user '.$username.', class '.$user_class.', attribute '.$username_attr, 'ldap', TBGLogging::LEVEL_FATAL);
+					\caspar\core\Logging::log('could not find user '.$username.', class '.$user_class.', attribute '.$username_attr, 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 					throw new Exception(TBGContext::geti18n()->__('User does not exist in the directory'));
 				}
 				
 				// If we have more than 1 user, something is seriously messed up...
 				if ($data['count'] > 1)
 				{
-					TBGLogging::log('too many users for '.$username.', class '.$user_class.', attribute '.$username_attr, 'ldap', TBGLogging::LEVEL_FATAL);
+					\caspar\core\Logging::log('too many users for '.$username.', class '.$user_class.', attribute '.$username_attr, 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 					throw new Exception(TBGContext::geti18n()->__('This user was found multiple times in the directory, please contact your admimistrator'));
 				}
 
@@ -255,7 +255,7 @@
 						
 						if (!$results2)
 						{
-							TBGLogging::log('failed to search for user after binding: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+							\caspar\core\Logging::log('failed to search for user after binding: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 							throw new Exception(TBGContext::geti18n()->__('Search failed ').ldap_error($connection));
 						}
 						
@@ -395,10 +395,10 @@
 			/*
 			 * Set cookies and return user row for general operations.
 			 */
-			TBGContext::getResponse()->setCookie('tbg3_username', $username);
-			TBGContext::getResponse()->setCookie('tbg3_password', TBGUser::hashPassword($user->getJoinedDate().$username));
+			\caspar\core\Caspar::getResponse()->setCookie('tbg3_username', $username);
+			\caspar\core\Caspar::getResponse()->setCookie('tbg3_password', TBGUser::hashPassword($user->getJoinedDate().$username));
 
-			return TBGUsersTable::getTable()->getByUsername($username);
+			return Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->getByUsername($username);
 		}
 
 		public function verifyLogin($username)

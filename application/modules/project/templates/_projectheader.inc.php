@@ -4,7 +4,7 @@
 		<?php if ($tbg_response->getPage() != 'project_releases'): ?>
 			<?php echo link_tag(make_url('project_releases', array('project_key' => $selected_project->getKey())), image_tag('icon_download.png').__('Download'), array('class' => 'button button-orange')); ?>
 		<?php endif; ?>
-		<?php if (TBGContext::getUser()->canReportIssues($selected_project)): ?>
+		<?php if (\caspar\core\Caspar::getUser()->canReportIssues($selected_project)): ?>
 			<?php echo link_tag(make_url('project_reportissue', array('project_key' => $selected_project->getKey())), image_tag('tab_reportissue.png' ) . __('Report an issue'), array('class' => 'button button-green')); ?>
 		<?php endif; ?>
 	</div>

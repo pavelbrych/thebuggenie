@@ -10,22 +10,22 @@
 		
 		public function componentUserdropdown()
 		{
-			\TBGLogging::log('user dropdown component');
+			\caspar\core\Logging::log('user dropdown component');
 			$this->rnd_no = rand();
 			try
 			{
 				if (!$this->user instanceof \TBGUser)
 				{
-					\TBGLogging::log('loading user object in dropdown');
-					$this->user = \\caspar\core\Caspar::factory()->TBGUser($this->user);
-					\TBGLogging::log('done (loading user object in dropdown)');
+					\caspar\core\Logging::log('loading user object in dropdown');
+					$this->user = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->user);
+					\caspar\core\Logging::log('done (loading user object in dropdown)');
 				}
 			}
 			catch (Exception $e) 
 			{ 
 			}
 			$this->show_avatar = (isset($this->show_avatar)) ? $this->show_avatar : true;
-			\TBGLogging::log('done (user dropdown component)');
+			\caspar\core\Logging::log('done (user dropdown component)');
 		}
 		
 		public function componentClientusers()
@@ -34,9 +34,9 @@
 			{
 				if (!$this->client instanceof \TBGClient)
 				{
-					\TBGLogging::log('loading user object in dropdown');
-					$this->client = \\caspar\core\Caspar::factory()->TBGClient($this->client);
-					\TBGLogging::log('done (loading user object in dropdown)');
+					\caspar\core\Logging::log('loading user object in dropdown');
+					$this->client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $this->client);
+					\caspar\core\Logging::log('done (loading user object in dropdown)');
 				}
 				$this->clientusers = $this->client->getMembers();
 			}
@@ -54,7 +54,7 @@
 			}
 			elseif ($this->target == \TBGIdentifiableClass::TYPE_TEAM)
 			{
-				$this->team = \\caspar\core\Caspar::factory()->TBGTeam($this->id);
+				$this->team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $this->id);
 				$own = \TBGProject::getAllByOwner($this->team);
 				$leader = \TBGProject::getAllByLeader($this->team);
 				$qa = \TBGProject::getAllByQaResponsible($this->team);
@@ -72,7 +72,7 @@
 			}
 			elseif ($this->target == \TBGIdentifiableClass::TYPE_CLIENT)
 			{
-				$this->client = \\caspar\core\Caspar::factory()->TBGClient($this->id);
+				$this->client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $this->id);
 				$projects = \TBGProject::getAllByClientID($this->client->getID());
 				
 				$final_projects = array();
@@ -86,7 +86,7 @@
 			}
 			elseif ($this->target == 'project')
 			{
-				$this->parent = \\caspar\core\Caspar::factory()->TBGProject($this->id);
+				$this->parent = \caspar\core\Caspar::factory()->TBGProject($this->id);
 				$this->projects = $this->parent->getChildren(true);;
 			}
 			
@@ -95,22 +95,22 @@
 		
 		public function componentTeamdropdown()
 		{
-			\TBGLogging::log('team dropdown component');
+			\caspar\core\Logging::log('team dropdown component');
 			$this->rnd_no = rand();
 			try
 			{
 				$this->team = (isset($this->team)) ? $this->team : null;
 				if (!$this->team instanceof \TBGTeam)
 				{
-					\TBGLogging::log('loading team object in dropdown');
-					$this->team = \\caspar\core\Caspar::factory()->TBGTeam($this->team);
-					\TBGLogging::log('done (loading team object in dropdown)');
+					\caspar\core\Logging::log('loading team object in dropdown');
+					$this->team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $this->team);
+					\caspar\core\Logging::log('done (loading team object in dropdown)');
 				}
 			}
 			catch (Exception $e) 
 			{ 
 			}
-			\TBGLogging::log('done (team dropdown component)');
+			\caspar\core\Logging::log('done (team dropdown component)');
 		}
 		
 		public function componentIdentifiableselector()
@@ -121,12 +121,12 @@
 		
 		public function componentIdentifiableselectorresults()
 		{
-			$this->include_teams = (\TBGContext::getRequest()->hasParameter('include_teams')) ? \TBGContext::getRequest()->getParameter('include_teams') : false;
+			$this->include_teams = (\caspar\core\Caspar::getRequest()->hasParameter('include_teams')) ? \caspar\core\Caspar::getRequest()->getParameter('include_teams') : false;
 		}
 		
 		public function componentMyfriends()
 		{
-			$this->friends = \TBGContext::getUser()->getFriends();
+			$this->friends = \\caspar\core\Caspar::getUser()->getFriends();
 		}
 
 		protected function setupVariables()
@@ -203,14 +203,14 @@
 			if (isset($this->transition) && $this->transition->hasAction(\TBGWorkflowTransitionAction::ACTION_ASSIGN_ISSUE))
 			{
 				$available_assignees = array();
-				foreach (\TBGContext::getUser()->getTeams() as $team)
+				foreach (\\caspar\core\Caspar::getUser()->getTeams() as $team)
 				{
 					foreach ($team->getMembers() as $user)
 					{
 						$available_assignees[$user->getID()] = $user->getNameWithUsername();
 					}
 				}
-				foreach (\TBGContext::getUser()->getFriends() as $user)
+				foreach (\\caspar\core\Caspar::getUser()->getFriends() as $user)
 				{
 					$available_assignees[$user->getID()] = $user->getNameWithUsername();
 				}
@@ -258,7 +258,7 @@
 		{
 			if ($this->mode == 'issue' && !isset($this->issue))
 			{
-				$this->issue = \\caspar\core\Caspar::factory()->TBGIssue($this->issue_id);
+				$this->issue = \caspar\core\Caspar::factory()->TBGIssue($this->issue_id);
 			}
 			elseif ($this->mode == 'article' && !isset($this->article))
 			{
@@ -296,7 +296,7 @@
 			{
 				try
 				{
-					$this->issue = \\caspar\core\Caspar::factory()->TBGIssue($this->log_action['target']);
+					$this->issue = \caspar\core\Caspar::factory()->TBGIssue($this->log_action['target']);
 				}
 				catch (Exception $e) {}
 			}
@@ -308,7 +308,7 @@
 			{
 				try
 				{
-					$this->issue = \\caspar\core\Caspar::factory()->TBGIssue($this->comment->getTargetID());
+					$this->issue = \caspar\core\Caspar::factory()->TBGIssue($this->comment->getTargetID());
 				}
 				catch (Exception $e) {}
 			}
@@ -326,7 +326,7 @@
 
 		public function componentLoginpopup()
 		{
-			if (\TBGContext::getRequest()->getParameter('redirect') == true)
+			if (\caspar\core\Caspar::getRequest()->getParameter('redirect') == true)
 				$this->mandatory = true;
 		}
 
@@ -352,11 +352,11 @@
 
 			if (\TBGSettings::isLoginRequired())
 			{
-				\TBGContext::getResponse()->deleteCookie('\TBG3_username');
-				\TBGContext::getResponse()->deleteCookie('\TBG3_password');
+				\caspar\core\Caspar::getResponse()->deleteCookie('\TBG3_username');
+				\caspar\core\Caspar::getResponse()->deleteCookie('\TBG3_password');
 				$this->error = \TBGContext::geti18n()->__('You need to log in to access this site');
 			}
-			elseif (!\TBGContext::getUser()->isAuthenticated())
+			elseif (!\\caspar\core\Caspar::getUser()->isAuthenticated())
 			{
 				$this->error = \TBGContext::geti18n()->__('Please log in');
 			}
@@ -428,7 +428,7 @@
 
 		public function componentReportIssue()
 		{
-			$this->uniqid = \TBGContext::getRequest()->getParameter('uniqid', uniqid());
+			$this->uniqid = \caspar\core\Caspar::getRequest()->getParameter('uniqid', uniqid());
 			$this->_setupReportIssueProperties();
 		}
 

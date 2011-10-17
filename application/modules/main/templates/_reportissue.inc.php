@@ -9,7 +9,7 @@
 					<?php endforeach; ?>
 				<?php elseif (is_bool($error)): ?>
 					<li>
-						<?php if ($key == 'title' || in_array($key, TBGDatatype::getAvailableFields(true)) || in_array($key, array('pain_bug_type', 'pain_likelihood', 'pain_effect'))): ?>
+						<?php if ($key == 'title' || in_array($key, \thebuggenie\entities\Datatype::getAvailableFields(true)) || in_array($key, array('pain_bug_type', 'pain_likelihood', 'pain_effect'))): ?>
 							<?php
 
 								switch ($key)
@@ -89,7 +89,7 @@
 					<?php endforeach; ?>
 				<?php elseif (is_bool($p_error)): ?>
 					<li>
-						<?php if (in_array($key, TBGDatatype::getAvailableFields(true))): ?>
+						<?php if (in_array($key, \thebuggenie\entities\Datatype::getAvailableFields(true))): ?>
 							<?php
 
 								switch ($key)

@@ -64,7 +64,7 @@
 						
 						if (!$results2)
 						{
-							TBGLogging::log('failed to search for user: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+							\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 							throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
 						}
 						
@@ -144,7 +144,7 @@
 					
 					if (!$results)
 					{
-						TBGLogging::log('failed to search for user: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+						\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 						throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
 					}
 					
@@ -183,7 +183,7 @@
 							
 							if (!$results2)
 							{
-								TBGLogging::log('failed to search for user: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+								\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 								throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
 							}
 							
@@ -270,7 +270,7 @@
 				$results = ldap_search($connection, $base_dn, $filter, $fields);
 				if (!$results)
 				{
-					TBGLogging::log('failed to search for users: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+					\caspar\core\Logging::log('failed to search for users: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 					throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
 				}
 				
@@ -320,7 +320,7 @@
 							
 							if (!$results2)
 							{
-								TBGLogging::log('failed to search for user: '.ldap_error($connection), 'ldap', TBGLogging::LEVEL_FATAL);
+								\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
 								throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
 							}
 							

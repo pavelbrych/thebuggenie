@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\tables;
+
 	use b2db\Core,
 		b2db\Criteria,
 		b2db\Criterion;
@@ -20,7 +22,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class TBGListTypesTable extends ScopedTable 
+	class ListTypes extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;
@@ -54,7 +56,7 @@
 			parent::_addText(self::ITEMDATA, false);
 			parent::_addInteger(self::APPLIES_TO, 10);
 			parent::_addInteger(self::ORDER, 3);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function clearListTypeCache()
@@ -68,7 +70,7 @@
 			{
 				self::$_item_cache = array();
 				$crit = $this->getCriteria();
-				$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$crit->addOrderBy(self::ORDER, Criteria::SORT_ASC);
 				if ($res = $this->doSelect($crit, false))
 				{
@@ -95,7 +97,7 @@
 
 		public function createNew($name, $itemtype, $itemdata = null, $scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ITEMTYPE, $itemtype);
@@ -133,7 +135,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ITEMTYPE, $type);
 			$crit->addWhere(self::ID, $id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 
 			$res = $this->doDelete($crit);
 		}

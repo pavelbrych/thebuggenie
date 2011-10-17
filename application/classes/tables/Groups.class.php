@@ -1,5 +1,7 @@
 <?php
 
+	namespace thebuggenie\tables;
+
 	use b2db\Core,
 		b2db\Criteria,
 		b2db\Criterion;
@@ -20,7 +22,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class TBGGroupsTable extends ScopedTable 
+	class Groups extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;
@@ -29,27 +31,15 @@
 		const NAME = 'groups.name';
 		const SCOPE = 'groups.scope';
 
-		/**
-		 * Return an instance of this table
-		 *
-		 * @return TBGGroupsTable
-		 */
-		public static function getTable()
-		{
-			return Core::getTable('TBGGroupsTable');
-		}
-
 		protected function _setup()
 		{
-			
-			
 			parent::_addVarchar(self::NAME, 50);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function getAll($scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope;
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope);
 			

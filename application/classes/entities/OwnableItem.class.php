@@ -80,11 +80,11 @@
 				{
 					if ($this->$type_field == TBGIdentifiableClass::TYPE_USER)
 					{
-						$this->$field = \caspar\core\Caspar::factory()->TBGUser($this->$field);
+						$this->$field = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->$field);
 					}
 					elseif ($this->$type_field == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$this->$field = \caspar\core\Caspar::factory()->TBGTeam($this->$field);
+						$this->$field = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $this->$field);
 					}
 				}
 				catch (Exception $e)

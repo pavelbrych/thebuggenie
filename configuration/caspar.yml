@@ -6,5 +6,5 @@ core:
   site_name: 'Caspar'
   css: []
   javascripts: ['prototype', 'scriptaculous']
-  user_classname: \User
+  user_classname: \thebuggenie\core\User
 

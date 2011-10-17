@@ -767,17 +767,17 @@
 
 				TBGDashboardViewsTable::getTable()->setDefaultViews($this->getID(), TBGDashboardView::TYPE_PROJECT);
 
-				TBGContext::setPermission("canseeproject", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("canseeprojecthierarchy", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("canmanageproject", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("page_project_allpages_access", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("canvoteforissues", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("canlockandeditlockedissues", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("cancreateandeditissues", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("caneditissue", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("caneditissuecustomfields", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("canaddextrainformationtoissues", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
-				TBGContext::setPermission("canpostseeandeditallcomments", $this->getID(), "core", TBGContext::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canseeproject", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canseeprojecthierarchy", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canmanageproject", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("page_project_allpages_access", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canvoteforissues", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canlockandeditlockedissues", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("cancreateandeditissues", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("caneditissue", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("caneditissuecustomfields", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canaddextrainformationtoissues", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
+				TBGContext::setPermission("canpostseeandeditallcomments", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
 
 				TBGEvent::createNew('core', 'TBGProject::createNew', $this)->trigger();
 			}
@@ -1459,15 +1459,15 @@
 			switch (true)
 			{
 				case ($assignee instanceof TBGUser):
-					if (!$res = \b2db\Core::getTable('TBGProjectAssigneesTable')->getByProjectAndRoleAndUser($this->getID(), $role, $assignee->getID()))
+					if (!$res = Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->getByProjectAndRoleAndUser($this->getID(), $role, $assignee->getID()))
 					{
-						\b2db\Core::getTable('TBGProjectAssigneesTable')->addByProjectAndRoleAndUser($this->getID(), $role, $assignee->getID());
+						Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->addByProjectAndRoleAndUser($this->getID(), $role, $assignee->getID());
 					}
 					break;
 				case ($assignee instanceof TBGTeam):
-					if (!($res = \b2db\Core::getTable('TBGProjectAssigneesTable')->getByProjectAndRoleAndTeam($this->getID(), $role, $assignee->getID())))
+					if (!($res = Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->getByProjectAndRoleAndTeam($this->getID(), $role, $assignee->getID())))
 					{
-						\b2db\Core::getTable('TBGProjectAssigneesTable')->addByProjectAndRoleAndTeam($this->getID(), $role, $assignee->getID());
+						Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->addByProjectAndRoleAndTeam($this->getID(), $role, $assignee->getID());
 					}
 					break;
 			}
@@ -1499,7 +1499,7 @@
 			$users = array();
 			foreach (array_keys($this->_assignees['users']) as $user_id)
 			{
-				$users[$user_id] = \caspar\core\Caspar::factory()->TBGUser($user_id);
+				$users[$user_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $user_id);
 			}
 			return $users;
 		}
@@ -1510,7 +1510,7 @@
 			$teams = array();
 			foreach (array_keys($this->_assignees['teams']) as $team_id)
 			{
-				$teams[$team_id] = \caspar\core\Caspar::factory()->TBGTeam($team_id);
+				$teams[$team_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $team_id);
 			}
 			return $teams;
 		}
@@ -1671,7 +1671,7 @@
 			if ($this->_visible_milestones === null)
 			{
 				$this->_visible_milestones = array();
-				if ($res = \b2db\Core::getTable('TBGVisibleMilestonesTable')->getAllByProjectID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGVisibleMilestonesTable')->getAllByProjectID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -1704,7 +1704,7 @@
 		public function clearVisibleMilestones()
 		{
 			$this->_visible_milestones = null;
-			\b2db\Core::getTable('TBGVisibleMilestonesTable')->clearByProjectID($this->getID());
+			Caspar::getB2DBInstance()->getTable('TBGVisibleMilestonesTable')->clearByProjectID($this->getID());
 		}
 		
 		/**
@@ -1719,7 +1719,7 @@
 			try
 			{
 				$this->_visible_milestones = null;
-				\b2db\Core::getTable('TBGVisibleMilestonesTable')->addByProjectIDAndMilestoneID($this->getID(), $milestone_id);
+				Caspar::getB2DBInstance()->getTable('TBGVisibleMilestonesTable')->addByProjectIDAndMilestoneID($this->getID(), $milestone_id);
 				return true;
 			}
 			catch (Exception $e)
@@ -1837,7 +1837,7 @@
 		public function clearVisibleIssuetypes()
 		{
 			$this->_visible_issuetypes = null;
-			\b2db\Core::getTable('TBGVisibleIssueTypesTable')->clearByProjectID($this->getID());
+			Caspar::getB2DBInstance()->getTable('TBGVisibleIssueTypesTable')->clearByProjectID($this->getID());
 		}
 		
 		/**
@@ -1851,7 +1851,7 @@
 		{
 			try
 			{
-				\b2db\Core::getTable('TBGVisibleIssueTypesTable')->addByProjectIDAndIssuetypeID($this->getID(), $issuetype_id);
+				Caspar::getB2DBInstance()->getTable('TBGVisibleIssueTypesTable')->addByProjectIDAndIssuetypeID($this->getID(), $issuetype_id);
 				return true;
 			}
 			catch (Exception $e)
@@ -2199,10 +2199,10 @@
 			if (!isset($this->_fieldsarrays[$issue_type][(int) $reportable]))
 			{
 				$retval = array();
-				$res = \b2db\Core::getTable('TBGIssueFieldsTable')->getBySchemeIDandIssuetypeID($this->getIssuetypeScheme()->getID(), $issue_type);
+				$res = Caspar::getB2DBInstance()->getTable('TBGIssueFieldsTable')->getBySchemeIDandIssuetypeID($this->getIssuetypeScheme()->getID(), $issue_type);
 				if ($res)
 				{
-					$builtin_types = TBGDatatype::getAvailableFields(true);
+					$builtin_types = \thebuggenie\entities\Datatype::getAvailableFields(true);
 					while ($row = $res->getNextRow())
 					{
 						if (!$reportable || (bool) $row->get(TBGIssueFieldsTable::REPORTABLE) == true)
@@ -2348,7 +2348,7 @@
 		 */
 		public function hasAccess()
 		{
-			return TBGContext::getUser()->hasPermission('canseeproject', $this->getID());
+			return \caspar\core\Caspar::getUser()->hasPermission('canseeproject', $this->getID());
 		}
 		
 		protected function _populateLogItems($limit = null, $important = true, $offset = null)
@@ -2926,14 +2926,14 @@
 		 */
 		public function permissionCheck($key, $explicit = false)
 		{
-			$retval = TBGContext::getUser()->hasPermission($key, $this->getID(), 'core', true, null);
+			$retval = \caspar\core\Caspar::getUser()->hasPermission($key, $this->getID(), 'core', true, null);
 			if ($explicit)
 			{
-				$retval = ($retval !== null) ? $retval : TBGContext::getUser()->hasPermission($key, 0, 'core', true, null);
+				$retval = ($retval !== null) ? $retval : \caspar\core\Caspar::getUser()->hasPermission($key, 0, 'core', true, null);
 			}
 			else
 			{
-				$retval = ($retval !== null) ? $retval : TBGContext::getUser()->hasPermission($key);
+				$retval = ($retval !== null) ? $retval : \caspar\core\Caspar::getUser()->hasPermission($key);
 			}
 			
 			return $retval;

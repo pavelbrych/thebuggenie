@@ -17,9 +17,9 @@ include_component('leftmenu', array('selected_section' => 10));
 				<div class="config_header" style="width: 750px;"><?php echo __('Configure projects'); ?></div>
 				<p style="padding-top: 5px;">
 					<?php echo __('More information about projects, editions, builds and components is available from the %wiki_help_section%.', array('%wiki_help_section%' => link_tag(make_url('publish_article', array('article_name' => 'Category:Help')), '<b>'.__('Wiki help section').'</b>'))); ?>
-					<?php if (TBGContext::getScope()->getMaxProjects()): ?>
+					<?php if (\thebuggenie\core\Context::getScope()->getMaxProjects()): ?>
 						<div class="faded_out dark" style="margin: 12px 0;">
-							<?php echo __('This instance is using %num% of max %max% projects', array('%num%' => '<b id="current_project_num_count">'.TBGProject::getProjectsCount().'</b>', '%max%' => '<b>'.TBGContext::getScope()->getMaxProjects().'</b>')); ?>
+							<?php echo __('This instance is using %num% of max %max% projects', array('%num%' => '<b id="current_project_num_count">'.TBGProject::getProjectsCount().'</b>', '%max%' => '<b>'.\thebuggenie\core\Context::getScope()->getMaxProjects().'</b>')); ?>
 						</div>
 					<?php endif; ?>
 				</p>
@@ -27,7 +27,7 @@ include_component('leftmenu', array('selected_section' => 10));
 		</tr>
 	</table>
 	<?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
-		<div class="rounded_box lightgrey" style="width: 690px; padding: 5px; margin: 10px 0;<?php if (!TBGContext::getScope()->hasProjectsAvailable()): ?> display: none;<?php endif; ?>" id="add_project_div">
+		<div class="rounded_box lightgrey" style="width: 690px; padding: 5px; margin: 10px 0;<?php if (!\thebuggenie\core\Context::getScope()->hasProjectsAvailable()): ?> display: none;<?php endif; ?>" id="add_project_div">
 			<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" method="post" id="add_project_form" onsubmit="TBG.Project.add('<?php echo make_url('configure_projects_add_project'); ?>');return false;">
 				<input type="hidden" name="add_project" value="true">
 				<table cellpadding=0 cellspacing=0 style="margin: 0; width: 690px; table-layout: auto;">

@@ -119,7 +119,7 @@
 						if ($type_name && class_exists($type_name))
 						{
 							$b2dbtablename = $type_name::$_b2dbtablename;
-							$b2dbtable = $b2dbtablename::getTable();
+							$b2dbtable = Caspar::getB2DBInstance()->getTable($b2dbtablename);
 							foreach ($row->getJoinedTables() as $join_details)
 							{
 								if ($join_details['original_column'] == $column['name'])

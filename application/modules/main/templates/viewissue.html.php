@@ -269,7 +269,7 @@
 						<input class="button button-silver first last" id="more_actions_button" type="button" value="<?php echo __('More actions'); ?>" onclick="$(this).toggleClassName('button-pressed');$('more_actions').toggle();">
 					</li>
 				</ul>
-				<?php if (!$issue->getProject()->isArchived() && (TBGContext::getUser()->hasPermission('caneditissue') || TBGContext::getUser()->hasPermission('caneditissuebasic'))): ?>
+				<?php if (!$issue->getProject()->isArchived() && (\caspar\core\Caspar::getUser()->hasPermission('caneditissue') || \caspar\core\Caspar::getUser()->hasPermission('caneditissuebasic'))): ?>
 					<ul id="more_actions" style="display: none; position: absolute; width: 300px; top: 21px; right: 0; z-index: 1000;" class="simple_list rounded_box white shadowed" onclick="$('more_actions_button').toggleClassName('button-pressed');$('more_actions').toggle();">
 						<li class="header"><?php echo __('Additional actions available'); ?></li>
 						<?php if ($issue->isOpen()): ?>
@@ -302,7 +302,7 @@
 								</div>
 							</form>
 						</li>
-						<?php if (TBGContext::getUser()->hasPermission('candeleteissues') || TBGContext::getUser()->hasPermission('caneditissue')): ?>
+						<?php if (\caspar\core\Caspar::getUser()->hasPermission('candeleteissues') || \caspar\core\Caspar::getUser()->hasPermission('caneditissue')): ?>
 							<li><a href="javascript:void(0)" onClick="TBG.Main.Helpers.Dialog.show('<?php echo __('Permanently delete this issue?'); ?>', '<?php echo __('Are you sure you wish to delete this issue? It will remain in the database for your records, but will not be accessible via The Bug Genie.'); ?>', {yes: {href: '<?php echo make_url('deleteissue', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getId())); ?>' }, no: {click: TBG.Main.Helpers.Dialog.dismiss}});"><?php echo image_tag('icon_delete.png', array('style' => 'float: left; margin-right: 5px;')) . __("Permanently delete this issue"); ?></a></li>
 						<?php endif; ?>
 					</ul>

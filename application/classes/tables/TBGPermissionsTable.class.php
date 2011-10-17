@@ -53,10 +53,10 @@
 			parent::_addVarchar(self::TARGET_ID, 200, 0);
 			parent::_addBoolean(self::ALLOWED);
 			parent::_addVarchar(self::MODULE, 50);
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
-			parent::_addForeignKeyColumn(self::GID, TBGGroupsTable::getTable(), TBGGroupsTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
+			parent::_addForeignKeyColumn(self::GID, \thebuggenie\entities\GroupsTable::getTable(), \thebuggenie\entities\GroupsTable::ID);
 			parent::_addForeignKeyColumn(self::TID, Core::getTable('TBGTeamsTable'), TBGTeamsTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		protected function _setupIndexes()
@@ -66,7 +66,7 @@
 
 		public function getAll($scope_id = null)
 		{
-			$scope_id = ($scope_id === null) ? TBGContext::getScope()->getID() : $scope_id;
+			$scope_id = ($scope_id === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope_id;
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::SCOPE, $scope_id);
 			$res = $this->doSelect($crit, 'none');
@@ -182,7 +182,7 @@
 			foreach ($permissions_to_add as $permission)
 			{
 				$crit = $this->getCriteria();
-				$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$crit->addInsert(self::PERMISSION_TYPE, $permission['permission_type']);
 				$crit->addInsert(self::TARGET_ID, $permission['target_id']);
 				$crit->addInsert($mode, $new_id);

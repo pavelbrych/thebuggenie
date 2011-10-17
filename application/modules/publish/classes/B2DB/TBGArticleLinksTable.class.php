@@ -29,14 +29,14 @@
 			
 			parent::_addVarchar(self::ARTICLE_NAME, 300);
 			parent::_addVarchar(self::LINK_ARTICLE_NAME, 300);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function deleteLinksByArticle($article_name)
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ARTICLE_NAME, $article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 		}
 
@@ -45,7 +45,7 @@
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::ARTICLE_NAME, $article_name);
 			$crit->addInsert(self::LINK_ARTICLE_NAME, $linked_article_name);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doInsert($crit);
 		}
 
@@ -53,7 +53,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ARTICLE_NAME, $article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doSelect($crit);
 
 			return $res;
@@ -63,7 +63,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::LINK_ARTICLE_NAME, $linked_article_name);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doSelect($crit);
 
 			return $res;

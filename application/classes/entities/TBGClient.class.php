@@ -65,11 +65,11 @@
 			if (self::$_clients === null)
 			{
 				self::$_clients = array();
-				if ($res = \b2db\Core::getTable('TBGClientsTable')->getAll())
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGClientsTable')->getAll())
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
+						self::$_clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(TBGClientsTable::ID), $row);
 					}
 				}
 			}
@@ -179,10 +179,10 @@
 		public function addMember(TBGUser $user)
 		{
 			$crit = new \b2db\Criteria();
-			$crit->addInsert(TBGClientMembersTable::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(TBGClientMembersTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(TBGClientMembersTable::CID, $this->_id);
 			$crit->addInsert(TBGClientMembersTable::UID, $user->getID());
-			\b2db\Core::getTable('TBGClientMembersTable')->doInsert($crit);
+			Caspar::getB2DBInstance()->getTable('TBGClientMembersTable')->doInsert($crit);
 			if ($this->_members === null)
 			{
 				$this->_members = array();
@@ -198,7 +198,7 @@
 				$this->_members = array();
 				foreach (TBGClientMembersTable::getTable()->getUIDsForClientID($this->getID()) as $uid)
 				{
-					$this->_members[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
+					$this->_members[$uid] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 				}
 			}
 			return $this->_members;
@@ -214,7 +214,7 @@
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(TBGClientMembersTable::UID, $uid);
 			$crit->addWhere(TBGClientMembersTable::CID, $this->_id);
-			\b2db\Core::getTable('TBGClientMembersTable')->doDelete($crit);
+			Caspar::getB2DBInstance()->getTable('TBGClientMembersTable')->doDelete($crit);
 		}
 		
 		public function _preDelete()
@@ -229,11 +229,11 @@
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(TBGClientsTable::NAME, "%$details%", \b2db\Criteria::DB_LIKE);
 			$clients = array();
-			if ($res = \b2db\Core::getTable('TBGClientsTable')->doSelect($crit))
+			if ($res = Caspar::getB2DBInstance()->getTable('TBGClientsTable')->doSelect($crit))
 			{
 				while ($row = $res->getNextRow())
 				{
-					$clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->TBGClient($row->get(TBGClientsTable::ID), $row);
+					$clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(TBGClientsTable::ID), $row);
 				}
 			}
 			return $clients;
@@ -255,7 +255,7 @@
 
 		public function hasAccess()
 		{
-			return (bool) (TBGContext::getUser()->hasPageAccess('clientlist') || TBGContext::getUser()->isMemberOfClient($this));
+			return (bool) (\caspar\core\Caspar::getUser()->hasPageAccess('clientlist') || \caspar\core\Caspar::getUser()->isMemberOfClient($this));
 		}
 		
 	}

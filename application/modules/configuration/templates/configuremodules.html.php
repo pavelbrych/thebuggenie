@@ -27,7 +27,7 @@
 						<?php include_template('modulebox', array('module' => $module)); ?>
 					<?php endif; ?>
 				<?php endforeach; ?>
-				<?php if (TBGContext::getScope()->isDefault()): ?>
+				<?php if (\thebuggenie\core\Context::getScope()->isDefault()): ?>
 					<div class="header" style="margin-top: 15px;"><?php echo __('Uninstalled modules'); ?></div>
 					<?php if (count($uninstalled_modules) == 0): ?>
 						<div class="faded_out" style="margin-top: 5px;"><?php echo __('There are no uninstalled modules available'); ?></div>

@@ -5,7 +5,7 @@
 
 		protected static $_items = null;
 		
-		protected $_itemtype = TBGDatatype::REPRODUCABILITY;
+		protected $_itemtype = \thebuggenie\entities\Datatype::REPRODUCABILITY;
 
 		public static function loadFixtures(TBGScope $scope)
 		{

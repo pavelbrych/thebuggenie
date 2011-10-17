@@ -52,13 +52,13 @@
 			parent::_addVarchar(self::TARGET_TYPE, 30);
 			parent::_addInteger(self::TARGET_ID, 10);
 			parent::_addVarchar(self::DESCRIPTION, 100, '');
-			parent::_addForeignKeyColumn(self::UID, TBGUsersTable::getTable(), TBGUsersTable::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function addLink($target_type, $target_id = 0, $url = null, $description = null, $link_order = null, $scope = null)
 		{
-			$scope = ($scope === null) ? TBGContext::getScope()->getID() : $scope; 
+			$scope = ($scope === null) ? \thebuggenie\core\Context::getScope()->getID() : $scope; 
 			if ($link_order === null)
 			{
 				$crit = $this->getCriteria();
@@ -77,7 +77,7 @@
 			$crit->addInsert(self::URL, $url);
 			$crit->addInsert(self::DESCRIPTION, $description);
 			$crit->addInsert(self::LINK_ORDER, $link_order);
-			$crit->addInsert(self::UID, (TBGContext::getUser() instanceof TBGUser) ? TBGContext::getUser()->getID() : 0);
+			$crit->addInsert(self::UID, (\caspar\core\Caspar::getUser() instanceof TBGUser) ? \caspar\core\Caspar::getUser()->getID() : 0);
 			$crit->addInsert(self::SCOPE, $scope);
 			$res = $this->doInsert($crit);
 
@@ -90,7 +90,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::TARGET_TYPE, $target_type);
 			$crit->addWhere(self::TARGET_ID, $target_id);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addOrderBy(self::LINK_ORDER, Criteria::SORT_ASC);
 			if ($res = $this->doSelect($crit, 'none'))
 			{
@@ -126,7 +126,7 @@
 			{
 				$crit->addWhere(self::ID, $link_id);
 			}
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doDelete($crit);
 			
 			return true;

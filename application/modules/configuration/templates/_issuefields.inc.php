@@ -18,7 +18,7 @@
 			<label for="add_option_<?php echo $type; ?>_itemdata"><?php echo __('Color'); ?></label>
 			#<input type="text" id="add_option_<?php echo $type; ?>_itemdata" name="itemdata" style="width: 45px;" onclick="picker.show(this);">
 		<?php endif; ?>
-		<?php if (!array_key_exists($type, TBGDatatype::getTypes())): ?>
+		<?php if (!array_key_exists($type, \thebuggenie\entities\Datatype::getTypes())): ?>
 			<label for="add_option_<?php echo $type; ?>_itemdata"><?php echo __('Value'); ?></label>
 			<input type="text" id="add_option_<?php echo $type; ?>_itemdata" name="value" style="width: 45px;">
 		<?php endif; ?>

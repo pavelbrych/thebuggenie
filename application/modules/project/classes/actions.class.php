@@ -59,7 +59,7 @@
 
 		protected function _checkProjectPageAccess($page)
 		{
-			return TBGContext::getUser()->hasProjectPageAccess($page, $this->selected_project->getID());
+			return \caspar\core\Caspar::getUser()->hasProjectPageAccess($page, $this->selected_project->getID());
 		}
 		
 		/**
@@ -348,7 +348,7 @@
 		public function runScrumAssignStory(Request $request)
 		{
 			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
-			$this->forward403unless($this->_checkProjectPageAccess('project_scrum') && TBGContext::getUser()->canAssignScrumUserStories($this->selected_project));
+			$this->forward403unless($this->_checkProjectPageAccess('project_scrum') && \caspar\core\Caspar::getUser()->canAssignScrumUserStories($this->selected_project));
 			try
 			{
 				$issue = \caspar\core\Caspar::factory()->TBGIssue($request->getParameter('story_id'));
@@ -719,7 +719,7 @@
 				switch (mb_strtolower($filter_assigned_to))
 				{
 					case 'me':
-						$user_id = TBGContext::getUser()->getID();
+						$user_id = \caspar\core\Caspar::getUser()->getID();
 						break;
 					case 'none':
 						$user_id = 0;
@@ -860,7 +860,7 @@
 					{
 						try
 						{
-							if (in_array($field_key, array_merge(array('title', 'state'), TBGDatatype::getAvailableFields(true))))
+							if (in_array($field_key, array_merge(array('title', 'state'), \thebuggenie\entities\Datatype::getAvailableFields(true))))
 							{
 								switch ($field_key)
 								{
@@ -911,7 +911,7 @@
 										switch (mb_strtolower($field_value))
 										{
 											case 'me':
-												$issue->$set_method(TBGContext::getUser());
+												$issue->$set_method(\caspar\core\Caspar::getUser());
 												break;
 											case 'none':
 												$issue->$unset_method();
@@ -1078,7 +1078,7 @@
 				$milestone->setType($request->getParameter('milestone_type', TBGMilestone::TYPE_REGULAR));
 				if ($request->hasParameter('sch_month') && $request->hasParameter('sch_day') && $request->hasParameter('sch_year'))
 				{
-					$scheduled_date = mktime(23, 59, 59, TBGContext::getRequest()->getParameter('sch_month'), TBGContext::getRequest()->getParameter('sch_day'), TBGContext::getRequest()->getParameter('sch_year'));
+					$scheduled_date = mktime(23, 59, 59, \caspar\core\Caspar::getRequest()->getParameter('sch_month'), \caspar\core\Caspar::getRequest()->getParameter('sch_day'), \caspar\core\Caspar::getRequest()->getParameter('sch_year'));
 					$milestone->setScheduledDate($scheduled_date);
 				}
 				else
@@ -1086,7 +1086,7 @@
 
 				if ($request->hasParameter('starting_month') && $request->hasParameter('starting_day') && $request->hasParameter('starting_year'))
 				{
-					$starting_date = mktime(0, 0, 1, TBGContext::getRequest()->getParameter('starting_month'), TBGContext::getRequest()->getParameter('starting_day'), TBGContext::getRequest()->getParameter('starting_year'));
+					$starting_date = mktime(0, 0, 1, \caspar\core\Caspar::getRequest()->getParameter('starting_month'), \caspar\core\Caspar::getRequest()->getParameter('starting_day'), \caspar\core\Caspar::getRequest()->getParameter('starting_year'));
 					$milestone->setStartingDate($starting_date);
 				}
 				else

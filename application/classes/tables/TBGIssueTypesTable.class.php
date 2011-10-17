@@ -39,14 +39,14 @@
 			parent::_addVarchar(self::ICON, 30, 'bug_report');
 			parent::_addText(self::DESCRIPTION, false);
 			parent::_addBoolean(self::TASK);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 
 		public function createNew($name, $icon = 'bug_report')
 		{
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::NAME, $name);
-			$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addInsert(self::ICON, $icon);
 			$crit->addInsert(self::DESCRIPTION, $name);
 			$res = $this->doInsert($crit);
@@ -58,7 +58,7 @@
 		{
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::ICON, 'bug_report');
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$res = $this->doSelect($crit);
 
 			$retarr = array();

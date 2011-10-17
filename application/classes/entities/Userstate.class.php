@@ -1,5 +1,7 @@
 <?php
-	
+
+	namespace thebuggenie\entities;
+
 	/**
 	 * User state class
 	 *
@@ -16,9 +18,9 @@
 	 * @package thebuggenie
 	 * @subpackage core
 	 */
-	class TBGUserstate extends TBGDatatype 
+	class Userstate extends Datatype 
 	{
-		static protected $_b2dbtablename = 'TBGUserStateTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Userstates';
 		
 		protected $_is_online = false;
 		protected $_is_unavailable = false;
@@ -28,7 +30,7 @@
 		
 		static $_userstates = null;
 		
-		protected $_itemtype = TBGDatatype::USERSTATE;
+		protected $_itemtype = \thebuggenie\entities\Datatype::USERSTATE;
 		
 		public static function getAll()
 		{
@@ -36,11 +38,11 @@
 			{
 				if (!($states = TBGCache::get(TBGCache::KEY_USERSTATES_CACHE)))
 				{
-					$res = TBGUserStateTable::getTable()->doSelectAll();
+					$res = \thebuggenie\tables\UserState::getTable()->doSelectAll();
 					$states = array();
 					while ($row = $res->getNextRow())
 					{
-						$states[$row->get(TBGUserStateTable::ID)] = \caspar\core\Caspar::factory()->TBGUserstate($row->get(TBGUserStateTable::ID), $row);
+						$states[$row->get(\thebuggenie\tables\UserState::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\UserState', $row->get(\thebuggenie\tables\UserState::ID), $row);
 					}
 					TBGCache::add(TBGCache::KEY_USERSTATES_CACHE, $states);
 				}

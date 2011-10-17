@@ -52,7 +52,7 @@
 			parent::_addInteger(self::PID);
 			parent::_addInteger(self::TARGET_TYPE);
 			parent::_addInteger(self::TID);
-			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(), TBGScopesTable::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		
 		public function addView($target_id, $target_type, $view)
@@ -64,7 +64,7 @@
 				$crit->addInsert(self::TARGET_TYPE, $target_type);
 				$crit->addInsert(self::TYPE, $view['type']);
 				$crit->addInsert(self::VIEW, $view['id']);
-				$crit->addInsert(self::SCOPE, TBGContext::getScope()->getID());
+				$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				$this->doInsert($crit);
 			}
 		}
@@ -74,7 +74,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::TID, $target_id);
 			$crit->addWhere(self::TARGET_TYPE, $target_type);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$this->doDelete($crit);
 		}
 
@@ -83,7 +83,7 @@
 			$crit = $this->getCriteria();
 			$crit->addWhere(self::TID, $target_id);
 			$crit->addWhere(self::TARGET_TYPE, $target_type);
-			$crit->addWhere(self::SCOPE, TBGContext::getScope()->getID());
+			$crit->addWhere(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 			$crit->addOrderBy(self::ID);
 			$res = $this->doSelect($crit);
 			if ($res instanceof Resultset)

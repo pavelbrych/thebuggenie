@@ -599,7 +599,7 @@
 			else
 			{
 				$issue_no = explode('-', mb_strtoupper($issue_no));
-				TBGLogging::log('exploding');
+				\caspar\core\Logging::log('exploding');
 				if (count($issue_no) == 2 && $row = TBGIssuesTable::getTable()->getByPrefixAndIssueNo($issue_no[0], $issue_no[1]))
 				{
 					$theIssue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
@@ -608,7 +608,7 @@
 						return null;
 					}
 				}
-				TBGLogging::log('exploding done');
+				\caspar\core\Logging::log('exploding done');
 			}
 		
 			return ($theIssue instanceof TBGIssue) ? $theIssue : null;
@@ -690,47 +690,47 @@
 		 */
 		public function hasAccess()
 		{
-			TBGLogging::log('checking access to issue ' . $this->getFormattedIssueNo());
+			\caspar\core\Logging::log('checking access to issue ' . $this->getFormattedIssueNo());
 			$i_id = $this->getID();
-			$specific_access = TBGContext::getUser()->hasPermission("canviewissue", $i_id, 'core', true, null);
+			$specific_access = \caspar\core\Caspar::getUser()->hasPermission("canviewissue", $i_id, 'core', true, null);
 			if ($specific_access !== null)
 			{
-				TBGLogging::log('done checking, returning specific access ' . (($specific_access) ? 'allowed' : 'denied'));
+				\caspar\core\Logging::log('done checking, returning specific access ' . (($specific_access) ? 'allowed' : 'denied'));
 				return $specific_access;
 			}
-			if ($this->getPostedByID() == TBGContext::getUser()->getID())
+			if ($this->getPostedByID() == \caspar\core\Caspar::getUser()->getID())
 			{
-				TBGLogging::log('done checking, allowed since this user posted it');
+				\caspar\core\Logging::log('done checking, allowed since this user posted it');
 				return true;
 			}
-			if ($this->getOwnerType() == TBGIdentifiableClass::TYPE_USER && $this->getOwnerID() == TBGContext::getUser()->getID())
+			if ($this->getOwnerType() == TBGIdentifiableClass::TYPE_USER && $this->getOwnerID() == \caspar\core\Caspar::getUser()->getID())
 			{
-				TBGLogging::log('done checking, allowed since this user owns it');
+				\caspar\core\Logging::log('done checking, allowed since this user owns it');
 				return true;
 			}
-			if ($this->getAssigneeType() == TBGIdentifiableClass::TYPE_USER && $this->getAssigneeID() == TBGContext::getUser()->getID())
+			if ($this->getAssigneeType() == TBGIdentifiableClass::TYPE_USER && $this->getAssigneeID() == \caspar\core\Caspar::getUser()->getID())
 			{
-				TBGLogging::log('done checking, allowed since this user is assigned to it');
+				\caspar\core\Logging::log('done checking, allowed since this user is assigned to it');
 				return true;
 			}
-			if (TBGContext::getUser()->hasPermission('canseegroupissues', 0, 'core', true, true) &&
+			if (\caspar\core\Caspar::getUser()->hasPermission('canseegroupissues', 0, 'core', true, true) &&
 				$this->getPostedByType() == TBGIdentifiableClass::TYPE_USER && 
-				$this->getPostedBy()->getGroupID() == TBGContext::getUser()->getGroupID())
+				$this->getPostedBy()->getGroupID() == \caspar\core\Caspar::getUser()->getGroupID())
 			{
-				TBGLogging::log('done checking, allowed since this user is in same group as user that posted it');
+				\caspar\core\Logging::log('done checking, allowed since this user is in same group as user that posted it');
 				return true;
 			}
-			if (!TBGContext::getUser()->hasPermission('canseeallissues', 0, 'core', true, true))
+			if (!\caspar\core\Caspar::getUser()->hasPermission('canseeallissues', 0, 'core', true, true))
 			{
-				TBGLogging::log('done checking, not allowed to access issues not posted by themselves');
+				\caspar\core\Logging::log('done checking, not allowed to access issues not posted by themselves');
 				return false;
 			}
 			if ($this->getProject()->hasAccess())
 			{
-				TBGLogging::log('done checking, can access project');
+				\caspar\core\Logging::log('done checking, can access project');
 				return true;
 			}
-			TBGLogging::log('done checking, denied');
+			\caspar\core\Logging::log('done checking, denied');
 			return false;
 		}
 		
@@ -832,7 +832,7 @@
 				$this->_builds = array();
 				$this->_components = array();
 		
-				if ($res = \b2db\Core::getTable('TBGIssueAffectsEditionTable')->getByIssueID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsEditionTable')->getByIssueID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -847,7 +847,7 @@
 					}
 				}
 				
-				if ($res = \b2db\Core::getTable('TBGIssueAffectsBuildTable')->getByIssueID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->getByIssueID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -862,7 +862,7 @@
 					}
 				}
 				
-				if ($res = \b2db\Core::getTable('TBGIssueAffectsComponentTable')->getByIssueID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsComponentTable')->getByIssueID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -1032,7 +1032,7 @@
 		protected function _permissionCheck($key, $exclusive = false)
 		{
 			$retval = null;
-			if (TBGContext::getUser()->isGuest()) return false;
+			if (\caspar\core\Caspar::getUser()->isGuest()) return false;
 			if ($this->isInvolved() && !$exclusive)
 			{
 				$retval = $this->getProject()->permissionCheck($key.'own', true);
@@ -1056,7 +1056,7 @@
 				if (!$this->isBeingWorkedOn())
 					return false;
 				
-				if ($this->getUserWorkingOnIssue()->getID() == TBGContext::getUser()->getID())
+				if ($this->getUserWorkingOnIssue()->getID() == \caspar\core\Caspar::getUser()->getID())
 					return true;
 					
 				//return false;
@@ -1072,7 +1072,7 @@
 
 		public function isInvolved()
 		{
-			$user_id = TBGContext::getUser()->getID();
+			$user_id = \caspar\core\Caspar::getUser()->getID();
 			return (bool) ($this->getPostedByID() == $user_id || ($this->isAssigned() && $this->getAssignee()->getID() == $user_id && $this->getAssignee()->getType() == TBGIdentifiableClass::TYPE_USER) || ($this->isOwned() && $this->getOwner()->getID() == $user_id && $this->getOwner()->getType() == TBGIdentifiableClass::TYPE_USER));
 		}
 		
@@ -1633,7 +1633,7 @@
 		 */
 		public function attachLink($url, $description = null)
 		{
-			$link_id = \b2db\Core::getTable('TBGLinksTable')->addLinkToIssue($this->getID(), $url, $description);
+			$link_id = Caspar::getB2DBInstance()->getTable('TBGLinksTable')->addLinkToIssue($this->getID(), $url, $description);
 			return $link_id;
 		}
 
@@ -1661,7 +1661,7 @@
 				$this->_parent_issues = array();
 				$this->_child_issues = array();
 				
-				if ($res = \b2db\Core::getTable('TBGIssueRelationsTable')->getRelatedIssues($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable')->getRelatedIssues($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
@@ -1799,7 +1799,7 @@
 		 */
 		public function vote($up = true)
 		{
-			$user_id = TBGContext::getUser()->getID();
+			$user_id = \caspar\core\Caspar::getUser()->getID();
 			if (!$this->hasUserVoted($user_id, $up))
 			{
 				TBGVotesTable::getTable()->addByUserIdAndIssueId($user_id, $this->getID(), $up);
@@ -1826,7 +1826,7 @@
 				if ($this->_tasks == null)
 				{
 					$this->_tasks = array();
-					if ($res = \b2db\Core::getTable('TBGIssueTasksTable')->getByIssueID($this->getID()))
+					if ($res = Caspar::getB2DBInstance()->getTable('TBGIssueTasksTable')->getByIssueID($this->getID()))
 					{
 						while ($row = $resultset->getNextRow())
 						{
@@ -1849,7 +1849,7 @@
 			if ($this->_tags == null)
 			{
 				$this->_tags = array();
-				if ($res = \b2db\Core::getTable('TBGIssueTagsTable')->getByIssueID($this->getID()))
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGIssueTagsTable')->getByIssueID($this->getID()))
 				{
 					while ($row = $resultset->getNextRow())
 					{
@@ -2171,7 +2171,7 @@
 		 */
 		public function removeDependantIssue($issue_id)
 		{
-			if ($row = \b2db\Core::getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $issue_id))
+			if ($row = Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $issue_id))
 			{
 				$related_issue = \caspar\core\Caspar::factory()->TBGIssue($issue_id);
 				if ($row->get(TBGIssueRelationsTable::PARENT_ID) == $this->getID())
@@ -2196,10 +2196,10 @@
 		protected function _removeParentIssue($related_issue, $relation_id)
 		{
 			$this->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('This issue no longer depends on the solution of issue %issue_no%', array('%issue_no%' => $related_issue->getFormattedIssueNo())));
-			$this->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('This issue no longer depends on the solution of issue %issue_no%', array('%issue_no%' => $related_issue->getFormattedIssueNo())), TBGContext::getUser()->getID());
+			$this->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('This issue no longer depends on the solution of issue %issue_no%', array('%issue_no%' => $related_issue->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 			
 			$related_issue->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('Issue %issue_no% no longer depends on the solution of this issue', array('%issue_no%' => $this->getFormattedIssueNo())));
-			$related_issue->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('Issue %issue_no% no longer depends on the solution of this issue', array('%issue_no%' => $this->getFormattedIssueNo())), TBGContext::getUser()->getID());
+			$related_issue->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('Issue %issue_no% no longer depends on the solution of this issue', array('%issue_no%' => $this->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 			
 			if ($this->_parent_issues !== null && array_key_exists($relation_id, $this->_parent_issues))
 			{
@@ -2218,10 +2218,10 @@
 		protected function _removeChildIssue($related_issue, $relation_id)
 		{
 			$this->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('Issue %issue_no% no longer depends on the solution of this issue', array('%issue_no%' => $related_issue->getFormattedIssueNo())));
-			$this->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('Issue %issue_no% no longer depends on the solution of this issue', array('%issue_no%' => $related_issue->getFormattedIssueNo())), TBGContext::getUser()->getID());
+			$this->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('Issue %issue_no% no longer depends on the solution of this issue', array('%issue_no%' => $related_issue->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 			
 			$related_issue->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('This issue no longer depends on the solution of issue %issue_no%', array('%issue_no%' => $this->getFormattedIssueNo())));
-			$related_issue->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('This issue no longer depends on the solution of issue %issue_no%', array('%issue_no%' => $this->getFormattedIssueNo())), TBGContext::getUser()->getID());
+			$related_issue->addSystemComment(TBGContext::getI18n()->__('Issue dependancy removed'), TBGContext::getI18n()->__('This issue no longer depends on the solution of issue %issue_no%', array('%issue_no%' => $this->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 			
 			if ($this->_child_issues !== null && array_key_exists($relation_id, $this->_child_issues))
 			{
@@ -2238,16 +2238,16 @@
 		 */
 		public function addParentIssue(TBGIssue $related_issue)
 		{
-			if (!$row = \b2db\Core::getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $related_issue->getID()))
+			if (!$row = Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $related_issue->getID()))
 			{
-				$res = \b2db\Core::getTable('TBGIssueRelationsTable')->addParentIssue($this->getID(), $related_issue->getID());
+				$res = Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable')->addParentIssue($this->getID(), $related_issue->getID());
 				$this->_parent_issues = null;
 				
 				$related_issue->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('This %this_issuetype% now depends on the solution of %issuetype% %issue_no%', array('%this_issuetype%' => $related_issue->getIssueType()->getName(), '%issuetype%' => $this->getIssueType()->getName(), '%issue_no%' => $this->getFormattedIssueNo())));
-				$related_issue->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('This %this_issuetype% now depends on the solution of %issuetype% %issue_no%', array('%this_issuetype%' => $related_issue->getIssueType()->getName(), '%issuetype%' => $this->getIssueType()->getName(), '%issue_no%' => $this->getFormattedIssueNo())), TBGContext::getUser()->getID());
+				$related_issue->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('This %this_issuetype% now depends on the solution of %issuetype% %issue_no%', array('%this_issuetype%' => $related_issue->getIssueType()->getName(), '%issuetype%' => $this->getIssueType()->getName(), '%issue_no%' => $this->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 				
 				$this->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('%issuetype% %issue_no% now depends on the solution of this %this_issuetype%', array('%this_issuetype%' => $this->getIssueType()->getName(), '%issuetype%' => $related_issue->getIssueType()->getName(), '%issue_no%' => $related_issue->getFormattedIssueNo())));
-				$comment = $this->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('%issuetype% %issue_no% now depends on the solution of this %this_issuetype%', array('%this_issuetype%' => $this->getIssueType()->getName(), '%issuetype%' => $related_issue->getIssueType()->getName(), '%issue_no%' => $related_issue->getFormattedIssueNo())), TBGContext::getUser()->getID());
+				$comment = $this->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('%issuetype% %issue_no% now depends on the solution of this %this_issuetype%', array('%this_issuetype%' => $this->getIssueType()->getName(), '%issuetype%' => $related_issue->getIssueType()->getName(), '%issue_no%' => $related_issue->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 				
 				return ($comment instanceof TBGComment) ? $comment : true;
 			}
@@ -2263,16 +2263,16 @@
 		 */
 		public function addChildIssue(TBGIssue $related_issue)
 		{
-			if (!$row = \b2db\Core::getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $related_issue->getID()))
+			if (!$row = Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable')->getIssueRelation($this->getID(), $related_issue->getID()))
 			{
-				$res = \b2db\Core::getTable('TBGIssueRelationsTable')->addChildIssue($this->getID(), $related_issue->getID());
+				$res = Caspar::getB2DBInstance()->getTable('TBGIssueRelationsTable')->addChildIssue($this->getID(), $related_issue->getID());
 				$this->_child_issues = null;
 				
 				$related_issue->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('%issuetype% %issue_no% now depends on the solution of this %this_issuetype%', array('%this_issuetype%' => $related_issue->getIssueType()->getName(), '%issuetype%' => $this->getIssueType()->getName(), '%issue_no%' => $this->getFormattedIssueNo())));
-				$related_issue->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('%issuetype% %issue_no% now depends on the solution of this %this_issuetype%', array('%this_issuetype%' => $related_issue->getIssueType()->getName(), '%issuetype%' => $this->getIssueType()->getName(), '%issue_no%' => $this->getFormattedIssueNo())), TBGContext::getUser()->getID());
+				$related_issue->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('%issuetype% %issue_no% now depends on the solution of this %this_issuetype%', array('%this_issuetype%' => $related_issue->getIssueType()->getName(), '%issuetype%' => $this->getIssueType()->getName(), '%issue_no%' => $this->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 				
 				$this->addLogEntry(TBGLogTable::LOG_ISSUE_DEPENDS, TBGContext::getI18n()->__('This %this_issuetype% now depends on the solution of %issuetype% %issue_no%', array('%this_issuetype%' => $this->getIssueType()->getName(), '%issuetype%' => $related_issue->getIssueType()->getName(), '%issue_no%' => $related_issue->getFormattedIssueNo())));
-				$comment = $this->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('This %this_issuetype% now depends on the solution of %issuetype% %issue_no%', array('%this_issuetype%' => $this->getIssueType()->getName(), '%issuetype%' => $related_issue->getIssueType()->getName(), '%issue_no%' => $related_issue->getFormattedIssueNo())), TBGContext::getUser()->getID());
+				$comment = $this->addSystemComment(TBGContext::getI18n()->__('Dependancy added'), TBGContext::getI18n()->__('This %this_issuetype% now depends on the solution of %issuetype% %issue_no%', array('%this_issuetype%' => $this->getIssueType()->getName(), '%issuetype%' => $related_issue->getIssueType()->getName(), '%issue_no%' => $related_issue->getFormattedIssueNo())), \caspar\core\Caspar::getUser()->getID());
 				
 				return ($comment instanceof TBGComment) ? $comment : true;
 			}
@@ -2292,11 +2292,11 @@
 				{
 					if ($this->_assigned_type == TBGIdentifiableClass::TYPE_USER)
 					{
-						$this->_assigned_to = \caspar\core\Caspar::factory()->TBGUser($this->_assigned_to);
+						$this->_assigned_to = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->_assigned_to);
 					}
 					elseif ($this->_assigned_type == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$this->_assigned_to = \caspar\core\Caspar::factory()->TBGTeam($this->_assigned_to);
+						$this->_assigned_to = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $this->_assigned_to);
 					}
 				}
 				catch (Exception $e)
@@ -2383,11 +2383,11 @@
 				{
 					if ($this->_owner_type == TBGIdentifiableClass::TYPE_USER)
 					{
-						$this->_owner = \caspar\core\Caspar::factory()->TBGUser($this->_owner);
+						$this->_owner = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->_owner);
 					}
 					elseif ($this->_owner_type == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$this->_owner = \caspar\core\Caspar::factory()->TBGTeam($this->_owner);
+						$this->_owner = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $this->_owner);
 					}
 				}
 				catch (Exception $e)
@@ -2463,7 +2463,7 @@
 			{
 				try
 				{
-					$this->_posted_by = \caspar\core\Caspar::factory()->TBGUser($this->_posted_by);
+					$this->_posted_by = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $this->_posted_by);
 				}
 				catch (Exception $e)
 				{
@@ -3241,11 +3241,11 @@
 		{
 			if ($this->getProject() && $this->getProject()->isBuildsEnabled())
 			{
-				$retval = \b2db\Core::getTable('TBGIssueAffectsBuildTable')->setIssueAffected($this->getID(), $build->getID());
+				$retval = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->setIssueAffected($this->getID(), $build->getID());
 				if ($retval !== false)
 				{
 					$this->addLogEntry(TBGLogTable::LOG_AFF_ADD, TBGContext::getI18n()->__("'%release_name%' added", array('%release_name%' => $build->getName())));
-					$this->addSystemComment(TBGContext::getI18n()->__("Affected releases"), TBGContext::getI18n()->__('\'\'\'%release_name%\'\'\' is now affected by this issue', array('%release_name%' => $build->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__("Affected releases"), TBGContext::getI18n()->__('\'\'\'%release_name%\'\'\' is now affected by this issue', array('%release_name%' => $build->getName())), \caspar\core\Caspar::getUser()->getID());
 					return array('a_id' => $retval, 'build' => $build, 'confirmed' => 0, 'status' => \caspar\core\Caspar::factory()->TBGStatus(20));
 				}
 			}
@@ -3263,11 +3263,11 @@
 		{
 			if ($this->getProject() && $this->getProject()->isEditionsEnabled())
 			{
-				$retval = \b2db\Core::getTable('TBGIssueAffectsEditionTable')->setIssueAffected($this->getID(), $edition->getID());
+				$retval = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsEditionTable')->setIssueAffected($this->getID(), $edition->getID());
 				if ($retval !== false)
 				{
 					$this->addLogEntry(TBGLogTable::LOG_AFF_ADD, TBGContext::getI18n()->__("'%edition_name%' added", array('%edition_name%' => $edition->getName())));
-					$this->addSystemComment(TBGContext::getI18n()->__("Affected editions"), TBGContext::getI18n()->__('\'\'\'%edition_name%\'\'\' is now affected by this issue', array('%edition_name%' => $edition->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__("Affected editions"), TBGContext::getI18n()->__('\'\'\'%edition_name%\'\'\' is now affected by this issue', array('%edition_name%' => $edition->getName())), \caspar\core\Caspar::getUser()->getID());
 					return array('a_id' => $retval, 'edition' => $edition, 'confirmed' => 0, 'status' => \caspar\core\Caspar::factory()->TBGStatus(20));
 				}
 			}
@@ -3285,11 +3285,11 @@
 		{
 			if ($this->getProject() && $this->getProject()->isComponentsEnabled())
 			{
-				$retval = \b2db\Core::getTable('TBGIssueAffectsComponentTable')->setIssueAffected($this->getID(), $component->getID());
+				$retval = Caspar::getB2DBInstance()->getTable('TBGIssueAffectsComponentTable')->setIssueAffected($this->getID(), $component->getID());
 				if ($retval !== false)
 				{
 					$this->addLogEntry(TBGLogTable::LOG_AFF_ADD, TBGContext::getI18n()->__("'%component_name%' added", array('%component_name%' => $component->getName())));
-					$this->addSystemComment(TBGContext::getI18n()->__("Affected components"), TBGContext::getI18n()->__('\'\'\'%component_name%\'\'\' is now affected by this issue', array('%component_name%' => $component->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__("Affected components"), TBGContext::getI18n()->__('\'\'\'%component_name%\'\'\' is now affected by this issue', array('%component_name%' => $component->getName())), \caspar\core\Caspar::getUser()->getID());
 					return array('a_id' => $retval, 'component' => $component, 'confirmed' => 0, 'status' => \caspar\core\Caspar::factory()->TBGStatus(20));
 				}
 			}
@@ -3309,10 +3309,10 @@
 		 */
 		public function removeAffectedEdition($item)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsEditionTable')->deleteByIssueIDandEditionID($this->getID(), $item->getID()))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsEditionTable')->deleteByIssueIDandEditionID($this->getID(), $item->getID()))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' removed", array('%item_name%' => $item->getName())));
-				$this->addSystemComment(TBGContext::getI18n()->__('Affected edition removed'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is no longer affected by issue', array('%edition%' => $item->getName())), TBGContext::getUser()->getID());
+				$this->addSystemComment(TBGContext::getI18n()->__('Affected edition removed'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is no longer affected by issue', array('%edition%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				return true;
 			}
 			return false;
@@ -3331,10 +3331,10 @@
 		 */
 		public function removeAffectedBuild($item)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsBuildTable')->deleteByIssueIDandBuildID($this->getID(), $item->getID()))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->deleteByIssueIDandBuildID($this->getID(), $item->getID()))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' removed", array('%item_name%' => $item->getName())));
-				$this->addSystemComment(TBGContext::getI18n()->__('Affected build removed'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is no longer affected by issue', array('%build%' => $item->getName())), TBGContext::getUser()->getID());
+				$this->addSystemComment(TBGContext::getI18n()->__('Affected build removed'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is no longer affected by issue', array('%build%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				return true;
 			}
 			return false;
@@ -3353,10 +3353,10 @@
 		 */
 		public function removeAffectedComponent($item)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsComponentTable')->deleteByIssueIDandComponentID($this->getID(), $item->getID()))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsComponentTable')->deleteByIssueIDandComponentID($this->getID(), $item->getID()))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' removed", array('%item_name%' => $item->getName())));
-				$this->addSystemComment(TBGContext::getI18n()->__('Affected component removed'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is no longer affected by issue', array('%component%' => $item->getName())), TBGContext::getUser()->getID());
+				$this->addSystemComment(TBGContext::getI18n()->__('Affected component removed'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is no longer affected by issue', array('%component%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				return true;
 			}
 			return false;
@@ -3376,16 +3376,16 @@
 		 */
 		public function confirmAffectedEdition($item, $confirmed = true)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsEditionTable')->confirmByIssueIDandEditionID($this->getID(), $item->getID(), $confirmed))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsEditionTable')->confirmByIssueIDandEditionID($this->getID(), $item->getID(), $confirmed))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' confirmed", array('%item_name%' => $item->getName())));
 				if ($confirmed)
 				{
-					$this->addSystemComment(TBGContext::getI18n()->__('Affected edition updated'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is now confirmed for this issue', array('%edition%' => $item->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__('Affected edition updated'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is now confirmed for this issue', array('%edition%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				}
 				else
 				{
-					$this->addSystemComment(TBGContext::getI18n()->__('Affected edition updated'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is now unconfirmed for this issue', array('%edition%' => $item->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__('Affected edition updated'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is now unconfirmed for this issue', array('%edition%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				}
 				return true;
 			}
@@ -3406,16 +3406,16 @@
 		 */
 		public function confirmAffectedBuild($item, $confirmed = true)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsBuildTable')->confirmByIssueIDandBuildID($this->getID(), $item->getID(), $confirmed))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->confirmByIssueIDandBuildID($this->getID(), $item->getID(), $confirmed))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' confirmed", array('%item_name%' => $item->getName())));
 				if ($confirmed)
 				{
-					$this->addSystemComment(TBGContext::getI18n()->__('Affected build updated'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is now confirmed for this issue', array('%build%' => $item->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__('Affected build updated'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is now confirmed for this issue', array('%build%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				}
 				else
 				{
-					$this->addSystemComment(TBGContext::getI18n()->__('Affected build updated'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is now unconfirmed for this issue', array('%build%' => $item->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__('Affected build updated'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is now unconfirmed for this issue', array('%build%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				}
 				return true;
 			}
@@ -3436,17 +3436,17 @@
 		 */
 		public function confirmAffectedComponent($item, $confirmed = true)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsComponentTable')->confirmByIssueIDandComponentID($this->getID(), $item->getID(), $confirmed))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsComponentTable')->confirmByIssueIDandComponentID($this->getID(), $item->getID(), $confirmed))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' confirmed", array('%item_name%' => $item->getName())));
 				
 				if ($confirmed)
 				{
-					$this->addSystemComment(TBGContext::getI18n()->__('Affected component updated'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is now confirmed for this issue', array('%component%' => $item->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__('Affected component updated'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is now confirmed for this issue', array('%component%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				}
 				else
 				{
-					$this->addSystemComment(TBGContext::getI18n()->__('Affected component updated'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is now unconfirmed for this issue', array('%component%' => $item->getName())), TBGContext::getUser()->getID());
+					$this->addSystemComment(TBGContext::getI18n()->__('Affected component updated'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is now unconfirmed for this issue', array('%component%' => $item->getName())), \caspar\core\Caspar::getUser()->getID());
 				}
 				return true;
 			}
@@ -3467,10 +3467,10 @@
 		 */
 		public function setAffectedEditionStatus($item, $status)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsEditionTable')->setStatusByIssueIDandEditionID($this->getID(), $item->getID(), $status->getID()))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsEditionTable')->setStatusByIssueIDandEditionID($this->getID(), $item->getID(), $status->getID()))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' -> '%status_name%", array('%item_name%' => $item->getName(), '%status_name%' => $status->getName())));
-				$this->addSystemComment(TBGContext::getI18n()->__('Affected edition updated'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is now %status%', array('%edition%' => $item->getName(), '%status%' => $status->getName())), TBGContext::getUser()->getID());
+				$this->addSystemComment(TBGContext::getI18n()->__('Affected edition updated'), TBGContext::getI18n()->__('Edition \'\'\'%edition%\'\'\' is now %status%', array('%edition%' => $item->getName(), '%status%' => $status->getName())), \caspar\core\Caspar::getUser()->getID());
 				return true;
 			}
 			return false;
@@ -3490,10 +3490,10 @@
 		 */
 		public function setAffectedBuildStatus($item, $status)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsBuildTable')->setStatusByIssueIDandBuildID($this->getID(), $item->getID(), $status->getID()))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsBuildTable')->setStatusByIssueIDandBuildID($this->getID(), $item->getID(), $status->getID()))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' -> '%status_name%", array('%item_name%' => $item->getName(), '%status_name%' => $status->getName())));
-				$this->addSystemComment(TBGContext::getI18n()->__('Affected build updated'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is now %status%', array('%build%' => $item->getName(), '%status%' => $status->getName())), TBGContext::getUser()->getID());
+				$this->addSystemComment(TBGContext::getI18n()->__('Affected build updated'), TBGContext::getI18n()->__('Build \'\'\'%build%\'\'\' is now %status%', array('%build%' => $item->getName(), '%status%' => $status->getName())), \caspar\core\Caspar::getUser()->getID());
 				return true;
 			}
 			return false;
@@ -3513,10 +3513,10 @@
 		 */
 		public function setAffectedComponentStatus($item, $status)
 		{
-			if (\b2db\Core::getTable('TBGIssueAffectsComponentTable')->setStatusByIssueIDandComponentID($this->getID(), $item->getID(), $status->getID()))
+			if (Caspar::getB2DBInstance()->getTable('TBGIssueAffectsComponentTable')->setStatusByIssueIDandComponentID($this->getID(), $item->getID(), $status->getID()))
 			{
 				$this->addLogEntry(TBGLogTable::LOG_AFF_DELETE, TBGContext::getI18n()->__("'%item_name%' -> '%status_name%", array('%item_name%' => $item->getName(), '%status_name%' => $status->getName())));
-				$this->addSystemComment(TBGContext::getI18n()->__('Affected component updated'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is now %status%', array('%component%' => $item->getName(), '%status%' => $status->getName())), TBGContext::getUser()->getID());
+				$this->addSystemComment(TBGContext::getI18n()->__('Affected component updated'), TBGContext::getI18n()->__('Component \'\'\'%component%\'\'\' is now %status%', array('%component%' => $item->getName(), '%status%' => $status->getName())), \caspar\core\Caspar::getUser()->getID());
 				return true;
 			}
 			return false;
@@ -3547,7 +3547,7 @@
 		 */
 		public function addLogEntry($change_type, $text = null, $system = false, $time = null)
 		{
-			$uid = ($system) ? 0 : TBGContext::getUser()->getID();
+			$uid = ($system) ? 0 : \caspar\core\Caspar::getUser()->getID();
 			TBGLogTable::getTable()->createNew($this->getID(), TBGLogTable::TYPE_ISSUE, $change_type, $text, $uid, $time);
 		}
 	
@@ -3596,7 +3596,7 @@
 		{
 			if ($this->_links === null)
 			{
-				$this->_links = \b2db\Core::getTable('TBGLinksTable')->getByIssueID($this->getID());
+				$this->_links = Caspar::getB2DBInstance()->getTable('TBGLinksTable')->getByIssueID($this->getID());
 			}
 		}
 	
@@ -3607,7 +3607,7 @@
 		 */
 		public function removeLink($link_id)
 		{
-			if ($res = \b2db\Core::getTable('TBGLinksTable')->removeByIssueIDandLinkID($this->getID(), $link_id))
+			if ($res = Caspar::getB2DBInstance()->getTable('TBGLinksTable')->removeByIssueIDandLinkID($this->getID(), $link_id))
 			{
 				if (is_array($this->_links) && array_key_exists($link_id, $this->_links))
 				{
@@ -4080,7 +4080,7 @@
 				
 				if (!$this->_posted) $this->_posted = NOW;
 				if (!$this->_last_updated) $this->_last_updated = NOW;
-				if (!$this->_posted_by) $this->_posted_by = TBGContext::getUser();
+				if (!$this->_posted_by) $this->_posted_by = \caspar\core\Caspar::getUser();
 				
 				$step = $this->getProject()->getWorkflowScheme()->getWorkflowForIssuetype($this->getIssueType())->getFirstStep();
 				$step->applyToIssue($this);
@@ -4228,9 +4228,9 @@
 								{
 									$old_identifiable = null;
 									if ($this->getChangedPropertyOriginal('_assigned_type') == TBGIdentifiableClass::TYPE_USER)
-										$old_identifiable = \caspar\core\Caspar::factory()->TBGUser($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $value['original_value']);
 									elseif ($this->getChangedPropertyOriginal('_assigned_type') == TBGIdentifiableClass::TYPE_TEAM)
-										$old_identifiable = \caspar\core\Caspar::factory()->TBGTeam($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $value['original_value']);
 									$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 								}
 								else
@@ -4251,7 +4251,7 @@
 							}
 							break;
 						case '_posted_by':
-							$old_identifiable = ($value['original_value']) ? \caspar\core\Caspar::factory()->TBGUser($value['original_value']) : TBGContext::getI18n()->__('Unknown');
+							$old_identifiable = ($value['original_value']) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $value['original_value']) : TBGContext::getI18n()->__('Unknown');
 							$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 							$new_name = $this->getPostedBy()->getName();
 							
@@ -4261,7 +4261,7 @@
 						case '_being_worked_on_by_user':
 							if ($value['original_value'] != 0)
 							{
-								$old_identifiable = \caspar\core\Caspar::factory()->TBGUser($value['original_value']);
+								$old_identifiable = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $value['original_value']);
 								$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 							}
 							else
@@ -4281,9 +4281,9 @@
 								{
 									$old_identifiable = null;
 									if ($this->getChangedPropertyOriginal('_owner_type') == TBGIdentifiableClass::TYPE_USER)
-										$old_identifiable = \caspar\core\Caspar::factory()->TBGUser($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $value['original_value']);
 									elseif ($this->getChangedPropertyOriginal('_owner_type') == TBGIdentifiableClass::TYPE_TEAM)
-										$old_identifiable = \caspar\core\Caspar::factory()->TBGTeam($value['original_value']);
+										$old_identifiable = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $value['original_value']);
 									$old_name = ($old_identifiable instanceof TBGIdentifiableClass) ? $old_identifiable->getName() : TBGContext::getI18n()->__('Unknown');
 								}
 								else
@@ -4529,24 +4529,24 @@
 			if (count($comment_lines) == 0)
 			{
 				$comment = TBGContext::getI18n()->__("The issue has been updated");
-				$this->comment = $this->addSystemComment(TBGContext::getI18n()->__('Issue updated'), $comment, TBGContext::getUser()->getID());
+				$this->comment = $this->addSystemComment(TBGContext::getI18n()->__('Issue updated'), $comment, \caspar\core\Caspar::getUser()->getID());
 				$this->comment_lines = $comment_lines;
 			}
 			else
 			{
 				$comment = TBGContext::getI18n()->__("The issue was updated with the following change(s):%list_of_changes%", array('%list_of_changes%' => "\n* ".join("\n* ", $comment_lines)), true);
-				$this->comment = $this->addSystemComment(TBGContext::getI18n()->__('Issue updated'), $comment, TBGContext::getUser()->getID());
+				$this->comment = $this->addSystemComment(TBGContext::getI18n()->__('Issue updated'), $comment, \caspar\core\Caspar::getUser()->getID());
 				$this->comment_lines = $comment_lines;
 			}
 
 			if ($is_saved_estimated)
 			{
-				\b2db\Core::getTable('TBGIssueEstimates')->saveEstimate($this->getID(), $this->_estimated_months, $this->_estimated_weeks, $this->_estimated_days, $this->_estimated_hours, $this->_estimated_points);
+				Caspar::getB2DBInstance()->getTable('TBGIssueEstimates')->saveEstimate($this->getID(), $this->_estimated_months, $this->_estimated_weeks, $this->_estimated_days, $this->_estimated_hours, $this->_estimated_points);
 			}
 
 			if ($is_saved_spent)
 			{
-				\b2db\Core::getTable('TBGIssueSpentTimes')->saveSpentTime($this->getID(), $this->_spent_months, $this->_spent_weeks, $this->_spent_days, $this->_spent_hours, $this->_spent_points);
+				Caspar::getB2DBInstance()->getTable('TBGIssueSpentTimes')->saveSpentTime($this->getID(), $this->_spent_months, $this->_spent_weeks, $this->_spent_days, $this->_spent_hours, $this->_spent_points);
 			}
 
 			$this->related_issues_to_save = $related_issues_to_save;
@@ -4557,7 +4557,7 @@
 		{
 			if (!$is_new && isset($this->comment) && isset($this->comment_lines))
 			{
-				$event = TBGEvent::createNew('core', 'TBGIssue::save', $this, array('changed_properties' => $this->_getChangedProperties(), 'comment' => $this->comment, 'comment_lines' => $this->comment_lines, 'updated_by' => TBGContext::getUser()));
+				$event = TBGEvent::createNew('core', 'TBGIssue::save', $this, array('changed_properties' => $this->_getChangedProperties(), 'comment' => $this->comment, 'comment_lines' => $this->comment_lines, 'updated_by' => \caspar\core\Caspar::getUser()));
 				$event->trigger();
 			}
 

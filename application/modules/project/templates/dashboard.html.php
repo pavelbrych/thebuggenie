@@ -8,7 +8,7 @@
 			<?php include_template('project/projectheader', array('selected_project' => $selected_project)); ?>
 			<?php include_template('project/projectinfosidebar', array('selected_project' => $selected_project)); ?>
 			<?php TBGEvent::createNew('core', 'project_dashboard_top')->trigger(); ?>
-			<?php if (empty($dashboardViews) && TBGContext::getUser()->canEditProjectDetails($selected_project)) :?>
+			<?php if (empty($dashboardViews) && \caspar\core\Caspar::getUser()->canEditProjectDetails($selected_project)) :?>
 				<p class="content faded_out"><?php echo __("This dashboard doesn't contain any views. To add views in this dashboard, press 'Customize' on the left."); ?></p>
 			<?php elseif (empty($dashboardViews)): ?>
 				<p class="content faded_out"><?php echo __("This dashboard doesn't contain any views."); ?></p>

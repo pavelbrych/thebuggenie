@@ -43,11 +43,11 @@
 			if (self::$_teams === null)
 			{
 				self::$_teams = array();
-				if ($res = \b2db\Core::getTable('TBGTeamsTable')->getAll())
+				if ($res = Caspar::getB2DBInstance()->getTable('TBGTeamsTable')->getAll())
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
+						self::$_teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(TBGTeamsTable::ID), $row);
 					}
 				}
 			}
@@ -120,7 +120,7 @@
 				$this->_members = array();
 				foreach (TBGTeamMembersTable::getTable()->getUIDsForTeamID($this->getID()) as $uid)
 				{
-					$this->_members[$uid] = \caspar\core\Caspar::factory()->TBGUser($uid);
+					$this->_members[$uid] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 				}
 			}
 			return $this->_members;
@@ -150,11 +150,11 @@
 			$crit = new \b2db\Criteria();
 			$crit->addWhere(TBGTeamsTable::NAME, "%$details%", \b2db\Criteria::DB_LIKE);
 			$teams = array();
-			if ($res = \b2db\Core::getTable('TBGTeamsTable')->doSelect($crit))
+			if ($res = Caspar::getB2DBInstance()->getTable('TBGTeamsTable')->doSelect($crit))
 			{
 				while ($row = $res->getNextRow())
 				{
-					$teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->TBGTeam($row->get(TBGTeamsTable::ID), $row);
+					$teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(TBGTeamsTable::ID), $row);
 				}
 			}
 			return $teams;
@@ -185,9 +185,9 @@
 			{
 				$this->_associated_projects = array();
 				
-				$projects = \b2db\Core::getTable('TBGProjectAssigneesTable')->getProjectsByTeamID($this->getID());
-				$edition_projects = \b2db\Core::getTable('TBGEditionAssigneesTable')->getProjectsByTeamID($this->getID());
-				$component_projects = \b2db\Core::getTable('TBGComponentAssigneesTable')->getProjectsByTeamID($this->getID());
+				$projects = Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->getProjectsByTeamID($this->getID());
+				$edition_projects = Caspar::getB2DBInstance()->getTable('TBGEditionAssigneesTable')->getProjectsByTeamID($this->getID());
+				$component_projects = Caspar::getB2DBInstance()->getTable('TBGComponentAssigneesTable')->getProjectsByTeamID($this->getID());
 
 				$project_ids = array_merge(array_keys($projects), array_keys($edition_projects), array_keys($component_projects));
 				foreach ($project_ids as $project_id)
@@ -211,7 +211,7 @@
 
 		public function hasAccess()
 		{
-			return (bool) (TBGContext::getUser()->hasPageAccess('teamlist') || TBGContext::getUser()->isMemberOfTeam($this));
+			return (bool) (\caspar\core\Caspar::getUser()->hasPageAccess('teamlist') || \caspar\core\Caspar::getUser()->isMemberOfTeam($this));
 		}
 
 	}

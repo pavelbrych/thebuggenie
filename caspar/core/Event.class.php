@@ -106,7 +106,7 @@
 				{
 					try
 					{
-						$cb_string = (is_array($trigger)) ? get_class($trigger[0]).'::'.$trigger[1] : $trigger;
+						$cb_string = (is_array($trigger)) ? ((is_string($trigger[0])) ? $trigger[0] : get_class($trigger[0])).'::'.$trigger[1] : $trigger;
 						Logging::log('Running callback function '.$cb_string);
 						$retval = call_user_func($trigger, $event);
 						if ($return_when_processed && $event->isProcessed())
