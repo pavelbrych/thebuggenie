@@ -1,4 +1,4 @@
-<?php TBGContext::loadLibrary('ui'); ?>
+<?php \core\caspar\Caspar::loadLibrary('ui'); ?>
 <?php if ($show_mode == 'all'): ?>
 	<?php foreach ($build->getParent()->getBuilds() as $build): ?>
 		<span id="build_list_<?php echo $build->getID(); ?>">

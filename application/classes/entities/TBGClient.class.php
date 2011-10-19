@@ -19,7 +19,7 @@
 	class TBGClient extends TBGIdentifiableClass 
 	{
 		
-		static protected $_b2dbtablename = 'TBGClientsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Clients';
 		
 		protected $_members = null;
 

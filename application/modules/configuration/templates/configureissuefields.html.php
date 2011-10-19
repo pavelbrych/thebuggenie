@@ -1,8 +1,8 @@
 <?php
 
-	$tbg_response->setTitle(__('Configure data types'));
-	$tbg_response->addJavascript('cpicker/cpicker.js');
-	$tbg_response->addStylesheet('cpicker/cpicker.css');
+	$csp_response->setTitle(__('Configure data types'));
+	$csp_response->addJavascript('cpicker/cpicker.js');
+	$csp_response->addStylesheet('cpicker/cpicker.css');
 ?>
 <table style="table-layout: fixed; width: 100%" cellpadding=0 cellspacing=0>
 <tr>

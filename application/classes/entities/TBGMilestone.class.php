@@ -22,13 +22,13 @@
 		const TYPE_REGULAR = 1;
 		const TYPE_SCRUMSPRINT = 2;
 
-		static protected $_b2dbtablename = 'TBGMilestonesTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Milestones';
 		
 		/**
 		 * This components project
 		 *
-		 * @var TBGProject
-		 * @Class TBGProject
+		 * @Class \thebuggenie\entities\Project
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_project;
 
@@ -130,7 +130,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$milestone = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+					$milestone = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $row->get(TBGMilestonesTable::ID), $row);
 					$milestones[$milestone->getID()] = $milestone;
 				}
 			}
@@ -151,7 +151,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$milestone = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+					$milestone = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $row->get(TBGMilestonesTable::ID), $row);
 					$milestones[$milestone->getID()] = $milestone;
 				}
 			}
@@ -172,7 +172,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$sprint = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+					$sprint = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $row->get(TBGMilestonesTable::ID), $row);
 					$sprints[$sprint->getID()] = $sprint;
 				}
 			}
@@ -189,7 +189,7 @@
 			if ($is_new)
 			{
 				TBGContext::setPermission("canseemilestone", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
-				TBGEvent::createNew('core', 'TBGMilestone::createNew', $this)->trigger();
+				\caspar\core\Event::createNew('core', 'TBGMilestone::createNew', $this)->trigger();
 			}
 		}
 		
@@ -327,7 +327,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$theIssue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+						$theIssue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));
 						if ($this->isSprint() && $theIssue->getIssueType()->isTask()) continue;
 						$this->_issues[$theIssue->getID()] = $theIssue;
 						if ($theIssue->getState() == TBGIssue::STATE_CLOSED)
@@ -855,7 +855,7 @@
 
 		public function getDateString()
 		{
-			TBGContext::loadLibrary('common');
+			\core\caspar\Caspar::loadLibrary('common');
 			$i18n = TBGContext::getI18n();
 			if ($this->hasStartingDate() && $this->hasScheduledDate())
 			{

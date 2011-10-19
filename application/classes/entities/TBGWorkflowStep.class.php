@@ -19,7 +19,7 @@
 	class TBGWorkflowStep extends TBGIdentifiableClass
 	{
 
-		static protected $_b2dbtablename = 'TBGWorkflowStepsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\WorkflowSteps';
 		
 		/**
 		 * The workflow description
@@ -82,8 +82,8 @@
 		/**
 		 * The associated workflow object
 		 *
-		 * @var TBGWorkflow
-		 * @Class TBGWorkflow
+		 * @Class \thebuggenie\entities\Workflow
+		 * @Class \thebuggenie\entities\Workflow
 		 */
 		protected $_workflow_id = null;
 
@@ -144,7 +144,7 @@
 			{
 				try
 				{
-					$this->_status_id = \caspar\core\Caspar::factory()->TBGStatus($this->_status_id);
+					$this->_status_id = \caspar\core\Caspar::factory()->manufacture('TBGStatus', $this->_status_id);
 				}
 				catch (Exception $e)
 				{

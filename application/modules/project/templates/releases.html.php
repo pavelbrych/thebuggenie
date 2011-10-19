@@ -1,9 +1,9 @@
 <?php
 
-	$tbg_response->addBreadcrumb(__('Releases'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
-	$tbg_response->setTitle(__('"%project_name%" releases', array('%project_name%' => $selected_project->getName())));
+	$csp_response->addBreadcrumb(__('Releases'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
+	$csp_response->setTitle(__('"%project_name%" releases', array('%project_name%' => $selected_project->getName())));
 
-	if (!$selected_project instanceof TBGProject) exit();
+	if (!$selected_project instanceof \thebuggenie\entities\Project) exit();
 	
 ?>
 			<?php include_template('project/projectheader', array('selected_project' => $selected_project)); ?>

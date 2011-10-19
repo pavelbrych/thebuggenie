@@ -2,12 +2,12 @@
 
 	if ($step instanceof TBGWorkflowStep)
 	{
-		$tbg_response->setTitle(__('Configure workflow step "%step_name%"', array('%step_name%' => $step->getName())));
+		$csp_response->setTitle(__('Configure workflow step "%step_name%"', array('%step_name%' => $step->getName())));
 		$glue = '<div class="faded_out" style="clear: both;">'.__('%a_workflow_step_transition% or %a_workflow_step_transition%', array('%a_workflow_step_transition%' => '')).'</div>';
 	}
 	else
 	{
-		$tbg_response->setTitle(__('Configure workflows'));
+		$csp_response->setTitle(__('Configure workflows'));
 	}
 	
 ?>

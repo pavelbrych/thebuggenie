@@ -60,7 +60,7 @@
 
 				while ($row = $res->getNextRow())
 				{
-					$scope = Caspar::factory()->TBGScope($row->get(TBGScopesTable::ID), $row);
+					$scope = Caspar::factory()->manufacture('TBGScope', $row->get(TBGScopesTable::ID), $row);
 					$scopes[$scope->getID()] = $scope;
 				}
 
@@ -130,7 +130,7 @@
 			{
 				try
 				{
-					$this->_administrator = Caspar::factory()->TBGUser($this->_administrator);
+					$this->_administrator = Caspar::factory()->manufacture('TBGUser', $this->_administrator);
 				}
 				catch (Exception $e) { }
 			}
@@ -296,7 +296,7 @@
 
 		public function hasProjectsAvailable()
 		{
-			return ($this->getMaxProjects()) ? (TBGProject::getProjectsCount() < $this->getMaxProjects()) : true;
+			return ($this->getMaxProjects()) ? (\thebuggenie\entities\Project::getProjectsCount() < $this->getMaxProjects()) : true;
 		}
 
 		public function getMaxTeams()

@@ -1,7 +1,7 @@
 <?php
 
-	$tbg_response->addBreadcrumb(__('Team overview'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
-	$tbg_response->setTitle(__('"%project_name%" project team', array('%project_name%' => $selected_project->getName())));
+	$csp_response->addBreadcrumb(__('Team overview'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
+	$csp_response->setTitle(__('"%project_name%" project team', array('%project_name%' => $selected_project->getName())));
 
 ?>
 			<?php include_template('project/projectheader', array('selected_project' => $selected_project)); ?>
@@ -22,7 +22,7 @@
 										<?php if (array_key_exists('projects', $assigns)): ?>
 											<?php foreach ($assigns['projects'] as $p_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theProject = \caspar\core\Caspar::factory()->TBGProject($p_id); ?>
+												<?php $theProject = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $p_id); ?>
 												<?php if (array_key_exists('editions', $assigns) || array_key_exists('components', $assigns)): ?>
 													<b><?php echo $theProject->getName(); ?></b>:&nbsp;
 												<?php endif; ?>
@@ -35,7 +35,7 @@
 										<?php if (array_key_exists('editions', $assigns)): ?>
 											<?php foreach ($assigns['editions'] as $e_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theEdition = \caspar\core\Caspar::factory()->TBGEdition($e_id); ?>
+												<?php $theEdition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $e_id); ?>
 												<b><?php echo $theEdition->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>
@@ -46,7 +46,7 @@
 										<?php if (array_key_exists('components', $assigns)): ?>
 											<?php foreach ($assigns['components'] as $cp_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theComponent = \caspar\core\Caspar::factory()->TBGComponent($cp_id); ?>
+												<?php $theComponent = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $cp_id); ?>
 												<b><?php echo $theComponent->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>
@@ -77,7 +77,7 @@
 										<?php if (array_key_exists('projects', $assigns)): ?>
 											<?php foreach ($assigns['projects'] as $p_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theProject = \caspar\core\Caspar::factory()->TBGProject($p_id); ?>
+												<?php $theProject = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $p_id); ?>
 												<?php if (array_key_exists('editions', $assigns) || array_key_exists('components', $assigns)): ?>
 													<b><?php echo $theProject->getName(); ?></b>:&nbsp;
 												<?php endif; ?>
@@ -90,7 +90,7 @@
 										<?php if (array_key_exists('editions', $assigns)): ?>
 											<?php foreach ($assigns['editions'] as $e_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theEdition = \caspar\core\Caspar::factory()->TBGEdition($e_id); ?>
+												<?php $theEdition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $e_id); ?>
 												<b><?php echo $theEdition->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>
@@ -101,7 +101,7 @@
 										<?php if (array_key_exists('components', $assigns)): ?>
 											<?php foreach ($assigns['components'] as $cp_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theComponent = \caspar\core\Caspar::factory()->TBGComponent($cp_id); ?>
+												<?php $theComponent = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $cp_id); ?>
 												<b><?php echo $theComponent->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>

@@ -1,6 +1,6 @@
 <?php
 
-	namespace thebuggenie\core;
+	namespace thebuggenie\entities;
 
 	/**
 	 * Group class
@@ -18,7 +18,7 @@
 	 * @package thebuggenie
 	 * @subpackage main
 	 */
-	class Group extends IdentifiableClass 
+	class Group extends \thebuggenie\core\IdentifiableClass 
 	{
 		
 		static protected $_b2dbtablename = '\\thebuggenie\\tables\Groups';
@@ -89,7 +89,7 @@
 			
 			// Set up initial users, and their permissions
 			TBGUser::loadFixtures($scope, $admin_group, $user_group, $guest_group);
-			TBGPermissionsTable::getTable()->loadFixtures($scope, $admin_group->getID(), $guest_group->getID());
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Permissions')->loadFixtures($scope, $admin_group->getID(), $guest_group->getID());
 		}
 		
 		public function _preDelete()

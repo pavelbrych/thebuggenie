@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Manage projects'));
+	$csp_response->setTitle(__('Manage projects'));
 	
 ?>
 <table style="table-layout: fixed; width: 100%" cellpadding=0 cellspacing=0>
@@ -19,7 +19,7 @@ include_component('leftmenu', array('selected_section' => 10));
 					<?php echo __('More information about projects, editions, builds and components is available from the %wiki_help_section%.', array('%wiki_help_section%' => link_tag(make_url('publish_article', array('article_name' => 'Category:Help')), '<b>'.__('Wiki help section').'</b>'))); ?>
 					<?php if (\thebuggenie\core\Context::getScope()->getMaxProjects()): ?>
 						<div class="faded_out dark" style="margin: 12px 0;">
-							<?php echo __('This instance is using %num% of max %max% projects', array('%num%' => '<b id="current_project_num_count">'.TBGProject::getProjectsCount().'</b>', '%max%' => '<b>'.\thebuggenie\core\Context::getScope()->getMaxProjects().'</b>')); ?>
+							<?php echo __('This instance is using %num% of max %max% projects', array('%num%' => '<b id="current_project_num_count">'.\thebuggenie\entities\Project::getProjectsCount().'</b>', '%max%' => '<b>'.\thebuggenie\core\Context::getScope()->getMaxProjects().'</b>')); ?>
 						</div>
 					<?php endif; ?>
 				</p>

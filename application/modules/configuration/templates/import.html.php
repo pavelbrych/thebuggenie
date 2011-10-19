@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Import data'));
+	$csp_response->setTitle(__('Import data'));
 
 ?>
 <table style="table-layout: fixed; width: 100%" cellpadding=0 cellspacing=0>
@@ -55,7 +55,7 @@
 							{
 								echo '<tr><td>'.__('Workflow scheme').'</td><td>'.$item->getName().'</td><td>'.$item->getID().'</td></tr>';
 							}
-							foreach (TBGProject::getAll() as $item)
+							foreach (\thebuggenie\entities\Project::getAll() as $item)
 							{
 								echo '<tr><td>'.__('Project').'</td><td>'.$item->getName().'</td><td>'.$item->getID().'</td></tr>';
 								foreach (TBGMilestone::getAllByProjectID($item->getID()) as $item2)

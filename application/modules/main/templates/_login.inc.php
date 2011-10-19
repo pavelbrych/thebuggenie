@@ -1,7 +1,7 @@
 		<div class="tab_menu">
 			<ul id="login_menu">
 				<li id="tab_login"<?php if ($selected_tab == 'login'): ?> class="selected"<?php endif; ?>><?php echo javascript_link_tag(image_tag('icon_login.png', array('style' => 'float: left;')).__('Login'), array('onclick' => "TBG.Main.Helpers.tabSwitcher('tab_login', 'login_menu');")); ?></li>
-				<?php TBGEvent::createNew('core', 'login_form_tab')->trigger(array('selected_tab' => $selected_tab)); ?>
+				<?php \caspar\core\Event::createNew('core', 'login_form_tab')->trigger(array('selected_tab' => $selected_tab)); ?>
 				<?php if (TBGSettings::get('allowreg') == true): ?>
 					<li id="tab_register"<?php if ($selected_tab == 'register'): ?> class="selected"<?php endif; ?>><?php echo javascript_link_tag(image_tag('icon_register.png', array('style' => 'float: left;')).__('Register new account'), array('onclick' => "TBG.Main.Helpers.tabSwitcher('tab_register', 'login_menu');")); ?></li>
 				<?php endif; ?>
@@ -58,7 +58,7 @@
 				</div>				
 			</div>
 			<br style="clear: both;">
-			<?php TBGEvent::createNew('core', 'login_form_pane')->trigger(array_merge(array('selected_tab' => $selected_tab), $options)); ?>
+			<?php \caspar\core\Event::createNew('core', 'login_form_pane')->trigger(array_merge(array('selected_tab' => $selected_tab), $options)); ?>
 			<?php if (TBGSettings::get('allowreg') == true): ?>
 				<?php include_template('main/loginregister', array('selected_tab' => $selected_tab)); ?>
 			<?php endif; ?>
@@ -73,13 +73,13 @@
 	</script>
 <?php endif; ?>
 <script type="text/javascript">
-	<?php if (!$tbg_request->isAjaxCall()): ?>
+	<?php if (!$csp_request->isAjaxCall()): ?>
 	document.observe('dom:loaded', function() {
 	<?php endif; ?>
 		$('tbg3_username').focus();
 		openid.no_sprite = true;
 		openid.init('openid_identifier');
-	<?php if (!$tbg_request->isAjaxCall()): ?>
+	<?php if (!$csp_request->isAjaxCall()): ?>
 	});
 	<?php endif; ?>
 </script>

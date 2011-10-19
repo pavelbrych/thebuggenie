@@ -46,7 +46,7 @@
 			parent::_addBoolean(self::MEETING);
 			parent::_addBoolean(self::ABSENT);
 			parent::_addVarchar(self::COLOR, 7, '');
-			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), Scopes::ID);
 		}
 
 		public function getAll()

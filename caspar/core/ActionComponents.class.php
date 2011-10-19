@@ -171,27 +171,33 @@
 			/**
 			 * @global TBGRequest The request object
 			 */
-			$tbg_request = Caspar::getRequest();
+			$csp_request = Caspar::getRequest();
 			
 			/**
 			 * @global TBGResponse The response object
 			 */
-			$tbg_response = Caspar::getResponse();
+			$csp_response = Caspar::getResponse();
 			
 			/**
 			 * @global TBGRequest The request object
 			 */
-			$tbg_routing = Caspar::getRouting();
+			$csp_routing = Caspar::getRouting();
 			
 			/**
 			 * @global TBGUser The user object
 			 */
-			$tbg_user = Caspar::getUser();
+			$csp_user = Caspar::getUser();
 
 			Caspar::loadLibrary('common');
 			Caspar::loadLibrary('ui');
 
 			Logging::log('rendering template output');
+			
+			$___vars = Event::createNew('core', 'loadTemplateVariables')->trigger()->getReturnList();
+			foreach ($___vars as $k => $v) {
+				$$k = $v;
+			}
+			
 			require $template_file;
 		}
 

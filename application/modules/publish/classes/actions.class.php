@@ -33,13 +33,13 @@
 				if ($namespace != '')
 				{
 					$key = mb_strtolower($namespace);
-					$row = TBGProjectsTable::getTable()->getByKey($key);
+					$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($key);
 					
 					if ($row instanceof \b2db\Row)
 					{
-						$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+						$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
 						
-						if ($project instanceof TBGProject)
+						if ($project instanceof \thebuggenie\entities\Project)
 							$this->forward403unless($project->hasAccess());
 
 						TBGContext::setCurrentProject($project);
@@ -52,14 +52,14 @@
 				{
 					if ($project_key = $request->getParameter('project_key'))
 					{
-						$row = TBGProjectsTable::getTable()->getByKey($project_key);
+						$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($project_key);
 						
-						$this->selected_project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+						$this->selected_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
 					}
 					elseif ($project_id = (int) $request->getParameter('project_id'))
-						$this->selected_project = \caspar\core\Caspar::factory()->TBGProject($project_id);
+						$this->selected_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 
-					if ($this->selected_project instanceof TBGProject)
+					if ($this->selected_project instanceof \thebuggenie\entities\Project)
 						$this->forward403unless($this->selected_project->hasAccess());
 
 					TBGContext::setCurrentProject($this->selected_project);
@@ -337,7 +337,7 @@
 					$this->article_content = $request->getRawParameter('new_article_content');
 				}
 					
-				TBGContext::loadLibrary('publish');
+				\core\caspar\Caspar::loadLibrary('publish');
 				$this->article_title = str_replace(array(':', '_'), array(' ', ' '), get_spaced_name($this->article_name));
 			}
 		}

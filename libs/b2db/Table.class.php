@@ -837,6 +837,11 @@
 			}
 			return $fsql;
 		}
+		
+		protected function _getTable($table)
+		{
+			return $this->_connection->getTable($table);
+		}
 
 		protected function _getTableNameSQL()
 		{

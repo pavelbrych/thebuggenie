@@ -1,6 +1,6 @@
 <ul class="rounded_box white shadowed cut_top">
 	<li class="searchterm"><?php echo $searchterm; ?><br><span class="informal"><?php echo __('Press "Enter" twice to find issues matching your query'); ?></span></li>
-	<?php TBGEvent::createNew('core', 'quicksearch_dropdown_firstitems', $searchterm)->trigger(); ?>
+	<?php \caspar\core\Event::createNew('core', 'quicksearch_dropdown_firstitems', $searchterm)->trigger(); ?>
 	<li class="header disabled"><?php echo __('%num% issue(s) found', array('%num%' => $resultcount)); ?></li>
 	<?php $cc = 0; ?>
 	<?php if ($resultcount > 0): ?>
@@ -21,5 +21,5 @@
 			<?php echo __('No issues found matching your query'); ?>
 		</li>
 	<?php endif; ?>
-	<?php TBGEvent::createNew('core', 'quicksearch_dropdown_founditems', $searchterm)->trigger(); ?>
+	<?php \caspar\core\Event::createNew('core', 'quicksearch_dropdown_founditems', $searchterm)->trigger(); ?>
 </ul>

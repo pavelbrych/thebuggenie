@@ -1,4 +1,4 @@
-<?php TBGContext::loadLibrary('ui'); ?>
+<?php \core\caspar\Caspar::loadLibrary('ui'); ?>
 <div class="rounded_box round_canhover lightgrey projectbox" style="margin: 10px 0px 10px 0px; width: 690px;">
 	<div style="padding: 3px; font-size: 14px;">
 		<?php if ($project->isArchived()): ?>

@@ -158,7 +158,7 @@
 						{
 							if ($issue instanceof TBGIssue)
 							{
-								if (!TBGContext::getCurrentProject() instanceof TBGProject || $issue->getProjectID() != TBGContext::getCurrentProject()->getID())
+								if (!TBGContext::getCurrentProject() instanceof \thebuggenie\entities\Project || $issue->getProjectID() != TBGContext::getCurrentProject()->getID())
 								{
 									$issue = null;
 								}

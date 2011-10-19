@@ -31,8 +31,8 @@
 		/**
 		 * The lead for the project
 		 *  
-		 * @var TBGUser
-		 * @Class TBGUser
+		 * @Class \thebuggenie\entities\User
+		 * @Class \thebuggenie\entities\User
 		 */
 		protected $_leader = 0;
 		
@@ -46,7 +46,7 @@
 		/**
 		 * The QA for the project
 		 *  
-		 * @var TBGIdentifiable
+		 * @Class \thebuggenie\entities\Identifiable
 		 */
 		protected $_qa_responsible = 0;
 		
@@ -60,7 +60,7 @@
 		/**
 		 * The owner of the project
 		 *  
-		 * @var TBGIdentifiable
+		 * @Class \thebuggenie\entities\Identifiable
 		 */
 		protected $_owner = 0;
 
@@ -344,7 +344,7 @@
 				TBGContext::setPermission($permission, $this->getID(), 'core', $uid, null, $tid, true);
 			}
 			
-			if (!$this instanceof TBGProject)
+			if (!$this instanceof \thebuggenie\entities\Project)
 			{
 				$extrapermissions = array();
 				$extrapermissions[] = 'page_project_allpages_access';

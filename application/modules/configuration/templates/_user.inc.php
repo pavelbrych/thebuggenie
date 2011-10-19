@@ -101,7 +101,7 @@
 		<td>
 			<select name="<?php echo TBGSettings::SETTING_RETURN_FROM_LOGIN; ?>" id="returnfromlogin" style="width: 300px;"<?php if ($access_level != TBGSettings::ACCESS_FULL): ?> disabled<?php endif; ?>>
 				<?php $return_routes = array('home' => __('Frontpage'), 'dashboard' => __('Dashboard'), 'account' => __('Account details'), 'referer' => __('Page before login')); ?>
-				<?php $return_routes = TBGEvent::createNew('core', 'setting_returnfromlogin', null, array(), $return_routes)->trigger()->getReturnList(); ?>
+				<?php $return_routes = \caspar\core\Event::createNew('core', 'setting_returnfromlogin', null, array(), $return_routes)->trigger()->getReturnList(); ?>
 				<?php foreach ($return_routes as $route => $description): ?> 
 					<option value="<?php echo $route; ?>"<?php if (TBGSettings::getLoginReturnRoute() == $route): ?> selected<?php endif; ?>><?php echo $description; ?></option>
 				<?php endforeach; ?>
@@ -113,7 +113,7 @@
 		<td>
 			<select name="<?php echo TBGSettings::SETTING_RETURN_FROM_LOGOUT; ?>" id="returnfromlogout" style="width: 300px;"<?php if ($access_level != TBGSettings::ACCESS_FULL): ?> disabled<?php endif; ?>>
 				<?php $return_routes = array('home' => __('Frontpage')); ?>
-				<?php $return_routes = TBGEvent::createNew('core', 'setting_returnfromlogout', null, array(), $return_routes)->trigger()->getReturnList(); ?>
+				<?php $return_routes = \caspar\core\Event::createNew('core', 'setting_returnfromlogout', null, array(), $return_routes)->trigger()->getReturnList(); ?>
 				<?php foreach ($return_routes as $route => $description): ?> 
 					<option value="<?php echo $route; ?>"<?php if (TBGSettings::getLogoutReturnRoute() == $route): ?> selected<?php endif; ?>><?php echo $description; ?></option>
 				<?php endforeach; ?>

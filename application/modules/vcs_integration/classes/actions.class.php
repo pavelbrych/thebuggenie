@@ -19,7 +19,7 @@
 	{
 		public function runProjectCommits(Request $request)
 		{
-			$this->selected_project = TBGProject::getByKey($request->getParameter('project_key'));
+			$this->selected_project = \thebuggenie\entities\Project::getByKey($request->getParameter('project_key'));
 			TBGContext::setCurrentProject($this->selected_project);
 			
 			if (TBGContext::getModule('vcs_integration')->getSetting('vcs_mode_' . TBGContext::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return $this->return404(TBGContext::getI18n()->__('VCS Integration has been disabled for this project'));; endif;
@@ -56,7 +56,7 @@
 				$branch = null;
 			}
 			
-			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
+			$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 			
 			if (!$project)
 			{
@@ -121,7 +121,7 @@
 				
 			$passkey = \caspar\core\Caspar::getRequest()->getParameter('passkey');
 			$project_id = urldecode(\caspar\core\Caspar::getRequest()->getParameter('project_id'));
-			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
+			$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 			
 			// Validate access
 			if (!$project)
@@ -241,7 +241,7 @@
 			
 			$passkey = \caspar\core\Caspar::getRequest()->getParameter('passkey');
 			$project_id = urldecode(\caspar\core\Caspar::getRequest()->getParameter('project_id'));
-			$project = \caspar\core\Caspar::factory()->TBGProject($project_id);
+			$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 			
 			// Validate access
 			if (!$project)

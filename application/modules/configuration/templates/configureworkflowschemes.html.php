@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Configure workflow schemes'));
+	$csp_response->setTitle(__('Configure workflow schemes'));
 
 ?>
 <table style="table-layout: fixed; width: 100%" cellpadding=0 cellspacing=0>

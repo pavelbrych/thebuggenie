@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Configuration center'));
+	$csp_response->setTitle(__('Configuration center'));
 	
 ?>
 <div class="update_div rounded_box lightgrey">

@@ -1,27 +1,27 @@
 <?php
 
-	$tbg_response->setTitle('Your account details');
-	$tbg_response->addBreadcrumb(__('Account details'), make_url('account'), tbg_get_breadcrumblinks('main_links'));
+	$csp_response->setTitle('Your account details');
+	$csp_response->addBreadcrumb(__('Account details'), make_url('account'), tbg_get_breadcrumblinks('main_links'));
 	
 ?>
 <div id="account_info_container">
 	<div id="account_user_info">
-		<?php echo image_tag($tbg_user->getAvatarURL(false), array('style' => 'float: left; margin-right: 5px;'), true); ?>
+		<?php echo image_tag($csp_user->getAvatarURL(false), array('style' => 'float: left; margin-right: 5px;'), true); ?>
 		<span id="user_name_span">
-			<?php echo $tbg_user->getRealname(); ?><br>
-			<?php if (!$tbg_user->isOpenIdLocked()): ?>
-				<?php echo $tbg_user->getUsername(); ?>
+			<?php echo $csp_user->getRealname(); ?><br>
+			<?php if (!$csp_user->isOpenIdLocked()): ?>
+				<?php echo $csp_user->getUsername(); ?>
 			<?php endif; ?>
 		</span>
 	</div>
 	<div class="profile_buttons">
-		<a style="<?php if (!$tbg_user->usesGravatar()): ?>display: none; <?php endif; ?>" id="gravatar_change" href="http://en.gravatar.com/emails/" class="button button-silver">
+		<a style="<?php if (!$csp_user->usesGravatar()): ?>display: none; <?php endif; ?>" id="gravatar_change" href="http://en.gravatar.com/emails/" class="button button-silver">
 			<?php echo image_tag('gravatar.png'); ?>
 			<?php echo __('Change my profile picture / avatar'); ?>
 		</a>
-		<?php if ($tbg_user->canChangePassword() && !$tbg_user->isOpenIdLocked()): ?>
+		<?php if ($csp_user->canChangePassword() && !$csp_user->isOpenIdLocked()): ?>
 			<a href="javascript:void(0);" onclick="$(this).toggleClassName('button-pressed');$('change_password_div').toggle();" id="change_password_button" class="button button-silver"><?php echo __('Change my password'); ?></a>
-		<?php elseif (!$tbg_user->isOpenIdLocked()): ?>
+		<?php elseif (!$csp_user->isOpenIdLocked()): ?>
 			<a href="javascript:void(0);" onclick="TBG.Main.Helpers.Message.error('<?php echo __('Changing password disabled'); ?>', '<?php echo __('Changing your password can not be done via this interface. Please contact your administrator to change your password.'); ?>')" class="button button-silver disabled"><?php echo __('Change my password'); ?></a>
 		<?php endif; ?>
 		<a class="button button-silver first last" id="more_actions_button" type="button" href="javascript:void(0);" onclick="$(this).toggleClassName('button-pressed');$('more_actions').toggle();"><?php echo image_tag('tab_search.png').__('Show my issues'); ?></a>
@@ -30,7 +30,7 @@
 			<li><?php echo link_tag(make_url('my_assigned_issues'), image_tag('tab_search.png', array('style' => 'float: left; margin-right: 5px;')).__("Show open issues assigned to me")); ?></li>
 			<li><?php echo link_tag(make_url('my_teams_assigned_issues'), image_tag('tab_search.png', array('style' => 'float: left; margin-right: 5px;')).__("Show open issues assigned to my teams")); ?></li>
 		</ul>
-		<?php if ($tbg_user->isOpenIdLocked()): ?>
+		<?php if ($csp_user->isOpenIdLocked()): ?>
 			<a href="javascript:void(0);" onclick="$(this).toggleClassName('button-pressed');$('pick_username_div').toggle();" id="pick_username_button" class="button button-blue"><?php echo __('Pick a username'); ?></a>
 			<div class="rounded_box white shadowed"  style="display: none; position: absolute; right: 0; top: 38px; z-index: 100; padding: 5px 10px 5px 10px; font-size: 13px; width: 400px;" id="pick_username_div">
 				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_check_username'); ?>" onsubmit="TBG.Main.Profile.checkUsernameAvailability('<?php echo make_url('account_check_username'); ?>'); return false;" method="post" id="check_username_form">
@@ -47,7 +47,7 @@
 				</form>
 			</div>
 		<?php endif; ?>
-		<?php if ($tbg_user->canChangePassword()): ?>
+		<?php if ($csp_user->canChangePassword()): ?>
 			<div class="rounded_box white shadowed"  style="display: none; position: absolute; right: 0; top: 38px; z-index: 100; padding: 5px 10px 5px 10px; font-size: 13px; width: 350px;" id="change_password_div">
 				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_change_password'); ?>" onsubmit="TBG.Main.Profile.changePassword('<?php echo make_url('account_change_password'); ?>'); return false;" method="post" id="change_password_form">
 					<b><?php echo __('Changing your password'); ?></b><br>
@@ -71,15 +71,15 @@
 	</div>
 	<br style="clear: both;">
 	<div style="margin: 0 0 20px 0; table-layout: fixed; width: 100%; height: 100%;">
-		<?php /* TBGEvent::createNew('core', 'account_left_top')->trigger(); ?>
+		<?php /* \caspar\core\Event::createNew('core', 'account_left_top')->trigger(); ?>
 		<div class="rounded_box iceblue borderless account_details">
-			<?php echo image_tag($tbg_user->getAvatarURL(false), array('style' => 'float: left; margin-right: 5px;'), true); ?>
-			<div class="user_realname"><?php echo $tbg_user->getRealname(); ?></div>
+			<?php echo image_tag($csp_user->getAvatarURL(false), array('style' => 'float: left; margin-right: 5px;'), true); ?>
+			<div class="user_realname"><?php echo $csp_user->getRealname(); ?></div>
 			<div class="user_username">
-				(<?php echo $tbg_user->getUsername(); ?>)
+				(<?php echo $csp_user->getUsername(); ?>)
 			</div>
 			<div class="user_status">
-				<?php echo '<b>' . __('Status: %status%', array('%status%' => '</b>' . (($tbg_user->getState() instanceof TBGUserstate) ? $tbg_user->getState()->getName() : '<span class="faded_out">' . __('Unknown') . '</span>'))); ?>
+				<?php echo '<b>' . __('Status: %status%', array('%status%' => '</b>' . (($csp_user->getState() instanceof TBGUserstate) ? $csp_user->getState()->getName() : '<span class="faded_out">' . __('Unknown') . '</span>'))); ?>
 			</div>
 			<div style="font-size: 13px;">
 				<div style="clear: both; margin-top: 15px;">
@@ -95,7 +95,7 @@
 				{
 				}
 				?>
-				<div style="<?php if (!$tbg_user->usesGravatar()): ?>display: none; <?php endif; ?>clear: both; margin: 3px 0 15px 0;" id="gravatar_change">
+				<div style="<?php if (!$csp_user->usesGravatar()): ?>display: none; <?php endif; ?>clear: both; margin: 3px 0 15px 0;" id="gravatar_change">
 					<?php echo image_tag('gravatar.png', array('style' => 'float: left; margin-right: 5px;')); ?>
 					<?php echo link_tag('http://en.gravatar.com/emails/', __('Change my profile picture / avatar'), array('target' => '_blank')); ?>
 					<p class="faded_out" style="font-size: 11px; padding-top: 3px;">
@@ -116,19 +116,19 @@
 				</div>
 				<div style="clear: both; margin-top: 10px;">
 					<?php echo image_tag('icon_user.png', array('style' => 'float: left; margin-right: 5px;')); ?>
-					<a href="javascript:void(0);" onclick="TBG.Main.Helpers.Backdrop.show('<?php echo make_url('get_partial_for_backdrop', array('key' => 'usercard', 'user_id' => $tbg_user->getID())); ?>');"><?php echo __('Preview my user card'); ?></a>
+					<a href="javascript:void(0);" onclick="TBG.Main.Helpers.Backdrop.show('<?php echo make_url('get_partial_for_backdrop', array('key' => 'usercard', 'user_id' => $csp_user->getID())); ?>');"><?php echo __('Preview my user card'); ?></a>
 				</div>
 			</div>
 		</div>
 		<div class="container_div" style="margin-top: 0;">
 			<?php include_component('main/myfriends'); ?>
 		</div>
-		<?php TBGEvent::createNew('core', 'account_left_bottom')->trigger(); */ ?>
+		<?php \caspar\core\Event::createNew('core', 'account_left_bottom')->trigger(); */ ?>
 		<div style="margin: 0; clear: both; height: 30px; width: 100%;" class="tab_menu">
 			<ul id="account_tabs">
 				<li class="selected" id="tab_profile"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_profile', 'account_tabs');" href="javascript:void(0);"><?php echo image_tag('cfg_icon_users.png', array('style' => 'float: left;')).__('Profile information'); ?></a></li>
 				<li id="tab_settings"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_settings', 'account_tabs');" href="javascript:void(0);"><?php echo image_tag('cfg_icon_general.png', array('style' => 'float: left;')).__('Settings'); ?></a></li>
-				<?php TBGEvent::createNew('core', 'account_tabs')->trigger(); ?>
+				<?php \caspar\core\Event::createNew('core', 'account_tabs')->trigger(); ?>
 				<?php foreach (TBGContext::getModules() as $module_name => $module): ?>
 					<?php if ($module->hasAccountSettings()): ?>
 						<li id="tab_settings_<?php echo $module_name; ?>"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_settings_<?php echo $module_name; ?>', 'account_tabs');" href="javascript:void(0);"><?php echo image_tag($module->getAccountSettingsLogo(), array('style' => 'float: left;'), false, $module_name).$module->getAccountSettingsName(); ?></a></li>
@@ -153,7 +153,7 @@
 							<tr>
 								<td style="padding: 5px;"><label for="profile_buddyname">* <?php echo __('"Friendly" name / nickname'); ?></label></td>
 								<td>
-									<input type="text" name="buddyname" id="profile_buddyname" value="<?php echo $tbg_user->getBuddyname(); ?>" style="width: 200px;">
+									<input type="text" name="buddyname" id="profile_buddyname" value="<?php echo $csp_user->getBuddyname(); ?>" style="width: 200px;">
 								</td>
 							</tr>
 							<tr>
@@ -162,7 +162,7 @@
 							<tr>
 								<td style="padding: 5px;"><label for="profile_realname"><?php echo __('Full name'); ?></label></td>
 								<td>
-									<input type="text" name="realname" id="profile_realname" value="<?php echo $tbg_user->getRealname(); ?>" style="width: 300px;">
+									<input type="text" name="realname" id="profile_realname" value="<?php echo $csp_user->getRealname(); ?>" style="width: 300px;">
 								</td>
 							</tr>
 							<tr>
@@ -171,14 +171,14 @@
 							<tr>
 								<td style="padding: 5px;"><label for="profile_email">* <?php echo __('Email address'); ?></label></td>
 								<td>
-									<input type="email" name="email" id="profile_email" value="<?php echo $tbg_user->getEmail(); ?>" style="width: 300px;">
+									<input type="email" name="email" id="profile_email" value="<?php echo $csp_user->getEmail(); ?>" style="width: 300px;">
 								</td>
 							</tr>
 							<tr>
 								<td style="padding: 5px;"><label for="profile_email_private_yes">* <?php echo __('Show my email address to others'); ?></label></td>
 								<td>
-									<input type="radio" name="email_private" value="0" id="profile_email_private_no"<?php if ($tbg_user->isEmailPublic()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_email_private_no"><?php echo __('Yes'); ?></label>&nbsp;&nbsp;
-									<input type="radio" name="email_private" value="1" id="profile_email_private_yes"<?php if ($tbg_user->isEmailPrivate()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_email_private_yes"><?php echo __('No'); ?></label>
+									<input type="radio" name="email_private" value="0" id="profile_email_private_no"<?php if ($csp_user->isEmailPublic()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_email_private_no"><?php echo __('Yes'); ?></label>&nbsp;&nbsp;
+									<input type="radio" name="email_private" value="1" id="profile_email_private_yes"<?php if ($csp_user->isEmailPrivate()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_email_private_yes"><?php echo __('No'); ?></label>
 								</td>
 							</tr>
 							<tr>
@@ -187,7 +187,7 @@
 							<tr>
 								<td style="padding: 5px;"><label for="profile_homepage"><?php echo __('Homepage'); ?></label></td>
 								<td>
-									<input type="url" name="homepage" id="profile_homepage" value="<?php echo $tbg_user->getHomepage(); ?>" style="width: 300px;">
+									<input type="url" name="homepage" id="profile_homepage" value="<?php echo $csp_user->getHomepage(); ?>" style="width: 300px;">
 								</td>
 							</tr>
 							<tr>
@@ -212,28 +212,28 @@
 							<tr>
 								<td style="width: 200px; padding: 5px;"><label for="profile_use_gravatar_yes"><?php echo __('Use Gravatar avatar'); ?></label></td>
 								<td>
-									<input type="radio" name="use_gravatar" value="1" id="profile_use_gravatar_yes"<?php if ($tbg_user->usesGravatar()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_use_gravatar_yes"><?php echo __('Yes'); ?></label>&nbsp;&nbsp;
-									<input type="radio" name="use_gravatar" value="0" id="profile_use_gravatar_no"<?php if (!$tbg_user->usesGravatar()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_use_gravatar_no"><?php echo __('No'); ?></label>
+									<input type="radio" name="use_gravatar" value="1" id="profile_use_gravatar_yes"<?php if ($csp_user->usesGravatar()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_use_gravatar_yes"><?php echo __('Yes'); ?></label>&nbsp;&nbsp;
+									<input type="radio" name="use_gravatar" value="0" id="profile_use_gravatar_no"<?php if (!$csp_user->usesGravatar()): ?> checked<?php endif; ?>>&nbsp;<label for="profile_use_gravatar_no"><?php echo __('No'); ?></label>
 								</td>
 							</tr>
 							<tr>
 								<td class="config_explanation" colspan="2">
 									<?php echo __("The Bug Genie can use your <a href=\"http://www.gravatar.com\" target=\"_blank\">Gravatar</a> profile picture, if you have one. If you don't have one but still want to use Gravatar for profile pictures, The Bug Genie will use a Gravatar <a href=\"http://blog.gravatar.com/2008/04/22/identicons-monsterids-and-wavatars-oh-my/\" target=\"_blank\">auto-generated image unique for your email address</a>."); ?><br>
 									<br>
-									<?php echo __("Don't have a Gravatar yet? %link_to_get_one_now%", array('%link_to_get_one_now%' => link_tag('http://en.gravatar.com/site/signup/'.urlencode($tbg_user->getEmail()), __('Get one now!'), array('target' => '_blank')))); ?>
+									<?php echo __("Don't have a Gravatar yet? %link_to_get_one_now%", array('%link_to_get_one_now%' => link_tag('http://en.gravatar.com/site/signup/'.urlencode($csp_user->getEmail()), __('Get one now!'), array('target' => '_blank')))); ?>
 								</td>
 							</tr>
 							<tr>
 								<td style="width: 200px; padding: 5px;"><label for="profile_timezone"><?php echo __('Current timezone'); ?></label></td>
 								<td>
 									<select name="timezone" id="profile_timezone" style="width: 150px;">
-										<option value="sys"<?php if ($tbg_user->getTimezone() == 'sys'): ?> selected<?php endif; ?>><?php echo __('Use global setting - GMT%time%', array('%time%' => ' '.TBGSettings::getGMTOffset())); ?></option>
+										<option value="sys"<?php if ($csp_user->getTimezone() == 'sys'): ?> selected<?php endif; ?>><?php echo __('Use global setting - GMT%time%', array('%time%' => ' '.TBGSettings::getGMTOffset())); ?></option>
 										<?php for ($cc = 12;$cc >= 1;$cc--): ?>
-											<option value="-<?php echo $cc; ?>"<?php if ($tbg_user->getTimezone() == -$cc): ?> selected<?php endif; ?>>GMT -<?php echo $cc; ?></option>
+											<option value="-<?php echo $cc; ?>"<?php if ($csp_user->getTimezone() == -$cc): ?> selected<?php endif; ?>>GMT -<?php echo $cc; ?></option>
 										<?php endfor; ?>
-										<option value="0"<?php if ($tbg_user->getTimezone() == '0'): ?> selected<?php endif; ?>>GMT/UTC</option>
+										<option value="0"<?php if ($csp_user->getTimezone() == '0'): ?> selected<?php endif; ?>>GMT/UTC</option>
 										<?php for ($cc = 1;$cc <= 12;$cc++): ?>
-											<option value="<?php echo $cc; ?>"<?php if ($tbg_user->getTimezone() == $cc): ?> selected<?php endif; ?>>GMT +<?php echo $cc; ?></option>
+											<option value="<?php echo $cc; ?>"<?php if ($csp_user->getTimezone() == $cc): ?> selected<?php endif; ?>>GMT +<?php echo $cc; ?></option>
 										<?php endfor; ?>
 									</select>
 								</td>
@@ -248,9 +248,9 @@
 								<td style="width: 200px; padding: 5px;"><label for="profile_timezone"><?php echo __('Language'); ?></label></td>
 								<td>
 									<select name="profile_language" id="profile_language" style="width: 300px;">
-										<option value="sys"<?php if ($tbg_user->getLanguage() == 'sys'): ?> selected<?php endif; ?>><?php echo __('Use global setting - %lang%', array('%lang%' => TBGSettings::getLanguage())); ?></option>
+										<option value="sys"<?php if ($csp_user->getLanguage() == 'sys'): ?> selected<?php endif; ?>><?php echo __('Use global setting - %lang%', array('%lang%' => TBGSettings::getLanguage())); ?></option>
 									<?php foreach ($languages as $lang_code => $lang_desc): ?>
-										<option value="<?php echo $lang_code; ?>" <?php if ($tbg_user->getLanguage() == $lang_code): ?> selected<?php endif; ?>><?php echo $lang_desc; ?><?php if (TBGSettings::getLanguage() == $lang_code): ?> <?php echo __('(site default)'); endif;?></option>
+										<option value="<?php echo $lang_code; ?>" <?php if ($csp_user->getLanguage() == $lang_code): ?> selected<?php endif; ?>><?php echo $lang_desc; ?><?php if (TBGSettings::getLanguage() == $lang_code): ?> <?php echo __('(site default)'); endif;?></option>
 									<?php endforeach; ?>
 									</select>
 								</td>
@@ -272,7 +272,7 @@
 					</div>
 				</form>
 			</div>
-			<?php TBGEvent::createNew('core', 'account_tab_panes')->trigger(); ?>
+			<?php \caspar\core\Event::createNew('core', 'account_tab_panes')->trigger(); ?>
 			<?php foreach (TBGContext::getModules() as $module_name => $module): ?>
 				<?php if ($module->hasAccountSettings()): ?>
 					<div id="tab_settings_<?php echo $module_name; ?>_pane" style="display: none;">

@@ -284,7 +284,7 @@
 			if (self::$_defaultscope === null)
 			{
 				$row = Caspar::getB2DBInstance()->getTable('\thebuggenie\tables\Settings')->getDefaultScope();
-				self::$_defaultscope = Caspar::factory()->TBGScope($row->get(\thebuggenie\tables\Settings::VALUE));
+				self::$_defaultscope = Caspar::factory()->manufacture('TBGScope', $row->get(\thebuggenie\tables\Settings::VALUE));
 			}
 			return self::$_defaultscope;
 		}
@@ -513,7 +513,7 @@
 		{
 			try
 			{
-				return Caspar::factory()->Userstate(self::get(self::SETTING_ONLINESTATE));
+				return Caspar::factory()->manufacture('Userstate', self::get(self::SETTING_ONLINESTATE));
 			}
 			catch (\Exception $e)
 			{
@@ -525,7 +525,7 @@
 		{
 			try
 			{
-				return Caspar::factory()->Userstate(self::get(self::SETTING_OFFLINESTATE));
+				return Caspar::factory()->manufacture('Userstate', self::get(self::SETTING_OFFLINESTATE));
 			}
 			catch (\Exception $e)
 			{
@@ -543,7 +543,7 @@
 		{
 			try
 			{
-				return Caspar::factory()->Userstate(self::get(self::SETTING_AWAYSTATE));
+				return Caspar::factory()->manufacture('Userstate', self::get(self::SETTING_AWAYSTATE));
 			}
 			catch (\Exception $e)
 			{

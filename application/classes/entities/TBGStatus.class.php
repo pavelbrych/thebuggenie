@@ -46,7 +46,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = \caspar\core\Caspar::factory()->TBGStatus($row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->manufacture('TBGStatus', $row_id, $row);
 					}
 				}
 			}
@@ -70,7 +70,7 @@
 			}
 			
 			$res = parent::_createNew($name, self::STATUS, $itemdata);
-			return \caspar\core\Caspar::factory()->TBGStatus($res->getInsertID());
+			return \caspar\core\Caspar::factory()->manufacture('TBGStatus', $res->getInsertID());
 		}
 
 		public static function getStatusByKeyish($key)

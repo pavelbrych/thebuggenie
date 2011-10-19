@@ -19,7 +19,7 @@
 	class TBGComment extends TBGIdentifiableClass 
 	{
 		
-		static protected $_b2dbtablename = 'TBGCommentsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Comments';
 		
 		/**
 		 * Issue comment
@@ -36,16 +36,16 @@
 		/**
 		 * Who posted the comment
 		 * 
-		 * @var TBGUser
-		 * @Class TBGUser
+		 * @Class \thebuggenie\entities\User
+		 * @Class \thebuggenie\entities\User
 		 */
 		protected $_posted_by;
 		
 		/**
 		 * Who last updated the comment
 		 * 
-		 * @var TBGUser
-		 * @Class TBGUser
+		 * @Class \thebuggenie\entities\User
+		 * @Class \thebuggenie\entities\User
 		 */
 		protected $_updated_by;
 		
@@ -81,7 +81,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$comment = \caspar\core\Caspar::factory()->TBGComment($row->get(TBGCommentsTable::ID), $row);
+					$comment = \caspar\core\Caspar::factory()->manufacture('TBGComment', $row->get(TBGCommentsTable::ID), $row);
 					$retval[$comment->getID()] = $comment;
 				}
 				self::$_comment_count[$target_type][$target_id] = count($retval);
@@ -96,7 +96,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$comment = \caspar\core\Caspar::factory()->TBGComment($row->get(TBGCommentsTable::ID), $row);
+					$comment = \caspar\core\Caspar::factory()->manufacture('TBGComment', $row->get(TBGCommentsTable::ID), $row);
 					$retval[$comment->getID()] = $comment;
 				}
 			}

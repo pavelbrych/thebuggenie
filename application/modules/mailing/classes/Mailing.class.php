@@ -131,7 +131,7 @@
 
 		public function postConfigSettings(\caspar\core\Request $request)
 		{
-			TBGContext::loadLibrary('common');
+			\core\caspar\Caspar::loadLibrary('common');
 			$settings = array('smtp_host', 'smtp_port', 'smtp_user', 'timeout', 'mail_type', 'enable_outgoing_notifications',
 								'smtp_pwd', 'headcharset', 'from_name', 'from_addr', 'ehlo', 'use_queue', 'no_dash_f', 'activation_needed');
 			foreach ($settings as $setting)
@@ -239,7 +239,7 @@
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
-				TBGActionComponent::includeComponent('mailing/forgotPasswordPane', $event->getParameters());
+				\caspar\core\ActionComponents::includeComponent('mailing/forgotPasswordPane', $event->getParameters());
 			}
 		}
 
@@ -247,7 +247,7 @@
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
-				TBGActionComponent::includeComponent('mailing/forgotPasswordTab', $event->getParameters());
+				\caspar\core\ActionComponents::includeComponent('mailing/forgotPasswordTab', $event->getParameters());
 			}
 		}			
 		
@@ -271,7 +271,7 @@
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
-				TBGActionComponent::includeTemplate('mailing/userDropdownAnon', $event->getParameters());
+				\caspar\core\ActionComponents::includeTemplate('mailing/userDropdownAnon', $event->getParameters());
 			}
 		}
 		
@@ -560,7 +560,7 @@
 
 		public function listen_projectconfig_tab(Event $event)
 		{
-			TBGActionComponent::includeTemplate('mailing/projectconfig_tab', array('selected_tab' => $event->getParameter('selected_tab')));
+			\caspar\core\ActionComponents::includeTemplate('mailing/projectconfig_tab', array('selected_tab' => $event->getParameter('selected_tab')));
 		}
 		
 		public function listen_get_backdrop_partial(Event $event)
@@ -576,7 +576,7 @@
 		
 		public function listen_projectconfig_panel(Event $event)
 		{
-			TBGActionComponent::includeTemplate('mailing/projectconfig_panel', array('selected_tab' => $event->getParameter('selected_tab'), 'access_level' => $event->getParameter('access_level'), 'project' => $event->getParameter('project')));
+			\caspar\core\ActionComponents::includeTemplate('mailing/projectconfig_panel', array('selected_tab' => $event->getParameter('selected_tab'), 'access_level' => $event->getParameter('access_level'), 'project' => $event->getParameter('project')));
 		}
 		
 		public function listen_TBGComment_createNew(Event $event)
@@ -1007,7 +1007,7 @@
 						if ($type != "TEXT/PLAIN") $data = strip_tags($data);
 
 						$matches = array();
-						preg_match(TBGTextParser::getIssueRegex(), mb_decode_mimeheader($email->subject), $matches);
+						preg_match(\thebuggenie\core\TextParser::getIssueRegex(), mb_decode_mimeheader($email->subject), $matches);
 
 						$issue = ($matches) ? TBGIssue::getIssueFromLink($matches[0], $account->getProject()) : null;
 

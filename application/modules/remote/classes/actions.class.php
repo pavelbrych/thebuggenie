@@ -18,9 +18,9 @@
 			try
 			{
 				if ($project_key = $request->getParameter('project_key'))
-					$this->selected_project = TBGProject::getByKey($project_key);
+					$this->selected_project = \thebuggenie\entities\Project::getByKey($project_key);
 				elseif ($project_id = (int) $request->getParameter('project_id'))
-					$this->selected_project = \caspar\core\Caspar::factory()->TBGProject($project_id);
+					$this->selected_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 				
 				TBGContext::setCurrentProject($this->selected_project);
 			}
@@ -29,7 +29,7 @@
 		
 		public function runListProjects(Request $request)
 		{
-			$projects = TBGProject::getAll();
+			$projects = \thebuggenie\entities\Project::getAll();
 
 			$return_array = array();
 			foreach ($projects as $project)
@@ -104,7 +104,7 @@
 					case 'milestone':
 						$return_array['description'] = TBGContext::getI18n()->__('Select from available project milestones');
 						$return_array['type'] = 'choice';
-						if ($this->selected_project instanceof TBGProject)
+						if ($this->selected_project instanceof \thebuggenie\entities\Project)
 						{
 							$milestones = $this->selected_project->getAllMilestones();
 							foreach ($milestones as $milestone)

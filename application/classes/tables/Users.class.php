@@ -68,7 +68,6 @@
 			parent::_addVarchar(self::BUDDYNAME, 50);
 			parent::_addVarchar(self::REALNAME, 100);
 			parent::_addVarchar(self::EMAIL, 200);
-			parent::_addForeignKeyColumn(self::USERSTATE, $this->_connection->getTable('\\thebuggenie\\tables\Userstates'), \thebuggenie\tables\Userstates::ID);
 			parent::_addBoolean(self::CUSTOMSTATE);
 			parent::_addVarchar(self::HOMEPAGE, 250, '');
 			parent::_addVarchar(self::LANGUAGE, 100, '');
@@ -82,8 +81,9 @@
 			parent::_addBoolean(self::PRIVATE_EMAIL);
 			parent::_addBoolean(self::OPENID_LOCKED);
 			parent::_addInteger(self::JOINED, 10);
-			parent::_addForeignKeyColumn(self::GROUP_ID, $this->_connection->getTable('\\thebuggenie\\tables\\Groups'), \thebuggenie\tables\Groups::ID);
-			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
+			parent::_addForeignKeyColumn(self::USERSTATE, $this->_connection->getTable('\\thebuggenie\\tables\Userstates'), Userstates::ID);
+			parent::_addForeignKeyColumn(self::GROUP_ID, $this->_connection->getTable('\\thebuggenie\\tables\\Groups'), Groups::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), Scopes::ID);
 		}
 
 		public function getByUsername($username, $scope = null)

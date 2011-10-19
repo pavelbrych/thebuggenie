@@ -43,7 +43,7 @@
 			parent::_addBoolean(self::ENABLED);
 			parent::_addVarchar(self::VERSION, 10);
 			parent::_addVarchar(self::CLASSNAME, 50);
-			parent::_addForeignKeyColumn(self::SCOPE, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Scopes'));
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\Scopes'));
 		}
 		
 		public function getAll()

@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Configure permissions'));
+	$csp_response->setTitle(__('Configure permissions'));
 
 ?>
 <table style="table-layout: fixed; width: 100%" cellpadding=0 cellspacing=0>

@@ -25,7 +25,7 @@
 		const RULE_REPRODUCABILITY_VALID = 'valid_reproducability';
 		const RULE_PRIORITY_VALID = 'valid_priority';
 
-		static protected $_b2dbtablename = 'TBGWorkflowTransitionValidationRulesTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\WorkflowTransitionValidationRules';
 		
 		protected $_rule = null;
 
@@ -36,16 +36,16 @@
 		/**
 		 * The connected transition
 		 *
-		 * @var TBGWorkflowTransition
-		 * @Class TBGWorkflowTransition
+		 * @Class \thebuggenie\entities\WorkflowTransition
+		 * @Class \thebuggenie\entities\WorkflowTransition
 		 */
 		protected $_transition_id = null;
 
 		/**
 		 * The associated workflow object
 		 *
-		 * @var TBGWorkflow
-		 * @Class TBGWorkflow
+		 * @Class \thebuggenie\entities\Workflow
+		 * @Class \thebuggenie\entities\Workflow
 		 */
 		protected $_workflow_id = null;
 

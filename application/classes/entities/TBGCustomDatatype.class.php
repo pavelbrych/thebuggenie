@@ -3,7 +3,7 @@
 	class TBGCustomDatatype extends TBGDatatypeBase
 	{
 		
-		static protected $_b2dbtablename = 'TBGCustomFieldsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\CustomFields';
 
 		const DROPDOWN_CHOICE_TEXT = 1;
 		const INPUT_TEXT = 2;
@@ -62,7 +62,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_types[$row->get(TBGCustomFieldsTable::FIELD_KEY)] = \caspar\core\Caspar::factory()->TBGCustomDatatype($row_id, $row);
+						self::$_types[$row->get(TBGCustomFieldsTable::FIELD_KEY)] = \caspar\core\Caspar::factory()->manufacture('TBGCustomDatatype', $row_id, $row);
 					}
 				}
 			}
@@ -137,7 +137,7 @@
 			$row = Caspar::getB2DBInstance()->getTable('TBGCustomFieldsTable')->getByKey($key);
 			if ($row)
 			{
-				return \caspar\core\Caspar::factory()->TBGCustomDatatype($row->get(TBGCustomFieldsTable::ID), $row);
+				return \caspar\core\Caspar::factory()->manufacture('TBGCustomDatatype', $row->get(TBGCustomFieldsTable::ID), $row);
 			}
 			return null;
 		}

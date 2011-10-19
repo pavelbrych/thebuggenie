@@ -75,37 +75,37 @@
 		switch ($format)
 		{
 			case 1:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(1), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(1), $tstamp);
 				break;
 			case 2:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(2), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(2), $tstamp);
 				break;
 			case 3:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(3), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(3), $tstamp);
 				break;
 			case 4:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(4), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(4), $tstamp);
 				break;
 			case 5:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(5), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(5), $tstamp);
 				break;
 			case 6:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(6), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(6), $tstamp);
 				break;
 			case 7:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(7), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(7), $tstamp);
 				break;
 			case 8:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(8), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(8), $tstamp);
 				break;
 			case 9:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(9), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(9), $tstamp);
 				break;
 			case 10:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(10), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(10), $tstamp);
 				break;
 			case 11:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(9), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(9), $tstamp);
 				break;
 			case 12:
 				$tstring = '';
@@ -123,9 +123,9 @@
 				}
 				else
 				{
-					$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(12) . ', ', $tstamp);
+					$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(12) . ', ', $tstamp);
 				}
-				$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(14), $tstamp);
+				$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(14), $tstamp);
 				break;
 			case 13:
 				$tstring = '';
@@ -143,9 +143,9 @@
 				}
 				else
 				{
-					$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(12) . ', ', $tstamp);
+					$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(12) . ', ', $tstamp);
 				}
-				$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(14), $tstamp);
+				$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(14), $tstamp);
 				break;
 			case 14:
 				$tstring = '';
@@ -163,23 +163,23 @@
 				}
 				else
 				{
-					$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(12), $tstamp);
+					$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(12), $tstamp);
 				}
 				break;
 			case 15:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(11), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(11), $tstamp);
 				break;
 			case 16:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(12), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(12), $tstamp);
 				break;
 			case 17:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(13), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(13), $tstamp);
 				break;
 			case 18:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(16), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(16), $tstamp);
 				break;
 			case 19:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(14), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(14), $tstamp);
 				break;
 			case 20:
 				$tstring = '';
@@ -197,17 +197,17 @@
 				}
 				else
 				{
-					$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(15), $tstamp);
+					$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(15), $tstamp);
 				}
 				break;
 			case 21:
-				$tstring = (TBGContext::isCLI()) ? strftime('%a, %d %b %Y %H:%M:%S GMT', $tstamp) : strftime(TBGContext::getI18n()->getDateTimeFormat(17), $tstamp);
+				$tstring = (TBGContext::isCLI()) ? strftime('%a, %d %b %Y %H:%M:%S GMT', $tstamp) : strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(17), $tstamp);
 				if (\caspar\core\Caspar::getUser()->getTimezone() > 0) $tstring .= '+';
 				if (\caspar\core\Caspar::getUser()->getTimezone() < 0) $tstring .= '-';
 				if (\caspar\core\Caspar::getUser()->getTimezone() != 0) $tstring .= \caspar\core\Caspar::getUser()->getTimezone();
 				break;
 			case 22:
-				$tstring = strftime(TBGContext::getI18n()->getDateTimeFormat(15), $tstamp);
+				$tstring = strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(15), $tstamp);
 				break;
 			case 23:
 				$tstring = '';
@@ -225,19 +225,19 @@
 				}
 				else
 				{
-					$tstring .= strftime(TBGContext::getI18n()->getDateTimeFormat(15), $tstamp);
+					$tstring .= strftime(\caspar\core\Caspar::getI18n()->getDateTimeFormat(15), $tstamp);
 				}
 				break;
 			default:
 				return $tstamp;
 		}
-		return htmlentities($tstring, ENT_COMPAT, TBGContext::getI18n()->getCharset());
+		return htmlentities($tstring, ENT_COMPAT, \caspar\core\Caspar::getI18n()->getCharset());
 	}
 
 	function tbg_parse_text($text, $toc = false, $article_id = null, $options = array())
 	{
 		// Perform wiki parsing
-		$wiki_parser = new TBGTextParser($text, $toc, 'article_' . $article_id);
+		$wiki_parser = new \thebuggenie\core\TextParser($text, $toc, 'article_' . $article_id);
 		foreach ($options as $option => $value)
 		{
 			$wiki_parser->setOption($option, $value);
@@ -257,14 +257,14 @@
 	 */
 	function tbg_decodeUTF8($str, $htmlentities = false)
 	{
-		if (tbg_isUTF8($str) && !mb_stristr(TBGContext::getI18n()->getCharset(), 'UTF-8'))
+		if (tbg_isUTF8($str) && !mb_stristr(\caspar\core\Caspar::getI18n()->getCharset(), 'UTF-8'))
 		{
 			$str = utf8_decode($str);
 		}
 		
 		if ($htmlentities)
 		{
-			$str = htmlentities($str, ENT_NOQUOTES+ENT_IGNORE, TBGContext::getI18n()->getCharset());
+			$str = htmlentities($str, ENT_NOQUOTES+ENT_IGNORE, \caspar\core\Caspar::getI18n()->getCharset());
 		}
 		return $str;
 	}
@@ -338,25 +338,25 @@
 
 	function tbg_get_javascripts()
 	{
-		$tbg_response = \caspar\core\Caspar::getResponse();
-//		$tbg_response->addJavascript('jquery-1.6.2.min.js');
-		$tbg_response->addJavascript('prototype.js');
-		$tbg_response->addJavascript('builder.js');
-		$tbg_response->addJavascript('openid-prototype.js');
-		$tbg_response->addJavascript('openid-en.js');
-		$tbg_response->addJavascript('effects.js');
-//		$tbg_response->addJavascript('dragdrop.js');
-		$tbg_response->addJavascript('controls.js');
-//		$tbg_response->addJavascript('jquery.markitup.js');
-		$tbg_response->addJavascript('thebuggenie.js');
-//		$tbg_response->addJavascript('markitup.js');
-//		$tbg_response->addJavascript('tablekit.js');
+		$csp_response = \caspar\core\Caspar::getResponse();
+//		$csp_response->addJavascript('jquery-1.6.2.min.js');
+		$csp_response->addJavascript('prototype.js');
+		$csp_response->addJavascript('builder.js');
+		$csp_response->addJavascript('openid-prototype.js');
+		$csp_response->addJavascript('openid-en.js');
+		$csp_response->addJavascript('effects.js');
+//		$csp_response->addJavascript('dragdrop.js');
+		$csp_response->addJavascript('controls.js');
+//		$csp_response->addJavascript('jquery.markitup.js');
+		$csp_response->addJavascript('thebuggenie.js');
+//		$csp_response->addJavascript('markitup.js');
+//		$csp_response->addJavascript('tablekit.js');
 
 		$jsstrings = array();
 		$sepjs = array();
 
 		// Add scripts to minify and non-minify lists
-		foreach ($tbg_response->getJavascripts() as $script => $minify)
+		foreach ($csp_response->getJavascripts() as $script => $minify)
 		{
 			if ($minify == true && file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . $script))
 				$jsstrings[] = 'js/'.$script;
@@ -371,12 +371,12 @@
 
 	function tbg_get_stylesheets()
 	{
-		$tbg_response = \caspar\core\Caspar::getResponse();
+		$csp_response = \caspar\core\Caspar::getResponse();
 		$cssstrings = array();
 		$sepcss = array();
 
 		// Add stylesheets to minify and non-minify lists
-		foreach ($tbg_response->getStylesheets() as $stylesheet => $minify)
+		foreach ($csp_response->getStylesheets() as $stylesheet => $minify)
 		{
 			if ($minify == true && file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . TBGSettings::getThemeName() . DIRECTORY_SEPARATOR .$stylesheet))
 				$cssstrings[] = 'themes/'.TBGSettings::getThemeName().'/'.$stylesheet;

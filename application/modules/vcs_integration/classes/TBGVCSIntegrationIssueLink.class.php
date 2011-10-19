@@ -21,15 +21,15 @@
 		
 		/**
 		 * Affected issue
-		 * @var TBGIssue
-		 * @Class TBGIssue
+		 * @Class \thebuggenie\entities\Issue
+		 * @Class \thebuggenie\entities\Issue
 		 */
 		protected $_issue_no = null;
 		
 		/**
 		 * Associated commit
-		 * @var TBGVCSIntegrationCommit
-		 * @Class TBGVCSIntegrationCommit
+		 * @Class \thebuggenie\entities\VCSIntegrationCommit
+		 * @Class \thebuggenie\entities\VCSIntegrationCommit
 		 */
 		protected $_commit_id = null;
 		
@@ -85,7 +85,7 @@
 			
 			foreach (TBGVCSIntegrationIssueLinksTable::getTable()->getByIssueID($issue->getID())->getAllRows() as $row)
 			{
-				$data[] = \caspar\core\Caspar::factory()->TBGVCSIntegrationIssueLink($row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
+				$data[] = \caspar\core\Caspar::factory()->manufacture('TBGVCSIntegrationIssueLink', $row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
 			}
 
 			return $data;
@@ -108,7 +108,7 @@
 			
 			foreach ($rows->getAllRows() as $row)
 			{
-				$data[] = \caspar\core\Caspar::factory()->TBGVCSIntegrationIssueLink($row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
+				$data[] = \caspar\core\Caspar::factory()->manufacture('TBGVCSIntegrationIssueLink', $row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
 			}
 
 			return $data;

@@ -1,8 +1,8 @@
 <?php
 
 	include_template('publish/wikibreadcrumbs', array('article_name' => $article_name));
-	TBGContext::loadLibrary('publish/publish');
-	$tbg_response->setTitle(__('%article_name% attachments', array('%article_name%' => $article_name)));
+	\core\caspar\Caspar::loadLibrary('publish/publish');
+	$csp_response->setTitle(__('%article_name% attachments', array('%article_name%' => $article_name)));
 
 ?>
 <?php if (TBGSettings::isUploadsEnabled() && $article instanceof TBGWikiArticle && $article->canEdit()): ?>

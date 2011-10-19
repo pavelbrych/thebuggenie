@@ -19,7 +19,7 @@
 	class TBGTeam extends TBGIdentifiableClass 
 	{
 		
-		static protected $_b2dbtablename = 'TBGTeamsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Teams';
 
 		static protected $_teams = null;
 		
@@ -35,7 +35,7 @@
 		
 		public static function doesTeamNameExist($team_name)
 		{
-			return TBGTeamsTable::getTable()->doesTeamNameExist($team_name);
+			return \thebuggenie\tables\Teams::getTable()->doesTeamNameExist($team_name);
 		}
 
 		public static function getAll()
@@ -47,7 +47,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(TBGTeamsTable::ID), $row);
+						self::$_teams[$row->get(\thebuggenie\tables\Teams::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(\thebuggenie\tables\Teams::ID), $row);
 					}
 				}
 			}
@@ -84,7 +84,7 @@
 				if (self::$_teams !== null)
 					self::$_num_teams = count(self::$_teams);
 				else
-					self::$_num_teams = TBGTeamsTable::getTable()->countTeams();
+					self::$_num_teams = \thebuggenie\tables\Teams::getTable()->countTeams();
 			}
 
 			return self::$_num_teams;
@@ -107,7 +107,7 @@
 		 */
 		public function addMember(TBGUser $user)
 		{
-			TBGTeamMembersTable::getTable()->addUserToTeam($user->getID(), $this->getID());
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->addUserToTeam($user->getID(), $this->getID());
 			
 			if (is_array($this->_members))
 				$this->_members[$user->getID()] = $user->getID();
@@ -118,7 +118,7 @@
 			if ($this->_members === null)
 			{
 				$this->_members = array();
-				foreach (TBGTeamMembersTable::getTable()->getUIDsForTeamID($this->getID()) as $uid)
+				foreach (\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->getUIDsForTeamID($this->getID()) as $uid)
 				{
 					$this->_members[$uid] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 				}
@@ -140,21 +140,21 @@
 		
 		public function _preDelete()
 		{
-			$crit = TBGTeamMembersTable::getTable()->getCriteria();
+			$crit = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->getCriteria();
 			$crit->addWhere(TBGTeamMembersTable::TID, $this->getID());
-			$res = TBGTeamMembersTable::getTable()->doDelete($crit);
+			$res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->doDelete($crit);
 		}
 		
 		public static function findTeams($details)
 		{
 			$crit = new \b2db\Criteria();
-			$crit->addWhere(TBGTeamsTable::NAME, "%$details%", \b2db\Criteria::DB_LIKE);
+			$crit->addWhere(\thebuggenie\tables\Teams::NAME, "%$details%", \b2db\Criteria::DB_LIKE);
 			$teams = array();
 			if ($res = Caspar::getB2DBInstance()->getTable('TBGTeamsTable')->doSelect($crit))
 			{
 				while ($row = $res->getNextRow())
 				{
-					$teams[$row->get(TBGTeamsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(TBGTeamsTable::ID), $row);
+					$teams[$row->get(\thebuggenie\tables\Teams::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(\thebuggenie\tables\Teams::ID), $row);
 				}
 			}
 			return $teams;
@@ -168,7 +168,7 @@
 			}
 			elseif ($this->_num_members === null)
 			{
-				$this->_num_members = TBGTeamMembersTable::getTable()->getNumberOfMembersByTeamID($this->getID());
+				$this->_num_members = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->getNumberOfMembersByTeamID($this->getID());
 			}
 
 			return $this->_num_members;
@@ -192,7 +192,7 @@
 				$project_ids = array_merge(array_keys($projects), array_keys($edition_projects), array_keys($component_projects));
 				foreach ($project_ids as $project_id)
 				{
-					$this->_associated_projects[$project_id] = \caspar\core\Caspar::factory()->TBGProject($project_id);
+					$this->_associated_projects[$project_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 				}
 			}
 			

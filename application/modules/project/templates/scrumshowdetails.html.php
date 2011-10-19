@@ -1,15 +1,15 @@
 <?php
 
-	$tbg_response->addBreadcrumb(link_tag(make_url('project_scrum', array('project_key' => $selected_project->getKey())), __('Project sprint planning')));
+	$csp_response->addBreadcrumb(link_tag(make_url('project_scrum', array('project_key' => $selected_project->getKey())), __('Project sprint planning')));
 	if ($selected_sprint instanceof TBGMilestone)
 	{
-		$tbg_response->addBreadcrumb(__('%sprint_name% overview', array('%sprint_name%' => $selected_sprint->getName())));
+		$csp_response->addBreadcrumb(__('%sprint_name% overview', array('%sprint_name%' => $selected_sprint->getName())));
 	}
 	else
 	{
-		$tbg_response->addBreadcrumb(__('No sprint selected'));
+		$csp_response->addBreadcrumb(__('No sprint selected'));
 	}
-	$tbg_response->setTitle(__('"%project_name%" sprint overview', array('%project_name%' => $selected_project->getName())));
+	$csp_response->setTitle(__('"%project_name%" sprint overview', array('%project_name%' => $selected_project->getName())));
 
 ?>
 			<?php include_template('project/projectheader', array('selected_project' => $selected_project)); ?>

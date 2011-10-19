@@ -28,14 +28,14 @@
 		protected $_connection;
 
 		/**
-		 * @Class TBGProject
-		 * @var TBGProject
+		 * @Class \thebuggenie\entities\Project
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_project;
 		
 		/**
-		 * @Class TBGIssuetype
-		 * @var TBGIssuetype
+		 * @Class \thebuggenie\entities\Issuetype
+		 * @Class \thebuggenie\entities\Issuetype
 		 */
 		protected $_issuetype;
 		
@@ -50,7 +50,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$accounts[] = \caspar\core\Caspar::factory()->TBGIncomingEmailAccount($row->get(TBGIncomingEmailAccountTable::ID), $row);
+					$accounts[] = \caspar\core\Caspar::factory()->manufacture('TBGIncomingEmailAccount', $row->get(TBGIncomingEmailAccountTable::ID), $row);
 				}
 			}
 			
@@ -64,7 +64,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$accounts[] = \caspar\core\Caspar::factory()->TBGIncomingEmailAccount($row->get(TBGIncomingEmailAccountTable::ID), $row);
+					$accounts[] = \caspar\core\Caspar::factory()->manufacture('TBGIncomingEmailAccount', $row->get(TBGIncomingEmailAccountTable::ID), $row);
 				}
 			}
 			

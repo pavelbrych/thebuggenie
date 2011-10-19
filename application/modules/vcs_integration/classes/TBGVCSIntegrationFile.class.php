@@ -33,8 +33,8 @@
 		
 		/**
 		 * Associated commit
-		 * @var TBGVCSIntegrationCommit
-		 * @Class TBGVCSIntegrationCommit
+		 * @Class \thebuggenie\entities\VCSIntegrationCommit
+		 * @Class \thebuggenie\entities\VCSIntegrationCommit
 		 */
 		protected $_commit_id = null;
 		

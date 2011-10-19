@@ -1,19 +1,19 @@
 <?php
 
-	$tbg_response->addBreadcrumb(__('Planning'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
-	$tbg_response->setTitle(__('"%project_name%" project planning', array('%project_name%' => $selected_project->getName())));
+	$csp_response->addBreadcrumb(__('Planning'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
+	$csp_response->setTitle(__('"%project_name%" project planning', array('%project_name%' => $selected_project->getName())));
 
 ?>
 		<?php include_template('project/projectheader', array('selected_project' => $selected_project)); ?>
 		<?php include_template('project/projectinfosidebar', array('selected_project' => $selected_project, 'table_id' => 'project_planning')); ?>
 		<div class="planning_container">
 			<h3>
-				<?php if ($tbg_user->canAddScrumSprints($selected_project)): ?>
+				<?php if ($csp_user->canAddScrumSprints($selected_project)): ?>
 					<?php echo javascript_link_tag(__('Add new milestone'), array('onclick' => "TBG.Main.Helpers.Backdrop.show('".make_url('get_partial_for_backdrop', array('key' => 'milestone', 'project_id' => $selected_project->getId()))."');", 'class' => 'button button-green')); ?>
 				<?php endif; ?>
 				<?php echo __('Project milestones'); ?>
 			</h3>
-			<?php if ($tbg_user->canAddScrumSprints($selected_project)): ?>
+			<?php if ($csp_user->canAddScrumSprints($selected_project)): ?>
 				<table cellpadding=0 cellspacing=0 style="display: none; margin-left: 5px; width: 300px;" id="sprint_add_indicator">
 					<tr>
 						<td style="width: 20px; padding: 2px;"><?php echo image_tag('spinning_20.gif'); ?></td>
@@ -33,7 +33,7 @@
 				<?php include_template('search/bulkactions', array('mode' => 'bottom')); ?>
 			</div>
 		</div>
-		<?php if ($tbg_user->canAssignScrumUserStories($selected_project)): ?>
+		<?php if ($csp_user->canAssignScrumUserStories($selected_project)): ?>
 			<script type="text/javascript">
 				<?php foreach ($selected_project->getAllMilestones() as $milestone): ?>
 					Droppables.add('milestone_<?php echo $milestone->getID(); ?>', { hoverclass: 'highlighted', onDrop: function (dragged, dropped, event) { TBG.Project.Planning.assign('<?php echo make_url('project_scrum_assign_story', array('project_key' => $selected_project->getKey())); ?>', dragged, dropped)}});
@@ -53,7 +53,7 @@
 	<td id="scrum_unassigned" class="milestone_issues_container">
 		<div class="rounded_box lightgrey borderless" style="margin-top: 5px; padding: 7px;" id="scrum_sprint_0">
 			<div class="header_div"><?php echo __('Unassigned items / project backlog'); ?></div>
-			<?php if ($tbg_user->canAddScrumUserStories($selected_project)): ?>
+			<?php if ($csp_user->canAddScrumUserStories($selected_project)): ?>
 				<div class="rounded_box white" style="margin-top: 5px; padding: 7px;">
 					<form id="add_user_story_form" action="<?php echo make_url('project_reportissue', array('project_key' => $project_key)); ?>" method="post" accept-charset="<?php echo TBGSettings::getCharset(); ?>" onsubmit="addUserStory('<?php echo make_url('project_reportissue', array('project_key' => $project_key)); ?>');return false;">
 						<div id="add_story">
@@ -87,7 +87,7 @@
 					</tr>
 				</table>
 			<?php endif; ?>
-			<?php if ($tbg_user->canAssignScrumUserStories($selected_project)): ?>
+			<?php if ($csp_user->canAssignScrumUserStories($selected_project)): ?>
 				<table cellpadding=0 cellspacing=0 style="display: none; margin-left: 5px; width: 300px;" id="scrum_sprint_0_indicator">
 					<tr>
 						<td style="width: 20px; padding: 2px;"><?php echo image_tag('spinning_20.gif'); ?></td>

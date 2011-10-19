@@ -6,17 +6,17 @@
 		<meta name="description" content="The bug genie, friendly issue tracking">
 		<meta name="keywords" content="thebuggenie friendly issue tracking">
 		<meta name="author" content="thebuggenie.com">
-		<title><?php echo ($tbg_response->hasTitle()) ? strip_tags($tbg_response->getBaseTitle() . ' ~ ' . $tbg_response->getTitle()) : strip_tags($tbg_response->getBaseTitle()); ?></title>
-		<link rel="shortcut icon" href="<?php print $tbg_response->getFaviconURL(); ?>">
-		<link title="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? __('%project_name% search', array('%project_name%' => \thebuggenie\core\Context::getCurrentProject()->getName())) : __('%site_name% search', array('%site_name%' => $tbg_response->getBaseTitle())); ?>" href="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('project_opensearch', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : make_url('opensearch'); ?>" type="application/opensearchdescription+xml" rel="search">
-		<?php foreach ($tbg_response->getFeeds() as $feed_url => $feed_title): ?>
+		<title><?php echo ($csp_response->hasTitle()) ? strip_tags($csp_response->getBaseTitle() . ' ~ ' . $csp_response->getTitle()) : strip_tags($csp_response->getBaseTitle()); ?></title>
+		<link rel="shortcut icon" href="<?php print $csp_response->getFaviconURL(); ?>">
+		<link title="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? __('%project_name% search', array('%project_name%' => \thebuggenie\core\Context::getCurrentProject()->getName())) : __('%site_name% search', array('%site_name%' => $csp_response->getBaseTitle())); ?>" href="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('project_opensearch', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : make_url('opensearch'); ?>" type="application/opensearchdescription+xml" rel="search">
+		<?php foreach ($csp_response->getFeeds() as $feed_url => $feed_title): ?>
 			<link rel="alternate" type="application/rss+xml" title="<?php echo str_replace('"', '\'', $feed_title); ?>" href="<?php echo $feed_url; ?>">
 		<?php endforeach; ?>
 		<?php include THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . TBGSettings::getThemeName() . DS . 'theme.php'; ?>
 		<?php if (count(\caspar\core\Caspar::getModules())): ?>
 			<?php foreach (\caspar\core\Caspar::getModules() as $module): ?>
 				<?php if (file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . TBGSettings::getThemeName() . DS . "{$module->getName()}.css")): ?>
-					<?php $tbg_response->addStylesheet("{$module->getName()}.css"); ?>
+					<?php $csp_response->addStylesheet("{$module->getName()}.css"); ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
 		<?php endif; ?>

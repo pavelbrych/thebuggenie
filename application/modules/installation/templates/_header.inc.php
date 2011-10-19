@@ -5,7 +5,7 @@
     header ("Cache-Control: no-store, must-revalidate"); // HTTP/1.1
     header ("Pragma: no-cache"); // HTTP/1.0
 
-    $step = $tbg_request->getParameter('step', 0);
+    $step = $csp_request->getParameter('step', 0);
 
 	$mode = (isset($mode)) ? $mode : 'install';
     

@@ -156,7 +156,7 @@
 	 */
 	function include_template($template, $params = array())
 	{
-		return TBGActionComponent::includeTemplate($template, $params);
+		return \caspar\core\ActionComponents::includeTemplate($template, $params);
 	}
 
 	/**
@@ -178,7 +178,7 @@
 	 */
 	function include_component($component, $params = array())
 	{
-		return TBGActionComponent::includeComponent($component, $params);
+		return \caspar\core\ActionComponents::includeComponent($component, $params);
 	}
 
 	/**

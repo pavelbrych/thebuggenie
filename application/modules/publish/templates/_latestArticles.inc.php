@@ -1,4 +1,4 @@
-<?php TBGContext::loadLibrary('publish/publish'); ?>
+<?php \core\caspar\Caspar::loadLibrary('publish/publish'); ?>
 <div class="container_div" style="margin: 0 0 5px 5px;">
 	<div class="header"><?php echo __('Recently edited pages here'); ?></div>
 	<div class="content">

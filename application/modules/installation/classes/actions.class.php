@@ -448,7 +448,7 @@
 			TBGContext::addAutoloaderClassPath(THEBUGGENIE_MODULES_PATH . 'installation' . DS . 'classes' . DS . 'upgrade_3.1');
 
 			// Upgrade existing tables
-			TBGProjectsTable::getTable()->upgrade(TBGProjectsTable3dot1::getTable());
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->upgrade(TBGProjectsTable3dot1::getTable());
 			TBGBuildsTable::getTable()->upgrade(TBGBuildsTable3dot1::getTable());
 			Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users')->upgrade(TBGUsersTable3dot1::getTable());
 			
@@ -458,7 +458,7 @@
 			
 			// Add new indexes
 			TBGCommentsTable::getTable()->createIndexes();
-			TBGPermissionsTable::getTable()->createIndexes();
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Permissions')->createIndexes();
 
 			TBGSettings::saveSetting(TBGSettings::SETTING_ICONSET, TBGSettings::get(TBGSettings::SETTING_THEME_NAME));
 			

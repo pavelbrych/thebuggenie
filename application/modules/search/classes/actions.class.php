@@ -18,12 +18,12 @@
 		 */
 		public function preExecute(\TBGRequest $request, $action)
 		{
-			$this->forward403unless(\\caspar\core\Caspar::getUser()->hasPageAccess('search') && \\caspar\core\Caspar::getUser()->canSearchForIssues());
+			$this->forward403unless(\caspar\core\Caspar::getUser()->hasPageAccess('search') && \caspar\core\Caspar::getUser()->canSearchForIssues());
 			if ($request->hasParameter('project_key'))
 			{
-				if (($project = TBGProject::getByKey($request->getParameter('project_key'))) instanceof TBGProject)
+				if (($project = \thebuggenie\entities\Project::getByKey($request->getParameter('project_key'))) instanceof \thebuggenie\entities\Project)
 				{
-					$this->forward403unless(\\caspar\core\Caspar::getUser()->hasProjectPageAccess('project_issues', $project->getID()));
+					$this->forward403unless(\caspar\core\Caspar::getUser()->hasProjectPageAccess('project_issues', $project->getID()));
 					\caspar\core\Caspar::getResponse()->setPage('project_issues');
 					\TBGContext::setCurrentProject($project);
 				}
@@ -51,13 +51,13 @@
 			switch ($type)
 			{
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES:
-					return ($project instanceof TBGProject) ? $i18n->__('Open issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All open issues');
+					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Open issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All open issues');
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES:
-					return ($project instanceof TBGProject) ? $i18n->__('Closed issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All closed issues');
+					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Closed issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All closed issues');
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
 					return $i18n->__('Milestone todo-list for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName()));
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
-					return ($project instanceof TBGProject) ? $i18n->__('Most voted issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('Most voted issues');
+					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Most voted issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('Most voted issues');
 				case \TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
 					return $i18n->__('Open issues assigned to me');
 				case \TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
@@ -93,7 +93,7 @@
 			if ($request->hasParameter('saved_search'))
 			{
 				$savedsearch = Caspar::getB2DBInstance()->getTable('TBGSavedSearchesTable')->doSelectById($request->getParameter('saved_search'));
-				if ($savedsearch instanceof \b2db\Row && \\caspar\core\Caspar::getUser()->canAccessSavedSearch($savedsearch))
+				if ($savedsearch instanceof \b2db\Row && \caspar\core\Caspar::getUser()->canAccessSavedSearch($savedsearch))
 				{
 					$this->issavedsearch = true;
 					$this->savedsearch = $savedsearch;
@@ -113,7 +113,7 @@
 			$i18n = \TBGContext::getI18n();
 			if ($this->searchterm)
 			{
-				preg_replace_callback(TBGTextParser::getIssueRegex(), array($this, 'extractIssues'), $this->searchterm);
+				preg_replace_callback(\thebuggenie\core\TextParser::getIssueRegex(), array($this, 'extractIssues'), $this->searchterm);
 				
 				if (!count($this->foundissues))
 				{
@@ -149,19 +149,19 @@
 							$this->grouporder = 'desc';
 							break;
 						case \TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES:
-							$this->filters['posted_by'] = array('operator' => '=', 'value' => \\caspar\core\Caspar::getUser()->getID());
+							$this->filters['posted_by'] = array('operator' => '=', 'value' => \caspar\core\Caspar::getUser()->getID());
 							$this->groupby = 'issuetype';
 							break;
 						case \TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
 							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_OPEN);
 							$this->filters['assigned_type'] = array('operator' => '=', 'value' => TBGIdentifiableClass::TYPE_USER);
-							$this->filters['assigned_to'] = array('operator' => '=', 'value' => \\caspar\core\Caspar::getUser()->getID());
+							$this->filters['assigned_to'] = array('operator' => '=', 'value' => \caspar\core\Caspar::getUser()->getID());
 							$this->groupby = 'issuetype';
 							break;
 						case \TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
 							$this->filters['state'] = array('operator' => '=', 'value' => \TBGIssue::STATE_OPEN);
 							$this->filters['assigned_type'] = array('operator' => '=', 'value' => TBGIdentifiableClass::TYPE_TEAM);
-							foreach (\\caspar\core\Caspar::getUser()->getTeams() as $team_id => $team)
+							foreach (\caspar\core\Caspar::getUser()->getTeams() as $team_id => $team)
 							{
 								$this->filters['assigned_to'][] = array('operator' => '=', 'value' => $team_id);
 							}
@@ -257,7 +257,7 @@
 					try
 					{
 						$search = TBGSavedSearchesTable::getTable()->getByID($request->getParameter('saved_search_id'));
-						if ($search->get(TBGSavedSearchesTable::UID) == \\caspar\core\Caspar::getUser()->getID() || $search->get(TBGSavedSearchesTable::IS_PUBLIC) && \\caspar\core\Caspar::getUser()->canCreatePublicSearches())
+						if ($search->get(TBGSavedSearchesTable::UID) == \caspar\core\Caspar::getUser()->getID() || $search->get(TBGSavedSearchesTable::IS_PUBLIC) && \caspar\core\Caspar::getUser()->canCreatePublicSearches())
 						{
 							TBGSavedSearchesTable::getTable()->doDeleteById($request->getParameter('saved_search_id'));
 							return $this->renderJSON(array('failed' => false, 'message' => \TBGContext::getI18n()->__('The saved search was deleted successfully')));
@@ -329,7 +329,7 @@
 
 		public function runAddFilter(\TBGRequest $request)
 		{
-			if ($request->getParameter('filter_name') == 'project_id' && count(TBGProject::getAll()) == 0)
+			if ($request->getParameter('filter_name') == 'project_id' && count(\thebuggenie\entities\Project::getAll()) == 0)
 			{
 				return $this->renderJSON(array('failed' => true, 'error' => \TBGContext::getI18n()->__('No projects exist so this filter can not be added')));
 			}
@@ -549,7 +549,7 @@
 		{
 			$issue_ids = $request['issue_ids'];
 			$options = array('issue_ids' => array_values($issue_ids));
-			\TBGContext::loadLibrary('common');
+			\caspar\core\caspar\Caspar::loadLibrary('common');
 			$options['last_updated'] = tbg_formatTime(time(), 20);
 
 			if (!empty($issue_ids))

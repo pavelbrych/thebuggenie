@@ -125,8 +125,8 @@
 
 		public function componentIssueTypeSchemeOptions()
 		{
-			$this->issuetype = \caspar\core\Caspar::factory()->TBGIssuetype($this->id);
-			$this->scheme = \caspar\core\Caspar::factory()->TBGIssuetypeScheme($this->scheme_id);
+			$this->issuetype = \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $this->id);
+			$this->scheme = \caspar\core\Caspar::factory()->manufacture('TBGIssuetypeScheme', $this->scheme_id);
 			$this->builtinfields = \thebuggenie\entities\Datatype::getAvailableFields(true);
 			$this->customtypes = TBGCustomDatatype::getAll();
 			$this->visiblefields = $this->scheme->getVisibleFieldsForIssuetype($this->issuetype);
@@ -211,7 +211,7 @@
 		
 		public function componentProjectInfo()
 		{
-			$this->valid_subproject_targets = TBGProject::getValidSubprojects($this->project);
+			$this->valid_subproject_targets = \thebuggenie\entities\Project::getValidSubprojects($this->project);
 		}
 
 		public function componentProjectSettings()
@@ -258,7 +258,7 @@
 				$this->build = new TBGBuild();
 				$this->build->setProject(TBGContext::getCurrentProject());
 				$this->build->setName(TBGContext::getI18n()->__('%project_name% version 0.0.0', array('%project_name%' => $this->project->getName())));
-				if (\caspar\core\Caspar::getRequest()->getParameter('edition_id') && $edition = \caspar\core\Caspar::factory()->TBGEdition(\caspar\core\Caspar::getRequest()->getParameter('edition_id')))
+				if (\caspar\core\Caspar::getRequest()->getParameter('edition_id') && $edition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', \caspar\core\Caspar::getRequest()->getParameter('edition_id')))
 				{
 					$this->build->setEdition($edition);
 				}

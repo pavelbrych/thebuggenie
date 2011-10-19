@@ -19,7 +19,7 @@
 	class TBGWorkflowTransition extends TBGIdentifiableClass
 	{
 
-		static protected $_b2dbtablename = 'TBGWorkflowTransitionsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\WorkflowTransitions';
 		
 		/**
 		 * The workflow description
@@ -37,8 +37,8 @@
 		/**
 		 * The outgoing step from this transition
 		 *
-		 * @var TBGWorkflowStep
-		 * @Class TBGWorkflowStep
+		 * @Class \thebuggenie\entities\WorkflowStep
+		 * @Class \thebuggenie\entities\WorkflowStep
 		 */
 		protected $_outgoing_step_id = null;
 
@@ -47,7 +47,7 @@
 		/**
 		 * The originating request
 		 * 
-		 * @var TBGRequest
+		 * @Class \thebuggenie\entities\Request
 		 */
 		protected $_request = null;
 		
@@ -58,15 +58,15 @@
 		/**
 		 * The associated workflow object
 		 *
-		 * @var TBGWorkflow
-		 * @Class TBGWorkflow
+		 * @Class \thebuggenie\entities\Workflow
+		 * @Class \thebuggenie\entities\Workflow
 		 */
 		protected $_workflow_id = null;
 
 		public static function getTemplates()
 		{
 			$templates = array('main/updateissueproperties' => 'Set issue properties or add comment');
-			$event = TBGEvent::createNew('core', 'workflow_templates', null, array(), $templates)->trigger();
+			$event = \caspar\core\Event::createNew('core', 'workflow_templates', null, array(), $templates)->trigger();
 			
 			return $event->getReturnList();
 		}
@@ -426,7 +426,7 @@
 			return array_keys($this->_validation_errors);
 		}
 		
-		public function listenIssueSaveAddComment(TBGEvent $event)
+		public function listenIssueSaveAddComment(\caspar\core\Event $event)
 		{
 			$comment = $event->getParameter('comment');
 			$comment->setContent($this->_request->getParameter('comment_body', null, false) . "\n\n" . $comment->getContent());
@@ -446,7 +446,7 @@
 			$this->getOutgoingStep()->applyToIssue($issue);
 			if ($request->hasParameter('comment_body') && trim($request->getParameter('comment_body') != '')) {
 				$this->_request = $request;
-				TBGEvent::listen('core', 'TBGIssue::save', array($this, 'listenIssueSaveAddComment'));
+				\caspar\core\Event::listen('core', 'TBGIssue::save', array($this, 'listenIssueSaveAddComment'));
 			}
 			
 			if (!empty($this->_validation_errors)) return false;

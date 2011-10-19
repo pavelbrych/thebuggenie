@@ -29,13 +29,13 @@
 		public function do_execute()
 		{
 			$this->cliEcho("Importing articles ... \n", 'white', 'bold');
-			TBGEvent::listen('publish', 'fixture_article_loaded', array($this, 'listenPublishFixtureArticleCreated'));
+			\caspar\core\Event::listen('publish', 'fixture_article_loaded', array($this, 'listenPublishFixtureArticleCreated'));
 			$overwrite = (bool) ($this->getProvidedArgument('overwrite', 'no') == 'yes');
 			
 			TBGPublish::getModule()->loadFixturesArticles(\thebuggenie\core\Context::getScope()->getID(), $overwrite);
 		}
 
-		public function listenPublishFixtureArticleCreated(TBGEvent $event)
+		public function listenPublishFixtureArticleCreated(\caspar\core\Event $event)
 		{
 			$this->cliEcho(($event->getParameter('imported')) ? "Importing " : "Skipping ");
 			$this->cliEcho($event->getSubject()."\n", 'white', 'bold');

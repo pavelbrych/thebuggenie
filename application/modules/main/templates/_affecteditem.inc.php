@@ -12,7 +12,7 @@
 					<div class="dropdown_content">
 						<table cellpadding="0" cellspacing="0">
 							<?php foreach ($statuses as $status): ?>
-								<?php if (!$status->canUserSet($tbg_user)) continue; ?>
+								<?php if (!$status->canUserSet($csp_user)) continue; ?>
 								<tr>
 									<td style="width: 16px;"><div style="border: 1px solid #AAA; background-color: <?php echo $status->getColor(); ?>; font-size: 1px; width: 16px; height: 15px; margin-right: 2px;">&nbsp;</div></td>
 									<td style="padding-left: 5px;"><a href="javascript:void(0);" onclick="TBG.Issues.Affected.setStatus('<?php echo make_url('status_affected', array('issue_id' => $issue->getID(), 'affected_type' => $itemtype, 'affected_id' => $item['a_id'], 'status_id' => $status->getID())); ?>', '<?php echo $itemtype.'_'.$item['a_id']; ?>');"><?php echo $status->getName(); ?></a></td>

@@ -2,7 +2,7 @@
 <?php if ($target_type == TBGComment::TYPE_ISSUE): ?>
 	<div style="float: right; padding: 5px;"><label><?php echo __('Show system-generated comments'); ?><input type="checkbox" id="comments_show_system_comments_toggle" onchange="$$('#comments_box .system_comment').each(function (elm) { $(elm).toggle(); })" /></label></div>
 <?php endif; ?>
-<?php if ($tbg_user->canPostComments() && ((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || !TBGContext::isProjectContext())): ?>
+<?php if ($csp_user->canPostComments() && ((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || !TBGContext::isProjectContext())): ?>
 	<ul class="simple_list" id="add_comment_button_container">
 		<li id="comment_add_button"><input class="button button-green" type="button" onclick="$('comment_add_button').hide(); $('comment_add').show();$('comment_bodybox').focus();" value="<?php echo __('Add new comment'); ?>"></li>
 	</ul>

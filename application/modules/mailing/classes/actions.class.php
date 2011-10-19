@@ -94,11 +94,11 @@
 			{
 				try
 				{
-					$project = TBGProject::getByKey($project_key);
+					$project = \thebuggenie\entities\Project::getByKey($project_key);
 				}
 				catch (Exception $e) {}
 			}
-			if ($project instanceof TBGProject)
+			if ($project instanceof \thebuggenie\entities\Project)
 			{
 				$account_id = $request->getParameter('account_id');
 				$account = new TBGIncomingEmailAccount($account_id);
@@ -126,7 +126,7 @@
 		
 		public function runCheckIncomingAccount(Request $request)
 		{
-			TBGContext::loadLibrary('common');
+			\core\caspar\Caspar::loadLibrary('common');
 			if ($account_id = $request->getParameter('account_id'))
 			{
 				$account = new TBGIncomingEmailAccount($account_id);

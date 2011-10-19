@@ -39,7 +39,7 @@
 		 */
 		public function runViewIssue(Request $request)
 		{
-			//TBGEvent::listen('core', 'viewissue', array($this, 'listenViewIssuePostError'));
+			//\caspar\core\Event::listen('core', 'viewissue', array($this, 'listenViewIssuePostError'));
 			\caspar\core\Logging::log('Loading issue');
 			
 			if ($issue_no = $request->getParameter('issue_no'))
@@ -77,7 +77,7 @@
 				if (count($_SESSION['viewissue_list']) > 10)
 					array_shift($_SESSION['viewissue_list']);
 
-				TBGEvent::createNew('core', 'viewissue', $issue)->trigger();
+				\caspar\core\Event::createNew('core', 'viewissue', $issue)->trigger();
 			}
 
 			$message = Context::getMessageAndClear('issue_saved');
@@ -175,7 +175,7 @@
 			
 			$this->issuelist = $issuelist;
 			$this->issue = $issue;
-			$event = TBGEvent::createNew('core', 'viewissue', $issue)->trigger();
+			$event = \caspar\core\Event::createNew('core', 'viewissue', $issue)->trigger();
 			$this->listenViewIssuePostError($event);
 		}
 		
@@ -187,7 +187,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e) { }
 			}
@@ -333,7 +333,7 @@
 			$this->client = null;
 			try
 			{
-				$this->client = Caspar::factory()->TBGClient($request->getParameter('client_id'));
+				$this->client = Caspar::factory()->manufacture('TBGClient', $request->getParameter('client_id'));
 				$projects = \thebuggenie\entities\Project::getAllByClientID($this->client->getID());
 				
 				$final_projects = array();
@@ -363,7 +363,7 @@
 		{
 			try
 			{
-				$this->team = Caspar::factory()->TBGTeam($request->getParameter('team_id'));
+				$this->team = Caspar::factory()->manufacture('TBGTeam', $request->getParameter('team_id'));
 				$this->forward403Unless($this->team->hasAccess());
 				
 				$own = \thebuggenie\entities\Project::getAllByOwner($this->team);
@@ -558,7 +558,7 @@
 		 */
 		public function runRegister(Request $request)
 		{
-			Context::loadLibrary('common');
+			Caspar::loadLibrary('common');
 			$i18n = Context::getI18n();
 			
 			try
@@ -733,7 +733,7 @@
 
 						if (Caspar::getUser()->getEmail() != $request->getParameter('email'))
 						{
-							if (TBGEvent::createNew('core', 'changeEmail', Caspar::getUser(), array('email' => $request->getParameter('email')))->triggerUntilProcessed()->isProcessed() == false)
+							if (\caspar\core\Event::createNew('core', 'changeEmail', Caspar::getUser(), array('email' => $request->getParameter('email')))->triggerUntilProcessed()->isProcessed() == false)
 							{
 								Caspar::getUser()->setEmail($request->getParameter('email'));
 							}
@@ -871,7 +871,7 @@
 				{
 					try
 					{
-						$this->selected_issuetype = Caspar::factory()->TBGIssuetype($this->issuetype_id);
+						$this->selected_issuetype = Caspar::factory()->manufacture('TBGIssuetype', $this->issuetype_id);
 					}
 					catch (Exception $e) {}
 				}
@@ -896,11 +896,11 @@
 				$this->selected_reproduction_steps = $request->getRawParameter('reproduction_steps', null, false);
 
 				if ($edition_id = (int) $request->getParameter('edition_id'))
-					$this->selected_edition = Caspar::factory()->TBGEdition($edition_id);
+					$this->selected_edition = Caspar::factory()->manufacture('TBGEdition', $edition_id);
 				if ($build_id = (int) $request->getParameter('build_id'))
-					$this->selected_build = Caspar::factory()->TBGBuild($build_id);
+					$this->selected_build = Caspar::factory()->manufacture('TBGBuild', $build_id);
 				if ($component_id = (int) $request->getParameter('component_id'))
-					$this->selected_component = Caspar::factory()->TBGComponent($component_id);
+					$this->selected_component = Caspar::factory()->manufacture('TBGComponent', $component_id);
 
 				if (trim($this->title) == '' || $this->title == $this->default_title)
 					$errors['title'] = true;
@@ -919,22 +919,22 @@
 					$errors['component'] = true;
 
 				if ($category_id = (int) $request->getParameter('category_id'))
-					$this->selected_category = Caspar::factory()->TBGCategory($category_id);
+					$this->selected_category = Caspar::factory()->manufacture('TBGCategory', $category_id);
 
 				if ($status_id = (int) $request->getParameter('status_id'))
-					$this->selected_status = Caspar::factory()->TBGStatus($status_id);
+					$this->selected_status = Caspar::factory()->manufacture('TBGStatus', $status_id);
 
 				if ($reproducability_id = (int) $request->getParameter('reproducability_id'))
-					$this->selected_reproducability = Caspar::factory()->TBGReproducability($reproducability_id);
+					$this->selected_reproducability = Caspar::factory()->manufacture('TBGReproducability', $reproducability_id);
 
 				if ($resolution_id = (int) $request->getParameter('resolution_id'))
-					$this->selected_resolution = Caspar::factory()->TBGResolution($resolution_id);
+					$this->selected_resolution = Caspar::factory()->manufacture('TBGResolution', $resolution_id);
 
 				if ($severity_id = (int) $request->getParameter('severity_id'))
-					$this->selected_severity = Caspar::factory()->TBGSeverity($severity_id);
+					$this->selected_severity = Caspar::factory()->manufacture('TBGSeverity', $severity_id);
 
 				if ($priority_id = (int) $request->getParameter('priority_id'))
-					$this->selected_priority = Caspar::factory()->TBGPriority($priority_id);
+					$this->selected_priority = Caspar::factory()->manufacture('TBGPriority', $priority_id);
 
 				if ($request->getParameter('estimated_time'))
 					$this->selected_estimated_time = $request->getParameter('estimated_time');
@@ -1196,7 +1196,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1235,7 +1235,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1249,7 +1249,7 @@
 				return $this->renderText('no issue');
 			}
 
-			Context::loadLibrary('common');
+			Caspar::loadLibrary('common');
 			
 			if (!$issue instanceof \TBGIssue) return false;
 			
@@ -1323,10 +1323,10 @@
 								switch ($request->getParameter('identifiable_type'))
 								{
 									case TBGIdentifiableClass::TYPE_USER:
-										$identified = Caspar::factory()->TBGUser($request->getParameter('value'));
+										$identified = Caspar::factory()->manufacture('TBGUser', $request->getParameter('value'));
 										break;
 									case TBGIdentifiableClass::TYPE_TEAM:
-										$identified = Caspar::factory()->TBGTeam($request->getParameter('value'));
+										$identified = Caspar::factory()->manufacture('TBGTeam', $request->getParameter('value'));
 										break;
 								}
 								if ($identified instanceof TBGIdentifiableClass)
@@ -1353,7 +1353,7 @@
 						}
 						elseif ($request->getParameter('field') == 'posted_by')
 						{
-							$identified = Caspar::factory()->TBGUser($request->getParameter('value'));
+							$identified = Caspar::factory()->manufacture('TBGUser', $request->getParameter('value'));
 							if ($identified instanceof TBGIdentifiableClass)
 							{
 								$issue->setPostedBy($identified);
@@ -1494,7 +1494,7 @@
 									$field = array('id' => $parameter_id, 'name' => $name);
 									if ($classname == '\TBGIssuetype')
 									{
-										Context::loadLibrary('ui');
+										Caspar::loadLibrary('ui');
 										$field['src'] = htmlspecialchars(Context::getTBGPath() . 'themes/' . \thebuggenie\core\Settings::getThemeName() . '/' . $issue->getIssuetype()->getIcon() . '_small.png');
 									}
 									return ($parameter_id == 0) ? $this->renderJSON(array('changed' => true, 'field' => array('id' => 0))) : $this->renderJSON(array('changed' => true, 'visible_fields' => $visible_fields, 'field' => $field));
@@ -1624,7 +1624,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1639,7 +1639,7 @@
 			}
 			
 			$field = null;
-			Context::loadLibrary('common');
+			Caspar::loadLibrary('common');
 			switch ($request->getParameter('field'))
 			{
 				case 'description':
@@ -1774,7 +1774,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1801,7 +1801,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1842,7 +1842,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1855,7 +1855,7 @@
 			}
 			try
 			{
-				$issue2 = Caspar::factory()->TBGIssue($request->getParameter('duplicate_issue'));
+				$issue2 = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('duplicate_issue'));
 			}
 			catch (Exception $e)
 			{
@@ -1899,7 +1899,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1931,7 +1931,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1962,7 +1962,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -1993,7 +1993,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2057,15 +2057,15 @@
 			\caspar\core\Logging::log('status was: ' . (int) $status['finished']. ', pct: '. (int) $status['percent']);
 			if (array_key_exists('file_id', $status) && $request->getParameter('mode') == 'issue')
 			{
-				$file = Caspar::factory()->TBGFile($status['file_id']);
+				$file = Caspar::factory()->manufacture('TBGFile', $status['file_id']);
 				$status['content_uploader'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'uploaded_files', 'mode' => 'issue', 'issue_id' => $request->getParameter('issue_id'), 'file' => $file));
 				$status['content_inline'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'viewissue_files', 'mode' => 'issue', 'issue_id' => $request->getParameter('issue_id'), 'file' => $file));
-				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 				$status['attachmentcount'] = count($issue->getFiles()) + count($issue->getLinks());
 			}
 			elseif (array_key_exists('file_id', $status) && $request->getParameter('mode') == 'article')
 			{
-				$file = Caspar::factory()->TBGFile($status['file_id']);
+				$file = Caspar::factory()->manufacture('TBGFile', $status['file_id']);
 				$status['content_uploader'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'article_'.mb_strtolower(urldecode($request->getParameter('article_name'))).'_files', 'mode' => 'article', 'article_name' => $request->getParameter('article_name'), 'file' => $file));
 				$status['content_inline'] = $this->getComponentHTML('main/attachedfile', array('base_id' => 'article_'.mb_strtolower(urldecode($request->getParameter('article_name'))).'_files', 'mode' => 'article', 'article_name' => $request->getParameter('article_name'), 'file' => $file));
 				$article = TBGWikiArticle::getByName($request->getParameter('article_name'));
@@ -2088,7 +2088,7 @@
 
 			if ($request->getParameter('mode') == 'issue')
 			{
-				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 				$canupload = (bool) ($issue instanceof \TBGIssue && $issue->hasAccess() && $issue->canAttachFiles());
 			}
 			elseif ($request->getParameter('mode') == 'article')
@@ -2098,7 +2098,7 @@
 			}
 			else
 			{
-				$event = TBGEvent::createNew('core', 'upload', $request->getParameter('mode'));
+				$event = \caspar\core\Event::createNew('core', 'upload', $request->getParameter('mode'));
 				$event->triggerUntilProcessed();
 
 				$canupload = ($event->isProcessed()) ? (bool) $event->getReturnValue() : true;
@@ -2178,7 +2178,7 @@
 				switch ($request->getParameter('mode'))
 				{
 					case 'issue':
-						$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+						$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 						if ($issue->canRemoveAttachments() && (int) $request->getParameter('file_id', 0))
 						{
 							Caspar::getB2DBInstance()->getTable('\TBGIssueFilesTable')->removeByIssueIDAndFileID($issue->getID(), (int) $request->getParameter('file_id'));
@@ -2190,7 +2190,7 @@
 						$article = TBGWikiArticle::getByName($request->getParameter('article_name'));
 						if ($article instanceof TBGWikiArticle && $article->canEdit() && (int) $request->getParameter('file_id', 0))
 						{
-							$article->removeFile(Caspar::factory()->TBGFile((int) $request->getParameter('file_id')));
+							$article->removeFile(Caspar::factory()->manufacture('TBGFile', (int) $request->getParameter('file_id')));
 							return $this->renderJSON(array('failed' => false, 'file_id' => $request->getParameter('file_id'), 'attachmentcount' => count($article->getFiles()), 'message' => Context::getI18n()->__('The attachment has been removed')));
 						}
 						return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You can not remove items from this issue')));
@@ -2232,7 +2232,7 @@
 
 		public function runAttachLinkToIssue(Request $request)
 		{
-			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+			$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 			if ($issue instanceof \TBGIssue && $issue->canAttachLinks())
 			{
 				if ($request->getParameter('link_url') != '')
@@ -2247,7 +2247,7 @@
 
 		public function runRemoveLinkFromIssue(Request $request)
 		{
-			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+			$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 			if ($issue instanceof \TBGIssue && $issue->canRemoveAttachments())
 			{
 				if ($request->getParameter('link_id') != 0)
@@ -2278,7 +2278,7 @@
 		
 		public function runDeleteComment(Request $request)
 		{
-			$comment = Caspar::factory()->TBGComment($request->getParameter('comment_id'));
+			$comment = Caspar::factory()->manufacture('TBGComment', $request->getParameter('comment_id'));
 			if ($comment instanceof TBGcomment)
 			{							
 				if (!$comment->canUserDeleteComment())
@@ -2288,7 +2288,7 @@
 				else
 				{
 					unset($comment);
-					$comment = Caspar::factory()->TBGComment((int) $request->getParameter('comment_id'));
+					$comment = Caspar::factory()->manufacture('TBGComment', (int) $request->getParameter('comment_id'));
 					$comment->delete();
 					return $this->renderJSON(array('title' => Context::getI18n()->__('Comment deleted!')));
 				}
@@ -2301,8 +2301,8 @@
 		
 		public function runUpdateComment(Request $request)
 		{
-			Context::loadLibrary('ui');
-			$comment = Caspar::factory()->TBGComment($request->getParameter('comment_id'));
+			Caspar::loadLibrary('ui');
+			$comment = Caspar::factory()->manufacture('TBGComment', $request->getParameter('comment_id'));
 			if ($comment instanceof TBGcomment)
 			{							
 				if (!$comment->canUserEditComment())
@@ -2331,7 +2331,7 @@
 					$comment->setUpdatedBy(Caspar::getUser()->getID());
 					$comment->save();
 
-					Context::loadLibrary('common');
+					Caspar::loadLibrary('common');
 					$body = tbg_parse_text($comment->getContent());
 					
 					return $this->renderJSON(array('title' => Context::getI18n()->__('Comment edited!'), 'comment_title' => $comment->getTitle(), 'comment_body' => $body));
@@ -2343,13 +2343,13 @@
 			}
 		}
 
-		public function listenIssueSaveAddComment(TBGEvent $event)
+		public function listenIssueSaveAddComment(\caspar\core\Event $event)
 		{
 			$this->comment_lines = $event->getParameter('comment_lines');
 			$this->comment = $event->getParameter('comment');
 		}
 
-		public function listenViewIssuePostError(TBGEvent $event)
+		public function listenViewIssuePostError(\caspar\core\Event $event)
 		{
 			if (Context::hasMessage('comment_error'))
 			{
@@ -2378,8 +2378,8 @@
 					{
 						$this->comment_lines = array();
 						$this->comment = '';
-						TBGEvent::listen('core', '\TBGIssue::save', array($this, 'listenIssueSaveAddComment'));
-						$issue = Caspar::factory()->TBGIssue($request->getParameter('comment_applies_id'));
+						\caspar\core\Event::listen('core', '\TBGIssue::save', array($this, 'listenIssueSaveAddComment'));
+						$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('comment_applies_id'));
 						$issue->save(false);
 					}
 
@@ -2401,7 +2401,7 @@
 					switch ($comment_applies_type)
 					{
 						case TBGComment::TYPE_ISSUE:
-							$comment_html = $this->getTemplateHTML('main/comment', array('comment' => $comment, 'issue' => Caspar::factory()->TBGIssue($request->getParameter('comment_applies_id'))));
+							$comment_html = $this->getTemplateHTML('main/comment', array('comment' => $comment, 'issue' => Caspar::factory()->manufacture('TBGIssue', $request->getParameter('comment_applies_id'))));
 							break;
 						case TBGComment::TYPE_ARTICLE:
 							$comment_html = $this->getTemplateHTML('main/comment', array('comment' => $comment));
@@ -2412,8 +2412,8 @@
 					
 					if ($comment_applies_type == TBGComment::TYPE_ISSUE)
 					{
-						$issue = Caspar::factory()->TBGIssue($request->getParameter('comment_applies_id'));
-						TBGEvent::createNew('core', 'TBGComment::createNew', $issue, array('comment' => $comment))->trigger();
+						$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('comment_applies_id'));
+						\caspar\core\Event::createNew('core', 'TBGComment::createNew', $issue, array('comment' => $comment))->trigger();
 						$issue->save();
 					}
 				}
@@ -2541,7 +2541,7 @@
 				$template_name = null;
 				if ($request->hasParameter('issue_id'))
 				{
-					$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+					$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 					$options = array('issue' => $issue);
 				}
 				else
@@ -2554,7 +2554,7 @@
 						$template_name = 'main/usercard';
 						if ($user_id = $request->getParameter('user_id'))
 						{
-							$user = Caspar::factory()->TBGUser($user_id);
+							$user = Caspar::factory()->manufacture('TBGUser', $user_id);
 							$options['user'] = $user;
 						}
 						break;
@@ -2565,7 +2565,7 @@
 						$options['mandatory'] = false;
 						break;
 					case 'workflow_transition':
-						$transition = Caspar::factory()->TBGWorkflowTransition($request->getParameter('transition_id'));
+						$transition = Caspar::factory()->manufacture('TBGWorkflowTransition', $request->getParameter('transition_id'));
 						$template_name = $transition->getTemplate();
 						$options['transition'] = $transition;
 						$options['issues'] = array();
@@ -2592,13 +2592,13 @@
 						$template_name = 'project/milestone';
 						$options['project'] = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						if ($request->hasParameter('milestone_id'))
-							$options['milestone'] = Caspar::factory()->TBGMilestone($request->getParameter('milestone_id'));
+							$options['milestone'] = Caspar::factory()->manufacture('TBGMilestone', $request->getParameter('milestone_id'));
 						break;
 					case 'project_build':
 						$template_name = 'configuration/build';
 						$options['project'] = Caspar::factory()->manufacture('\\thebuggenie\entities\Project', $request->getParameter('project_id'));
 						if ($request->hasParameter('build_id'))
-							$options['build'] = Caspar::factory()->TBGBuild($request->getParameter('build_id'));
+							$options['build'] = Caspar::factory()->manufacture('TBGBuild', $request->getParameter('build_id'));
 						break;
 					case 'project_icons':
 						$template_name = 'configuration/projecticons';
@@ -2620,17 +2620,17 @@
 						$options['section'] = $request->getParameter('section', 'info');
 						if ($request->hasParameter('edition_id'))
 						{
-							$edition = Caspar::factory()->TBGEdition($request->getParameter('edition_id'));
+							$edition = Caspar::factory()->manufacture('TBGEdition', $request->getParameter('edition_id'));
 							$options['edition'] = $edition;
 							$options['selected_section'] = $request->getParameter('section', 'general');
 						}
 						break;
 					case 'issue_add_item':
-						$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+						$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 						$template_name = 'main/issueadditem';
 						break;
 					case 'client_users':
-						$options['client'] = Caspar::factory()->TBGClient($request->getParameter('client_id'));
+						$options['client'] = Caspar::factory()->manufacture('TBGClient', $request->getParameter('client_id'));
 						$template_name = 'main/clientusers';
 						break;
 					case 'dashboard_config':
@@ -2667,7 +2667,7 @@
 						$options['issue_ids'] = $request['issue_ids'];
 						break;
 					default:
-						$event = new TBGEvent('core', 'get_backdrop_partial', $request->getParameter('key'));
+						$event = new \caspar\core\Event('core', 'get_backdrop_partial', $request->getParameter('key'));
 						$event->triggerUntilProcessed();
 						$options = $event->getReturnList();
 						$template_name = $event->getReturnValue();
@@ -2694,7 +2694,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2741,7 +2741,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2781,7 +2781,7 @@
 			{
 				try
 				{
-					$issue = Caspar::factory()->TBGIssue($issue_id);
+					$issue = Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				}
 				catch (Exception $e)
 				{
@@ -2813,7 +2813,7 @@
 				{
 					try
 					{
-						$related_issue = Caspar::factory()->TBGIssue((int) $issue_id);
+						$related_issue = Caspar::factory()->manufacture('TBGIssue', (int) $issue_id);
 						if ($mode == 'relate_children')
 						{
 							$issue->addChildIssue($related_issue);
@@ -2850,7 +2850,7 @@
 		public function runVoteForIssue(Request $request)
 		{
 			$i18n = Context::getI18n();
-			$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+			$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 			$vote_direction = $request->getParameter('vote');
 			if ($issue instanceof \TBGIssue && !$issue->hasUserVoted(Caspar::getUser()->getID(), ($vote_direction == 'up')))
 			{
@@ -2864,7 +2864,7 @@
 		{
 			try
 			{
-				$friend_user = Caspar::factory()->TBGUser($request->getParameter('user_id'));
+				$friend_user = Caspar::factory()->manufacture('TBGUser', $request->getParameter('user_id'));
 				$mode = $request->getParameter('mode');
 				if ($mode == 'add')
 				{
@@ -2888,10 +2888,10 @@
 		
 		public function runToggleAffectedConfirmed(Request $request)
 		{
-			Context::loadLibrary('ui');
+			Caspar::loadLibrary('ui');
 			try
 			{
-				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 				
 				if (!$issue->canEditIssue())
 				{
@@ -3001,10 +3001,10 @@
 		
 		public function runRemoveAffected(Request $request)
 		{
-			Context::loadLibrary('ui');
+			Caspar::loadLibrary('ui');
 			try
 			{
-				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 				
 				if (!$issue->canEditIssue())
 				{
@@ -3096,11 +3096,11 @@
 		
 		public function runStatusAffected(Request $request)
 		{
-			Context::loadLibrary('ui');
+			Caspar::loadLibrary('ui');
 			try
 			{
-				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
-				$status = Caspar::factory()->TBGStatus($request->getParameter('status_id'));
+				$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
+				$status = Caspar::factory()->manufacture('TBGStatus', $request->getParameter('status_id'));
 				if (!$issue->canEditIssue())
 				{
 					$this->getResponse()->setHttpStatus(400);
@@ -3167,10 +3167,10 @@
 			
 		public function runAddAffected(Request $request)
 		{
-			Context::loadLibrary('ui');
+			Caspar::loadLibrary('ui');
 			try
 			{
-				$issue = Caspar::factory()->TBGIssue($request->getParameter('issue_id'));
+				$issue = Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
 				$statuses = TBGStatus::getAll();
 
 				switch ($request->getParameter('item_type'))
@@ -3188,7 +3188,7 @@
 						}
 
 						
-						$edition = Caspar::factory()->TBGEdition($request->getParameter('which_item_edition'));
+						$edition = Caspar::factory()->manufacture('TBGEdition', $request->getParameter('which_item_edition'));
 						
 						if (\TBGIssueAffectsEditionTable::getTable()->getByIssueIDandEditionID($issue->getID(), $edition->getID()))
 						{
@@ -3218,7 +3218,7 @@
 							return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You are not allowed to do this')));
 						}
 						
-						$component = Caspar::factory()->TBGComponent($request->getParameter('which_item_component'));
+						$component = Caspar::factory()->manufacture('TBGComponent', $request->getParameter('which_item_component'));
 						
 						if (\TBGIssueAffectsComponentTable::getTable()->getByIssueIDandComponentID($issue->getID(), $component->getID()))
 						{
@@ -3248,7 +3248,7 @@
 							return $this->renderJSON(array('failed' => true, 'error' => Context::getI18n()->__('You are not allowed to do this')));
 						}
 						
-						$build = Caspar::factory()->TBGBuild($request->getParameter('which_item_build'));
+						$build = Caspar::factory()->manufacture('TBGBuild', $request->getParameter('which_item_build'));
 
 						
 						if (\TBGIssueAffectsBuildTable::getTable()->getByIssueIDandBuildID($issue->getID(), $build->getID()))
@@ -3324,7 +3324,7 @@
 							$password = $user->createPassword();
 							$user->changePassword($password);
 							$user->save();
-							$event = TBGEvent::createNew('core', 'password_reset', $user, array('password' => $password))->trigger();
+							$event = \caspar\core\Event::createNew('core', 'password_reset', $user, array('password' => $password))->trigger();
 							Context::setMessage('login_message', $i18n->__('An email has been sent to you with your new password.'));
 						}
 						else
@@ -3357,7 +3357,7 @@
 		 */			
 		public function runCaptcha(Request $request)
 		{
-			Context::loadLibrary('ui');
+			Caspar::loadLibrary('ui');
 			
 			if (!function_exists('imagecreatetruecolor'))
 			{
@@ -3388,12 +3388,12 @@
 				case 'assigned_to':
 					if ($request->getParameter('identifiable_type') == TBGIdentifiableClass::TYPE_USER)
 					{
-						$identifiable = Caspar::factory()->TBGUser($request->getParameter('value'));
+						$identifiable = Caspar::factory()->manufacture('TBGUser', $request->getParameter('value'));
 						$content = $this->getComponentHTML('main/userdropdown', array('user' => $identifiable));
 					}
 					elseif ($request->getParameter('identifiable_type') == TBGIdentifiableClass::TYPE_TEAM)
 					{
-						$identifiable = Caspar::factory()->TBGTeam($request->getParameter('value'));
+						$identifiable = Caspar::factory()->manufacture('TBGTeam', $request->getParameter('value'));
 						$content = $this->getComponentHTML('main/teamdropdown', array('team' => $identifiable));
 					}
 					

@@ -73,7 +73,7 @@
 				{
 					try
 					{
-						$file = \caspar\core\Caspar::factory()->TBGFile($row->get(TBGFilesTable::ID), $row);
+						$file = \caspar\core\Caspar::factory()->manufacture('TBGFile', $row->get(TBGFilesTable::ID), $row);
 						$file->setUploadedAt($row->get(self::ATTACHED_AT));
 						$ret_arr[$row->get(TBGFilesTable::ID)] = $file;
 					}

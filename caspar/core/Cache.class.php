@@ -29,7 +29,7 @@
 		const KEY_PERMISSIONS_CACHE = '_permissions';
 		const KEY_USERSTATES_CACHE = 'TBGUserstate::getAll';
 		const KEY_SETTINGS = '_settings';
-		const KEY_TEXTPARSER_ISSUE_REGEX = 'TBGTextParser::getIssueRegex';
+		const KEY_TEXTPARSER_ISSUE_REGEX = '\thebuggenie\core\TextParser::getIssueRegex';
 		
 		protected static $_enabled = false;
 		protected static $_filecache_enabled = false;

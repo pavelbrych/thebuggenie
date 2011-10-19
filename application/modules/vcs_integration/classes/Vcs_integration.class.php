@@ -58,13 +58,13 @@
 		
 		protected function _addListeners()
 		{
-			TBGEvent::listen('core', 'project_sidebar_links_statistics', array($this, 'listen_sidebar_links'));
-			TBGEvent::listen('core', 'breadcrumb_project_links', array($this, 'listen_breadcrumb_links'));
-			TBGEvent::listen('core', 'viewissue_tabs', array($this, 'listen_viewissue_tab'));
-			TBGEvent::listen('core', 'viewissue_tab_panes_back', array($this, 'listen_viewissue_panel'));
-			TBGEvent::listen('core', 'config_project_tabs', array($this, 'listen_projectconfig_tab'));
-			TBGEvent::listen('core', 'config_project_panes', array($this, 'listen_projectconfig_panel'));
-			TBGEvent::listen('core', 'project_header_buttons', array($this, 'listen_projectheader'));
+			\caspar\core\Event::listen('core', 'project_sidebar_links_statistics', array($this, 'listen_sidebar_links'));
+			\caspar\core\Event::listen('core', 'breadcrumb_project_links', array($this, 'listen_breadcrumb_links'));
+			\caspar\core\Event::listen('core', 'viewissue_tabs', array($this, 'listen_viewissue_tab'));
+			\caspar\core\Event::listen('core', 'viewissue_tab_panes_back', array($this, 'listen_viewissue_panel'));
+			\caspar\core\Event::listen('core', 'config_project_tabs', array($this, 'listen_projectconfig_tab'));
+			\caspar\core\Event::listen('core', 'config_project_panes', array($this, 'listen_projectconfig_panel'));
+			\caspar\core\Event::listen('core', 'project_header_buttons', array($this, 'listen_projectheader'));
 		}
 
 		protected function _addRoutes()
@@ -124,7 +124,7 @@
 							else
 							{
 								// All issues will be of the same project, so use one issue
-								$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGVCSIntegrationTable::ISSUE_NO));
+								$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGVCSIntegrationTable::ISSUE_NO));
 								// Add details of a new commit
 								$commits[$rev] = array('commit' => array(), 'files' => array(), 'issues' => array());
 								
@@ -139,7 +139,7 @@
 							$files = array();
 							$issues = array();
 
-							$scope = \caspar\core\Caspar::factory()->TBGScope($commit['commit']['scope']);
+							$scope = \caspar\core\Caspar::factory()->manufacture('TBGScope', $commit['commit']['scope']);
 							
 							try
 							{
@@ -181,7 +181,7 @@
 							foreach ($issues as $issue)
 							{
 								// Add affected issues
-								$issue = \caspar\core\Caspar::factory()->TBGIssue($issue);
+								$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $issue);
 								$inst = new TBGVCSIntegrationIssueLink();
 								$inst->setIssue($issue);
 								$inst->setCommit($commit);
@@ -198,7 +198,7 @@
 					$access_method = $this->getSetting('use_web_interface');
 					$passkey = $this->getSetting('vcs_passkey');
 					
-					foreach (TBGProject::getAll() as $project)
+					foreach (\thebuggenie\entities\Project::getAll() as $project)
 					{
 						$projectId = $project->getID();
 						$web_path = $this->getSetting('web_path_' . $projectId);
@@ -323,43 +323,43 @@
 			return false;
 		}
 		
-		public function listen_sidebar_links(TBGEvent $event)
+		public function listen_sidebar_links(\caspar\core\Event $event)
 		{
 			if (TBGContext::isProjectContext())
 			{
-				TBGActionComponent::includeTemplate('vcs_integration/menustriplinks', array('project' => TBGContext::getCurrentProject(), 'module' => $this, 'submenu' => $event->getParameter('submenu')));
+				\caspar\core\ActionComponents::includeTemplate('vcs_integration/menustriplinks', array('project' => TBGContext::getCurrentProject(), 'module' => $this, 'submenu' => $event->getParameter('submenu')));
 			}
 		}
 		
-		public function listen_breadcrumb_links(TBGEvent $event)
+		public function listen_breadcrumb_links(\caspar\core\Event $event)
 		{
 			$event->addToReturnList(array('url' => TBGContext::getRouting()->generate('vcs_commitspage', array('project_key' => TBGContext::getCurrentProject()->getKey())), 'title' => TBGContext::getI18n()->__('Commits')));
 		}
 		
-		public function listen_projectheader(TBGEvent $event)
+		public function listen_projectheader(\caspar\core\Event $event)
 		{
-			TBGActionComponent::includeTemplate('vcs_integration/projectheaderbutton');
+			\caspar\core\ActionComponents::includeTemplate('vcs_integration/projectheaderbutton');
 		}
 		
-		public function listen_projectconfig_tab(TBGEvent $event)
+		public function listen_projectconfig_tab(\caspar\core\Event $event)
 		{
-			TBGActionComponent::includeTemplate('vcs_integration/projectconfig_tab', array('selected_tab' => $event->getParameter('selected_tab')));
+			\caspar\core\ActionComponents::includeTemplate('vcs_integration/projectconfig_tab', array('selected_tab' => $event->getParameter('selected_tab')));
 		}
 		
-		public function listen_projectconfig_panel(TBGEvent $event)
+		public function listen_projectconfig_panel(\caspar\core\Event $event)
 		{
-			TBGActionComponent::includeTemplate('vcs_integration/projectconfig_panel', array('selected_tab' => $event->getParameter('selected_tab'), 'access_level' => $event->getParameter('access_level'), 'project' => $event->getParameter('project')));
+			\caspar\core\ActionComponents::includeTemplate('vcs_integration/projectconfig_panel', array('selected_tab' => $event->getParameter('selected_tab'), 'access_level' => $event->getParameter('access_level'), 'project' => $event->getParameter('project')));
 		}
 		
-		public function listen_viewissue_tab(TBGEvent $event)
+		public function listen_viewissue_tab(\caspar\core\Event $event)
 		{
 			if (TBGContext::getModule('vcs_integration')->getSetting('vcs_mode_' . TBGContext::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return; endif;
 				
 			$count = count(TBGVCSIntegrationIssueLink::getCommitsByIssue($event->getSubject()));
-			TBGActionComponent::includeTemplate('vcs_integration/viewissue_tab', array('count' => $count));
+			\caspar\core\ActionComponents::includeTemplate('vcs_integration/viewissue_tab', array('count' => $count));
 		}
 		
-		public function listen_viewissue_panel(TBGEvent $event)
+		public function listen_viewissue_panel(\caspar\core\Event $event)
 		{
 			if (TBGContext::getModule('vcs_integration')->getSetting('vcs_mode_' . TBGContext::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return; endif;
 
@@ -367,11 +367,11 @@
 			
 			if (count($links) == 0 || !is_array($links))
 			{
-				TBGActionComponent::includeTemplate('vcs_integration/viewissue_commits_top', array('items' => false));
+				\caspar\core\ActionComponents::includeTemplate('vcs_integration/viewissue_commits_top', array('items' => false));
 			}
 			else
 			{
-				TBGActionComponent::includeTemplate('vcs_integration/viewissue_commits_top', array('items' => true));
+				\caspar\core\ActionComponents::includeTemplate('vcs_integration/viewissue_commits_top', array('items' => true));
 				
 				/* Now produce each box */
 				foreach ($links as $link)
@@ -379,7 +379,7 @@
 					include_template('vcs_integration/commitbox', array("projectId" => $event->getSubject()->getProject()->getID(), "commit" => $link->getCommit()));
 				}
 				
-				TBGActionComponent::includeTemplate('vcs_integration/viewissue_commits_bottom');
+				\caspar\core\ActionComponents::includeTemplate('vcs_integration/viewissue_commits_bottom');
 			}
 		}
 		
@@ -406,7 +406,7 @@
 				return $output;
 			}
 			
-			$fixes_grep = TBGTextParser::getIssueRegex();
+			$fixes_grep = \thebuggenie\core\TextParser::getIssueRegex();
 
 			// Build list of affected issues
 			$temp = array();
@@ -587,7 +587,7 @@
 				$output .= '[VCS '.$project->getKey().'] Added with action '.$afile[0].' file ' . $afile[1] . "\n";
 			}
 
-			TBGEvent::createNew('vcs_integration', 'new_commit')->trigger(array('commit' => $commit));
+			\caspar\core\Event::createNew('vcs_integration', 'new_commit')->trigger(array('commit' => $commit));
 
 			return $output;
 		}

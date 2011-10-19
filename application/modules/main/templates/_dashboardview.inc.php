@@ -17,12 +17,12 @@
 	<?php break; ?>		
 	
 	<?php case TBGDashboardView::VIEW_LOGGED_ACTION : ?>
-		<?php if (count($tbg_user->getLatestActions()) > 0): ?>
+		<?php if (count($csp_user->getLatestActions()) > 0): ?>
 			<table cellpadding=0 cellspacing=0 style="margin: 5px;">
 				<?php $prev_date = null; ?>
 				<?php $prev_timestamp = null; ?>
 				<?php $prev_issue = null; ?>
-				<?php foreach ($tbg_user->getLatestActions() as $action): ?>
+				<?php foreach ($csp_user->getLatestActions() as $action): ?>
 					<?php $date = tbg_formatTime($action['timestamp'], 5); ?>
 					<?php if ($date != $prev_date): ?>
 						<tr>
@@ -46,7 +46,7 @@
 			<?php echo __('Recent comments'); ?>
 		</div>
 		<div id="dashboard_<?php echo $view->getID(); ?>">
-		<?php $comments = TBGComment::getRecentCommentsByAuthor($tbg_user->getID()); ?>
+		<?php $comments = TBGComment::getRecentCommentsByAuthor($csp_user->getID()); ?>
 		<?php if (count($comments)): ?>
 			<table cellpadding=0 cellspacing=0 style="margin: 5px;">
 				<?php $prev_date = null; ?>
@@ -476,5 +476,5 @@
 		</div>
 		<?php break; ?>
 	<?php endswitch;?>
-	<?php TBGEvent::createNew('core', 'dashboard_main_' . $view->getID())->trigger(); */ ?>
+	<?php \caspar\core\Event::createNew('core', 'dashboard_main_' . $view->getID())->trigger(); */ ?>
 </div>

@@ -51,7 +51,7 @@
 			
 			$issue = $this->getRemoteResponse($this->getRemoteURL('viewissue', $url_options));
 
-			TBGContext::loadLibrary('common');
+			\core\caspar\Caspar::loadLibrary('common');
 			$this->cliEcho($print_issue_number, 'green', 'bold');
 			$this->cliEcho(" - ");
 			$state = ($issue->state == TBGIssue::STATE_OPEN) ? 'OPEN' : 'CLOSED';

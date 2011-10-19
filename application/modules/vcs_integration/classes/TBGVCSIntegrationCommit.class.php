@@ -45,8 +45,8 @@
 		
 		/**
 		 * Commit author
-		 * @var TBGUser
-		 * @Class TBGUser
+		 * @Class \thebuggenie\entities\User
+		 * @Class \thebuggenie\entities\User
 		 */
 		protected $_author = null;
 		
@@ -76,8 +76,8 @@
 		
 		/**
 		 * Project
-		 * @var TBGProject
-		 * @Class TBGProject
+		 * @Class \thebuggenie\entities\Project
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_project_id = null;
 		
@@ -247,7 +247,7 @@
 				{
 					foreach ($res->getAllRows() as $row)
 					{
-						$this->_files[] = \caspar\core\Caspar::factory()->TBGVCSIntegrationFile($row->get(TBGVCSIntegrationFilesTable::ID), $row);
+						$this->_files[] = \caspar\core\Caspar::factory()->manufacture('TBGVCSIntegrationFile', $row->get(TBGVCSIntegrationFilesTable::ID), $row);
 					}
 				}
 			}
@@ -264,7 +264,7 @@
 				{
 					foreach ($res->getAllRows() as $row)
 					{
-						$this->_issues[] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGVCSIntegrationIssueLinksTable::ISSUE_NO));
+						$this->_issues[] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGVCSIntegrationIssueLinksTable::ISSUE_NO));
 					}
 				}
 			}
@@ -289,7 +289,7 @@
 			
 			foreach (TBGVCSIntegrationCommitsTable::getTable()->getCommitsByProject($id, $limit, $offset)->getAllRows() as $row)
 			{
-				$data[] = \caspar\core\Caspar::factory()->TBGVCSIntegrationCommit($row->get(TBGVCSIntegrationCommitsTable::ID), $row);
+				$data[] = \caspar\core\Caspar::factory()->manufacture('TBGVCSIntegrationCommit', $row->get(TBGVCSIntegrationCommitsTable::ID), $row);
 			}
 			return $data;
 		}

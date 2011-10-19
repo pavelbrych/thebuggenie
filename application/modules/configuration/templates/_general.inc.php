@@ -25,7 +25,7 @@
 	<tr>
 		<td class="config_explanation" colspan="2">
 			<?php echo __('In single project tracker mode, The Bug Genie will display the homepage for the first project as the main page instead of the regular index page'); ?><br>
-			<?php if (count(TBGProject::getAll()) > 1): ?>
+			<?php if (count(\thebuggenie\entities\Project::getAll()) > 1): ?>
 				<br>
 				<b class="more_than_one_project_warning"><?php echo __('More than one project exists. When in "single project" mode, accessing other projects than the first will become harder.'); ?></b>
 			<?php endif; ?>

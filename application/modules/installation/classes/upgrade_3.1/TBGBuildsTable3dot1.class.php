@@ -43,8 +43,8 @@
 			parent::_addInteger(self::RELEASE_DATE, 10);
 			parent::_addBoolean(self::RELEASED);
 			parent::_addBoolean(self::LOCKED);
-			parent::_addForeignKeyColumn(self::EDITION, TBGEditionsTable::getTable(), TBGEditionsTable::ID);
-			parent::_addForeignKeyColumn(self::PROJECT, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
+			parent::_addForeignKeyColumn(self::EDITION, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Editions'), TBGEditionsTable::ID);
+			parent::_addForeignKeyColumn(self::PROJECT, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects'), TBGProjectsTable::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		

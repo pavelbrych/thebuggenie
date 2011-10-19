@@ -1,6 +1,6 @@
 <?php
 
-	TBGContext::loadLibrary('ui');
+	\core\caspar\Caspar::loadLibrary('ui');
 ?>
 <div class="login_page_div">
 <?php include_component('main/login', compact('section', 'error')); ?>

@@ -19,29 +19,29 @@
 	class TBGBuild extends VersionableItem 
 	{
 		
-		static protected $_b2dbtablename = 'TBGBuildsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Builds';
 		
 		/**
 		 * This builds edition
 		 *
-		 * @var TBGEdition
-		 * @Class TBGEdition
+		 * @Class \thebuggenie\entities\Edition
+		 * @Class \thebuggenie\entities\Edition
 		 */
 		protected $_edition = null;
 
 		/**
 		 * This builds project
 		 *
-		 * @var TBGProject
-		 * @Class TBGProject
+		 * @Class \thebuggenie\entities\Project
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_project = null;
 		
 		/**
 		 * This builds milestone, if any
 		 *
-		 * @var TBGMilestone
-		 * @Class TBGMilestone
+		 * @Class \thebuggenie\entities\Milestone
+		 * @Class \thebuggenie\entities\Milestone
 		 */
 		protected $_milestone = null;
 		
@@ -69,8 +69,8 @@
 		/**
 		 * An attached file, if exists
 		 * 
-		 * @var TBGFile
-		 * @Class TBGFile
+		 * @Class \thebuggenie\entities\File
+		 * @Class \thebuggenie\entities\File
 		 */
 		protected $_file_id = null;
 		
@@ -115,7 +115,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$build = \caspar\core\Caspar::factory()->TBGBuild($row->get(TBGBuildsTable::ID), $row);
+						$build = \caspar\core\Caspar::factory()->manufacture('TBGBuild', $row->get(TBGBuildsTable::ID), $row);
 						self::$_project_builds[$project_id][$build->getID()] = $build;
 					}
 				}
@@ -141,7 +141,7 @@
 				self::$_edition_builds[$edition_id] = array();
 				if ($res = Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->getByEditionID($project_id))
 				{
-					$build = \caspar\core\Caspar::factory()->TBGBuild($row->get(TBGBuildsTable::ID), $row);
+					$build = \caspar\core\Caspar::factory()->manufacture('TBGBuild', $row->get(TBGBuildsTable::ID), $row);
 					self::$_edition_builds[$edition_id][$build->getID()] = $build;
 				}
 			}
@@ -159,11 +159,11 @@
 			{
 				if ($this->_edition && is_numeric($this->_edition))
 				{
-					$this->_edition = \caspar\core\Caspar::factory()->TBGEdition($row->get(TBGBuildsTable::EDITION), $row);
+					$this->_edition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $row->get(TBGBuildsTable::EDITION), $row);
 				}
 				elseif ($this->_project && is_numeric($this->_project))
 				{
-					$this->_project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGBuildsTable::PROJECT), $row);
+					$this->_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGBuildsTable::PROJECT), $row);
 				}
 			}
 			catch (Exception $e) {}
@@ -174,7 +174,7 @@
 			if ($is_new)
 			{
 				TBGContext::setPermission("canseebuild", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
-				TBGEvent::createNew('core', 'TBGBuild::createNew', $this)->trigger();
+				\caspar\core\Event::createNew('core', 'TBGBuild::createNew', $this)->trigger();
 			}
 		}
 
@@ -346,7 +346,7 @@
 		 */
 		public function hasAccess()
 		{
-			return (($this->getProject() instanceof TBGProject && $this->getProject()->canSeeAllBuilds()) || \caspar\core\Caspar::getUser()->hasPermission('canseebuild', $this->getID()));
+			return (($this->getProject() instanceof \thebuggenie\entities\Project && $this->getProject()->canSeeAllBuilds()) || \caspar\core\Caspar::getUser()->hasPermission('canseebuild', $this->getID()));
 		}
 
 		/**

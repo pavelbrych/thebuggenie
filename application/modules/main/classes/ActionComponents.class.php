@@ -49,15 +49,15 @@
 		{
 			if (!isset($this->target))
 			{
-				$this->projects = \TBGProject::getAllRootProjects(true);
+				$this->projects = \thebuggenie\entities\Project::getAllRootProjects(true);
 				$this->project_count = count($this->projects);
 			}
 			elseif ($this->target == \TBGIdentifiableClass::TYPE_TEAM)
 			{
 				$this->team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $this->id);
-				$own = \TBGProject::getAllByOwner($this->team);
-				$leader = \TBGProject::getAllByLeader($this->team);
-				$qa = \TBGProject::getAllByQaResponsible($this->team);
+				$own = \thebuggenie\entities\Project::getAllByOwner($this->team);
+				$leader = \thebuggenie\entities\Project::getAllByLeader($this->team);
+				$qa = \thebuggenie\entities\Project::getAllByQaResponsible($this->team);
 				$proj = $this->team->getAssociatedProjects();
 				
 				$projects = array_unique(array_merge($proj, $own, $leader, $qa));
@@ -73,7 +73,7 @@
 			elseif ($this->target == \TBGIdentifiableClass::TYPE_CLIENT)
 			{
 				$this->client = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $this->id);
-				$projects = \TBGProject::getAllByClientID($this->client->getID());
+				$projects = \thebuggenie\entities\Project::getAllByClientID($this->client->getID());
 				
 				$final_projects = array();
 				
@@ -86,7 +86,7 @@
 			}
 			elseif ($this->target == 'project')
 			{
-				$this->parent = \caspar\core\Caspar::factory()->TBGProject($this->id);
+				$this->parent = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $this->id);
 				$this->projects = $this->parent->getChildren(true);;
 			}
 			
@@ -126,7 +126,7 @@
 		
 		public function componentMyfriends()
 		{
-			$this->friends = \\caspar\core\Caspar::getUser()->getFriends();
+			$this->friends = \caspar\core\Caspar::getUser()->getFriends();
 		}
 
 		protected function setupVariables()
@@ -203,14 +203,14 @@
 			if (isset($this->transition) && $this->transition->hasAction(\TBGWorkflowTransitionAction::ACTION_ASSIGN_ISSUE))
 			{
 				$available_assignees = array();
-				foreach (\\caspar\core\Caspar::getUser()->getTeams() as $team)
+				foreach (\caspar\core\Caspar::getUser()->getTeams() as $team)
 				{
 					foreach ($team->getMembers() as $user)
 					{
 						$available_assignees[$user->getID()] = $user->getNameWithUsername();
 					}
 				}
-				foreach (\\caspar\core\Caspar::getUser()->getFriends() as $user)
+				foreach (\caspar\core\Caspar::getUser()->getFriends() as $user)
 				{
 					$available_assignees[$user->getID()] = $user->getNameWithUsername();
 				}
@@ -248,7 +248,7 @@
 					$this->existing_files = $this->article->getFiles();
 					break;
 				default:
-					// @todo: dispatch a \TBGEvent that allows us to retrieve the
+					// @todo: dispatch a \\caspar\core\Event that allows us to retrieve the
 					// necessary variables from anyone catching it
 					break;
 			}
@@ -258,7 +258,7 @@
 		{
 			if ($this->mode == 'issue' && !isset($this->issue))
 			{
-				$this->issue = \caspar\core\Caspar::factory()->TBGIssue($this->issue_id);
+				$this->issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $this->issue_id);
 			}
 			elseif ($this->mode == 'article' && !isset($this->article))
 			{
@@ -296,7 +296,7 @@
 			{
 				try
 				{
-					$this->issue = \caspar\core\Caspar::factory()->TBGIssue($this->log_action['target']);
+					$this->issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $this->log_action['target']);
 				}
 				catch (Exception $e) {}
 			}
@@ -308,7 +308,7 @@
 			{
 				try
 				{
-					$this->issue = \caspar\core\Caspar::factory()->TBGIssue($this->comment->getTargetID());
+					$this->issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $this->comment->getTargetID());
 				}
 				catch (Exception $e) {}
 			}
@@ -356,7 +356,7 @@
 				\caspar\core\Caspar::getResponse()->deleteCookie('\TBG3_password');
 				$this->error = \TBGContext::geti18n()->__('You need to log in to access this site');
 			}
-			elseif (!\\caspar\core\Caspar::getUser()->isAuthenticated())
+			elseif (!\caspar\core\Caspar::getUser()->isAuthenticated())
 			{
 				$this->error = \TBGContext::geti18n()->__('Please log in');
 			}

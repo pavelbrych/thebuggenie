@@ -38,25 +38,14 @@
 		
 		protected static $_item_cache = null;
 
-		/**
-		 * Return an instance of this table
-		 *
-		 * @return TBGListTypesTable
-		 */
-		public static function getTable()
-		{
-			return Core::getTable('TBGListTypesTable');
-		}
-
 		protected function _setup()
 		{
-			
 			parent::_addVarchar(self::NAME, 100);
 			parent::_addVarchar(self::ITEMTYPE, 25);
 			parent::_addText(self::ITEMDATA, false);
 			parent::_addInteger(self::APPLIES_TO, 10);
 			parent::_addInteger(self::ORDER, 3);
-			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), Scopes::ID);
 		}
 		
 		public function clearListTypeCache()

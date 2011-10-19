@@ -131,7 +131,7 @@
 		 * @param string $identifier
 		 * @param string $subject
 		 *
-		 * @return TBGEvent
+		 * @return \caspar\core\Event
 		 */
 		public static function createNew($module, $identifier, $subject = null, $parameters = array(), $initial_list = array())
 		{
@@ -214,7 +214,7 @@
 		 *
 		 * @param array $params[optional] Parameters to pass to the registered listeners
 		 *
-		 * @return TBGEvent
+		 * @return \caspar\core\Event
 		 */
 		public function trigger($parameters = null)
 		{
@@ -232,7 +232,7 @@
 		 *
 		 * @param array $params[optional] Parameters to pass to the registered listeners
 		 *
-		 * @return TBGEvent
+		 * @return \caspar\core\Event
 		 */
 		public function triggerUntilProcessed($parameters = null)
 		{

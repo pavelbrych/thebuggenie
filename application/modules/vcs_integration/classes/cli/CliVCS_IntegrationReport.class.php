@@ -37,9 +37,9 @@
 		public function do_execute()
 		{
 			/* Prepare variables */
-			$project = \caspar\core\Caspar::factory()->TBGProject($this->getProvidedArgument('projectid'));
+			$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $this->getProvidedArgument('projectid'));
 			
-			if (!($project instanceof TBGProject))
+			if (!($project instanceof \thebuggenie\entities\Project))
 			{
 				$this->cliEcho("The project with the ID ".$this->getProvidedArgument('projectid')." does not exist\n", 'red', 'bold');
 				exit;

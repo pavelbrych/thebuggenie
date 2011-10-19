@@ -24,8 +24,8 @@
 		/**
 		 * The project
 		 *
-		 * @var TBGProject
-		 * @Class TBGProject
+		 * @Class \thebuggenie\entities\Project
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_project = null;
 		
@@ -61,7 +61,7 @@
 			if ($is_new)
 			{
 				TBGContext::setPermission("canseeedition", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
-				TBGEvent::createNew('core', 'TBGEdition::createNew', $this)->trigger();
+				\caspar\core\Event::createNew('core', 'TBGEdition::createNew', $this)->trigger();
 			}
 		}
 
@@ -85,7 +85,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$edition = \caspar\core\Caspar::factory()->TBGEdition($row->get(TBGEditionsTable::ID), $row);
+						$edition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $row->get(TBGEditionsTable::ID), $row);
 						self::$_editions[$project_id][$edition->getID()] = $edition;
 					}
 				}
@@ -100,7 +100,7 @@
 		 */
 		public function _construct(\b2db\Row $row, $foreign_key = null)
 		{
-			TBGEvent::createNew('core', 'TBGEdition::__construct', $this)->trigger();
+			\caspar\core\Event::createNew('core', 'TBGEdition::__construct', $this)->trigger();
 		}
 		
 		/**
@@ -117,7 +117,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_components[$row->get(TBGEditionComponentsTable::COMPONENT)] = \caspar\core\Caspar::factory()->TBGComponent($row->get(TBGEditionComponentsTable::COMPONENT));
+						$this->_components[$row->get(TBGEditionComponentsTable::COMPONENT)] = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $row->get(TBGEditionComponentsTable::COMPONENT));
 					}
 				}
 			}
@@ -240,7 +240,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_builds[$row->get(TBGBuildsTable::ID)] = \caspar\core\Caspar::factory()->TBGBuild($row->get(TBGBuildsTable::ID), $row);
+						$this->_builds[$row->get(TBGBuildsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGBuild', $row->get(TBGBuildsTable::ID), $row);
 					}
 				}
 			}

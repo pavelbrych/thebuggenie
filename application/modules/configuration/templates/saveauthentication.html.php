@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Configure authentication'));
+	$csp_response->setTitle(__('Configure authentication'));
 	
 ?>
 <center>

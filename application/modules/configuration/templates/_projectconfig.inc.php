@@ -17,5 +17,5 @@
 	<div id="tab_permissions_pane" style="text-align: left;<?php if ($selected_tab != 'permissions'): ?> display: none;<?php endif; ?>" class="permission_list" style="">
 		<?php include_template('configuration/projectpermissions', array('access_level' => $access_level, 'project' => $project)); ?>
 	</div>
-	<?php TBGEvent::createNew('core', 'config_project_panes')->trigger(array('selected_tab' => $selected_tab, 'access_level' => $access_level, 'project' => $project)); ?>
+	<?php \caspar\core\Event::createNew('core', 'config_project_panes')->trigger(array('selected_tab' => $selected_tab, 'access_level' => $access_level, 'project' => $project)); ?>
 </div>

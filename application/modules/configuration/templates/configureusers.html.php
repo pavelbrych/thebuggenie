@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Configure users, teams and groups'));
+	$csp_response->setTitle(__('Configure users, teams and groups'));
 	$users_text = (\thebuggenie\core\Context::getScope()->getMaxUsers()) ? __('Users (%num%/%max%)', array('%num%' => '<span id="current_user_num_count">'.TBGUser::getUsersCount().'</span>', '%max%' => \thebuggenie\core\Context::getScope()->getMaxUsers())) : __('Users');
 	$teams_text = (\thebuggenie\core\Context::getScope()->getMaxTeams()) ? __('Teams (%num%/%max%)', array('%num%' => '<span id="current_team_num_count">'.TBGTeam::getTeamsCount().'</span>', '%max%' => \thebuggenie\core\Context::getScope()->getMaxTeams())) : __('Teams');
 

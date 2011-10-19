@@ -1,14 +1,14 @@
 <?php
 
-	$tbg_response->addBreadcrumb(__('Release center'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
-	$tbg_response->setTitle(__('"%project_name%" release center', array('%project_name%' => $selected_project->getName())));
+	$csp_response->addBreadcrumb(__('Release center'), null, tbg_get_breadcrumblinks('project_summary', $selected_project));
+	$csp_response->setTitle(__('"%project_name%" release center', array('%project_name%' => $selected_project->getName())));
 
 ?>
 			<?php include_template('project/projectheader', array('selected_project' => $selected_project)); ?>
 			<?php include_template('project/projectinfosidebar', array('selected_project' => $selected_project)); ?>
 			<?php //$url = make_url('configure_edition_add_build', array('project_id' => $selected_project->getProject()->getID(), 'edition_id' => $selected_project->getID())); ?>
 			<h3>
-				<?php if ($tbg_user->canManageProjectReleases($selected_project)): ?>
+				<?php if ($csp_user->canManageProjectReleases($selected_project)): ?>
 				<div class="button button-green" style="float: right; margin-top: -5px;" onclick="TBG.Main.Helpers.Backdrop.show('<?php echo make_url('get_partial_for_backdrop', array('key' => 'project_build', 'project_id' => $selected_project->getId())); ?>');"><?php echo __('Add new project release'); ?></div>
 				<?php endif; ?>
 				<?php echo __('Active project releases'); ?>
@@ -25,7 +25,7 @@
 				<?php foreach ($selected_project->getEditions() as $edition_id => $edition): ?>
 					<div style="margin: 20px 0 0 0;">
 						<h5>
-							<?php if ($tbg_user->canManageProjectReleases($selected_project)): ?>
+							<?php if ($csp_user->canManageProjectReleases($selected_project)): ?>
 							<div class="button button-green" style="float: right; margin-top: -5px;" onclick="TBG.Main.Helpers.Backdrop.show('<?php echo make_url('get_partial_for_backdrop', array('key' => 'project_build', 'project_id' => $selected_project->getId(), 'edition_id' => $edition_id)); ?>');"><?php echo __('Add new edition release'); ?></div>
 							<?php endif; ?>
 							<?php echo __('Active %edition_name% releases', array('%edition_name%' => $edition->getName())); ?>

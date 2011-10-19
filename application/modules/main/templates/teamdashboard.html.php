@@ -1,16 +1,16 @@
 <?php 
 
-	$tbg_response->addBreadcrumb(__('Teams'), null, tbg_get_breadcrumblinks('main_links'));
+	$csp_response->addBreadcrumb(__('Teams'), null, tbg_get_breadcrumblinks('main_links'));
 	if ($team instanceof TBGTeam)
 	{
-		$tbg_response->setTitle(__('Team dashboard for %team_name%', array('%team_name%' => $team->getName())));
-		$tbg_response->setPage('team');
-		$tbg_response->addBreadcrumb(__($team->getName()), make_url('team_dashboard', array('team_id' => $team->getID())), tbg_get_breadcrumblinks('team_list'));
+		$csp_response->setTitle(__('Team dashboard for %team_name%', array('%team_name%' => $team->getName())));
+		$csp_response->setPage('team');
+		$csp_response->addBreadcrumb(__($team->getName()), make_url('team_dashboard', array('team_id' => $team->getID())), tbg_get_breadcrumblinks('team_list'));
 	}
 	else
 	{
-		$tbg_response->setTitle(__('Team dashboard'));
-		$tbg_response->addBreadcrumb(__('Team dashboard'));
+		$csp_response->setTitle(__('Team dashboard'));
+		$csp_response->addBreadcrumb(__('Team dashboard'));
 	}
 	
 ?>

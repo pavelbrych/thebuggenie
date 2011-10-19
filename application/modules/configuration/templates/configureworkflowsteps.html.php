@@ -2,11 +2,11 @@
 
 	if ($workflow instanceof TBGWorkflow)
 	{
-		$tbg_response->setTitle(__('Configure workflow "%workflow_name%"', array('%workflow_name%' => $workflow->getName())));
+		$csp_response->setTitle(__('Configure workflow "%workflow_name%"', array('%workflow_name%' => $workflow->getName())));
 	}
 	else
 	{
-		$tbg_response->setTitle(__('Configure workflows'));
+		$csp_response->setTitle(__('Configure workflows'));
 	}
 	
 ?>

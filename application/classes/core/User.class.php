@@ -60,7 +60,7 @@
 		/**
 		 * The users scope
 		 *
-		 * @var TBGScope
+		 * @Class \thebuggenie\core\Scope
 		 */
 		protected $_scope = null;
 		
@@ -636,7 +636,7 @@
 				catch (Exception $e) {}
 				
 				$this->_group_id = null;
-				TBGTeamMembersTable::getTable()->clearTeamsByUserID($this->getID());
+				\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->clearTeamsByUserID($this->getID());
 				TBGClientMembersTable::getTable()->clearClientsByUserID($this->getID());
 			}
 		}
@@ -654,7 +654,7 @@
 		{
 			if ($is_new)
 			{
-				$event = TBGEvent::createNew('core', 'self::createNew', $this);
+				$event = \caspar\core\Event::createNew('core', 'self::createNew', $this);
 				$event->trigger();
 				
 				// If the event isn't processed we automatically enable the user
@@ -825,11 +825,11 @@
 			{
 				$this->teams = array('assigned' => array(), 'ondemand' => array());
 				\caspar\core\Logging::log('Populating user teams');
-				if ($res = TBGTeamMembersTable::getTable()->getTeamIDsForUserID($this->getID()))
+				if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->getTeamIDsForUserID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
-						$team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(TBGTeamsTable::ID), $row);
+						$team = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Team', $row->get(\thebuggenie\tables\Teams::ID), $row);
 						if ($team->isOndemand())
 						{
 							$this->teams['ondemand'][$team->getID()] = $team;
@@ -936,7 +936,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->userassigned[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$this->userassigned[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 					}
 					ksort($this->userassigned, SORT_NUMERIC);
 				}
@@ -959,7 +959,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->teamassigned[$team_id][$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$this->teamassigned[$team_id][$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 					}
 				}
 				ksort($this->teamassigned[$team_id], SORT_NUMERIC);
@@ -979,7 +979,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_starredissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+						$this->_starredissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 					}
 					ksort($this->_starredissues, SORT_NUMERIC);
 				}
@@ -1034,7 +1034,7 @@
 				$crit->addInsert(TBGUserIssuesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				
 				Caspar::getB2DBInstance()->getTable('TBGUserIssuesTable')->doInsert($crit);
-				$issue = \caspar\core\Caspar::factory()->TBGIssue($issue_id);
+				$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $issue_id);
 				$this->_starredissues[$issue->getID()] = $issue;
 				ksort($this->_starredissues);
 				\caspar\core\Logging::log('Starred');
@@ -1387,7 +1387,7 @@
 		 */
 		public function getGroup()
 		{
-			return $this->_group_id;
+			return $this->_getPopulatedObjectFromProperty('_group_id');
 		}
 
 		/**
@@ -1735,7 +1735,7 @@
 		{
 			\caspar\core\Logging::log('Checking permission '.$permission_type);
 			$group_id = ($this->getGroup() instanceof \thebuggenie\entities\Group) ? $this->getGroup()->getID() : 0;
-			$retval = TBGContext::checkPermission($permission_type, $this->getID(), $group_id, $this->getTeams(), $target_id, $module_name, $explicit, $permissive);
+			$retval = \thebuggenie\core\Context::checkPermission($permission_type, $this->getID(), $group_id, $this->getTeams(), $target_id, $module_name, $explicit, $permissive);
 			\caspar\core\Logging::log('...done (Checking permissions '.$permission_type.') - return was '.(($retval) ? 'true' : 'false'));
 			
 			return $retval;
@@ -1823,11 +1823,11 @@
 			$retval = null;
 			if ($project_id !== null)
 			{
-				if (is_numeric($project_id)) $project_id = \caspar\core\Caspar::factory()->TBGProject($project_id);
+				if (is_numeric($project_id)) $project_id = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 			
 				if ($project_id->isArchived()): return false; endif;
 				
-				$project_id = ($project_id instanceof TBGProject) ? $project_id->getID() : $project_id;
+				$project_id = ($project_id instanceof \thebuggenie\entities\Project) ? $project_id->getID() : $project_id;
 				$retval = $this->hasPermission('cancreateissues', $project_id, 'core', true, null);
 				$retval = ($retval !== null) ? $retval : $this->hasPermission('cancreateandeditissues', $project_id, 'core', true, null);
 			}
@@ -2081,7 +2081,7 @@
 				{
 					try
 					{
-						$this->_associated_projects[$project_id] = \caspar\core\Caspar::factory()->TBGProject($project_id);
+						$this->_associated_projects[$project_id] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
 					}
 					catch (Exception $e) { }
 				}
@@ -2124,7 +2124,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+					$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 					$retval[$issue->getID()] = $issue;
 				}
 			}

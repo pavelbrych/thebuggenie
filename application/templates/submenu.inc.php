@@ -1,6 +1,6 @@
 <nav class="submenu_strip<?php if (TBGContext::isProjectContext()): ?> project_context<?php endif; ?>">
 	<ul id="submenu" class="project_stuff">
-		<?php $breadcrumbs = $tbg_response->getBreadcrumbs(); ?>
+		<?php $breadcrumbs = $csp_response->getBreadcrumbs(); ?>
 		<?php foreach ($breadcrumbs as $index => $breadcrumb): ?>
 			<?php $next_has_menu = (array_key_exists($index + 1, $breadcrumbs) && array_key_exists('subitems', $breadcrumbs[$index + 1]) && is_array($breadcrumbs[$index + 1]['subitems'])); ?>
 			<li class="breadcrumb">
@@ -31,7 +31,7 @@
 			</li>
 		<?php endforeach; ?>
 	</ul>
-	<?php if ($tbg_user->canSearchForIssues()): ?>
+	<?php if ($csp_user->canSearchForIssues()): ?>
 		<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo (TBGContext::isProjectContext()) ? make_url('search', array('project_key' => TBGContext::getCurrentProject()->getKey())) : make_url('search'); ?>" method="get" name="quicksearchform" style="float: right;">
 			<div style="width: auto; padding: 0; text-align: right; position: relative;" id="quicksearch_container">
 				<input type="hidden" name="filters[text][operator]" value="=">

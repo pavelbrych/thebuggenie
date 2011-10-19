@@ -151,13 +151,13 @@
 		<?php echo __('Please try to fix the error described above, and then click the %file_issue% button again', array('%file_issue%' => '<b>'.__('File issue').'</b>')); ?>.
 	</div>
 <?php elseif ($issue instanceof TBGIssue): ?>
-	<div class="rounded_box report_issue_desc <?php if (!$tbg_request->isAjaxCall()): ?>green<?php endif; ?> borderless" style="margin-bottom: 10px;" id="report_issue_reported_issue_details">
+	<div class="rounded_box report_issue_desc <?php if (!$csp_request->isAjaxCall()): ?>green<?php endif; ?> borderless" style="margin-bottom: 10px;" id="report_issue_reported_issue_details">
 		<strong><?php echo __('The following issue was reported'); ?>:</strong>
 		<?php echo link_tag(make_url('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())), __('%issue_no% - %issue_title%', array('%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()))); ?><br>
 		<span class="faded_out"><?php echo __('Click the link to visit the reported issue'); ?></span>
 	</div>
 <?php endif; ?>
-<?php if ($tbg_request->isAjaxCall()): ?>
+<?php if ($csp_request->isAjaxCall()): ?>
 	<form action="<?php echo make_url('project_reportissue', array('project_key' => $selected_project->getKey())); ?>" method="post" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" onsubmit="TBG.Main.submitIssue('<?php echo make_url('project_reportissue', array('project_key' => $selected_project->getKey(), 'return_format' => 'planning')); ?>');return false;" id="report_issue_form">
 <?php else: ?>
 	<form action="<?php echo make_url('project_reportissue', array('project_key' => $selected_project->getKey())); ?>" method="post" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>">
@@ -182,8 +182,8 @@
 		<?php if (!isset($reproduction_steps)) : ?>
 			<?php $reproduction_steps = ''; ?>
 		<?php endif; ?>
-		<div id="report_more_here"<?php if ($selected_issuetype instanceof TBGIssuetype && $selected_project instanceof TBGProject): ?> style="display: none;"<?php endif; ?>><?php echo __('More options will appear here as soon as you select an issue type above'); ?>...</div>
-		<div class="report_form" id="report_form"<?php if (!$selected_project instanceof TBGProject || !$selected_issuetype instanceof TBGIssuetype): ?> style="display: none;"<?php endif; ?>>
+		<div id="report_more_here"<?php if ($selected_issuetype instanceof TBGIssuetype && $selected_project instanceof \thebuggenie\entities\Project): ?> style="display: none;"<?php endif; ?>><?php echo __('More options will appear here as soon as you select an issue type above'); ?>...</div>
+		<div class="report_form" id="report_form"<?php if (!$selected_project instanceof \thebuggenie\entities\Project || !$selected_issuetype instanceof TBGIssuetype): ?> style="display: none;"<?php endif; ?>>
 			<table cellpadding="0" cellspacing="0"<?php if (array_key_exists('title', $errors)): ?> class="reportissue_error"<?php endif; ?>>
 				<tr>
 					<td style="width: 180px;"><label for="title" class="required"><span>* </span><?php echo __('Short summary'); ?></label></td>
@@ -215,7 +215,7 @@
 				</tr>
 				<tr>
 					<td colspan="2" style="padding-top: 5px;">
-						<?php include_template('main/textarea', array('area_name' => 'description', 'height' => ($tbg_request->isAjaxCall() ? '150px' : '250px'), 'width' => '990px', 'value' => ((isset($selected_description)) ? $selected_description : null))); ?>
+						<?php include_template('main/textarea', array('area_name' => 'description', 'height' => ($csp_request->isAjaxCall() ? '150px' : '250px'), 'width' => '990px', 'value' => ((isset($selected_description)) ? $selected_description : null))); ?>
 					</td>
 				</tr>
 			</table>
@@ -460,7 +460,7 @@
 											break;
 										case TBGCustomDatatype::EDITIONS_CHOICE: ?>
 											<select name="<?php echo $customdatatype->getKey(); ?>_id" id="<?php echo $customdatatype->getKey(); ?>_id" style="width: 100%;">
-											<?php if ($selected_project instanceof TBGProject): ?>
+											<?php if ($selected_project instanceof \thebuggenie\entities\Project): ?>
 												<?php foreach (TBGEdition::getAllByProjectID($selected_project->getID()) as $option): ?>
 												<option value="<?php echo $option->getID(); ?>"<?php if ($selected_customdatatype[$customdatatype->getKey()] == $option->getID()): ?> selected<?php endif; ?>><?php echo $option->getName(); ?></option>
 												<?php endforeach; ?>
@@ -478,7 +478,7 @@
 											break;
 										case TBGCustomDatatype::COMPONENTS_CHOICE: ?>
 											<select name="<?php echo $customdatatype->getKey(); ?>_id" id="<?php echo $customdatatype->getKey(); ?>_id" style="width: 100%;">
-											<?php if ($selected_project instanceof TBGProject): ?>
+											<?php if ($selected_project instanceof \thebuggenie\entities\Project): ?>
 												<?php foreach (TBGComponent::getAllByProjectID($selected_project->getID()) as $option): ?>
 												<option value="<?php echo $option->getID(); ?>"<?php if ($selected_customdatatype[$customdatatype->getKey()] == $option->getID()): ?> selected<?php endif; ?>><?php echo $option->getName(); ?></option>
 												<?php endforeach; ?>
@@ -488,7 +488,7 @@
 											break;
 										case TBGCustomDatatype::RELEASES_CHOICE: ?>
 											<select name="<?php echo $customdatatype->getKey(); ?>_id" id="<?php echo $customdatatype->getKey(); ?>_id" style="width: 100%;">
-											<?php if ($selected_project instanceof TBGProject): ?>
+											<?php if ($selected_project instanceof \thebuggenie\entities\Project): ?>
 												<?php foreach (TBGBuild::getByProjectID($selected_project->getID()) as $option): ?>
 												<option value="<?php echo $option->getID(); ?>"<?php if ($selected_customdatatype[$customdatatype->getKey()] == $option->getID()): ?> selected<?php endif; ?>><?php echo $option->getName(); ?></option>
 												<?php endforeach; ?>
@@ -659,7 +659,7 @@
 										case TBGCustomDatatype::EDITIONS_CHOICE:
 											?>
 											<select name="<?php echo $customdatatype->getKey(); ?>_id" id="<?php echo $customdatatype->getKey(); ?>_id_additional">
-												<?php if ($selected_project instanceof TBGProject): ?>
+												<?php if ($selected_project instanceof \thebuggenie\entities\Project): ?>
 													<?php foreach (TBGEdition::getAllByProjectID($selected_project->getID()) as $option): ?>
 													<option value="<?php echo $option->getID(); ?>"<?php if ($selected_customdatatype[$customdatatype->getKey()] == $option->getID()): ?> selected<?php endif; ?>><?php echo $option->getName(); ?></option>
 													<?php endforeach; ?>
@@ -679,7 +679,7 @@
 										case TBGCustomDatatype::COMPONENTS_CHOICE:
 											?>
 											<select name="<?php echo $customdatatype->getKey(); ?>_id" id="<?php echo $customdatatype->getKey(); ?>_id_additional">
-												<?php if ($selected_project instanceof TBGProject): ?>
+												<?php if ($selected_project instanceof \thebuggenie\entities\Project): ?>
 													<?php foreach (TBGComponent::getAllByProjectID($selected_project->getID()) as $option): ?>
 													<option value="<?php echo $option->getID(); ?>"<?php if ($selected_customdatatype[$customdatatype->getKey()] == $option->getID()): ?> selected<?php endif; ?>><?php echo $option->getName(); ?></option>
 													<?php endforeach; ?>
@@ -690,7 +690,7 @@
 										case TBGCustomDatatype::RELEASES_CHOICE:
 											?>
 											<select name="<?php echo $customdatatype->getKey(); ?>_id" id="<?php echo $customdatatype->getKey(); ?>_id_additional">
-												<?php if ($selected_project instanceof TBGProject): ?>
+												<?php if ($selected_project instanceof \thebuggenie\entities\Project): ?>
 													<?php foreach (TBGBuild::getByProjectID($selected_project->getID()) as $option): ?>
 													<option value="<?php echo $option->getID(); ?>"<?php if ($selected_customdatatype[$customdatatype->getKey()] == $option->getID()): ?> selected<?php endif; ?>><?php echo $option->getName(); ?></option>
 													<?php endforeach; ?>
@@ -737,7 +737,7 @@
 							</div>
 						</li>
 					<?php endforeach; ?>
-					<?php TBGEvent::createNew('core', 'reportissue.listfields')->trigger(); ?>
+					<?php \caspar\core\Event::createNew('core', 'reportissue.listfields')->trigger(); ?>
 				</ul>
 				<div style="clear: both;"> </div>
 			</div>

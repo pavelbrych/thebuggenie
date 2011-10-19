@@ -1,12 +1,12 @@
 <?php if ($issue instanceof TBGIssue): ?>
 	<?php
 
-		$tbg_response->addBreadcrumb(__('Issues'), make_url('project_issues', array('project_key' => TBGContext::getCurrentProject()->getKey())), tbg_get_breadcrumblinks('project_summary', TBGContext::getCurrentProject()));
-		$tbg_response->addBreadcrumb($issue->getFormattedIssueNo(true, true), make_url('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())), $issuelist);
-		$tbg_response->setTitle('['.(($issue->isClosed()) ? mb_strtoupper(__('Closed')) : mb_strtoupper(__('Open'))) .'] ' . $issue->getFormattedIssueNo(true) . ' - ' . tbg_decodeUTF8($issue->getTitle()));
+		$csp_response->addBreadcrumb(__('Issues'), make_url('project_issues', array('project_key' => TBGContext::getCurrentProject()->getKey())), tbg_get_breadcrumblinks('project_summary', TBGContext::getCurrentProject()));
+		$csp_response->addBreadcrumb($issue->getFormattedIssueNo(true, true), make_url('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo())), $issuelist);
+		$csp_response->setTitle('['.(($issue->isClosed()) ? mb_strtoupper(__('Closed')) : mb_strtoupper(__('Open'))) .'] ' . $issue->getFormattedIssueNo(true) . ' - ' . tbg_decodeUTF8($issue->getTitle()));
 	
 	?>
-	<?php TBGEvent::createNew('core', 'viewissue_top', $issue)->trigger(); ?>
+	<?php \caspar\core\Event::createNew('core', 'viewissue_top', $issue)->trigger(); ?>
 	<?php if (TBGSettings::isUploadsEnabled() && $issue->canAttachFiles()): ?>
 		<?php include_component('main/uploader', array('issue' => $issue, 'mode' => 'issue')); ?>
 	<?php endif; ?>
@@ -29,12 +29,12 @@
 						</div>
 					</td>
 					<td class="title_left_images">
-						<?php if ($tbg_user->isGuest()): ?>
+						<?php if ($csp_user->isGuest()): ?>
 							<?php echo image_tag('star_faded.png', array('id' => 'issue_favourite_faded_'.$issue->getId(), 'title' => __('Please log in to bookmark issues'))); ?>
 						<?php else: ?>
 							<?php echo image_tag('spinning_20.gif', array('id' => 'issue_favourite_indicator_'.$issue->getId(), 'style' => 'display: none;')); ?>
-							<?php echo image_tag('star_faded.png', array('id' => 'issue_favourite_faded_'.$issue->getId(), 'style' => 'cursor: pointer;'.(($tbg_user->isIssueStarred($issue->getID())) ? 'display: none;' : ''), 'title' => __('Click to start following this issue'), 'onclick' => "TBG.Issues.toggleFavourite('".make_url('toggle_favourite_issue', array('issue_id' => $issue->getID()))."', ".$issue->getID().");")); ?>
-							<?php echo image_tag('star.png', array('id' => 'issue_favourite_normal_'.$issue->getId(), 'style' => 'cursor: pointer;'.((!$tbg_user->isIssueStarred($issue->getID())) ? 'display: none;' : ''), 'title' => __('Click to stop following this issue'), 'onclick' => "TBG.Issues.toggleFavourite('".make_url('toggle_favourite_issue', array('issue_id' => $issue->getID()))."', ".$issue->getID().");")); ?>
+							<?php echo image_tag('star_faded.png', array('id' => 'issue_favourite_faded_'.$issue->getId(), 'style' => 'cursor: pointer;'.(($csp_user->isIssueStarred($issue->getID())) ? 'display: none;' : ''), 'title' => __('Click to start following this issue'), 'onclick' => "TBG.Issues.toggleFavourite('".make_url('toggle_favourite_issue', array('issue_id' => $issue->getID()))."', ".$issue->getID().");")); ?>
+							<?php echo image_tag('star.png', array('id' => 'issue_favourite_normal_'.$issue->getId(), 'style' => 'cursor: pointer;'.((!$csp_user->isIssueStarred($issue->getID())) ? 'display: none;' : ''), 'title' => __('Click to stop following this issue'), 'onclick' => "TBG.Issues.toggleFavourite('".make_url('toggle_favourite_issue', array('issue_id' => $issue->getID()))."', ".$issue->getID().");")); ?>
 						<?php endif; ?>
 					</td>
 					<td class="title_left_images">
@@ -77,7 +77,7 @@
 							<table align="right">
 								<tr>
 									<td id="vote_down">
-										<?php $vote_down_options = ($issue->getProject()->isArchived() || $issue->hasUserVoted($tbg_user, false)) ? 'display: none;' : ''; ?>
+										<?php $vote_down_options = ($issue->getProject()->isArchived() || $issue->hasUserVoted($csp_user, false)) ? 'display: none;' : ''; ?>
 										<?php $vote_down_faded_options = ($vote_down_options == '') ? 'display: none;' : ''; ?>
 										<?php echo javascript_link_tag(image_tag('action_vote_minus.png'), array('onclick' => "TBG.Issues.voteDown('".make_url('issue_vote', array('issue_id' => $issue->getID(), 'vote' => 'down'))."');", 'id' => 'vote_down_link', 'class' => 'image', 'style' => $vote_down_options)); ?>
 										<?php echo image_tag('spinning_16.gif', array('id' => 'vote_down_indicator', 'style' => 'display: none;')); ?>
@@ -88,7 +88,7 @@
 										<div class="votes_header"><?php echo __('Votes'); ?></div>
 									</td>
 									<td id="vote_up">
-										<?php $vote_up_options = ($issue->getProject()->isArchived() || $issue->hasUserVoted($tbg_user, true)) ? 'display: none;' : ''; ?>
+										<?php $vote_up_options = ($issue->getProject()->isArchived() || $issue->hasUserVoted($csp_user, true)) ? 'display: none;' : ''; ?>
 										<?php $vote_up_faded_options = ($vote_up_options == '') ? 'display: none;' : ''; ?>
 										<?php echo javascript_link_tag(image_tag('action_vote_plus.png'), array('onclick' => "TBG.Issues.voteUp('".make_url('issue_vote', array('issue_id' => $issue->getID(), 'vote' => 'up'))."');", 'id' => 'vote_up_link', 'class' => 'image', 'style' => $vote_up_options)); ?>
 										<?php echo image_tag('spinning_16.gif', array('id' => 'vote_up_indicator', 'style' => 'display: none;')); ?>
@@ -211,7 +211,7 @@
 				<?php endif; ?>
 				<?php if ($issue->isBeingWorkedOn() && $issue->isOpen()): ?>
 					<div class="issue_info information" id="viewissue_being_worked_on">
-						<?php if ($issue->getUserWorkingOnIssue()->getID() == $tbg_user->getID()): ?>
+						<?php if ($issue->getUserWorkingOnIssue()->getID() == $csp_user->getID()): ?>
 							<?php echo __('You have been working on this issue since %time%', array('%time%' => tbg_formatTime($issue->getWorkedOnSince(), 6))); ?>
 						<?php elseif ($issue->getAssignee() instanceof TBGTeam): ?>
 							<?php echo __('%teamname% has been working on this issue since %time%', array('%teamname%' => $issue->getAssignee()->getName(), '%time%' => tbg_formatTime($issue->getWorkedOnSince(), 6))); ?>
@@ -288,8 +288,8 @@
 									<br>
 									<label for="move_issue_project"><?php echo __('Move issue to'); ?></label><br>
 									<select name="project_id">
-										<?php foreach (TBGProject::getAll() as $project): ?>
-											<?php if (!$tbg_user->canReportIssues($project) && $project->getID() != $issue->getProject()->getID()) continue; ?>
+										<?php foreach (\thebuggenie\entities\Project::getAll() as $project): ?>
+											<?php if (!$csp_user->canReportIssues($project) && $project->getID() != $issue->getProject()->getID()) continue; ?>
 											<option value="<?php echo $project->getID(); ?>"<?php if ($project->getID() == $issue->getProject()->getID()): ?> selected<?php endif; ?>><?php echo $project->getName(); ?></option>
 										<?php endforeach; ?>
 									</select>
@@ -313,13 +313,13 @@
 			<div id="issue_view">
 				<fieldset id="issue_details">
 					<legend><?php echo __('Issue details'); ?></legend>
-					<?php TBGEvent::createNew('core', 'viewissue_left_top', $issue)->trigger(); ?>
+					<?php \caspar\core\Event::createNew('core', 'viewissue_left_top', $issue)->trigger(); ?>
 					<?php include_component('main/issuedetailslisteditable', array('issue' => $issue)); ?>
 					<div style="clear: both; margin-bottom: 5px;"> </div>
-					<?php TBGEvent::createNew('core', 'viewissue_left_bottom', $issue)->trigger(); ?>
+					<?php \caspar\core\Event::createNew('core', 'viewissue_left_bottom', $issue)->trigger(); ?>
 				</fieldset>
 				<div class="issue_main">
-					<?php TBGEvent::createNew('core', 'viewissue_right_top', $issue)->trigger(); ?>
+					<?php \caspar\core\Event::createNew('core', 'viewissue_right_top', $issue)->trigger(); ?>
 					<fieldset id="description_field"<?php if (!$issue->isDescriptionVisible()): ?> style="display: none;"<?php endif; ?> class="viewissue_description<?php if ($issue->isDescriptionChanged()): ?> issue_detail_changed<?php endif; ?><?php if (!$issue->isDescriptionMerged()): ?> issue_detail_unmerged<?php endif; ?> hoverable">
 						<legend id="description_header">
 							<?php if ($issue->isEditable() && $issue->canEditDescription()): ?>
@@ -378,11 +378,11 @@
 					</fieldset>
 					<br />
 					<?php include_component('main/issuemaincustomfields', array('issue' => $issue)); ?>
-					<?php TBGEvent::createNew('core', 'viewissue_right_bottom', $issue)->trigger(); ?>
+					<?php \caspar\core\Event::createNew('core', 'viewissue_right_bottom', $issue)->trigger(); ?>
 				</div>
 			</div>
 		</div>
-		<?php TBGEvent::createNew('core', 'viewissue_before_tabs', $issue)->trigger(); ?>
+		<?php \caspar\core\Event::createNew('core', 'viewissue_before_tabs', $issue)->trigger(); ?>
 		<div style="clear: both; height: 30px; margin: 20px 5px 0 5px;" class="tab_menu">
 			<ul id="viewissue_menu">
 				<li id="tab_comments" class="selected"><?php echo javascript_link_tag(image_tag('icon_comments.png', array('style' => 'float: left; margin-right: 5px;')) . __('Comments (%count%)', array('%count%' => '<span id="viewissue_comment_count">'.$issue->getCommentCount().'</span>')), array('onclick' => "TBG.Main.Helpers.tabSwitcher('tab_comments', 'viewissue_menu');")); ?></li>
@@ -412,11 +412,11 @@
 				<li id="tab_affected"><?php echo javascript_link_tag(image_tag('cfg_icon_projecteditionsbuilds.png', array('style' => 'float: left; margin-right: 5px;')) . __('Affected items (%count%)', array('%count%' => '<span id="viewissue_affects_count">'.$count.'</span>')), array('onclick' => "TBG.Main.Helpers.tabSwitcher('tab_affected', 'viewissue_menu');")); ?></li>
 				<li id="tab_related_issues_and_tasks"><?php echo javascript_link_tag(image_tag('icon_related_issues.png', array('style' => 'float: left; margin-right: 5px;')) . __('Related issues and tasks (%count%)', array('%count%' => '<span id="viewissue_duplicate_issues_count">'.(count($issue->getParentIssues())+count($issue->getChildIssues())).'</span>')), array('onclick' => "TBG.Main.Helpers.tabSwitcher('tab_related_issues_and_tasks', 'viewissue_menu');")); ?></li>
 				<li id="tab_duplicate_issues"><?php echo javascript_link_tag(image_tag('icon_duplicate_issues.png', array('style' => 'float: left; margin-right: 5px;')) . __('Duplicate issues (%count%)', array('%count%' => '<span id="viewissue_duplicate_issues_count">'.(count($issue->getDuplicateIssues())).'</span>')), array('onclick' => "TBG.Main.Helpers.tabSwitcher('tab_duplicate_issues', 'viewissue_menu');")); ?></li>
-				<?php TBGEvent::createNew('core', 'viewissue_tabs', $issue)->trigger(); ?>
+				<?php \caspar\core\Event::createNew('core', 'viewissue_tabs', $issue)->trigger(); ?>
 			</ul>
 		</div>
 		<div id="viewissue_menu_panes">
-			<?php TBGEvent::createNew('core', 'viewissue_tab_panes_front', $issue)->trigger(); ?>
+			<?php \caspar\core\Event::createNew('core', 'viewissue_tab_panes_front', $issue)->trigger(); ?>
 			<div id="tab_comments_pane" style="padding-top: 0; margin: 0 5px 0 5px;" class="comments">
 				<div id="viewissue_comments">
 					<?php include_template('main/comments', array('target_id' => $issue->getID(), 'target_type' => TBGComment::TYPE_ISSUE, 'comment_count_div' => 'viewissue_comment_count', 'save_changes_checked' => $issue->hasUnsavedChanges(), 'issue' => $issue, 'forward_url' => make_url('viewissue', array('project_key' => $issue->getProject()->getKey(), 'issue_no' => $issue->getFormattedIssueNo()), false))); ?>
@@ -538,9 +538,9 @@
 					<?php include_component('main/issueaffected', array('issue' => $issue)); ?>
 				</div>
 			</div>
-			<?php TBGEvent::createNew('core', 'viewissue_tab_panes_back', $issue)->trigger(); ?>
+			<?php \caspar\core\Event::createNew('core', 'viewissue_tab_panes_back', $issue)->trigger(); ?>
 		</div>
-		<?php TBGEvent::createNew('core', 'viewissue_after_tabs', $issue)->trigger(); ?>
+		<?php \caspar\core\Event::createNew('core', 'viewissue_after_tabs', $issue)->trigger(); ?>
 	</div>
 <?php else: ?>
 	<div class="rounded_box red borderless" id="notfound_error">

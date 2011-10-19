@@ -1,0 +1,166 @@
+<?php
+
+	namespace thebuggenie\tables;
+
+	use b2db\Core,
+		b2db\Criteria,
+		b2db\Criterion;
+
+	/**
+	 * Edition assignees table
+	 *
+	 * @author Daniel Andre Eikeland <zegenie@zegeniestudios.net>
+	 * @version 3.1
+	 * @license http://www.opensource.org/licenses/mozilla1.1.php Mozilla Public License 1.1 (MPL 1.1)
+	 * @package thebuggenie
+	 * @subpackage tables
+	 */
+
+	/**
+	 * Edition assignees table
+	 *
+	 * @package thebuggenie
+	 * @subpackage tables
+	 */
+	class EditionAssignees extends ScopedTable
+	{
+
+		const B2DB_TABLE_VERSION = 1;
+		const B2DBNAME = 'editionassignees';
+		const ID = 'editionassignees.id';
+		const SCOPE = 'editionassignees.scope';
+		const UID = 'editionassignees.uid';
+		const TID = 'editionassignees.tid';
+		const EDITION_ID = 'editionassignees.edition_id';
+		const TARGET_TYPE = 'editionassignees.target_type';
+		
+		protected function _setup()
+		{
+			parent::_addInteger(self::TARGET_TYPE, 5);
+			parent::_addForeignKeyColumn(self::EDITION_ID, $this->_connection->getTable('\\thebuggenie\\tables\\Editions'), Editions::ID);
+			parent::_addForeignKeyColumn(self::UID, $this->_connection->getTable('\\thebuggenie\\tables\Users'), Users::ID);
+			parent::_addForeignKeyColumn(self::TID, $this->_connection->getTable('\\thebuggenie\\tables\\Teams'), Teams::ID);
+			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), Scopes::ID);
+		}
+		
+		public function getByEditionIDs($edition_ids)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::EDITION_ID, $edition_ids, Criteria::DB_IN);
+			$res = $this->doSelect($crit);
+			return $res;
+		}
+
+		public function getByEditionID($edition_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::EDITION_ID, $edition_id);
+			$res = $this->doSelect($crit);
+			
+			$users = array();
+			$teams = array();
+			
+			if ($res)
+			{
+				while ($row = $res->getNextRow())
+				{
+					if ($row->get(self::UID) != 0)
+						$users[$row->get(self::UID)][$row->get(self::TARGET_TYPE)] = true;
+					else
+						$teams[$row->get(self::TID)][$row->get(self::TARGET_TYPE)] = true;
+				}
+			}
+			
+			return array('users' => $users, 'teams' => $teams);
+		}
+		
+		public function deleteByEditionID($edition_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::EDITION_ID, $edition_id);
+			$res = $this->doDelete($crit);
+			return $res;
+		}
+
+		public function getProjectsByUserID($user_id)
+		{
+			$projects = array();
+			
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::UID, $user_id);
+			if ($res = $this->doSelect($crit))
+			{
+				foreach ($res->getNextRow() as $row)
+				{
+					$projects[$row->get(Editions::PROJECT)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(Editions::PROJECT)); 
+				}
+			}
+			return $projects;
+		}
+		
+		public function getProjectsByTeamID($team_id)
+		{
+			$projects = array();
+			
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::TID, $team_id);
+			if ($res = $this->doSelect($crit))
+			{
+				foreach ($res->getNextRow() as $row)
+				{
+					$projects[$row->get(Editions::PROJECT)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(Editions::PROJECT)); 
+				}
+			}
+			return $projects;
+		}
+
+		public function addAssigneeToEdition($edition_id, $assignee, $role)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::EDITION_ID, $edition_id);
+			$crit->addWhere(self::TARGET_TYPE, $role);
+			switch (true)
+			{
+				case ($assignee instanceof TBGUser):
+					$crit->addWhere(self::UID, $assignee->getID());
+					break;
+				case ($assignee instanceof TBGTeam):
+					$crit->addWhere(self::TID, $assignee->getID());
+					break;
+			}
+			$res = $this->doSelectOne($crit);
+
+			if (!$res instanceof \b2db\Row)
+			{
+				$crit = $this->getCriteria();
+				switch (true)
+				{
+					case ($assignee instanceof TBGUser):
+						$crit->addInsert(self::UID, $assignee->getID());
+						break;
+					case ($assignee instanceof TBGTeam):
+						$crit->addInsert(self::TID, $assignee->getID());
+						break;
+				}
+				$crit->addInsert(self::EDITION_ID, $edition_id);
+				$crit->addInsert(self::TARGET_TYPE, $role);
+				$crit->addInsert(self::SCOPE, \thebuggenie\core\Context::getScope()->getID());
+				$res = $this->doInsert($crit);
+				return true;
+			}
+			return false;
+		}
+
+		public function removeAssigneeFromEdition($assignee_type, $assignee_id, $edition_id)
+		{
+			$crit = $this->getCriteria();
+			$crit->addWhere(self::EDITION_ID, $edition_id);
+			if ($assignee_type == 'team')
+				$crit->addWhere(self::TID, $assignee_id);
+			else
+				$crit->addWhere(self::UID, $assignee_id);
+
+			$this->doDelete($crit);
+		}
+
+	}

@@ -42,7 +42,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = \caspar\core\Caspar::factory()->TBGResolution($row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->manufacture('TBGResolution', $row_id, $row);
 					}
 				}
 			}
@@ -71,7 +71,7 @@
 		public static function createNew($name)
 		{
 			$res = parent::_createNew($name, self::RESOLUTION);
-			return \caspar\core\Caspar::factory()->TBGResolution($res->getInsertID());
+			return \caspar\core\Caspar::factory()->manufacture('TBGResolution', $res->getInsertID());
 		}
 
 		protected function _generateKey()

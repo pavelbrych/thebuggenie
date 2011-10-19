@@ -47,7 +47,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = \caspar\core\Caspar::factory()->TBGProjectRole($row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->manufacture('TBGProjectRole', $row_id, $row);
 					}
 				}
 			}

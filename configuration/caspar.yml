@@ -7,4 +7,5 @@ core:
   css: []
   javascripts: ['prototype', 'scriptaculous']
   user_classname: \thebuggenie\core\User
+  response_classname: \thebuggenie\core\Response
 

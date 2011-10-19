@@ -7,7 +7,7 @@
 		<div class="user_realname">
 			<?php echo $user->getRealname(); ?> <span class="user_username"><?php echo $user->getUsername(); ?></span>
 			<div class="user_status"><?php echo $user->getState()->getName(); ?></div>
-			<?php if ($user->isEmailPublic() || $tbg_user->canAccessConfigurationPage(TBGSettings::CONFIGURATION_SECTION_USERS)): ?>
+			<?php if ($user->isEmailPublic() || $csp_user->canAccessConfigurationPage(TBGSettings::CONFIGURATION_SECTION_USERS)): ?>
 				<div class="user_email"><?php echo $user->getEmail(); ?></div>
 			<?php endif; ?>
 		</div>
@@ -25,7 +25,7 @@
 					</span>
 				</div>
 			<?php endif; ?>
-			<?php if ($tbg_user->canAccessConfigurationPage(TBGSettings::CONFIGURATION_SECTION_USERS)): ?>
+			<?php if ($csp_user->canAccessConfigurationPage(TBGSettings::CONFIGURATION_SECTION_USERS)): ?>
 				<div style="padding: 2px;"><?php echo link_tag(make_url('configure_users', array('finduser' => $user->getUsername())), __('Edit this user'), array('target' => '_new')); ?></div>
 			<?php endif; ?>
 		<?php endif; ?>
@@ -77,8 +77,8 @@
 				</ul>
 			<?php endif; ?>			
 		</div>
-		<?php TBGEvent::createNew('core', 'usercardactions_top', $user)->trigger(); ?>
-		<?php TBGEvent::createNew('core', 'usercardactions_bottom', $user)->trigger(); ?>
+		<?php \caspar\core\Event::createNew('core', 'usercardactions_top', $user)->trigger(); ?>
+		<?php \caspar\core\Event::createNew('core', 'usercardactions_bottom', $user)->trigger(); ?>
 	</div>
 	<div class="backdrop_detail_footer">
 		<a href="javascript:void(0);" onclick="TBG.Main.Helpers.Backdrop.reset();"><?php echo __('Close'); ?></a>

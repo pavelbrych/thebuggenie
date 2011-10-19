@@ -3,13 +3,13 @@
 	class TBGWikiArticle extends TBGIdentifiableClass
 	{
 
-		static protected $_b2dbtablename = 'TBGArticlesTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Articles';
 		
 		/**
 		 * The article author
 		 *
-		 * @var TBGUser
-		 * @Class TBGUser
+		 * @Class \thebuggenie\entities\User
+		 * @Class \thebuggenie\entities\User
 		 */
 		protected $_author = null;
 
@@ -199,7 +199,7 @@
 		public function setContent($content)
 		{
 			$this->_content = str_replace("\r\n", "\n", $content);
-			$parser = new TBGTextParser($content);
+			$parser = new \thebuggenie\core\TextParser($content);
 			$parser->doParse();
 			$this->_populateCategories($parser->getCategories());
 		}
@@ -322,7 +322,7 @@
 
 		protected function _retrieveLinksAndCategoriesFromContent($options = array())
 		{
-			$parser = new TBGTextParser(html_entity_decode($this->_content));
+			$parser = new \thebuggenie\core\TextParser(html_entity_decode($this->_content));
 			$options['no_code_highlighting'] = true;
 			$parser->doParse($options);
 			return array($parser->getInternalLinks(), $parser->getCategories());
@@ -624,12 +624,12 @@
 			if(count($namespaces) > 0)
 			{
 				$key = $namespaces[0];
-				$row = TBGProjectsTable::getTable()->getByKey($key);
+				$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($key);
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
-					if ($project instanceof TBGProject)
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+					if ($project instanceof \thebuggenie\entities\Project)
 					{
 						if ($project->isArchived())
 							return false;
@@ -647,12 +647,12 @@
 			if(count($namespaces) > 0)
 			{
 				$key = $namespaces[0];
-				$row = TBGProjectsTable::getTable()->getByKey($key);
+				$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($key);
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
-					if ($project instanceof TBGProject)
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+					if ($project instanceof \thebuggenie\entities\Project)
 					{
 						if ($project->isArchived())
 							return false;
@@ -675,12 +675,12 @@
 			if(count($namespaces) > 0)
 			{
 				$key = $namespaces[0];
-				$row = TBGProjectsTable::getTable()->getByKey($key);
+				$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($key);
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
-					if ($project instanceof TBGProject)
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+					if ($project instanceof \thebuggenie\entities\Project)
 					{
 						if (!$project->hasAccess())
 							return false;

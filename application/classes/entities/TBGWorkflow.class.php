@@ -19,14 +19,14 @@
 	class TBGWorkflow extends TBGIdentifiableClass
 	{
 
-		static protected $_b2dbtablename = 'TBGWorkflowsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Workflows';
 		
 		protected static $_workflows = null;
 		
 		/**
 		 * The default (core) workflow
 		 * 
-		 * @var TBGWorkflow
+		 * @Class \thebuggenie\entities\Workflow
 		 */
 		protected static $_core_workflow = null;
 
@@ -63,7 +63,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$workflow = \caspar\core\Caspar::factory()->TBGWorkflow($row->get(TBGWorkflowsTable::ID), $row);
+						$workflow = \caspar\core\Caspar::factory()->manufacture('TBGWorkflow', $row->get(TBGWorkflowsTable::ID), $row);
 						
 						if (self::$_core_workflow === null)
 							self::$_core_workflow = $workflow;

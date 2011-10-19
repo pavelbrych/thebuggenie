@@ -1,7 +1,7 @@
 <?php 
 
-	$tbg_response->setTitle(__('Frontpage'));
-	$tbg_response->addBreadcrumb(__('Frontpage'), make_url('home'), tbg_get_breadcrumblinks('main_links'));
+	$csp_response->setTitle(__('Frontpage'));
+	$csp_response->addBreadcrumb(__('Frontpage'), make_url('home'), tbg_get_breadcrumblinks('main_links'));
 
 ?>
 <?php if ($show_project_config_link && $show_project_list): ?>
@@ -15,10 +15,10 @@
 	<tr>
 		<td class="side_bar">
 			<?php include_template('main/menulinks', array('links' => $links, 'target_type' => 'main_menu', 'target_id' => 0, 'title' => __('Quick links'))); ?>
-			<?php TBGEvent::createNew('core', 'index_left')->trigger(); ?>
+			<?php \caspar\core\Event::createNew('core', 'index_left')->trigger(); ?>
 		</td>
 		<td class="main_area frontpage">
-			<?php TBGEvent::createNew('core', 'index_right_top')->trigger(); ?>
+			<?php \caspar\core\Event::createNew('core', 'index_right_top')->trigger(); ?>
 			<?php if ($show_project_list): ?>
 				<div class="project_overview">
 					<div class="header">
@@ -46,7 +46,7 @@
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
-			<?php TBGEvent::createNew('core', 'index_right_bottom')->trigger(); ?>
+			<?php \caspar\core\Event::createNew('core', 'index_right_bottom')->trigger(); ?>
 		</td>
 	</tr>
 </table>

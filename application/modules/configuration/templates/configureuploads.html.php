@@ -1,6 +1,6 @@
 <?php
 
-	$tbg_response->setTitle(__('Configure uploads &amp; attachments'));
+	$csp_response->setTitle(__('Configure uploads &amp; attachments'));
 	
 ?>
 <script type="text/javascript">

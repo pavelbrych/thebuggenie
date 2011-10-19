@@ -11,7 +11,7 @@
 					<option value="!="<?php if ($selected_operator == '!='): ?> selected<?php endif; ?>><?php echo __('%field% is not %value%', array('%field%' => '', '%value%' => '')); ?></option>
 				</select>
 				<select name="filters[project_id][<?php echo $key; ?>][value]" id="filter_project_id_<?php echo $key; ?>">
-					<?php foreach (TBGProject::getAll() as $project): ?>
+					<?php foreach (\thebuggenie\entities\Project::getAll() as $project): ?>
 						<option value="<?php echo $project->getID(); ?>"<?php if ($selected_value == $project->getID()): ?> selected<?php endif; ?>><?php echo $project->getName(); ?></option>
 					<?php endforeach; ?>
 				</select>

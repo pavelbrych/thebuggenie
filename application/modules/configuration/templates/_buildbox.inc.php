@@ -1,6 +1,6 @@
 <?php $b_id = $build->getID(); ?>
 <li id="show_build_<?php print $b_id; ?>" class="rounded_box invisible buildbox">
-	<?php if ($tbg_user->canManageProjectReleases($build->getProject())): ?>
+	<?php if ($csp_user->canManageProjectReleases($build->getProject())): ?>
 		<div class="build_buttons">
 			<button class="button button-silver" onclick="TBG.Main.Helpers.Backdrop.show('<?php echo make_url('get_partial_for_backdrop', array('key' => 'project_build', 'project_id' => $build->getProject()->getId(), 'build_id' => $build->getId())); ?>');"><?php echo __('Edit'); ?></button>
 			<button class="button button-silver" onclick="TBG.Main.Helpers.Dialog.show('<?php echo __('Delete this release?'); ?>', '<?php echo __('Do you really want to delete this release?').'<br>'.__('Deleting this release will make it unavailable for download, and remove it from any associated issue reports or feature requests.').'<br><b>'.__('This action cannot be reverted').'</b>'; ?>', {yes: {click: function() {TBG.Project.Build.remove('<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'delete')); ?>', <?php print $b_id; ?>, '<?php echo ($build->isLocked()) ? "active" : "archived"; ?>');}}, no: {click: TBG.Main.Helpers.Dialog.dismiss}});"><?php echo __('Delete'); ?></button>
@@ -23,7 +23,7 @@
 		<?php endif; ?>
 	</div>
 </li>
-<?php /* if ($tbg_user->canManageProjectReleases($build->getProject())): ?>
+<?php /* if ($csp_user->canManageProjectReleases($build->getProject())): ?>
 	<tr id="edit_build_<?php print $b_id; ?>" class="selected_green" style="display: none;">
 		<td style="width: 20px; padding: 2px; padding-top: 10px;" valign="top"><?php echo image_tag('icon_edit_build.png'); ?></td>
 		<td style="width: auto; padding: 2px;" colspan="2">
@@ -98,7 +98,7 @@
 						<td style="width: auto;">
 							<select name="issuetype" id="build_<?php echo $b_id; ?>_issuetype">
 								<option value="" selected><?php echo __('All issue types'); ?></option>
-								<?php if ($build->getProject() instanceof TBGProject): ?>
+								<?php if ($build->getProject() instanceof \thebuggenie\entities\Project): ?>
 									<?php foreach (TBGIssuetype::getAll($build->getProject()->getID()) as $anIssuetype): ?>
 										<option value=<?php echo $anIssuetype->getID(); ?>><?php echo $anIssuetype->getName(); ?></option>
 									<?php endforeach; ?>

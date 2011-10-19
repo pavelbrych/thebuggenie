@@ -25,7 +25,7 @@
 		 * This components project
 		 *
 		 * @var unknown_type
-		 * @Class TBGProject
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_project = null;
 		
@@ -38,7 +38,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$component = \caspar\core\Caspar::factory()->TBGComponent($row->get(TBGComponentsTable::ID), $row);
+					$component = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $row->get(TBGComponentsTable::ID), $row);
 					if ($component->hasAccess())
 					{
 						$retval[$component->getID()] = $component;
@@ -53,7 +53,7 @@
 			if ($is_new)
 			{
 				TBGContext::setPermission("canseecomponent", $this->getID(), "core", 0, \caspar\core\Caspar::getUser()->getGroup()->getID(), 0, true);
-				TBGEvent::createNew('core', 'TBGComponent::createNew', $this)->trigger();
+				\caspar\core\Event::createNew('core', 'TBGComponent::createNew', $this)->trigger();
 			}
 		}
 		

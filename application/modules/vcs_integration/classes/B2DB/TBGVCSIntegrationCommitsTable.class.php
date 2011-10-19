@@ -45,7 +45,7 @@
 			parent::_addText(self::DATA, false);
 			parent::_addForeignKeyColumn(self::SCOPE, TBGScopesTable::getTable(),  TBGScopesTable::ID);
 			parent::_addForeignKeyColumn(self::AUTHOR, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
-			parent::_addForeignKeyColumn(self::PROJECT_ID, TBGProjectsTable::getTable(), TBGProjectsTable::ID);
+			parent::_addForeignKeyColumn(self::PROJECT_ID, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects'), TBGProjectsTable::ID);
 		}
 		
 		/**

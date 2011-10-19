@@ -2,7 +2,7 @@
 	<div class="backdrop_detail_header"><?php echo __('Perform workflow step'); ?></div>
 	<div id="backdrop_detail_content">
 		<div class="header"><?php echo __('%number_of% issues selected', array('%number_of%' => count($issues))); ?></div>
-		<?php if (!$project instanceof TBGProject): ?>
+		<?php if (!$project instanceof \thebuggenie\entities\Project): ?>
 			<div class="content faded_out">
 				<?php echo __('You can only apply workflow transitions on issues in the same project.'); ?>
 			</div>

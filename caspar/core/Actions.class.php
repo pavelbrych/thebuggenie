@@ -177,7 +177,7 @@
 		 */
 		public function renderTemplate($template, $params = array())
 		{
-			echo TBGActionComponent::includeTemplate($template, $params);
+			echo \caspar\core\ActionComponents::includeTemplate($template, $params);
 			return true;
 		}
 
@@ -191,7 +191,7 @@
 		 */
 		public function renderComponent($template, $params = array())
 		{
-			echo TBGActionComponent::includeComponent($template, $params);
+			echo \caspar\core\ActionComponents::includeComponent($template, $params);
 			return true;
 		}
 
@@ -207,7 +207,7 @@
 		{
 			$current_content = ob_get_clean();
 			ob_start('mb_output_handler');
-			echo TBGActionComponent::includeComponent($template, $params);
+			echo \caspar\core\ActionComponents::includeComponent($template, $params);
 			$component_content = ob_get_clean();
 			ob_start('mb_output_handler');
 			echo $current_content;
@@ -239,7 +239,7 @@
 		{
 			$current_content = ob_get_clean();
 			ob_start('mb_output_handler');
-			echo TBGActionComponent::includeTemplate($template, $params);
+			echo \caspar\core\ActionComponents::includeTemplate($template, $params);
 			$template_content = ob_get_clean();
 			ob_start('mb_output_handler');
 			echo $current_content;

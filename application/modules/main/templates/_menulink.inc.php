@@ -1,7 +1,7 @@
 <tr id="<?php echo $link['target_type']; ?>_<?php echo $link['target_id']; ?>_links_<?php echo $link_id; ?>">
 	<td>
 		<?php if ($link['target_type'] == 'wiki' && $link['url'] != ''): ?>
-			<?php if ($tbg_routing->getCurrentRouteModule() == 'publish' && $tbg_request->getParameter('article_name') == $link['url']): ?>
+			<?php if ($csp_routing->getCurrentRouteModule() == 'publish' && $csp_request->getParameter('article_name') == $link['url']): ?>
 				<?php echo link_tag(make_url('publish_article', array('article_name' => $link['url'])), (($link['description'] != '') ? $link['description'] : $link['url']), array('class' => 'selected')); ?>
 			<?php else: ?>
 				<?php echo link_tag(make_url('publish_article', array('article_name' => $link['url'])), (($link['description'] != '') ? $link['description'] : $link['url'])); ?>
@@ -16,14 +16,14 @@
 			&nbsp;
 		<?php endif; ?>
 	</td>
-	<?php if ($tbg_user->canEditMainMenu()): ?>
+	<?php if ($csp_user->canEditMainMenu()): ?>
 		<td style="width: 20px;">
 			<?php echo javascript_link_tag(image_tag('action_delete.png'), array('class' => 'image', 'id' => $link['target_type'].'_'.$link['target_id'].'_links_' . $link_id . '_remove_link', 'onclick' => "$('{$link['target_type']}_{$link['target_id']}_links_{$link_id}_remove_confirm').toggle();")); ?>
 			<?php echo image_tag('spinning_16.gif', array('id' => "{$link['target_type']}_{$link['target_id']}_links_{$link_id}_remove_indicator", 'style' => 'display: none;')); ?>
 		</td>
 	<?php endif; ?>
 </tr>
-<?php if ($tbg_user->canEditMainMenu()): ?>
+<?php if ($csp_user->canEditMainMenu()): ?>
 	<tr id="<?php echo $link['target_type']; ?>_<?php echo $link['target_id']; ?>_links_<?php echo $link_id; ?>_remove_confirm" style="display: none;">
 		<td colspan="2">
 			<div class="rounded_box white shadowed" style="position: absolute; padding: 0 5px 5px 5px; font-size: 12px; width: 300px; z-index: 10001;">

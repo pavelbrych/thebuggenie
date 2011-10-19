@@ -4,6 +4,8 @@
 
 	use caspar\core\Request,
 		caspar\core\Event,
+		caspar\core\Caspar,
+		caspar\core\ActionComponents,
 		thebuggenie\core\Context;
 	
 	/**
@@ -61,7 +63,7 @@
 				Event::listen('core', 'breadcrumb_main_links', array($this, 'listen_BreadcrumbMainLinks'));
 				Event::listen('core', 'breadcrumb_project_links', array($this, 'listen_BreadcrumbProjectLinks'));
 			}
-			Event::listen('core', 'TBGProject::createNew', array($this, 'listen_createNewProject'));
+			Event::listen('core', '\thebuggenie\entities\Project::createNew', array($this, 'listen_createNewProject'));
 			Event::listen('core', 'upload', array($this, 'listen_upload'));
 			Event::listen('core', 'quicksearch_dropdown_firstitems', array($this, 'listen_quicksearchDropdownFirstItems'));
 			Event::listen('core', 'quicksearch_dropdown_founditems', array($this, 'listen_quicksearchDropdownFoundItems'));
@@ -75,7 +77,7 @@
 			Context::setPermission('manage_billboard', 0, 'publish', 0, 1, 0, true, $scope);
 			$this->saveSetting('allow_camelcase_links', 1);
 
-			Context::getRouting()->addRoute('publish_article', '/wiki/:article_name', 'publish', 'showArticle');
+			Caspar::getRouting()->addRoute('publish_article', '/wiki/:article_name', 'publish', 'showArticle');
 			\application\core\TextParser::addRegex('/(?<![\!|\"|\[|\>|\/\:])\b[A-Z]+[a-z]+[A-Z][A-Za-z]*\b/', array($this, 'getArticleLinkTag'));
 			\application\core\TextParser::addRegex('/(?<!")\![A-Z]+[a-z]+[A-Z][A-Za-z]*\b/', array($this, 'stripExclamationMark'));
 		}
@@ -170,7 +172,7 @@
 
 		public function getRoute()
 		{
-			return Context::getRouting()->generate('publish');
+			return Caspar::getRouting()->generate('publish');
 		}
 
 		public function hasProjectAwareRoute()
@@ -180,7 +182,7 @@
 
 		public function getProjectAwareRoute($project_key)
 		{
-			return Context::getRouting()->generate('publish_article', array('article_name' => ucfirst($project_key).":MainPage"));
+			return Caspar::getRouting()->generate('publish_article', array('article_name' => ucfirst($project_key).":MainPage"));
 		}
 
 		public function isWikiTabsEnabled()
@@ -200,7 +202,7 @@
 					$content = file_get_contents(THEBUGGENIE_MODULES_PATH . 'publish' . DS . 'fixtures' . DS . $article_name);
 					TBGWikiArticle::createNew(urldecode($article_name), $content, true, null, array('overwrite' => true, 'noauthor' => true));
 				}
-				Context::setMessage('module_message', Context::getI18n()->__('%number_of_articles% articles imported successfully', array('%number_of_articles%' => $cc)));
+				Context::setMessage('module_message', Caspar::getI18n()->__('%number_of_articles% articles imported successfully', array('%number_of_articles%' => $cc)));
 			}
 			else
 			{
@@ -218,7 +220,7 @@
 		public function getMenuTitle($project_context = null)
 		{
 			$project_context = ($project_context !== null) ? $project_context : Context::isProjectContext();
-			$i18n = Context::getI18n();
+			$i18n = Caspar::getI18n();
 			if (($menu_title = $this->getSetting('menu_title')) !== null)
 			{
 				switch ($menu_title)
@@ -246,12 +248,12 @@
 		public function getArticleLinkTag($matches)
 		{
 			$article_name = $matches[0];
-			if (TBGTextParser::getCurrentParser() instanceof TBGTextParser)
-				TBGTextParser::getCurrentParser()->addInternalLinkOccurrence($article_name);
+			if (\thebuggenie\core\TextParser::getCurrentParser() instanceof \thebuggenie\core\TextParser)
+				\thebuggenie\core\TextParser::getCurrentParser()->addInternalLinkOccurrence($article_name);
 			$article_name = $this->getSpacedName($matches[0]);
 			if (!Context::isCLI())
 			{
-				Context::loadLibrary('ui');
+				Caspar::loadLibrary('ui');
 				return link_tag(make_url('publish_article', array('article_name' => $matches[0])), $article_name);
 			}
 			else
@@ -312,7 +314,7 @@
 			$article = $this->getFrontpageArticle('main');
 			if ($article instanceof TBGWikiArticle)
 			{
-				TBGActionComponent::includeComponent('publish/articledisplay', array('article' => $article, 'show_title' => false, 'show_details' => false, 'show_actions' => false, 'embedded' => true));
+				ActionComponents::includeComponent('publish/articledisplay', array('article' => $article, 'show_title' => false, 'show_details' => false, 'show_actions' => false, 'embedded' => true));
 			}
 		}
 
@@ -321,32 +323,32 @@
 			$article = $this->getFrontpageArticle('menu');
 			if ($article instanceof TBGWikiArticle)
 			{
-				TBGActionComponent::includeComponent('publish/articledisplay', array('article' => $article, 'show_title' => false, 'show_details' => false, 'show_actions' => false, 'embedded' => true));
+				ActionComponents::includeComponent('publish/articledisplay', array('article' => $article, 'show_title' => false, 'show_details' => false, 'show_actions' => false, 'embedded' => true));
 			}
 		}
 
 		public function listen_projectLinks(Event $event)
 		{
-			TBGActionComponent::includeTemplate('publish/projectlinks', array('project' => $event->getSubject()));
+			ActionComponents::includeTemplate('publish/projectlinks', array('project' => $event->getSubject()));
 		}
 
 		public function listen_BreadcrumbMainLinks(Event $event)
 		{
-			$link = array('url' => Context::getRouting()->generate('publish'), 'title' => $this->getMenuTitle(Context::isProjectContext()));
+			$link = array('url' => Caspar::getRouting()->generate('publish'), 'title' => $this->getMenuTitle(Context::isProjectContext()));
 			$event->addToReturnList($link);
 		}
 		
 		public function listen_BreadcrumbProjectLinks(Event $event)
 		{
-			$link = array('url' => Context::getRouting()->generate('publish_article', array('article_name' => Context::getCurrentProject()->getKey() . ':MainPage')), 'title' => $this->getMenuTitle(true));
+			$link = array('url' => Caspar::getRouting()->generate('publish_article', array('article_name' => Context::getCurrentProject()->getKey() . ':MainPage')), 'title' => $this->getMenuTitle(true));
 			$event->addToReturnList($link);
 		}
 
 		public function listen_MenustripLinks(Event $event)
 		{
-			$project_url = (Context::isProjectContext()) ? Context::getRouting()->generate('publish_article', array('article_name' => ucfirst(Context::getCurrentProject()->getKey()).':MainPage')) : null;
-			$url = Context::getRouting()->generate('publish');
-			TBGActionComponent::includeTemplate('publish/menustriplinks', array('url' => $url, 'project_url' => $project_url, 'selected_tab' => $event->getParameter('selected_tab')));
+			$project_url = (Context::isProjectContext()) ? Caspar::getRouting()->generate('publish_article', array('article_name' => ucfirst(Context::getCurrentProject()->getKey()).':MainPage')) : null;
+			$url = Caspar::getRouting()->generate('publish');
+			ActionComponents::includeTemplate('publish/menustriplinks', array('url' => $url, 'project_url' => $project_url, 'selected_tab' => $event->getParameter('selected_tab')));
 		}
 
 		public function listen_createNewProject(Event $event)
@@ -419,14 +421,14 @@
 		public function listen_quicksearchDropdownFirstItems(Event $event)
 		{
 			$searchterm = $event->getSubject();
-			TBGActionComponent::includeTemplate('publish/quicksearch_dropdown_firstitems', array('searchterm' => $searchterm));
+			ActionComponents::includeTemplate('publish/quicksearch_dropdown_firstitems', array('searchterm' => $searchterm));
 		}
 		
 		public function listen_quicksearchDropdownFoundItems(Event $event)
 		{
 			$searchterm = $event->getSubject();
 			list ($resultcount, $articles) = TBGWikiArticle::findArticlesByContentAndProject($searchterm, Context::getCurrentProject());
-			TBGActionComponent::includeTemplate('publish/quicksearch_dropdown_founditems', array('searchterm' => $searchterm, 'articles' => $articles, 'resultcount' => $resultcount));
+			ActionComponents::includeTemplate('publish/quicksearch_dropdown_founditems', array('searchterm' => $searchterm, 'articles' => $articles, 'resultcount' => $resultcount));
 		}
 		
 	}

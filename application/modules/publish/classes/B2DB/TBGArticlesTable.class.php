@@ -159,7 +159,7 @@
 		public function findArticlesContaining($content, $project = null, $limit = 5, $offset = 0)
 		{
 			$crit = $this->getCriteria();
-			if ($project instanceof TBGProject)
+			if ($project instanceof \thebuggenie\entities\Project)
 			{
 				$ctn = $crit->returnCriterion(self::NAME, "%{$content}%", Criteria::DB_LIKE);
 				$ctn->addWhere(self::NAME, "category:" . $project->getKey() . "%", Criteria::DB_LIKE);

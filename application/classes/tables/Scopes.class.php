@@ -59,8 +59,8 @@
 		protected function _migrateData(\b2db\Table $old_table)
 		{
 			$crit = $this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames')->getCriteria();
-			$crit->addInsert(\thebuggenie\tables\ScopeHostnames::HOSTNAME, '*');
-			$crit->addInsert(\thebuggenie\tables\ScopeHostnames::SCOPE_ID, 1);
+			$crit->addInsert(ScopeHostnames::HOSTNAME, '*');
+			$crit->addInsert(ScopeHostnames::SCOPE_ID, 1);
 			$this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames')->doInsert($crit);
 
 			$crit = $this->getCriteria();
@@ -71,8 +71,8 @@
 		public function getByHostname($hostname)
 		{
 			$crit = $this->getCriteria();
-			$crit->addJoin($this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames'), \thebuggenie\tables\ScopeHostnames::SCOPE_ID, self::ID);
-			$crit->addWhere(\thebuggenie\tables\ScopeHostnames::HOSTNAME, $hostname);
+			$crit->addJoin($this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames'), ScopeHostnames::SCOPE_ID, self::ID);
+			$crit->addWhere(ScopeHostnames::HOSTNAME, $hostname);
 			$row = $this->doSelectOne($crit);
 			return $row;
 		}
@@ -87,8 +87,8 @@
 			$crit = $this->getCriteria();
 			if ($hostname !== null)
 			{
-				$crit->addJoin($this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames'), \thebuggenie\tables\ScopeHostnames::SCOPE_ID, self::ID);
-				$crit->addWhere(\thebuggenie\tables\ScopeHostnames::HOSTNAME, $hostname);
+				$crit->addJoin($this->_connection->getTable('\\thebuggenie\\tables\ScopeHostnames'), ScopeHostnames::SCOPE_ID, self::ID);
+				$crit->addWhere(ScopeHostnames::HOSTNAME, $hostname);
 				$crit->addOr(self::ID, 1);
 				$crit->addOrderBy(self::ID, 'desc');
 			}

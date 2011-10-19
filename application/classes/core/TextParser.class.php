@@ -1,6 +1,9 @@
 <?php
 
 	namespace thebuggenie\core;
+	
+	use caspar\core\Caspar,
+		caspar\core\Cache;
 
 	/**
 	 * Text parser class
@@ -58,7 +61,7 @@
 		/**
 		 * Returns the current parser object, only valid when the _parseText method is running,
 		 *
-		 * @return TBGTextParser
+		 * @return \thebuggenie\core\TextParser
 		 */
 		public static function getCurrentParser()
 		{
@@ -78,10 +81,10 @@
 
 		public static function getIssueRegex()
 		{
-			if (!$regex = TBGCache::get(TBGCache::KEY_TEXTPARSER_ISSUE_REGEX))
+			if (!$regex = Cache::get(Cache::KEY_TEXTPARSER_ISSUE_REGEX))
 			{
 				$issue_strings = array('bug', 'issue', 'ticket', 'story');
-				foreach (TBGIssuetype::getAll() as $issuetype)
+				foreach (\thebuggenie\entities\Issuetype::getAll() as $issuetype)
 				{
 					$issue_strings[] = $issuetype->getName();
 				}
@@ -89,7 +92,7 @@
 				$issue_string = html_entity_decode($issue_string, ENT_QUOTES);
 				$issue_string = str_replace(array(' ', "'"), array('\s{1,1}', "\'"), $issue_string);
 				$regex = '#( |^)(?<!\!)(('.$issue_string.')\s\#?(([A-Z0-9]+\-)?\d+))#i';
-				TBGCache::add(TBGCache::KEY_TEXTPARSER_ISSUE_REGEX, $regex);
+				Cache::add(Cache::KEY_TEXTPARSER_ISSUE_REGEX, $regex);
 			}
 			return $regex;
 		}
@@ -107,13 +110,13 @@
 			$this->use_toc = $use_toc;
 			$this->toc_base_id = $toc_base_id;
 
-			if (TBGContext::isProjectContext())
+			if (Context::isProjectContext())
 			{
-				$this->namespace = TBGContext::getCurrentProject()->getKey();
+				$this->namespace = Context::getCurrentProject()->getKey();
 			}
-			if (!TBGContext::isCLI())
+			if (!Caspar::isCLI())
 			{
-				TBGContext::loadLibrary('ui');
+				Caspar::loadLibrary('ui');
 			}
 		}
 
@@ -151,7 +154,7 @@
 			$retval .= ">" . $content;
 			if (!isset($this->options['embedded']) || $this->options['embedded'] == false)
 			{
-				$retval .= "&nbsp;<a href=\"#top\">&uArr;&nbsp;".TBGContext::getI18n()->__('top')."</a>";
+				$retval .= "&nbsp;<a href=\"#top\">&uArr;&nbsp;".Context::getI18n()->__('top')."</a>";
 			}
 			$retval .= "</h{$level}>\n";
 
@@ -333,7 +336,7 @@
 
 			if (mb_strtolower($namespace) == 'wikipedia')
 			{
-				if (TBGContext::isCLI()) return $href;
+				if (Context::isCLI()) return $href;
 				
 				$options = explode('|', $title);
 				$title = (array_key_exists(5, $matches) && (mb_strpos($matches[5], '|') !== false) ? '' : $namespace.':') . array_pop($options);
@@ -344,7 +347,7 @@
 			if (in_array(mb_strtolower($namespace), array('image', 'file')))
 			{
 				$retval = $namespace . ':' . $href;
-				if (!TBGContext::isCLI())
+				if (!Context::isCLI())
 				{
 					$options = explode('|', $title);
 					$filename = $href;
@@ -436,7 +439,7 @@
 
 			if ($namespace == 'TBG')
 			{
-				if (TBGContext::isCLI()) return $href;
+				if (Context::isCLI()) return $href;
 
 				$options = explode('|',$title);
 				$title = array_pop($options);
@@ -446,7 +449,7 @@
 
 			if (mb_substr($href, 0, 1) == '/')
 			{
-				if (TBGContext::isCLI()) return $href;
+				if (Context::isCLI()) return $href;
 				
 				$options = explode('|', $title);
 				$title = array_pop($options);
@@ -464,16 +467,16 @@
 				$title = (isset($title)) ? $title : $href;
 				$this->addInternalLinkOccurrence($href);
 
-				if (TBGContext::isCLI()) return $href;
+				if (Context::isCLI()) return $href;
 				
-				$href = TBGContext::getRouting()->generate('publish_article', array('article_name' => $href));
+				$href = Context::getRouting()->generate('publish_article', array('article_name' => $href));
 			}
 			else
 			{
 				$href = $namespace.':'.$this->_wiki_link($href);
 			}
 
-			if (TBGContext::isCLI()) return $href;
+			if (Context::isCLI()) return $href;
 			
 			return link_tag($href, $title);
 		}
@@ -489,7 +492,7 @@
 				$title = "[{$this->linknumber}]";
 			}
 
-			if (TBGContext::isCLI()) return $href;
+			if (Context::isCLI()) return $href;
 
 			return link_tag($href, $title, array('target' => '_new'));
 		}
@@ -794,7 +797,7 @@
 		
 		protected function _parseText($options = array())
 		{
-			TBGContext::loadLibrary('common');
+			Caspar::loadLibrary('common');
 			
 			self::$current_parser = $this;
 			$this->list_level_types = array();
@@ -862,7 +865,7 @@
 
 		protected function _parse_add_toc($matches)
 		{
-			if (TBGContext::isCLI()) return '';
+			if (Context::isCLI()) return '';
 			
 			return TBGAction::returnTemplateHTML('publish/toc', array('toc' => $this->toc));
 		}

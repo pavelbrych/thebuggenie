@@ -62,7 +62,7 @@
 			$this->cliEcho("\n");
 			if (!empty($response) && $response->count > 0)
 			{
-				TBGContext::loadLibrary('common');
+				\core\caspar\Caspar::loadLibrary('common');
 				$this->cliEcho("The following {$response->count} issues were found:\n", 'white', 'bold');
 
 				foreach ($response->issues as $issue)

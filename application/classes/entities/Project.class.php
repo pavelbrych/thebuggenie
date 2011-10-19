@@ -21,7 +21,7 @@
 	class Project extends OwnableItem
 	{
 
-		static protected $_b2dbtablename = 'TBGProjectsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Projects';
 		
 		/**
 		 * Project list cache
@@ -149,16 +149,16 @@
 		/**
 		 * The small project icon, if set
 		 * 
-		 * @Class TBGFile
-		 * @var TBGFile
+		 * @Class \thebuggenie\entities\File
+		 * @Class \thebuggenie\entities\File
 		 */
 		protected $_small_icon = null;
 		
 		/**
 		 * The large project icon, if set
 		 * 
-		 * @Class TBGFile
-		 * @var TBGFile
+		 * @Class \thebuggenie\entities\File
+		 * @Class \thebuggenie\entities\File
 		 */
 		protected $_large_icon = null;
 
@@ -368,24 +368,24 @@
 		/**
 		 * The selected workflow scheme
 		 * 
-		 * @var TBGWorkflowScheme
-		 * @Class TBGWorkflowScheme
+		 * @Class \thebuggenie\entities\WorkflowScheme
+		 * @Class \thebuggenie\entities\WorkflowScheme
 		 */
 		protected $_workflow_scheme_id = 1;
 		
 		/**
 		 * The selected workflow scheme
 		 * 
-		 * @var TBGIssuetypeScheme
-		 * @Class TBGIssuetypeScheme
+		 * @Class \thebuggenie\entities\IssuetypeScheme
+		 * @Class \thebuggenie\entities\IssuetypeScheme
 		 */
 		protected $_issuetype_scheme_id = 1;
 		
 		/**
 		 * Assigned client
 		 * 
-		 * @var TBGClient
-		 * @Class TBGClient
+		 * @Class \thebuggenie\entities\Client
+		 * @Class \thebuggenie\entities\Client
 		 */
 		protected $_client = null;
 		
@@ -399,8 +399,8 @@
 		/**
 		 * Parent project
 		 * 
-		 * @var TBGProject
-		 * @Class TBGProject
+		 * @Class \thebuggenie\entities\Project
+		 * @Class \thebuggenie\entities\Project
 		 */
 		protected $_parent = null;
 		
@@ -433,20 +433,6 @@
 		protected $_archived = false;
 		
 		/**
-		 * Make a project default
-		 * 
-		 * @param $p_id integer The id for the default project
-		 * 
-		 * @return boolean
-		 */
-		public static function setDefault($p_id)
-		{
-			TBGProjectsTable::getTable()->clearDefaults();
-			TBGProjectsTable::getTable()->setDefaultProject($p_id);
-			return true;
-		}
-
-		/**
 		 * Retrieve a project by its key
 		 *
 		 * @param string $key
@@ -459,7 +445,7 @@
 			return (array_key_exists($key, self::$_projects)) ? self::$_projects[$key] : null;
 		}
 		
-		public static function getValidSubprojects(TBGProject $project)
+		public static function getValidSubprojects(Project $project)
 		{
 			$valid_subproject_targets = array();
 			foreach (self::getAll() as $aproject)
@@ -488,11 +474,11 @@
 			if (self::$_projects === null)
 			{
 				self::$_projects = array();
-				if ($res = TBGProjectsTable::getTable()->getAll())
+				if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getAll())
 				{
 					while ($row = $res->getNextRow())
 					{
-						$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+						$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 						if ($project->hasAccess() && !$project->isDeleted())
 						{
 							self::$_projects[$project->getKey()] = $project;
@@ -524,7 +510,7 @@
 			$final = array();
 			foreach (self::$_projects as $project)
 			{
-				if (($project->getParent() instanceof TBGProject) && $project->getParent()->getID() == $id)
+				if (($project->getParent() instanceof \thebuggenie\entities\Project) && $project->getParent()->getID() == $id)
 				{
 					$final[] = $project;
 				}
@@ -547,14 +533,14 @@
 			{
 				if ($archived)
 				{
-					if (!($project->getParent() instanceof TBGProject) && $project->isArchived())
+					if (!($project->getParent() instanceof \thebuggenie\entities\Project) && $project->isArchived())
 					{
 						$final[] = $project;
 					}
 				}
 				else
 				{
-					if (!($project->getParent() instanceof TBGProject) && !$project->isArchived())
+					if (!($project->getParent() instanceof \thebuggenie\entities\Project) && !$project->isArchived())
 					{
 						$final[] = $project;
 					}
@@ -571,7 +557,7 @@
 				if (self::$_projects !== null)
 					self::$_num_projects = count(self::$_projects);
 				else
-					self::$_num_projects = TBGProjectsTable::getTable()->countProjects();
+					self::$_num_projects = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->countProjects();
 			}
 
 			return self::$_num_projects;
@@ -723,14 +709,14 @@
 		 */
 		static function getDefaultProject()
 		{
-			if ($res = TBGProjectsTable::getTable()->getAllSortedByIsDefault())
+			if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getAllSortedByIsDefault())
 			{
 				while ($row = $res->getNextRow())
 				{
-					$project = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 					if ($project->hasAccess() && $project->isDeleted() == 0)
 					{
-						return $row->get(TBGProjectsTable::ID);
+						return $row->get(\thebuggenie\tables\Projects::ID);
 					}
 				}
 			}
@@ -746,15 +732,15 @@
 		 */
 		public function _preSave($is_new)
 		{
-			$project = self::getByKey($this->getKey()); // TBGProjectsTable::getTable()->getByKey($this->getKey());
-			if ($project instanceof TBGProject && $project->getID() != $this->getID())
+			$project = self::getByKey($this->getKey()); // \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($this->getKey());
+			if ($project instanceof \thebuggenie\entities\Project && $project->getID() != $this->getID())
 			{
 				throw new InvalidArgumentException("A project with this key already exists");
 			}
 			if ($is_new)
 			{
-				$this->setIssuetypeScheme(TBGIssuetypeScheme::getCoreScheme());
-				$this->setWorkflowScheme(TBGWorkflowScheme::getCoreScheme());
+				$this->setIssuetypeScheme(IssuetypeScheme::getCoreScheme());
+				$this->setWorkflowScheme(WorkflowScheme::getCoreScheme());
 			}
 		}
 
@@ -779,7 +765,7 @@
 				TBGContext::setPermission("canaddextrainformationtoissues", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
 				TBGContext::setPermission("canpostseeandeditallcomments", $this->getID(), "core", \caspar\core\Caspar::getUser()->getID(), 0, 0, true);
 
-				TBGEvent::createNew('core', 'TBGProject::createNew', $this)->trigger();
+				\caspar\core\Event::createNew('core', '\thebuggenie\entities\Project::createNew', $this)->trigger();
 			}
 			if ($this->_dodelete)
 			{
@@ -795,9 +781,9 @@
 		 */
 		static function getByPrefix($prefix)
 		{
-			if ($row = TBGProjectsTable::getTable()->getByPrefix($prefix))
+			if ($row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByPrefix($prefix))
 			{
-				return \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+				return \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 			}
 			return null;
 		}
@@ -809,7 +795,7 @@
  		 */
 		public function _construct(\b2db\Row $row, $foreign_key = null)
 		{
-			TBGEvent::createNew('core', 'TBGProject::__construct', $this)->trigger();
+			\caspar\core\Event::createNew('core', '\thebuggenie\entities\Project::__construct', $this)->trigger();
 		}
 		
 		/**
@@ -1602,7 +1588,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_unassignedissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+						$this->_unassignedissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));
 					}
 				}
 			}
@@ -1632,7 +1618,7 @@
 					{
 						while ($row = $res->getNextRow())
 						{
-							$this->_unassignedstories[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));
+							$this->_unassignedstories[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));
 						}
 					}
 				}
@@ -1675,7 +1661,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$milestone = \caspar\core\Caspar::factory()->TBGMilestone($row->get(TBGMilestonesTable::ID), $row);
+						$milestone = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $row->get(TBGMilestonesTable::ID), $row);
 						if ($milestone->hasAccess())
 						{
 							$this->_visible_milestones[$milestone->getID()] = $milestone;
@@ -1807,7 +1793,7 @@
 						try
 						{
 							$i_id = $row->get(TBGVisibleIssueTypesTable::ISSUETYPE_ID);
-							$this->_visible_issuetypes[$i_id] = \caspar\core\Caspar::factory()->TBGIssuetype($i_id);
+							$this->_visible_issuetypes[$i_id] = \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $i_id);
 						}
 						catch (Exception $e)
 						{
@@ -2136,7 +2122,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$issue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID));;
+					$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));;
 					if (!$merged)
 					{
 						$retval[$row->get(TBGIssuesTable::ISSUE_TYPE)]['issues'][] = $issue;
@@ -2504,7 +2490,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentissues[$recentissue->getID()] = $recentissue;
@@ -2527,7 +2513,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentdocumentationrequests[$recentissue->getID()] = $recentissue;
@@ -2550,7 +2536,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentenhancements[$recentissue->getID()] = $recentissue;
@@ -2573,7 +2559,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentfeatures[$recentissue->getID()] = $recentissue;
@@ -2596,7 +2582,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentideas[$recentissue->getID()] = $recentissue;
@@ -2619,7 +2605,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentsupportrequests[$recentissue->getID()] = $recentissue;
@@ -2642,7 +2628,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recenttasks[$recentissue->getID()] = $recentissue;
@@ -2665,7 +2651,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->TBGIssue($row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentdeveloperreports[$recentissue->getID()] = $recentissue;
@@ -2987,7 +2973,7 @@
 		
 		public function hasParent()
 		{
-			return ($this->getParent() instanceof TBGProject);
+			return ($this->getParent() instanceof \thebuggenie\entities\Project);
 		}
 		
 		public function hasChildren()
@@ -2997,7 +2983,7 @@
 		
 		public function getParent()
 		{
-//			if ($this->getKey() == 'sampleproject2'): return TBGProject::getByKey('sampleproject1'); endif;
+//			if ($this->getKey() == 'sampleproject2'): return \thebuggenie\entities\Project::getByKey('sampleproject1'); endif;
 			return $this->_getPopulatedObjectFromProperty('_parent');
 		}
 		
@@ -3035,13 +3021,13 @@
 			if ($this->_children === null)
 			{
 				$this->_children = array();
-				$res = TBGProjectsTable::getTable()->getByParentID($this->getID());
+				$res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByParentID($this->getID());
 
 				if ($res == false): return; endif;
 
 				foreach ($res->getAllRows() as $row)
 				{
-					$this->_children[] = \caspar\core\Caspar::factory()->TBGProject($row->get(TBGProjectsTable::ID), $row);
+					$this->_children[] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 				}
 			}
 		}

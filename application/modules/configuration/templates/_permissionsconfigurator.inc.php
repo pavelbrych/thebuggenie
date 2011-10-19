@@ -63,9 +63,9 @@
 	</div>
 	<div id="<?php echo $base_id; ?>_tab_projects_pane" class="tab_pane" style="display: none;">
 		<p><?php echo __('These permissions control what you can do, and which pages you can access in The Bug Genie - on a project-specific basis. Some of these permissions are also available as site-wide permissions, from the "%general_permissions%" tab.', array('%general_permissions%' => '<i>'.__('General permissions').'</i>')); ?></p>
-		<?php if (count(TBGProject::getAll()) > 0): ?>
+		<?php if (count(\thebuggenie\entities\Project::getAll()) > 0): ?>
 			<ul>
-				<?php foreach (TBGProject::getAll() as $project): ?>
+				<?php foreach (\thebuggenie\entities\Project::getAll() as $project): ?>
 					<li>
 						<a href="javascript:void(0);" onclick="$('project_permission_details_<?php echo $project->getID(); ?>').toggle();"><?php echo image_tag('icon_project_permissions.png', array('style' => 'float: right;')); ?><?php echo $project->getName(); ?> <span class="faded_out smaller"><?php echo $project->getKey(); ?></span></a>
 						<ul style="display: none;" id="project_permission_details_<?php echo $project->getID(); ?>">

@@ -37,7 +37,7 @@
 		const ACTION_USER_START_WORKING = 'user_start_working';
 		const ACTION_USER_STOP_WORKING = 'user_stop_working';
 		
-		static protected $_b2dbtablename = 'TBGWorkflowTransitionActionsTable';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\WorkflowTransitionActions';
 		
 		protected $_action_type = null;
 
@@ -46,16 +46,16 @@
 		/**
 		 * The connected transition
 		 *
-		 * @var TBGWorkflowTransition
-		 * @Class TBGWorkflowTransition
+		 * @Class \thebuggenie\entities\WorkflowTransition
+		 * @Class \thebuggenie\entities\WorkflowTransition
 		 */
 		protected $_transition_id = null;
 
 		/**
 		 * The associated workflow object
 		 *
-		 * @var TBGWorkflow
-		 * @Class TBGWorkflow
+		 * @Class \thebuggenie\entities\Workflow
+		 * @Class \thebuggenie\entities\Workflow
 		 */
 		protected $_workflow_id = null;
 
@@ -66,7 +66,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$action = \caspar\core\Caspar::factory()->TBGWorkflowTransitionAction($row->get(TBGWorkflowTransitionActionsTable::ID), $row);
+					$action = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransitionAction', $row->get(TBGWorkflowTransitionActionsTable::ID), $row);
 					$actions[$action->getActionType()] = $action;
 				}
 			}
@@ -133,13 +133,13 @@
 					break;
 				case self::ACTION_SET_STATUS:
 					if ($this->getTargetValue())
-						$issue->setStatus(\caspar\core\Caspar::factory()->TBGStatus((int) $this->getTargetValue()));
+						$issue->setStatus(\caspar\core\Caspar::factory()->manufacture('TBGStatus', (int) $this->getTargetValue()));
 					else
 						$issue->setStatus($request->getParameter('status_id'));
 					break;
 				case self::ACTION_SET_MILESTONE:
 					if ($this->getTargetValue())
-						$issue->setMilestone(\caspar\core\Caspar::factory()->TBGMilestone((int) $this->getTargetValue()));
+						$issue->setMilestone(\caspar\core\Caspar::factory()->manufacture('TBGMilestone', (int) $this->getTargetValue()));
 					else
 						$issue->setMilestone($request->getParameter('milestone_id'));
 					break;
@@ -148,7 +148,7 @@
 					break;
 				case self::ACTION_SET_PRIORITY:
 					if ($this->getTargetValue())
-						$issue->setPriority(\caspar\core\Caspar::factory()->TBGPriority((int) $this->getTargetValue()));
+						$issue->setPriority(\caspar\core\Caspar::factory()->manufacture('TBGPriority', (int) $this->getTargetValue()));
 					else
 						$issue->setPriority($request->getParameter('priority_id'));
 					break;
@@ -172,7 +172,7 @@
 					break;
 				case self::ACTION_SET_RESOLUTION:
 					if ($this->getTargetValue())
-						$issue->setResolution(\caspar\core\Caspar::factory()->TBGResolution((int) $this->getTargetValue()));
+						$issue->setResolution(\caspar\core\Caspar::factory()->manufacture('TBGResolution', (int) $this->getTargetValue()));
 					else
 						$issue->setResolution($request->getParameter('resolution_id'));
 					break;
@@ -181,7 +181,7 @@
 					break;
 				case self::ACTION_SET_REPRODUCABILITY:
 					if ($this->getTargetValue())
-						$issue->setReproducability(\caspar\core\Caspar::factory()->TBGReproducability((int) $this->getTargetValue()));
+						$issue->setReproducability(\caspar\core\Caspar::factory()->manufacture('TBGReproducability', (int) $this->getTargetValue()));
 					else
 						$issue->setReproducability($request->getParameter('reproducability_id'));
 					break;
