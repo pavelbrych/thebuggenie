@@ -115,7 +115,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$build = \caspar\core\Caspar::factory()->manufacture('TBGBuild', $row->get(TBGBuildsTable::ID), $row);
+						$build = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Build', $row->get(TBGBuildsTable::ID), $row);
 						self::$_project_builds[$project_id][$build->getID()] = $build;
 					}
 				}
@@ -141,7 +141,7 @@
 				self::$_edition_builds[$edition_id] = array();
 				if ($res = Caspar::getB2DBInstance()->getTable('TBGBuildsTable')->getByEditionID($project_id))
 				{
-					$build = \caspar\core\Caspar::factory()->manufacture('TBGBuild', $row->get(TBGBuildsTable::ID), $row);
+					$build = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Build', $row->get(TBGBuildsTable::ID), $row);
 					self::$_edition_builds[$edition_id][$build->getID()] = $build;
 				}
 			}
@@ -159,7 +159,7 @@
 			{
 				if ($this->_edition && is_numeric($this->_edition))
 				{
-					$this->_edition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $row->get(TBGBuildsTable::EDITION), $row);
+					$this->_edition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Edition', $row->get(TBGBuildsTable::EDITION), $row);
 				}
 				elseif ($this->_project && is_numeric($this->_project))
 				{

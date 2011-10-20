@@ -38,7 +38,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$component = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $row->get(TBGComponentsTable::ID), $row);
+					$component = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Component', $row->get(TBGComponentsTable::ID), $row);
 					if ($component->hasAccess())
 					{
 						$retval[$component->getID()] = $component;

@@ -1588,7 +1588,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_unassignedissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));
+						$this->_unassignedissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID));
 					}
 				}
 			}
@@ -1618,7 +1618,7 @@
 					{
 						while ($row = $res->getNextRow())
 						{
-							$this->_unassignedstories[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));
+							$this->_unassignedstories[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID));
 						}
 					}
 				}
@@ -1661,7 +1661,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$milestone = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $row->get(TBGMilestonesTable::ID), $row);
+						$milestone = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', $row->get(TBGMilestonesTable::ID), $row);
 						if ($milestone->hasAccess())
 						{
 							$this->_visible_milestones[$milestone->getID()] = $milestone;
@@ -1786,18 +1786,18 @@
 			if ($this->_visible_issuetypes === null)
 			{
 				$this->_visible_issuetypes = array();
-				if ($res = TBGVisibleIssueTypesTable::getTable()->getAllByProjectID($this->getID()))
+				if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\VisibleIssuetypes')->getAllByProjectID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
 						try
 						{
-							$i_id = $row->get(TBGVisibleIssueTypesTable::ISSUETYPE_ID);
-							$this->_visible_issuetypes[$i_id] = \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $i_id);
+							$i_id = $row->get(\thebuggenie\tables\VisibleIssuetypes::ISSUETYPE_ID);
+							$this->_visible_issuetypes[$i_id] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issuetype', $i_id);
 						}
 						catch (Exception $e)
 						{
-							TBGVisibleIssueTypesTable::getTable()->deleteByIssuetypeID($i_id);
+							\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\VisibleIssuetypes')->deleteByIssuetypeID($i_id);
 						}
 					}
 				}
@@ -2122,7 +2122,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID));;
+					$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID));;
 					if (!$merged)
 					{
 						$retval[$row->get(TBGIssuesTable::ISSUE_TYPE)]['issues'][] = $issue;
@@ -2490,7 +2490,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentissues[$recentissue->getID()] = $recentissue;
@@ -2513,7 +2513,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentdocumentationrequests[$recentissue->getID()] = $recentissue;
@@ -2536,7 +2536,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentenhancements[$recentissue->getID()] = $recentissue;
@@ -2559,7 +2559,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentfeatures[$recentissue->getID()] = $recentissue;
@@ -2582,7 +2582,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentideas[$recentissue->getID()] = $recentissue;
@@ -2605,7 +2605,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentsupportrequests[$recentissue->getID()] = $recentissue;
@@ -2628,7 +2628,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recenttasks[$recentissue->getID()] = $recentissue;
@@ -2651,7 +2651,7 @@
 					{
 						try
 						{
-							$recentissue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+							$recentissue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 							if ($recentissue->hasAccess())
 							{
 								$this->_recentdeveloperreports[$recentissue->getID()] = $recentissue;

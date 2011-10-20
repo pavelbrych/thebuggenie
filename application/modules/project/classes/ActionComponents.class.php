@@ -1,9 +1,11 @@
 <?php
 
+	namespace application\modules\project;
+
 	/**
 	 * Project action components
 	 */
-	class projectActionComponents extends TBGActionComponent
+	class ActionComponents extends \caspar\core\ActionComponents
 	{
 
 		public function componentOverview()

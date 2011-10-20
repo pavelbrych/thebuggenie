@@ -82,7 +82,7 @@
 			parent::_addBoolean(self::LOCKED);
 			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 			parent::_addForeignKeyColumn(self::WORKFLOW_SCHEME_ID, TBGWorkflowSchemesTable::getTable(), TBGWorkflowSchemesTable::ID);
-			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, TBGIssuetypeSchemesTable::getTable(), TBGIssuetypeSchemesTable::ID);
+			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemes'), \thebuggenie\tables\IssuetypeSchemes::ID);
 			parent::_addForeignKeyColumn(self::CLIENT, TBGClientsTable::getTable(), TBGClientsTable::ID);
 			parent::_addBoolean(self::DELETED);
 			parent::_addBoolean(self::AUTOASSIGN);

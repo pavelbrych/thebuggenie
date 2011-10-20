@@ -48,8 +48,8 @@
 			parent::_addBoolean(self::SSL);
 			parent::_addBoolean(self::KEEP_EMAIL);
 			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
-			parent::_addForeignKeyColumn(self::PROJECT, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects'), TBGProjectsTable::ID);
-			parent::_addForeignKeyColumn(self::ISSUETYPE, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
+			parent::_addForeignKeyColumn(self::PROJECT, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects'), \thebuggenie\tables\Projects::ID);
+			parent::_addForeignKeyColumn(self::ISSUETYPE, \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Issuetypes'), \thebuggenie\tables\Issuetypes::ID);
 		}
 		
 		public function getAllByProjectID($project_id)

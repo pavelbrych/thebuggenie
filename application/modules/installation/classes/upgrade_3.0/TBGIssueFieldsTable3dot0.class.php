@@ -37,8 +37,8 @@
 			parent::_addBoolean(self::REQUIRED);
 			parent::_addBoolean(self::REPORTABLE);
 			parent::_addBoolean(self::ADDITIONAL);
-			parent::_addForeignKeyColumn(self::ISSUETYPE_ID, TBGIssueTypesTable::getTable(), TBGIssueTypesTable::ID);
-			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, TBGIssuetypeSchemesTable::getTable(), TBGIssuetypeSchemesTable::ID);
+			parent::_addForeignKeyColumn(self::ISSUETYPE_ID, $this->_connection->getTable('\\thebuggenie\\tables\\Issuetypes'), \thebuggenie\tables\Issuetypes::ID);
+			parent::_addForeignKeyColumn(self::ISSUETYPE_SCHEME_ID, $this->_connection->getTable('\\thebuggenie\\tables\\IssuetypeSchemes'), \thebuggenie\tables\IssuetypeSchemes::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 		

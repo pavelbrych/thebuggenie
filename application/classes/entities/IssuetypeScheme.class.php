@@ -50,16 +50,16 @@
 			if (self::$_schemes === null)
 			{
 				self::$_schemes = array();
-				if ($res = TBGIssuetypeSchemesTable::getTable()->getAll())
+				if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemes')->getAll())
 				{
 					while ($row = $res->getNextRow())
 					{
-						$scheme = \caspar\core\Caspar::factory()->manufacture('TBGIssuetypeScheme', $row->get(TBGIssuetypeSchemesTable::ID), $row);
+						$scheme = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\IssuetypeScheme', $row->get(\thebuggenie\tables\IssuetypeSchemes::ID), $row);
 						
 						if (self::$_core_scheme === null)
 							self::$_core_scheme = $scheme;
 						
-						self::$_schemes[$row->get(TBGIssuetypeSchemesTable::ID)] = $scheme;
+						self::$_schemes[$row->get(\thebuggenie\tables\IssuetypeSchemes::ID)] = $scheme;
 					}
 				}
 			}

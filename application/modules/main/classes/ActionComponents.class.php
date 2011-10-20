@@ -258,7 +258,7 @@
 		{
 			if ($this->mode == 'issue' && !isset($this->issue))
 			{
-				$this->issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $this->issue_id);
+				$this->issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $this->issue_id);
 			}
 			elseif ($this->mode == 'article' && !isset($this->article))
 			{
@@ -296,7 +296,7 @@
 			{
 				try
 				{
-					$this->issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $this->log_action['target']);
+					$this->issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $this->log_action['target']);
 				}
 				catch (Exception $e) {}
 			}
@@ -308,7 +308,7 @@
 			{
 				try
 				{
-					$this->issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $this->comment->getTargetID());
+					$this->issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $this->comment->getTargetID());
 				}
 				catch (Exception $e) {}
 			}

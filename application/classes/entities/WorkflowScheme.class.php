@@ -54,7 +54,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$scheme = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowScheme', $row->get(TBGWorkflowSchemesTable::ID), $row);
+						$scheme = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowScheme', $row->get(TBGWorkflowSchemesTable::ID), $row);
 						
 						if (self::$_core_scheme === null)
 							self::$_core_scheme = $scheme;

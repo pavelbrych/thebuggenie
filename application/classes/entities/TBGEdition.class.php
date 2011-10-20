@@ -85,7 +85,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$edition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $row->get(TBGEditionsTable::ID), $row);
+						$edition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Edition', $row->get(TBGEditionsTable::ID), $row);
 						self::$_editions[$project_id][$edition->getID()] = $edition;
 					}
 				}
@@ -117,7 +117,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_components[$row->get(TBGEditionComponentsTable::COMPONENT)] = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $row->get(TBGEditionComponentsTable::COMPONENT));
+						$this->_components[$row->get(TBGEditionComponentsTable::COMPONENT)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Component', $row->get(TBGEditionComponentsTable::COMPONENT));
 					}
 				}
 			}
@@ -240,7 +240,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_builds[$row->get(TBGBuildsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGBuild', $row->get(TBGBuildsTable::ID), $row);
+						$this->_builds[$row->get(TBGBuildsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Build', $row->get(TBGBuildsTable::ID), $row);
 					}
 				}
 			}

@@ -57,7 +57,7 @@
 					try
 					{
 						$i_id = $row->get(self::ISSUETYPE_ID);
-						$issuetype = \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $i_id, $row);
+						$issuetype = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issuetype', $i_id, $row);
 					}
 					catch (Exception $e)
 					{

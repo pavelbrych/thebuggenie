@@ -60,7 +60,7 @@
 
 				while ($row = $res->getNextRow())
 				{
-					$scope = Caspar::factory()->manufacture('TBGScope', $row->get(TBGScopesTable::ID), $row);
+					$scope = Caspar::factory()->manufacture('\thebuggenie\entities\Scope', $row->get(TBGScopesTable::ID), $row);
 					$scopes[$scope->getID()] = $scope;
 				}
 
@@ -130,7 +130,7 @@
 			{
 				try
 				{
-					$this->_administrator = Caspar::factory()->manufacture('TBGUser', $this->_administrator);
+					$this->_administrator = Caspar::factory()->manufacture('\thebuggenie\entities\User', $this->_administrator);
 				}
 				catch (Exception $e) { }
 			}

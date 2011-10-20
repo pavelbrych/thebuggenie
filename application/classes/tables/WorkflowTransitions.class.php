@@ -88,7 +88,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$return_array[$row->get(self::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransition', $row->get(self::ID), $row);
+					$return_array[$row->get(self::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransition', $row->get(self::ID), $row);
 				}
 			}
 

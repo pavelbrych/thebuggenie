@@ -124,7 +124,7 @@
 							else
 							{
 								// All issues will be of the same project, so use one issue
-								$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGVCSIntegrationTable::ISSUE_NO));
+								$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGVCSIntegrationTable::ISSUE_NO));
 								// Add details of a new commit
 								$commits[$rev] = array('commit' => array(), 'files' => array(), 'issues' => array());
 								
@@ -139,7 +139,7 @@
 							$files = array();
 							$issues = array();
 
-							$scope = \caspar\core\Caspar::factory()->manufacture('TBGScope', $commit['commit']['scope']);
+							$scope = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Scope', $commit['commit']['scope']);
 							
 							try
 							{
@@ -181,7 +181,7 @@
 							foreach ($issues as $issue)
 							{
 								// Add affected issues
-								$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $issue);
+								$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $issue);
 								$inst = new TBGVCSIntegrationIssueLink();
 								$inst->setIssue($issue);
 								$inst->setCommit($commit);

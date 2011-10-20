@@ -72,7 +72,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$file = \caspar\core\Caspar::factory()->manufacture('TBGFile', $row->get(Files::ID), $row);
+					$file = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\File', $row->get(Files::ID), $row);
 					$file->setUploadedAt($row->get(self::ATTACHED_AT));
 					$ret_arr[$row->get(Files::ID)] = $file;
 				}

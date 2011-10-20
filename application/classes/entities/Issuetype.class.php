@@ -18,10 +18,10 @@
 	 * @package thebuggenie
 	 * @subpackage core
 	 */
-	class Issuetype extends TBGDatatype 
+	class Issuetype extends Datatype 
 	{
 		
-		static protected $_b2dbtablename = '\\thebuggenie\\tables\\IssueTypes';
+		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Issuetypes';
 		
 		/**
 		 * If true, is the default issue type when promoting tasks to issues
@@ -41,7 +41,7 @@
 		{
 			$scope_id = $scope->getID();
 			
-			$bug_report = new TBGIssuetype();
+			$bug_report = new Issuetype();
 			$bug_report->setName('Bug report');
 			$bug_report->setIcon('bug_report');
 			$bug_report->setDescription('Have you discovered a bug in the application, or is something not working as expected?');
@@ -49,35 +49,35 @@
 			TBGSettings::saveSetting('defaultissuetypefornewissues', $bug_report->getID(), 'core', $scope_id);
 			TBGSettings::saveSetting('issuetype_bug_report', $bug_report->getID(), 'core', $scope_id);
 
-			$feature_request = new TBGIssuetype();
+			$feature_request = new Issuetype();
 			$feature_request->setName('Feature request');
 			$feature_request->setIcon('feature_request');
 			$feature_request->setDescription('Are you missing some specific feature, or is your favourite part of the application a bit lacking?');
 			$feature_request->save();
 			TBGSettings::saveSetting('issuetype_feature_request', $feature_request->getID(), 'core', $scope_id);
 
-			$enhancement = new TBGIssuetype();
+			$enhancement = new Issuetype();
 			$enhancement->setName('Enhancement');
 			$enhancement->setIcon('enhancement');
 			$enhancement->setDescription('Have you found something that is working in a way that could be improved?');
 			$enhancement->save();
 			TBGSettings::saveSetting('issuetype_enhancement', $enhancement->getID(), 'core', $scope_id);
 
-			$task = new TBGIssuetype();
+			$task = new Issuetype();
 			$task->setName('Task');
 			$task->setIcon('task');
 			$task->setIsTask();
 			$task->save();
 			TBGSettings::saveSetting('issuetype_task', $task->getID(), 'core', $scope_id);
 
-			$user_story = new TBGIssuetype();
+			$user_story = new Issuetype();
 			$user_story->setName('User story');
 			$user_story->setIcon('developer_report');
 			$user_story->setDescription('Doing it Agile-style. Issue type perfectly suited for entering user stories');
 			$user_story->save();
 			TBGSettings::saveSetting('issuetype_user_story', $user_story->getID(), 'core', $scope_id);
 
-			$idea = new TBGIssuetype();
+			$idea = new Issuetype();
 			$idea->setName('Idea');
 			$idea->setIcon('idea');
 			$idea->setDescription('Express yourself - share your ideas with the rest of the team!');
@@ -93,12 +93,12 @@
 		 * @param string $name
 		 * @param string $icon
 		 *
-		 * @return TBGIssuetype
+		 * @return Issuetype
 		 */
 		public static function createNew($name, $icon = 'bug_report')
 		{
-			$res = TBGIssueTypesTable::getTable()->createNew($name, $icon);
-			return \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $res->getInsertID());
+			$res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Issuetypes')->createNew($name, $icon);
+			return \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Issuetype', $res->getInsertID());
 		}
 
 		/**
@@ -180,12 +180,12 @@
 			try
 			{
 				$crit = new \b2db\Criteria();
-				$crit->addWhere(TBGIssueTypesTable::ICON, 'task');
-				$crit->addWhere(TBGIssueTypesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
-				$row = TBGIssueTypesTable::getTable()->doSelectOne($crit);
+				$crit->addWhere(\thebuggenie\tables\Issuetypes::ICON, 'task');
+				$crit->addWhere(\thebuggenie\tables\Issuetypes::SCOPE, \thebuggenie\core\Context::getScope()->getID());
+				$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Issuetypes')->doSelectOne($crit);
 				if ($row instanceof \b2db\Row)
 				{
-					return \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $row->get(TBGIssueTypesTable::ID), $row);
+					return \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Issuetype', $row->get(\thebuggenie\tables\Issuetypes::ID), $row);
 				}
 				else
 				{
@@ -209,22 +209,22 @@
 			if (self::$_issuetypes === null)
 			{
 				self::$_issuetypes = array();
-				$crit = TBGIssueTypesTable::getTable()->getCriteria();
+				$crit = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Issuetypes')->getCriteria();
 				if ($scope_id === null)
 				{
-					$crit->addWhere(TBGIssueTypesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
+					$crit->addWhere(\thebuggenie\tables\Issuetypes::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				}
 				else
 				{
-					$crit->addWhere(TBGIssueTypesTable::SCOPE, $scope_id);
+					$crit->addWhere(\thebuggenie\tables\Issuetypes::SCOPE, $scope_id);
 				}
 				
 				$issuetypes = array();
-				if ($res = TBGIssueTypesTable::getTable()->doSelect($crit, 'none'))
+				if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Issuetypes')->doSelect($crit, 'none'))
 				{
 					while ($row = $res->getNextRow())
 					{
-						$issuetypes[$row->get(TBGIssueTypesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssuetype', $res->get(TBGIssueTypesTable::ID), $row);
+						$issuetypes[$row->get(\thebuggenie\tables\Issuetypes::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Issuetype', $res->get(\thebuggenie\tables\Issuetypes::ID), $row);
 					}
 				}
 				else
@@ -239,8 +239,8 @@
 		
 		public function _preDelete()
 		{
-			TBGIssuetypeSchemeLinkTable::getTable()->deleteByIssuetypeID($this->getID());
-			TBGVisibleIssueTypesTable::getTable()->deleteByIssuetypeID($this->getID());
+			IssuetypeSchemeLinkTable::getTable()->deleteByIssuetypeID($this->getID());
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\VisibleIssuetypes')->deleteByIssuetypeID($this->getID());
 		}
 	}
 	

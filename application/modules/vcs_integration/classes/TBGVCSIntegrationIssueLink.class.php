@@ -85,7 +85,7 @@
 			
 			foreach (TBGVCSIntegrationIssueLinksTable::getTable()->getByIssueID($issue->getID())->getAllRows() as $row)
 			{
-				$data[] = \caspar\core\Caspar::factory()->manufacture('TBGVCSIntegrationIssueLink', $row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
+				$data[] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\VCSIntegrationIssueLink', $row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
 			}
 
 			return $data;
@@ -108,7 +108,7 @@
 			
 			foreach ($rows->getAllRows() as $row)
 			{
-				$data[] = \caspar\core\Caspar::factory()->manufacture('TBGVCSIntegrationIssueLink', $row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
+				$data[] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\VCSIntegrationIssueLink', $row->get(TBGVCSIntegrationIssueLinksTable::ID), $row);
 			}
 
 			return $data;

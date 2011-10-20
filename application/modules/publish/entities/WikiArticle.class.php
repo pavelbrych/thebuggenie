@@ -1,9 +1,11 @@
 <?php
 
-	class TBGWikiArticle extends TBGIdentifiableClass
+	namespace application\modules\publish\entities;
+
+	class WikiArticle extends \thebuggenie\core\IdentifiableClass
 	{
 
-		static protected $_b2dbtablename = '\\thebuggenie\\tables\\Articles';
+		static protected $_b2dbtablename = '\\application\\modules\\publish\\tables\\Articles';
 		
 		/**
 		 * The article author
@@ -115,16 +117,16 @@
 		public static function findArticlesByContentAndProject($content, $project, $limit = 5, $offset = 0)
 		{
 			$articles = array();
-			list ($resultcount, $res) = TBGArticlesTable::getTable()->findArticlesContaining($content, $project, $limit, $offset);
+			list ($resultcount, $res) = \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->findArticlesContaining($content, $project, $limit, $offset);
 			
 			if ($res)
 			{
 				while ($row = $res->getNextRow())
 				{
-					$article = self::getByName($row->get(TBGArticlesTable::NAME), $row);
+					$article = self::getByName($row->get(\application\modules\publish\tables\Articles::NAME), $row);
 					if ($article->hasAccess())
 					{
-						$articles[$row->get(TBGArticlesTable::ID)] = $article;
+						$articles[$row->get(\application\modules\publish\tables\Articles::ID)] = $article;
 					}
 					else
 					{
@@ -140,23 +142,23 @@
 		{
 			if ($row === null)
 			{
-				$row = TBGArticlesTable::getTable()->getArticleByName($article_name);
+				$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getArticleByName($article_name);
 			}
 			if ($row instanceof \b2db\Row)
 			{
-				return PublishFactory::article($row->get(TBGArticlesTable::ID), $row);
+				return PublishFactory::article($row->get(\application\modules\publish\tables\Articles::ID), $row);
 			}
 			return null;
 		}
 
 		public static function doesArticleExist($article_name)
 		{
-			return TBGArticlesTable::getTable()->doesArticleExist($article_name);
+			return \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->doesArticleExist($article_name);
 		}
 
 		public static function deleteByName($article_name)
 		{
-			TBGArticlesTable::getTable()->deleteArticleByName($article_name);
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->deleteArticleByName($article_name);
 			TBGArticleLinksTable::getTable()->deleteLinksByArticle($article_name);
 		}
 
@@ -385,7 +387,7 @@
 
 		public function doSave($options = array(), $reason = null)
 		{	
-			if (TBGArticlesTable::getTable()->doesNameConflictExist($this->_name, $this->_id, \thebuggenie\core\Context::getScope()->getID()))
+			if (\caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->doesNameConflictExist($this->_name, $this->_id, \thebuggenie\core\Context::getScope()->getID()))
 			{
 				if (!array_key_exists('overwrite', $options) || !$options['overwrite'])
 				{
@@ -628,7 +630,7 @@
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 					if ($project instanceof \thebuggenie\entities\Project)
 					{
 						if ($project->isArchived())
@@ -651,7 +653,7 @@
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 					if ($project instanceof \thebuggenie\entities\Project)
 					{
 						if ($project->isArchived())
@@ -679,7 +681,7 @@
 				
 				if ($row instanceof \b2db\Row)
 				{
-					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+					$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 					if ($project instanceof \thebuggenie\entities\Project)
 					{
 						if (!$project->hasAccess())

@@ -1,10 +1,12 @@
 <?php
 
+	namespace application\modules\publish\tables;
+
 	use b2db\Core,
 		b2db\Criteria,
 		b2db\Criterion;
 
-	class TBGArticlesTable extends ScopedTable 
+	class Articles extends \thebuggenie\tables\ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;
@@ -17,24 +19,13 @@
 		const AUTHOR = 'articles.author';
 		const SCOPE = 'articles.scope';
 		
-		/**
-		 * Return an instance of this table
-		 *
-		 * @return TBGArticlesTable
-		 */
-		public static function getTable()
-		{
-			return Core::getTable('TBGArticlesTable');
-		}
-
 		protected function _setup()
 		{
-			
 			parent::_addVarchar(self::NAME, 255);
 			parent::_addText(self::CONTENT, false);
 			parent::_addBoolean(self::IS_PUBLISHED);
 			parent::_addInteger(self::DATE, 10);
-			parent::_addForeignKeyColumn(self::AUTHOR, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
+			parent::_addForeignKeyColumn(self::AUTHOR, $this->_connection->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
 		}
 

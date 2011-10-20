@@ -147,7 +147,7 @@
 			$selected_sprint = null;
 			if ($s_id = $request->getParameter('sprint_id'))
 			{
-				$selected_sprint = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $s_id);
+				$selected_sprint = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', $s_id);
 			}
 			else
 			{
@@ -174,7 +174,7 @@
 		{
 			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum'));
-			$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $request->getParameter('story_id'));
+			$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('story_id'));
 			try
 			{
 				if ($issue instanceof TBGIssue)
@@ -223,7 +223,7 @@
 
 			if ($m_id = $request->getParameter('sprint_id'))
 			{
-				$milestone = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $m_id);
+				$milestone = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', $m_id);
 			}
 			else
 			{
@@ -278,7 +278,7 @@
 		{
 			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum'));
-			$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $request->getParameter('story_id'));
+			$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('story_id'));
 			if ($issue instanceof TBGIssue)
 			{
 				switch ($request->getParameter('detail'))
@@ -351,12 +351,12 @@
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum') && \caspar\core\Caspar::getUser()->canAssignScrumUserStories($this->selected_project));
 			try
 			{
-				$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $request->getParameter('story_id'));
+				$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('story_id'));
 				$new_sprint_id = (int) $request->getParameter('sprint_id');
 				$sprint = null;
 				try
 				{
-					$sprint = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $new_sprint_id);
+					$sprint = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', $new_sprint_id);
 				}
 				catch (Exception $e) {}
 				if ($issue instanceof TBGIssue)
@@ -520,19 +520,19 @@
 						switch ($this->key)
 						{
 							case 'issues_per_status':
-								$item = \caspar\core\Caspar::factory()->manufacture('TBGStatus', $item_id);
+								$item = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Status', $item_id);
 								break;
 							case 'issues_per_priority':
-								$item = \caspar\core\Caspar::factory()->manufacture('TBGPriority', $item_id);
+								$item = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Priority', $item_id);
 								break;
 							case 'issues_per_category':
-								$item = \caspar\core\Caspar::factory()->manufacture('TBGCategory', $item_id);
+								$item = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Category', $item_id);
 								break;
 							case 'issues_per_resolution':
-								$item = \caspar\core\Caspar::factory()->manufacture('TBGResolution', $item_id);
+								$item = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Resolution', $item_id);
 								break;
 							case 'issues_per_reproducability':
-								$item = \caspar\core\Caspar::factory()->manufacture('TBGReproducability', $item_id);
+								$item = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Reproducability', $item_id);
 								break;
 							case 'issues_per_state':
 								$item = ($item_id == TBGIssue::STATE_OPEN) ? $i18n->__('Open', array(), true) : $i18n->__('Closed', array(), true);
@@ -1024,7 +1024,7 @@
 				$i18n = TBGContext::getI18n();
 				if ($request->hasParameter('milestone_id'))
 				{
-					$milestone = \caspar\core\Caspar::factory()->manufacture('TBGMilestone', $request->getParameter('milestone_id'));
+					$milestone = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', $request->getParameter('milestone_id'));
 					$milestone->updateStatus();
 					$details = array('failed' => false);
 					$details['percent'] = $milestone->getPercentComplete();
@@ -1115,8 +1115,8 @@
 		{
 			try
 			{
-				$transition = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransition', $request->getParameter('transition_id'));
-				$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $request->getParameter('issue_id'));
+				$transition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransition', $request->getParameter('transition_id'));
+				$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('issue_id'));
 				if (!$issue->isWorkflowTransitionsAvailable())
 				{
 					throw new Exception(TBGContext::getI18n()->__('You are not allowed to perform any workflow transitions on this issue'));
@@ -1144,13 +1144,13 @@
 		{
 			try
 			{
-				$transition = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransition', $request->getParameter('transition_id'));
+				$transition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransition', $request->getParameter('transition_id'));
 				$issue_ids = $request['issue_ids'];
 				$status = null;
 				$closed = false;
 				foreach ($issue_ids as $issue_id) 
 				{
-					$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $issue_id);
+					$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $issue_id);
 					if (!$issue->isWorkflowTransitionsAvailable() || !$transition->validateFromRequest($request))
 					{
 						$this->getResponse()->setHttpStatus(400);

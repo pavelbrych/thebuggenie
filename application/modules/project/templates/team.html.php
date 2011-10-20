@@ -35,7 +35,7 @@
 										<?php if (array_key_exists('editions', $assigns)): ?>
 											<?php foreach ($assigns['editions'] as $e_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theEdition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $e_id); ?>
+												<?php $theEdition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Edition', $e_id); ?>
 												<b><?php echo $theEdition->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>
@@ -46,7 +46,7 @@
 										<?php if (array_key_exists('components', $assigns)): ?>
 											<?php foreach ($assigns['components'] as $cp_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theComponent = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $cp_id); ?>
+												<?php $theComponent = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Component', $cp_id); ?>
 												<b><?php echo $theComponent->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>
@@ -90,7 +90,7 @@
 										<?php if (array_key_exists('editions', $assigns)): ?>
 											<?php foreach ($assigns['editions'] as $e_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theEdition = \caspar\core\Caspar::factory()->manufacture('TBGEdition', $e_id); ?>
+												<?php $theEdition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Edition', $e_id); ?>
 												<b><?php echo $theEdition->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>
@@ -101,7 +101,7 @@
 										<?php if (array_key_exists('components', $assigns)): ?>
 											<?php foreach ($assigns['components'] as $cp_id => $types): ?>
 												<?php $types_array = array(); ?>
-												<?php $theComponent = \caspar\core\Caspar::factory()->manufacture('TBGComponent', $cp_id); ?>
+												<?php $theComponent = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Component', $cp_id); ?>
 												<b><?php echo $theComponent->getName(); ?></b>:&nbsp;
 												<?php foreach ($types as $type => $bool): ?>
 													<?php $types_array[] = TBGProjectAssigneesTable::getTypeName($type); ?>

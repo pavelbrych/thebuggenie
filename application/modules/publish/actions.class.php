@@ -37,7 +37,7 @@
 					
 					if ($row instanceof \b2db\Row)
 					{
-						$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+						$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 						
 						if ($project instanceof \thebuggenie\entities\Project)
 							$this->forward403unless($project->hasAccess());
@@ -54,7 +54,7 @@
 					{
 						$row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->getByKey($project_key);
 						
-						$this->selected_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(TBGProjectsTable::ID), $row);
+						$this->selected_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $row->get(\thebuggenie\tables\Projects::ID), $row);
 					}
 					elseif ($project_id = (int) $request->getParameter('project_id'))
 						$this->selected_project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $project_id);
@@ -68,9 +68,9 @@
 				
 			}
 			
-			if ($row = TBGArticlesTable::getTable()->getArticleByName($this->article_name))
+			if ($row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getArticleByName($this->article_name))
 			{
-				$this->article = PublishFactory::article($row->get(TBGArticlesTable::ID), $row);
+				$this->article = PublishFactory::article($row->get(\application\modules\publish\tables\Articles::ID), $row);
 			}
 
 		}

@@ -54,7 +54,7 @@
 						}
 						break;
 					case TBGLogTable::LOG_COMMENT:
-						$comment = \caspar\core\Caspar::factory()->manufacture('TBGComment', (int) $log_action['text']);
+						$comment = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Comment', (int) $log_action['text']);
 						echo '<div class="timeline_inline_details">';
 						echo nl2br(tbg_truncateText(tbg_decodeUTF8($comment->getContent()), 300));
 						echo '</div>';

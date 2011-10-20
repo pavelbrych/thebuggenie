@@ -37,7 +37,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$key][$row_id] = \caspar\core\Caspar::factory()->manufacture('TBGCustomDatatypeOption', $row_id, $row);
+						self::$_items[$key][$row_id] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\CustomDatatypeOption', $row_id, $row);
 					}
 				}
 			}
@@ -57,7 +57,7 @@
 			$row = Caspar::getB2DBInstance()->getTable('TBGCustomFieldOptionsTable')->getByValueAndKey($value, $key);
 			if ($row)
 			{
-				return \caspar\core\Caspar::factory()->manufacture('TBGCustomDatatypeOption', $row->get(TBGCustomFieldOptionsTable::ID), $row);
+				return \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\CustomDatatypeOption', $row->get(TBGCustomFieldOptionsTable::ID), $row);
 			}
 			return null;
 		}

@@ -284,7 +284,7 @@
 			if (self::$_defaultscope === null)
 			{
 				$row = Caspar::getB2DBInstance()->getTable('\thebuggenie\tables\Settings')->getDefaultScope();
-				self::$_defaultscope = Caspar::factory()->manufacture('TBGScope', $row->get(\thebuggenie\tables\Settings::VALUE));
+				self::$_defaultscope = Caspar::factory()->manufacture('\thebuggenie\entities\Scope', $row->get(\thebuggenie\tables\Settings::VALUE));
 			}
 			return self::$_defaultscope;
 		}

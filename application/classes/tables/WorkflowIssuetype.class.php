@@ -123,7 +123,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$return_array[$row->get(self::ISSUETYPE_ID)] = \caspar\core\Caspar::factory()->manufacture('TBGWorkflow', $row->get(self::WORKFLOW_ID), $row);
+					$return_array[$row->get(self::ISSUETYPE_ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Workflow', $row->get(self::WORKFLOW_ID), $row);
 				}
 			}
 

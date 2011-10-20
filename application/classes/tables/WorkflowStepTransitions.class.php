@@ -70,11 +70,11 @@
 				{
 					if ($type == 'step')
 					{
-						$return_array[$row->get(self::TRANSITION_ID)] = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransition', $row->get(self::TRANSITION_ID), $row);
+						$return_array[$row->get(self::TRANSITION_ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransition', $row->get(self::TRANSITION_ID), $row);
 					}
 					else
 					{
-						$return_array[$row->get(self::FROM_STEP_ID)] = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowStep', $row->get(self::FROM_STEP_ID), $row);
+						$return_array[$row->get(self::FROM_STEP_ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowStep', $row->get(self::FROM_STEP_ID), $row);
 					}
 				}
 			}

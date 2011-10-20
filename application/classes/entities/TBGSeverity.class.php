@@ -37,7 +37,7 @@
 				{
 					foreach ($items as $row_id => $row)
 					{
-						self::$_items[$row_id] = \caspar\core\Caspar::factory()->manufacture('TBGSeverity', $row_id, $row);
+						self::$_items[$row_id] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Severity', $row_id, $row);
 					}
 				}
 			}
@@ -54,7 +54,7 @@
 		public static function createNew($name)
 		{
 			$res = parent::_createNew($name, self::SEVERITY);
-			return \caspar\core\Caspar::factory()->manufacture('TBGSeverity', $res->getInsertID());
+			return \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Severity', $res->getInsertID());
 		}
 
 	}

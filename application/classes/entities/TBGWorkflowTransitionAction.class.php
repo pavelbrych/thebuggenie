@@ -66,7 +66,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$action = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransitionAction', $row->get(TBGWorkflowTransitionActionsTable::ID), $row);
+					$action = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransitionAction', $row->get(TBGWorkflowTransitionActionsTable::ID), $row);
 					$actions[$action->getActionType()] = $action;
 				}
 			}
@@ -133,13 +133,13 @@
 					break;
 				case self::ACTION_SET_STATUS:
 					if ($this->getTargetValue())
-						$issue->setStatus(\caspar\core\Caspar::factory()->manufacture('TBGStatus', (int) $this->getTargetValue()));
+						$issue->setStatus(\caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Status', (int) $this->getTargetValue()));
 					else
 						$issue->setStatus($request->getParameter('status_id'));
 					break;
 				case self::ACTION_SET_MILESTONE:
 					if ($this->getTargetValue())
-						$issue->setMilestone(\caspar\core\Caspar::factory()->manufacture('TBGMilestone', (int) $this->getTargetValue()));
+						$issue->setMilestone(\caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', (int) $this->getTargetValue()));
 					else
 						$issue->setMilestone($request->getParameter('milestone_id'));
 					break;
@@ -148,7 +148,7 @@
 					break;
 				case self::ACTION_SET_PRIORITY:
 					if ($this->getTargetValue())
-						$issue->setPriority(\caspar\core\Caspar::factory()->manufacture('TBGPriority', (int) $this->getTargetValue()));
+						$issue->setPriority(\caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Priority', (int) $this->getTargetValue()));
 					else
 						$issue->setPriority($request->getParameter('priority_id'));
 					break;
@@ -172,7 +172,7 @@
 					break;
 				case self::ACTION_SET_RESOLUTION:
 					if ($this->getTargetValue())
-						$issue->setResolution(\caspar\core\Caspar::factory()->manufacture('TBGResolution', (int) $this->getTargetValue()));
+						$issue->setResolution(\caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Resolution', (int) $this->getTargetValue()));
 					else
 						$issue->setResolution($request->getParameter('resolution_id'));
 					break;
@@ -181,7 +181,7 @@
 					break;
 				case self::ACTION_SET_REPRODUCABILITY:
 					if ($this->getTargetValue())
-						$issue->setReproducability(\caspar\core\Caspar::factory()->manufacture('TBGReproducability', (int) $this->getTargetValue()));
+						$issue->setReproducability(\caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Reproducability', (int) $this->getTargetValue()));
 					else
 						$issue->setReproducability($request->getParameter('reproducability_id'));
 					break;

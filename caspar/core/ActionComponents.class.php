@@ -69,7 +69,7 @@
 		protected static function _getComponentDetails($template)
 		{
 			$module_file = self::getModuleAndTemplate($template);
-			$actionClassName = '\\thebuggenie\\modules\\'.$module_file['module'].'\\ActionComponents';
+			$actionClassName = '\\application\\modules\\'.$module_file['module'].'\\ActionComponents';
 			$actionToRunName = 'component' . ucfirst($module_file['file']);
 
 			return array($module_file, $actionClassName, $actionToRunName);

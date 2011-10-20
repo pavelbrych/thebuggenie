@@ -144,7 +144,7 @@
 			{
 				try
 				{
-					$this->_status_id = \caspar\core\Caspar::factory()->manufacture('TBGStatus', $this->_status_id);
+					$this->_status_id = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Status', $this->_status_id);
 				}
 				catch (Exception $e)
 				{

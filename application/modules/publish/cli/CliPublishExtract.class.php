@@ -29,7 +29,7 @@
 		public function do_execute()
 		{
 			$this->cliEcho("Extracting articles ... \n", 'white', 'bold');
-			$articles = TBGArticlesTable::getTable()->getAllArticles();
+			$articles = \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getAllArticles();
 
 			$this->cliEcho("Articles found: ");
 			$this->cliEcho(count($articles)."\n", 'green', 'bold');

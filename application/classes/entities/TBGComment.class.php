@@ -81,7 +81,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$comment = \caspar\core\Caspar::factory()->manufacture('TBGComment', $row->get(TBGCommentsTable::ID), $row);
+					$comment = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Comment', $row->get(TBGCommentsTable::ID), $row);
 					$retval[$comment->getID()] = $comment;
 				}
 				self::$_comment_count[$target_type][$target_id] = count($retval);
@@ -96,7 +96,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$comment = \caspar\core\Caspar::factory()->manufacture('TBGComment', $row->get(TBGCommentsTable::ID), $row);
+					$comment = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Comment', $row->get(TBGCommentsTable::ID), $row);
 					$retval[$comment->getID()] = $comment;
 				}
 			}

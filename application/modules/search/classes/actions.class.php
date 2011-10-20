@@ -175,7 +175,7 @@
 					$this->ipp = 0;
 					$this->groupby = 'user_pain';
 					$this->grouporder = 'desc';
-					$ids = \TBGIssueTypesTable::getTable()->getBugReportTypeIDs();
+					$ids = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Issuetypes')->getBugReportTypeIDs();
 					$this->filters['issuetype'] = array();
 					foreach ($ids as $id)
 					{

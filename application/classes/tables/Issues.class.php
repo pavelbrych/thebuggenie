@@ -291,7 +291,7 @@
 			{
 				while ($row = $results->getNextRow())
 				{
-					$data[] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(Issues::ID), $row);
+					$data[] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(Issues::ID), $row);
 				}
 			}
 			

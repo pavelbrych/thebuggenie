@@ -133,9 +133,9 @@
 						}
 						if ($overwrite)
 						{
-							TBGArticlesTable::getTable()->deleteArticleByName(urldecode($original_article_name));
+							\caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->deleteArticleByName(urldecode($original_article_name));
 						}
-						if (TBGArticlesTable::getTable()->getArticleByName(urldecode($original_article_name)) === null)
+						if (\caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getArticleByName(urldecode($original_article_name)) === null)
 						{
 							$content = file_get_contents(THEBUGGENIE_MODULES_PATH . 'publish' . DS . 'fixtures' . DS . $original_article_name);
 							TBGWikiArticle::createNew(urldecode($original_article_name), $content, true, $scope, array('overwrite' => $overwrite, 'noauthor' => true));
@@ -163,7 +163,7 @@
 		{
 			if (Context::getScope()->getID() == 1)
 			{
-				TBGArticlesTable::getTable()->drop();
+				\caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->drop();
 				Caspar::getB2DBInstance()->getTable('TBGBillboardPostsTable')->drop();
 			}
 			TBGLinksTable::getTable()->removeByTargetTypeTargetIDandLinkID('wiki', 0);
@@ -198,7 +198,7 @@
 				foreach ($request->getParameter('import_article') as $article_name => $import)
 				{
 					$cc++;
-					TBGArticlesTable::getTable()->deleteArticleByName(urldecode($article_name));
+					\caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->deleteArticleByName(urldecode($article_name));
 					$content = file_get_contents(THEBUGGENIE_MODULES_PATH . 'publish' . DS . 'fixtures' . DS . $article_name);
 					TBGWikiArticle::createNew(urldecode($article_name), $content, true, null, array('overwrite' => true, 'noauthor' => true));
 				}
@@ -264,7 +264,7 @@
 
 		public function getLatestArticles($limit = 5)
 		{
-			return TBGArticlesTable::getTable()->getArticles($limit, true);
+			return \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getArticles($limit, true);
 		}
 	
 		public function getMenuItems($target_id = 0)
@@ -276,13 +276,13 @@
 		{
 			$articles = array();
 
-			if ($res = TBGArticlesTable::getTable()->getUnpublishedArticlesByUser(Context::getUser()->getID()))
+			if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getUnpublishedArticlesByUser(Context::getUser()->getID()))
 			{
 				while ($row = $res->getNextRow())
 				{
 					try
 					{
-						$article = PublishFactory::article($row->get(TBGArticlesTable::ID), $row);
+						$article = PublishFactory::article($row->get(\application\modules\publish\tables\Articles::ID), $row);
 					}
 					catch (Exception $e)
 					{
@@ -302,9 +302,9 @@
 		public function getFrontpageArticle($type)
 		{
 			$article_name = ($type == 'main') ? 'FrontpageArticle' : 'FrontpageLeftmenu';
-			if ($row = TBGArticlesTable::getTable()->getArticleByName($article_name))
+			if ($row = \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles')->getArticleByName($article_name))
 			{
-				return PublishFactory::article($row->get(TBGArticlesTable::ID), $row);
+				return PublishFactory::article($row->get(\application\modules\publish\tables\Articles::ID), $row);
 			}
 			return null;
 		}

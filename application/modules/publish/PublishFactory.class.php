@@ -1,5 +1,7 @@
 <?php
 
+	namespace application\modules\publish;
+
 	class PublishFactory
 	{
 		
@@ -21,7 +23,7 @@
 			{
 				try
 				{
-					self::$_articles[$a_id] = new TBGWikiArticle($a_id, $row);
+					self::$_articles[$a_id] = new entities\WikiArticle($a_id, $row);
 					self::$_article_names[self::$_articles[$a_id]->getName()] = $a_id;
 				}
 				catch (Exception $e)

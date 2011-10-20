@@ -37,7 +37,7 @@
 			
 			parent::_addForeignKeyColumn(self::UID, Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\Users'), \thebuggenie\tables\Users::ID);
 			parent::_addForeignKeyColumn(self::SCOPE, $this->_connection->getTable('\\thebuggenie\\tables\\Scopes'), \thebuggenie\tables\Scopes::ID);
-			parent::_addForeignKeyColumn(self::ARTICLE_ID, TBGArticlesTable::getTable(), TBGArticlesTable::ID);
+			parent::_addForeignKeyColumn(self::ARTICLE_ID, \caspar\core\Caspar::getB2DBInstance()->getTable('\\application\\modules\\publish\\tables\\Articles'), \application\modules\publish\tables\Articles::ID);
 			parent::_addForeignKeyColumn(self::FILE_ID, TBGFilesTable::getTable(), TBGFilesTable::ID);
 			parent::_addInteger(self::ATTACHED_AT, 10);
 		}
@@ -73,7 +73,7 @@
 				{
 					try
 					{
-						$file = \caspar\core\Caspar::factory()->manufacture('TBGFile', $row->get(TBGFilesTable::ID), $row);
+						$file = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\File', $row->get(TBGFilesTable::ID), $row);
 						$file->setUploadedAt($row->get(self::ATTACHED_AT));
 						$ret_arr[$row->get(TBGFilesTable::ID)] = $file;
 					}

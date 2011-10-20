@@ -56,7 +56,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$actions[$row->get(self::PRE_OR_POST)][$row->get(self::RULE)] = \caspar\core\Caspar::factory()->manufacture('TBGWorkflowTransitionValidationRule', $row->get(self::ID), $row);
+					$actions[$row->get(self::PRE_OR_POST)][$row->get(self::RULE)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransitionValidationRule', $row->get(self::ID), $row);
 				}
 			}
 			

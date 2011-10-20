@@ -936,7 +936,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->userassigned[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+						$this->userassigned[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 					}
 					ksort($this->userassigned, SORT_NUMERIC);
 				}
@@ -959,7 +959,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->teamassigned[$team_id][$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+						$this->teamassigned[$team_id][$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 					}
 				}
 				ksort($this->teamassigned[$team_id], SORT_NUMERIC);
@@ -979,7 +979,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->_starredissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+						$this->_starredissues[$row->get(TBGIssuesTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 					}
 					ksort($this->_starredissues, SORT_NUMERIC);
 				}
@@ -1034,7 +1034,7 @@
 				$crit->addInsert(TBGUserIssuesTable::SCOPE, \thebuggenie\core\Context::getScope()->getID());
 				
 				Caspar::getB2DBInstance()->getTable('TBGUserIssuesTable')->doInsert($crit);
-				$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $issue_id);
+				$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $issue_id);
 				$this->_starredissues[$issue->getID()] = $issue;
 				ksort($this->_starredissues);
 				\caspar\core\Logging::log('Starred');
@@ -2124,7 +2124,7 @@
 			{
 				while ($row = $res->getNextRow())
 				{
-					$issue = \caspar\core\Caspar::factory()->manufacture('TBGIssue', $row->get(TBGIssuesTable::ID), $row);
+					$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $row->get(TBGIssuesTable::ID), $row);
 					$retval[$issue->getID()] = $issue;
 				}
 			}
