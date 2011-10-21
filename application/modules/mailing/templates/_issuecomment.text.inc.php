@@ -1,5 +1,5 @@
 Hi, %user_buddyname%!
-A comment has been added to <?php echo TBGContext::getI18n()->__($issue->getIssueType()->getName()); ?> <?php echo $issue->getFormattedIssueNo(true); ?> - <?php echo $issue->getTitle(); ?> by <?php echo $comment->getPostedBy()->getName(); ?>:
+A comment has been added to <?php echo \caspar\core\Caspar::getI18n()->__($issue->getIssueType()->getName()); ?> <?php echo $issue->getFormattedIssueNo(true); ?> - <?php echo $issue->getTitle(); ?> by <?php echo $comment->getPostedBy()->getName(); ?>:
 
 <?php echo tbg_parse_text($comment->getContent()); ?>
 

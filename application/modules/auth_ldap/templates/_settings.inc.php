@@ -11,7 +11,7 @@
 	<p><?php echo __('When you enable LDAP as your authentication backend in Authentication configuration, you will lose access to all accounts which do not also exist in the LDAP database. This may mean you lose administrative access.'); ?></p>
 	<p style="font-weight: bold; padding-top: 5px"><?php echo __('To resolve this issue, either import all users using the tool on this page and make one an administrator using Users configuration, or create a user with the same username as one in LDAP and make that one an administrator.'); ?></p>
 </div>
-<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
+<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
 	<div class="rounded_box borderless mediumgrey<?php if ($access_level == TBGSettings::ACCESS_FULL): ?> cut_bottom<?php endif; ?>" style="margin: 10px 0 0 0; width: 700px;<?php if ($access_level == TBGSettings::ACCESS_FULL): ?> border-bottom: 0;<?php endif; ?>">
 		<div class="header"><?php echo __('Connection details'); ?></div>
 		<table style="width: 680px;" class="padded_table" cellpadding=0 cellspacing=0 id="ldap_settings_table">
@@ -100,7 +100,7 @@
 <?php endif; ?>
 </form>
 
-<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('ldap_test'); ?>" method="post">
+<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('ldap_test'); ?>" method="post">
 	<div class="rounded_box borderless mediumgrey cut_bottom" style="margin: 10px 0 0 0; width: 700px; padding: 5px;">
 		<div class="header"><?php echo __('Test connection'); ?></div>
 		<div class="content"><?php echo __('After configuring and saving your connection settings, you should test your connection to the LDAP server. This test does not check whether the DN and attributes can allow The Bug Genie to correctly find users, but it will give an indication if The Bug Genie can talk to your LDAP server, and if any groups you specify exist.'); ?></div>
@@ -110,7 +110,7 @@
 	</div>
 </form>
 
-<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('ldap_import'); ?>" method="post">
+<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('ldap_import'); ?>" method="post">
 	<div class="rounded_box borderless mediumgrey cut_bottom" style="margin: 10px 0 0 0; width: 700px; padding: 5px;">
 		<div class="header"><?php echo __('Import all users'); ?></div>
 		<div class="content"><?php echo __('You can import all users who can log in from LDAP into The Bug Genie with this tool. This will not let them log in without switching to LDAP Authentication. We recomemnd you do this before switching over, and make at least one of the new users an administrator. Already existing users with the same username will be updated.'); ?></div>
@@ -120,7 +120,7 @@
 	</div>
 </form>
 
-<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('ldap_prune'); ?>" method="post">
+<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('ldap_prune'); ?>" method="post">
 	<div class="rounded_box borderless mediumgrey cut_bottom" style="margin: 10px 0 0 0; width: 700px; padding: 5px;">
 		<div class="header"><?php echo __('Prune users'); ?></div>
 		<div class="content"><?php echo __('To remove the data from The Bug Genie of users who can no longer log in via LDAP, run this tool. These users would not be able to log in anyway, but it will keep your user list clean. The guest user is not affected, but it may affect your current user - if this is deleted you will be logged out.'); ?></div>

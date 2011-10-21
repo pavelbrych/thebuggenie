@@ -4,6 +4,7 @@
 	
 	use caspar\core\Caspar,
 		thebuggenie\core\Settings,
+		thebuggenie\entities\Project,
 		thebuggenie\tables\Users;
 
 	/**
@@ -610,7 +611,7 @@
 			$compare_user = self::getByUsername($this->getUsername(), $this->getScope());
 			if ($compare_user instanceof TBGUser && $compare_user->getID() && $compare_user->getID() != $this->getID())
 			{
-				throw new Exception(TBGContext::getI18n()->__('This username already exists'));
+				throw new Exception(\caspar\core\Caspar::getI18n()->__('This username already exists'));
 			}
 			if (!$this->_realname)
 			{
@@ -637,7 +638,7 @@
 				
 				$this->_group_id = null;
 				\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->clearTeamsByUserID($this->getID());
-				TBGClientMembersTable::getTable()->clearClientsByUserID($this->getID());
+				\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\ClientMembers')->clearClientsByUserID($this->getID());
 			}
 		}
 
@@ -867,11 +868,11 @@
 			{
 				$this->clients = array();
 				\caspar\core\Logging::log('Populating user clients');
-				if ($res = TBGClientMembersTable::getTable()->getClientIDsForUserID($this->getID()))
+				if ($res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\ClientMembers')->getClientIDsForUserID($this->getID()))
 				{
 					while ($row = $res->getNextRow())
 					{
-						$this->clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(TBGClientsTable::ID), $row);
+						$this->clients[$row->get(\thebuggenie\tables\Clients::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(\thebuggenie\tables\Clients::ID), $row);
 					}
 				}
 				\caspar\core\Logging::log('...done (Populating user clients)');
@@ -1588,7 +1589,7 @@
 			}
 			else
 			{
-				$url = TBGContext::getTBGPath() . 'avatars/' . $this->getAvatar();
+				$url = \caspar\core\Caspar::getTBGPath() . 'avatars/' . $this->getAvatar();
 				if ($small) $url .= '_small';
 				$url .= '.png';
 			}
@@ -1750,7 +1751,7 @@
 		 */
 		public function hasModuleAccess($module)
 		{
-			return TBGContext::getModule($module)->hasAccess($this->getID());
+			return \thebuggenie\core\Context::getModule($module)->hasAccess($this->getID());
 		}
 	
 		/**
@@ -1934,11 +1935,11 @@
 		/**
 		 * Return if the user can manage a project
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 * 
 		 * @return boolean
 		 */
-		public function canManageProject(TBGProject $project)
+		public function canManageProject(Project $project)
 		{
 			return (bool) $this->hasPermission('canmanageproject', $project->getID());
 		}
@@ -1946,11 +1947,11 @@
 		/**
 		 * Return if the user can manage releases for a project
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 *
 		 * @return boolean
 		 */
-		public function canManageProjectReleases(TBGProject $project)
+		public function canManageProjectReleases(Project $project)
 		{
 			if ($project->isArchived()): return false; endif;
 			return (bool) ($this->hasPermission('canmanageprojectreleases', $project->getID()) || $this->hasPermission('canmanageproject', $project->getID()));
@@ -1959,11 +1960,11 @@
 		/**
 		 * Return if the user can edit project details and settings
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 *
 		 * @return boolean
 		 */
-		public function canEditProjectDetails(TBGProject $project)
+		public function canEditProjectDetails(Project $project)
 		{
 			if ($project->isArchived()): return false; endif;
 			return (bool) ($this->hasPermission('caneditprojectdetails', $project->getID(), 'core', true) || $this->hasPermission('canmanageproject', $project->getID(), 'core', true));
@@ -1972,11 +1973,11 @@
 		/**
 		 * Return if the user can add scrum user stories
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 *
 		 * @return boolean
 		 */
-		public function canAddScrumUserStories(TBGProject $project)
+		public function canAddScrumUserStories(Project $project)
 		{
 			if ($project->isArchived()): return false; endif;
 			return (bool) ($this->hasPermission('canaddscrumuserstories', $project->getID(), 'core', true) || $this->hasPermission('candoscrumplanning', $project->getID(), 'core', true) || $this->hasPermission('canaddscrumuserstories', 0, 'core', true) || $this->hasPermission('candoscrumplanning', 0, 'core', true));
@@ -1985,11 +1986,11 @@
 		/**
 		 * Return if the user can add scrum sprints
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 *
 		 * @return boolean
 		 */
-		public function canAddScrumSprints(TBGProject $project)
+		public function canAddScrumSprints(Project $project)
 		{
 			if ($project->isArchived()): return false; endif;
 			return (bool) ($this->hasPermission('canaddscrumsprints', $project->getID(), 'core', true) || $this->hasPermission('candoscrumplanning', $project->getID(), 'core', true) || $this->hasPermission('canaddscrumsprints', 0, 'core', true) || $this->hasPermission('candoscrumplanning', 0, 'core', true));
@@ -1998,11 +1999,11 @@
 		/**
 		 * Return if the user can assign scrum user stories
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 *
 		 * @return boolean
 		 */
-		public function canAssignScrumUserStories(TBGProject $project)
+		public function canAssignScrumUserStories(Project $project)
 		{
 			if ($project->isArchived()): return false; endif;
 			return (bool) ($this->hasPermission('canassignscrumuserstoriestosprints', $project->getID(), 'core', true) || $this->hasPermission('candoscrumplanning', $project->getID(), 'core', true) || $this->hasPermission('canassignscrumuserstoriestosprints', 0, 'core', true) || $this->hasPermission('candoscrumplanning', 0, 'core', true));
@@ -2011,7 +2012,7 @@
 		/**
 		 * Return if the user can change its own password
 		 *
-		 * @param TBGProject $project
+		 * @param Project $project
 		 *
 		 * @return boolean
 		 */
@@ -2060,16 +2061,16 @@
 			{
 				$this->_associated_projects = array();
 				
-				$projects = Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->getProjectsByUserID($this->getID());
+				$projects = Caspar::getB2DBInstance()->getTable('ProjectAssigneesTable')->getProjectsByUserID($this->getID());
 				$edition_projects = Caspar::getB2DBInstance()->getTable('TBGEditionAssigneesTable')->getProjectsByUserID($this->getID());
 				$component_projects = Caspar::getB2DBInstance()->getTable('TBGComponentAssigneesTable')->getProjectsByUserID($this->getID());
-				$lo_projects = Caspar::getB2DBInstance()->getTable('TBGProjectsTable')->getByUserID($this->getID());
+				$lo_projects = Caspar::getB2DBInstance()->getTable('ProjectsTable')->getByUserID($this->getID());
 
 				$project_ids = array_merge(array_keys($projects), array_keys($edition_projects), array_keys($component_projects), array_keys($lo_projects));
 
 				foreach ($this->getTeams() as $team)
 				{
-					$projects_team = Caspar::getB2DBInstance()->getTable('TBGProjectAssigneesTable')->getProjectsByTeamID($team->getID());
+					$projects_team = Caspar::getB2DBInstance()->getTable('ProjectAssigneesTable')->getProjectsByTeamID($team->getID());
 					$edition_projects_team = Caspar::getB2DBInstance()->getTable('TBGEditionAssigneesTable')->getProjectsByTeamID($team->getID());
 					$component_projects_team = Caspar::getB2DBInstance()->getTable('TBGComponentAssigneesTable')->getProjectsByTeamID($team->getID());
 					$project_ids = array_merge(array_keys($projects_team), array_keys($edition_projects_team), array_keys($component_projects_team), $project_ids);	

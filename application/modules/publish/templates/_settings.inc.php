@@ -6,7 +6,7 @@
 </div>
 <div id="publish_settings_menu_panes">
 	<div id="publish_tab_settings_pane" style="margin: 10px 0 0 0; width: 740px;<?php if ($access_level == TBGSettings::ACCESS_FULL): ?> border-bottom: 0;<?php endif; ?>">
-		<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
+		<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
 			<table style="width: 680px;" class="padded_table" cellpadding=0 cellspacing=0>
 				<tr>
 					<td style="width: 200px; padding: 5px;"><label for="publish_menu_title"><?php echo __('Menu title'); ?></label></td>
@@ -69,7 +69,7 @@
 		</form>
 	</div>
 	<div id="publish_tab_import_pane" style="margin: 10px 0 0 0; width: 740px; display: none;<?php if ($access_level == TBGSettings::ACCESS_FULL): ?> border-bottom: 0;<?php endif; ?>">
-		<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
+		<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
 			<input type="hidden" name="import_articles" value="1">
 			<div class="rounded_box lightgrey borderless" style="margin-bottom: 5px;">
 				<label for="select_article_categories"><?php echo __('Show articles in category'); ?>: </label>

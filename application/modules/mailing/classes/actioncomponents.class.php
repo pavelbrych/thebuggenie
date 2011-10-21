@@ -20,7 +20,7 @@
 
 		public function componentAccountSettings()
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$general_settings = array();
 			$issues_settings = array();
 			
@@ -43,7 +43,7 @@
 		
 		public function componentEditIncomingEmailAccount()
 		{
-			$this->project = TBGContext::getCurrentProject();
+			$this->project = \thebuggenie\core\Context::getCurrentProject();
 		}
 		
 	}

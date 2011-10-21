@@ -27,7 +27,7 @@
 	<tr id="edit_build_<?php print $b_id; ?>" class="selected_green" style="display: none;">
 		<td style="width: 20px; padding: 2px; padding-top: 10px;" valign="top"><?php echo image_tag('icon_edit_build.png'); ?></td>
 		<td style="width: auto; padding: 2px;" colspan="2">
-			<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'update')); ?>" method="post" id="edit_build_<?php print $b_id; ?>_form" onsubmit="TBG.Project.Build.update('<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'update')); ?>', <?php echo $b_id; ?>);return false;">
+			<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'update')); ?>" method="post" id="edit_build_<?php print $b_id; ?>_form" onsubmit="TBG.Project.Build.update('<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'update')); ?>', <?php echo $b_id; ?>);return false;">
 				<table cellpadding=0 cellspacing=0 style="width: 100%;">
 					<tr>
 						<td style="width: 120px;"><label for="build_name_<?php echo $b_id; ?>"><?php echo __('Build / release name'); ?>:</label></td>
@@ -73,7 +73,7 @@
 			<?php else: ?>
 				<?php echo __('This build / release will then be added to the list of affected builds / releases on all open issues for this edition'); ?>
 			<?php endif; ?>.
-			<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'addtoopen')); ?>" method="post" id="add_to_open_build_<?php print $b_id; ?>_form" onsubmit="addToOpenBuild('<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'addtoopen')); ?>', <?php echo $b_id; ?>);return false;">
+			<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'addtoopen')); ?>" method="post" id="add_to_open_build_<?php print $b_id; ?>_form" onsubmit="addToOpenBuild('<?php echo make_url('configure_build_action', array('build_id' => $b_id, 'build_action' => 'addtoopen')); ?>', <?php echo $b_id; ?>);return false;">
 				<table cellpadding=0 cellspacing=0 style="width: 100%;" class="padded_table">
 					<tr>
 						<td style="width: auto; margin-right: 10px; text-align: right;"><label for="build_<?php echo $b_id; ?>_status"><?php echo __('Status'); ?></label></td>
@@ -99,7 +99,7 @@
 							<select name="issuetype" id="build_<?php echo $b_id; ?>_issuetype">
 								<option value="" selected><?php echo __('All issue types'); ?></option>
 								<?php if ($build->getProject() instanceof \thebuggenie\entities\Project): ?>
-									<?php foreach (TBGIssuetype::getAll($build->getProject()->getID()) as $anIssuetype): ?>
+									<?php foreach (\thebuggenie\entities\Issuetype::getAll($build->getProject()->getID()) as $anIssuetype): ?>
 										<option value=<?php echo $anIssuetype->getID(); ?>><?php echo $anIssuetype->getName(); ?></option>
 									<?php endforeach; ?>
 								<?php else: ?>

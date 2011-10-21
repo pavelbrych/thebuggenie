@@ -1604,7 +1604,7 @@
 				$this->_unassignedstories = array();
 				$issuetypes = array();
 				
-				foreach (TBGIssuetype::getAll() as $issuetype)
+				foreach (\thebuggenie\entities\Issuetype::getAll() as $issuetype)
 				{
 					if ($issuetype->getIcon() == 'developer_report')
 					{
@@ -2229,7 +2229,7 @@
 							if ($key == 'edition' || array_key_exists('custom', $return_details) && $return_details['custom'] && in_array($return_details['custom_type'], array(TBGCustomDatatype::EDITIONS_LIST, TBGCustomDatatype::EDITIONS_CHOICE)))
 							{
 								$retval[$key]['values'] = array();
-								$retval[$key]['values'][''] = TBGContext::getI18n()->__('None');
+								$retval[$key]['values'][''] = \caspar\core\Caspar::getI18n()->__('None');
 								foreach ($this->getEditions() as $edition)
 								{
 									$retval[$key]['values'][$edition->getID()] = $edition->getName();
@@ -2276,7 +2276,7 @@
 							elseif ($key == 'component' || array_key_exists('custom', $return_details) && $return_details['custom'] && in_array($return_details['custom_type'], array(TBGCustomDatatype::COMPONENTS_LIST, TBGCustomDatatype::COMPONENTS_CHOICE)))
 							{
 								$retval[$key]['values'] = array();
-								$retval[$key]['values'][''] = TBGContext::getI18n()->__('None');
+								$retval[$key]['values'][''] = \caspar\core\Caspar::getI18n()->__('None');
 								foreach ($this->getComponents() as $component)
 								{
 									$retval[$key]['values'][$component->getID()] = $component->getName();
@@ -2300,7 +2300,7 @@
 							elseif ($key == 'build' || array_key_exists('custom', $return_details) && $return_details['custom'] && in_array($return_details['custom_type'], array(TBGCustomDatatype::RELEASES_LIST, TBGCustomDatatype::RELEASES_CHOICE)))
 							{
 								$retval[$key]['values'] = array();
-								$retval[$key]['values'][''] = TBGContext::getI18n()->__('None');
+								$retval[$key]['values'][''] = \caspar\core\Caspar::getI18n()->__('None');
 								foreach ($this->getBuilds() as $build)
 								{
 									if ($build->isLocked()) continue;

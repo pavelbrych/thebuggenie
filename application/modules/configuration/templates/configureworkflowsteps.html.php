@@ -33,7 +33,7 @@
 					<?php if (!$workflow->isCore()): ?>
 						<div class="rounded_box shadowed white" id="add_step_div" style="width: 720px; position: absolute; padding: 5px; margin: 5px; display: none; z-index: 100;">
 							<div class="header"><?php echo __('Create a new workflow step'); ?></div>
-							<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_add_step', array('workflow_id' => $workflow->getID())); ?>" onsubmit="$('step_update_indicator').show();$('update_step_buttons').hide();">
+							<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_add_step', array('workflow_id' => $workflow->getID())); ?>" onsubmit="$('step_update_indicator').show();$('update_step_buttons').hide();">
 								<dl>
 									<dt><label for="step_name"><?php echo __('Name'); ?></label></dt>
 									<dd><input type="text" name="name" id="step_name" style="width: 150px;"></dd>

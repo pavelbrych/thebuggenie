@@ -47,7 +47,7 @@
 							</thead>
 							<tbody>
 						<?php
-							foreach (TBGIssuetypeScheme::getAll() as $item)
+							foreach (IssuetypeScheme::getAll() as $item)
 							{
 								echo '<tr><td>'.__('Issue type scheme').'</td><td>'.$item->getName().'</td><td>'.$item->getID().'</td></tr>';
 							}
@@ -83,7 +83,7 @@
 							{
 								echo '<tr><td>'.__('Resolution').'</td><td>'.$item->getName().'</td><td>'.$item->getID().'</td></tr>';
 							}
-							foreach (TBGIssuetype::getAll() as $item)
+							foreach (\thebuggenie\entities\Issuetype::getAll() as $item)
 							{
 								echo '<tr><td>'.__('Issue type').'</td><td>'.$item->getName().'</td><td>'.$item->getID().'</td></tr>';
 							}

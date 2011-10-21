@@ -41,7 +41,7 @@
 
 		public function loadFixtures(TBGScope $scope)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			$crit = $this->getCriteria();
 			$crit->addInsert(self::SCOPE, $scope->getID());

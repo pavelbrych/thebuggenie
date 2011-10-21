@@ -38,16 +38,16 @@
 			$parameters[] = 'groupby='.$this->groupby;
 			$parameters[] = 'grouporder='.$this->grouporder;
 			$parameters[] = 'issues_per_page='.$this->ipp;
-			$route = (TBGContext::isProjectContext()) ? TBGContext::getRouting()->generate('project_search_paginated', array('project_key' => TBGContext::getCurrentProject()->getKey())) : TBGContext::getRouting()->generate('search_paginated');
+			$route = (\thebuggenie\core\Context::isProjectContext()) ? TBGContext::getRouting()->generate('project_search_paginated', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : TBGContext::getRouting()->generate('search_paginated');
 			$this->route = $route;
 			$this->parameters = join('&', $parameters);
 		}
 
 		public function componentFilter()
 		{
-			$pkey = (TBGContext::isProjectContext()) ? TBGContext::getCurrentProject()->getID() : null;
+			$pkey = (\thebuggenie\core\Context::isProjectContext()) ? \thebuggenie\core\Context::getCurrentProject()->getID() : null;
 
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$this->selected_value = (isset($this->selected_value)) ? $this->selected_value : 0;
 			$this->selected_operator = (isset($this->selected_operator)) ? $this->selected_operator : '=';
 
@@ -58,7 +58,7 @@
 			$filters['severity'] = array('description' => $i18n->__('Severity'), 'options' => TBGSeverity::getAll());
 			$filters['reproducability'] = array('description' => $i18n->__('Reproducability'), 'options' => TBGReproducability::getAll());
 			$filters['resolution'] = array('description' => $i18n->__('Resolution'), 'options' => TBGResolution::getAll());
-			$filters['issuetype'] = array('description' => $i18n->__('Issue type'), 'options' => TBGIssuetype::getAll());
+			$filters['issuetype'] = array('description' => $i18n->__('Issue type'), 'options' => \thebuggenie\entities\Issuetype::getAll());
 			$filters['component'] = array('description' => $i18n->__('Component'), 'options' => TBGComponent::getAllByProjectID($pkey));
 			$filters['build'] = array('description' => $i18n->__('Build'), 'options' => TBGBuild::getByProjectID($pkey));
 			$filters['edition'] = array('description' => $i18n->__('Edition'), 'options' => TBGEdition::getAllByProjectID($pkey));
@@ -117,7 +117,7 @@
 		
 		public function componentSidebar()
 		{
-			$savedsearches = Caspar::getB2DBInstance()->getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(\caspar\core\Caspar::getUser()->getID(), (TBGContext::isProjectContext()) ? TBGContext::getCurrentProject()->getID() : 0);
+			$savedsearches = Caspar::getB2DBInstance()->getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(\caspar\core\Caspar::getUser()->getID(), (\thebuggenie\core\Context::isProjectContext()) ? \thebuggenie\core\Context::getCurrentProject()->getID() : 0);
 			foreach ($savedsearches['user'] as $a_savedsearch)
 				$this->getResponse()->addFeed(make_url('search', array('saved_search' => $a_savedsearch->get(TBGSavedSearchesTable::ID), 'search' => true, 'format' => 'rss')), __($a_savedsearch->get(TBGSavedSearchesTable::NAME)));
 
@@ -139,14 +139,14 @@
 			{
 				case \caspar\core\Caspar::getRequest()->hasParameter('quicksearch'):
 					$searchfor = \caspar\core\Caspar::getRequest()->getParameter('searchfor');
-					$project_key = (TBGContext::getCurrentProject() instanceof \thebuggenie\entities\Project) ? TBGContext::getCurrentProject()->getKey() : 0;
+					$project_key = (\thebuggenie\core\Context::getCurrentProject() instanceof \thebuggenie\entities\Project) ? \thebuggenie\core\Context::getCurrentProject()->getKey() : 0;
 					$this->csv_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => $project_key, 'quicksearch' => 'true', 'format' => 'csv')).'?searchfor='.$searchfor;
 					$this->rss_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => $project_key, 'quicksearch' => 'true', 'format' => 'rss')).'?searchfor='.$searchfor;
 					break;
 				case \caspar\core\Caspar::getRequest()->hasParameter('predefined_search'):
 					$searchno = \caspar\core\Caspar::getRequest()->getParameter('predefined_search');
-					$project_key = (TBGContext::getCurrentProject() instanceof \thebuggenie\entities\Project) ? TBGContext::getCurrentProject()->getKey() : 0;
-					$url = (TBGContext::getCurrentProject() instanceof \thebuggenie\entities\Project) ? 'project_issues' : 'search';
+					$project_key = (\thebuggenie\core\Context::getCurrentProject() instanceof \thebuggenie\entities\Project) ? \thebuggenie\core\Context::getCurrentProject()->getKey() : 0;
+					$url = (\thebuggenie\core\Context::getCurrentProject() instanceof \thebuggenie\entities\Project) ? 'project_issues' : 'search';
 					$this->csv_url = TBGContext::getRouting()->generate($url, array('project_key' => $project_key, 'predefined_search' => $searchno, 'search' => '1', 'format' => 'csv'));
 					$this->rss_url = TBGContext::getRouting()->generate($url, array('project_key' => $project_key, 'predefined_search' => $searchno, 'search' => '1', 'format' => 'rss'));
 					break;
@@ -157,10 +157,10 @@
 
 					if (isset($get[0]))
 					{
-						if (TBGContext::isProjectContext())
+						if (\thebuggenie\core\Context::isProjectContext())
 						{
-							$this->csv_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'csv')).'/'.$get[0];
-							$this->rss_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')).'?'.$get[0];
+							$this->csv_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'csv')).'/'.$get[0];
+							$this->rss_url = TBGContext::getRouting()->generate('project_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')).'?'.$get[0];
 						}
 						else
 						{
@@ -170,7 +170,7 @@
 					}
 					break;
 			}
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$this->columns = array('title' => $i18n->__('Issue title'), 'issuetype' => $i18n->__('Issue type'), 'assigned_to' => $i18n->__('Assigned to'), 'status' => $i18n->__('Status'), 'resolution' => $i18n->__('Resolution'), 'category' => $i18n->__('Category'), 'severity' => $i18n->__('Severity'), 'percent_complete' => $i18n->__('% completed'), 'reproducability' => $i18n->__('Reproducability'), 'priority' => $i18n->__('Priority'), 'milestone' => $i18n->__('Milestone'), 'last_updated' => $i18n->__('Last updated time'), 'comments' => $i18n->__('Number of comments'));
 		}
 

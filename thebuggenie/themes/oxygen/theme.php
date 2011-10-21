@@ -1,10 +1,11 @@
 <?php
 
+	use caspar\core\Caspar;
 	/**
 	 * Configuration for theme
 	 */
 
-	\caspar\core\Caspar::getResponse()->addStylesheet('oxygen.css');
-	\caspar\core\Caspar::getResponse()->addStylesheet(TBGContext::getStrippedTBGPath().'/themes/oxygen/markitup.css', false);
-	\caspar\core\Caspar::getResponse()->addStylesheet(TBGContext::getStrippedTBGPath().'/themes/oxygen/tablekit.css', false);
+	Caspar::getResponse()->addStylesheet('oxygen.css');
+	Caspar::getResponse()->addStylesheet(Caspar::getStrippedTBGPath().'/themes/oxygen/markitup.css', false);
+	Caspar::getResponse()->addStylesheet(Caspar::getStrippedTBGPath().'/themes/oxygen/tablekit.css', false);
 	

@@ -1,9 +1,9 @@
 <div class="backdrop_box medium issuedetailspopup" style="padding: 5px; text-align: left; font-size: 13px; <?php if ($issue instanceof TBGIssue): ?>display: none;<?php endif; ?>" id="issue_transition_container_<?php echo $transition->getId(); ?>">
 	<div class="backdrop_detail_header"><?php echo $transition->getDescription(); ?></div>
 <?php if ($issue instanceof TBGIssue): ?>
-	<form action="<?php echo make_url('transition_issue', array('project_key' => $project->getKey(), 'issue_id' => $issue->getID(), 'transition_id' => $transition->getID())); ?>" method="post" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>">
+	<form action="<?php echo make_url('transition_issue', array('project_key' => $project->getKey(), 'issue_id' => $issue->getID(), 'transition_id' => $transition->getID())); ?>" method="post" accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>">
 <?php else: ?>
-		<form action="<?php echo make_url('transition_issues', array('project_key' => $project->getKey(), 'transition_id' => $transition->getID())); ?>" method="post" onsubmit="TBG.Search.bulkWorkflowTransition('<?php echo make_url('transition_issues', array('project_key' => $project->getKey(), 'transition_id' => $transition->getID())); ?>', <?php echo $transition->getID(); ?>);return false;" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" id="bulk_workflow_transition_form">
+		<form action="<?php echo make_url('transition_issues', array('project_key' => $project->getKey(), 'transition_id' => $transition->getID())); ?>" method="post" onsubmit="TBG.Search.bulkWorkflowTransition('<?php echo make_url('transition_issues', array('project_key' => $project->getKey(), 'transition_id' => $transition->getID())); ?>', <?php echo $transition->getID(); ?>);return false;" accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" id="bulk_workflow_transition_form">
 	<?php foreach ($issues as $issue_id => $i): ?>
 		<input type="hidden" name="issue_ids[<?php echo $issue_id; ?>]" value="<?php echo $issue_id; ?>">
 	<?php endforeach; ?>

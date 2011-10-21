@@ -255,7 +255,7 @@
 
 		public function updateByIssuetypeSchemeID($scheme_id)
 		{
-			$schemes = TBGIssuetypeScheme::getAll();
+			$schemes = IssuetypeScheme::getAll();
 			foreach ($schemes as $default_scheme_id => $scheme)
 			{
 				break;

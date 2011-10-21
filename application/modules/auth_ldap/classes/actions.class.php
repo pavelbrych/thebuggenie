@@ -13,20 +13,20 @@
 		 */
 		public function runTestConnection(Request $request)
 		{
-			$validgroups = TBGContext::getModule('auth_ldap')->getSetting('groups');
-			$base_dn = TBGContext::getModule('auth_ldap')->getSetting('b_dn');
-			$groups_members_attr = TBGContext::getModule('auth_ldap')->getSetting('g_attr');
-			$group_class = TBGContext::getModule('auth_ldap')->getSetting('g_type');
+			$validgroups = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('groups');
+			$base_dn = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('b_dn');
+			$groups_members_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_attr');
+			$group_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_type');
 			
 			try
 			{
-				$connection = TBGContext::getModule('auth_ldap')->connect();
+				$connection = \thebuggenie\core\Context::getModule('auth_ldap')->connect();
 				
 				TBGLDAPAuthentication::getModule()->bind($connection, TBGLDAPAuthentication::getModule()->getSetting('control_user'), TBGLDAPAuthentication::getModule()->getSetting('control_pass'));
 			}
 			catch (Exception $e)
 			{
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Failed to connect to server'));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Failed to connect to server'));
 				TBGContext::setMessage('module_error_details', $e->getMessage());
 				$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 			}
@@ -65,7 +65,7 @@
 						if (!$results2)
 						{
 							\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-							throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed: ').ldap_error($connection));
 						}
 						
 						$data2 = ldap_get_entries($connection, $results2);
@@ -80,7 +80,7 @@
 			catch (Exception $e)
 			{
 				ldap_unbind($connection);
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Failed to validate groups'));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Failed to validate groups'));
 				TBGContext::setMessage('module_error_details', $e->getMessage());
 				$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 			}
@@ -88,14 +88,14 @@
 			if (count($nonexisting) == 0)
 			{
 				ldap_unbind($connection);
-				TBGContext::setMessage('module_message', TBGContext::getI18n()->__('Connection test successful'));
+				TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('Connection test successful'));
 				$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 			}
 			else
 			{
 				ldap_unbind($connection);
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Some of the groups you specified don\'t exist'));
-				TBGContext::setMessage('module_error_details', TBGContext::getI18n()->__('The following groups for the group restriction could not be found: %groups%', array('%groups%' => implode(', ', $nonexisting))));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Some of the groups you specified don\'t exist'));
+				TBGContext::setMessage('module_error_details', \caspar\core\Caspar::getI18n()->__('The following groups for the group restriction could not be found: %groups%', array('%groups%' => implode(', ', $nonexisting))));
 				$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 			}
 		}
@@ -107,24 +107,24 @@
 		 */
 		public function runPruneUsers(Request $request)
 		{
-			$validgroups = TBGContext::getModule('auth_ldap')->getSetting('groups');
-			$base_dn = TBGContext::getModule('auth_ldap')->getSetting('b_dn');
-			$dn_attr = TBGContext::getModule('auth_ldap')->getSetting('dn_attr');
-			$username_attr = TBGContext::getModule('auth_ldap')->getSetting('u_attr');
-			$fullname_attr = TBGContext::getModule('auth_ldap')->getSetting('f_attr');
-			$email_attr = TBGContext::getModule('auth_ldap')->getSetting('e_attr');
-			$groups_members_attr = TBGContext::getModule('auth_ldap')->getSetting('g_attr');
+			$validgroups = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('groups');
+			$base_dn = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('b_dn');
+			$dn_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('dn_attr');
+			$username_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('u_attr');
+			$fullname_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('f_attr');
+			$email_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('e_attr');
+			$groups_members_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_attr');
 			
-			$user_class = TBGContext::getModule('auth_ldap')->getSetting('u_type');
-			$group_class = TBGContext::getModule('auth_ldap')->getSetting('g_type');
+			$user_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('u_type');
+			$group_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_type');
 			
 			$users = TBGUser::getAll();
 			$deletecount = 0;
 			
 			try
 			{
-				$connection = TBGContext::getModule('auth_ldap')->connect();
-				TBGContext::getModule('auth_ldap')->bind($connection, TBGContext::getModule('auth_ldap')->getSetting('control_user'), TBGContext::getModule('auth_ldap')->getSetting('control_pass'));
+				$connection = \thebuggenie\core\Context::getModule('auth_ldap')->connect();
+				\thebuggenie\core\Context::getModule('auth_ldap')->bind($connection, \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('control_user'), \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('control_pass'));
 
 				$default = TBGSettings::getDefaultUserID();
 
@@ -145,7 +145,7 @@
 					if (!$results)
 					{
 						\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-						throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed: ').ldap_error($connection));
 					}
 					
 					$data = ldap_get_entries($connection, $results);
@@ -184,7 +184,7 @@
 							if (!$results2)
 							{
 								\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-								throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
+								throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed: ').ldap_error($connection));
 							}
 							
 							$data2 = ldap_get_entries($connection, $results2);
@@ -221,13 +221,13 @@
 			catch (Exception $e)
 			{
 				ldap_unbind($connection);
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Pruning failed'));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Pruning failed'));
 				TBGContext::setMessage('module_error_details', $e->getMessage());
 				$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 			}
 			
 			ldap_unbind($connection);
-			TBGContext::setMessage('module_message', TBGContext::getI18n()->__('Pruning successful! %del% users deleted', array('%del%' => $deletecount)));
+			TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('Pruning successful! %del% users deleted', array('%del%' => $deletecount)));
 			$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 		}
 		
@@ -238,16 +238,16 @@
 		 */
 		public function runImportUsers(Request $request)
 		{
-			$validgroups = TBGContext::getModule('auth_ldap')->getSetting('groups');
-			$base_dn = TBGContext::getModule('auth_ldap')->getSetting('b_dn');
-			$dn_attr = TBGContext::getModule('auth_ldap')->getSetting('dn_attr');
-			$username_attr = TBGContext::getModule('auth_ldap')->getSetting('u_attr');
-			$fullname_attr = TBGContext::getModule('auth_ldap')->getSetting('f_attr');
-			$email_attr = TBGContext::getModule('auth_ldap')->getSetting('e_attr');
-			$groups_members_attr = TBGContext::getModule('auth_ldap')->getSetting('g_attr');
+			$validgroups = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('groups');
+			$base_dn = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('b_dn');
+			$dn_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('dn_attr');
+			$username_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('u_attr');
+			$fullname_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('f_attr');
+			$email_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('e_attr');
+			$groups_members_attr = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_attr');
 			
-			$user_class = TBGContext::getModule('auth_ldap')->getSetting('u_type');
-			$group_class = TBGContext::getModule('auth_ldap')->getSetting('g_type');
+			$user_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('u_type');
+			$group_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_type');
 			
 			$users = array();
 			$importcount = 0;
@@ -258,8 +258,8 @@
 				/*
 				 * Connect and bind to the control user
 				 */
-				$connection = TBGContext::getModule('auth_ldap')->connect();
-				TBGContext::getModule('auth_ldap')->bind($connection, TBGContext::getModule('auth_ldap')->getSetting('control_user'), TBGContext::getModule('auth_ldap')->getSetting('control_pass'));
+				$connection = \thebuggenie\core\Context::getModule('auth_ldap')->connect();
+				\thebuggenie\core\Context::getModule('auth_ldap')->bind($connection, \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('control_user'), \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('control_pass'));
 				
 				/*
 				 * Get a list of all users of a certain objectClass
@@ -271,7 +271,7 @@
 				if (!$results)
 				{
 					\caspar\core\Logging::log('failed to search for users: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-					throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed: ').ldap_error($connection));
 				}
 				
 				$data = ldap_get_entries($connection, $results);
@@ -321,7 +321,7 @@
 							if (!$results2)
 							{
 								\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-								throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
+								throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed: ').ldap_error($connection));
 							}
 							
 							$data2 = ldap_get_entries($connection, $results2);
@@ -381,7 +381,7 @@
 			}
 			catch (Exception $e)
 			{
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Import failed'));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Import failed'));
 				TBGContext::setMessage('module_error_details', $e->getMessage());
 				$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 			}
@@ -425,14 +425,14 @@
 				catch (Exception $e)
 				{
 					ldap_unbind($connection);
-					TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Import failed'));
+					TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Import failed'));
 					TBGContext::setMessage('module_error_details', $e->getMessage());
 					$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 				}
 			}
 			
 			ldap_unbind($connection);
-			TBGContext::setMessage('module_message', TBGContext::getI18n()->__('Import successful! %imp% users imported, %upd% users updated from LDAP', array('%imp%' => $importcount, '%upd%' => $updatecount)));
+			TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('Import successful! %imp% users imported, %upd% users updated from LDAP', array('%imp%' => $importcount, '%upd%' => $updatecount)));
 			$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'auth_ldap')));
 		}
 

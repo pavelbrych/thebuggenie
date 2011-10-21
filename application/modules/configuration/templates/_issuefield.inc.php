@@ -19,7 +19,7 @@
 </tr>
 <tr id="edit_item_<?php echo $item->getID(); ?>" style="display: none;">
 	<td colspan="3">
-		<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_issuefields_edit', array('type' => $type, 'id' => $item->getID())); ?>" onsubmit="TBG.Issues.Field.Options.update('<?php echo make_url('configure_issuefields_edit', array('type' => $type, 'id' => $item->getID())); ?>', '<?php echo $type; ?>', <?php echo $item->getID(); ?>);return false;" id="edit_<?php echo $type; ?>_<?php echo $item->getID(); ?>_form">
+		<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_issuefields_edit', array('type' => $type, 'id' => $item->getID())); ?>" onsubmit="TBG.Issues.Field.Options.update('<?php echo make_url('configure_issuefields_edit', array('type' => $type, 'id' => $item->getID())); ?>', '<?php echo $type; ?>', <?php echo $item->getID(); ?>);return false;" id="edit_<?php echo $type; ?>_<?php echo $item->getID(); ?>_form">
 			<table style="width: 100%;" cellpadding="0" cellspacing="0">
 				<tr>
 					<?php if ($type == 'status'): ?>

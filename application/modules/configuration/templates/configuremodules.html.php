@@ -32,7 +32,7 @@
 					<?php if (count($uninstalled_modules) == 0): ?>
 						<div class="faded_out" style="margin-top: 5px;"><?php echo __('There are no uninstalled modules available'); ?></div>
 					<?php else: ?>
-						<form action="<?php echo make_url('configure_install_module'); ?>" method="post" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>">
+						<form action="<?php echo make_url('configure_install_module'); ?>" method="post" accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>">
 							<div class="rounded_box mediumgrey borderless" style="margin: 5px 0px 5px 0px; text-align: right; width: 750px;">
 								<div class="content">
 									<?php echo __('This is a list of modules available, but not installed on this system.'); ?>
@@ -51,7 +51,7 @@
 					<?php if (count($outdated_modules) == 0): ?>
 						<div class="faded_out" style="margin-top: 5px;"><?php echo __('There are no outdated modules to upgrade'); ?></div>
 					<?php else: ?>
-						<form action="<?php echo make_url('configure_update_module'); ?>" method="post" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>">
+						<form action="<?php echo make_url('configure_update_module'); ?>" method="post" accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>">
 							<div class="rounded_box mediumgrey borderless" style="margin: 5px 0px 5px 0px; text-align: right; width: 750px;">
 								<div class="content">
 									<?php echo __('This is a list of modules available and installed, but have been disabled until you upgrade them.'); ?>
@@ -67,7 +67,7 @@
 						</form>
 					<?php endif; ?>
 					<div class="header" style="margin-top: 15px;"><?php echo __('Add new module'); ?></div>
-						<form action="<?php echo make_url('configure_upload_module'); ?>" method="post" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" enctype="multipart/form-data">
+						<form action="<?php echo make_url('configure_upload_module'); ?>" method="post" accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" enctype="multipart/form-data">
 							<div class="rounded_box mediumgrey borderless" style="margin: 5px 0px 5px 0px; text-align: right; width: 750px;">
 								<div class="content">
 									<?php echo __('To add a new module in The Bug Genie, download it then select it from the %browse%-button and press the %upload%-button', array('%upload%' => '<b>' . __('Upload') . '</b>', '%browse%' => '<b>' . __('Browse') . '</b>')); ?>

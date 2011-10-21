@@ -300,7 +300,7 @@
 						}
 						else
 						{
-							$content = str_replace('###PUT URL SUBDIRECTORY HERE###', $url_subdir, file_get_contents(THEBUGGENIE_CORE_PATH . 'templates/htaccess.template'));
+							$content = str_replace('###PUT URL SUBDIRECTORY HERE###', $url_subdir, file_get_contents(CASPAR_APPLICATION_PATH . 'templates/htaccess.template'));
 							file_put_contents(THEBUGGENIE_PATH . 'thebuggenie/.htaccess', $content);
 							if (file_get_contents(THEBUGGENIE_PATH . 'thebuggenie/.htaccess') != $content)
 							{

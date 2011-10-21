@@ -56,7 +56,7 @@
 		public function componentLeftmenu()
 		{
 			$this->show_article_options = (bool) ($this->article instanceof TBGWikiArticle);
-			$this->links_target_id = (TBGContext::isProjectContext()) ? TBGContext::getCurrentProject()->getID() : 0;
+			$this->links_target_id = (\thebuggenie\core\Context::isProjectContext()) ? \thebuggenie\core\Context::getCurrentProject()->getID() : 0;
 			$this->links = TBGPublish::getModule()->getMenuItems($this->links_target_id);
 			$this->user_drafts = TBGPublish::getModule()->getUserDrafts();
 			$this->whatlinkshere = ($this->article instanceof TBGWikiArticle) ? $this->article->getLinkingArticles() : null;

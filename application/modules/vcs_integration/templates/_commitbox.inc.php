@@ -1,5 +1,5 @@
 <?php
-	$base_url = TBGContext::getModule('vcs_integration')->getSetting('browser_url_' . $projectId);
+	$base_url = \thebuggenie\core\Context::getModule('vcs_integration')->getSetting('browser_url_' . $projectId);
 	
 	if (mb_strstr($commit->getRevision(), ':'))
 	{
@@ -37,7 +37,7 @@
 		}
 	}
 	
-	$link_base = TBGContext::getModule('vcs_integration')->getSetting('commit_url_' . $projectId);
+	$link_base = \thebuggenie\core\Context::getModule('vcs_integration')->getSetting('commit_url_' . $projectId);
 	
 	if ($branchname !== null)
 	{
@@ -88,7 +88,7 @@
 							
 							echo '<td class="imgtd">' . image_tag('icon_action_' . $action . '.png', null, false, 'vcs_integration') . '</td>';
 									
-							$link_file = str_replace('%revno%', $revision, TBGContext::getModule('vcs_integration')->getSetting('log_url_' . $projectId));
+							$link_file = str_replace('%revno%', $revision, \thebuggenie\core\Context::getModule('vcs_integration')->getSetting('log_url_' . $projectId));
 							$link_file = str_replace('%oldrev%', $oldrevision, $link_file);
 							
 							if ($branchname !== null)
@@ -98,7 +98,7 @@
 							
 							$link_file = $base_url.str_replace('%file%', $file->getFile(), $link_file);
 							
-							$link_diff = str_replace('%revno%', $revision, TBGContext::getModule('vcs_integration')->getSetting('blob_url_' . $projectId));
+							$link_diff = str_replace('%revno%', $revision, \thebuggenie\core\Context::getModule('vcs_integration')->getSetting('blob_url_' . $projectId));
 							$link_diff = str_replace('%oldrev%', $oldrevision, $link_diff);
 							
 							if ($branchname !== null)
@@ -108,7 +108,7 @@
 							
 							$link_diff = $base_url.str_replace('%file%', $file->getFile(), $link_diff);
 							
-							$link_view = str_replace('%revno%', $revision, TBGContext::getModule('vcs_integration')->getSetting('diff_url_' . $projectId));
+							$link_view = str_replace('%revno%', $revision, \thebuggenie\core\Context::getModule('vcs_integration')->getSetting('diff_url_' . $projectId));
 							$link_view = str_replace('%oldrev%', $oldrevision, $link_view);
 							
 							if ($branchname !== null)
@@ -158,7 +158,7 @@
 						{
 							if ($issue instanceof TBGIssue)
 							{
-								if (!TBGContext::getCurrentProject() instanceof \thebuggenie\entities\Project || $issue->getProjectID() != TBGContext::getCurrentProject()->getID())
+								if (!\thebuggenie\core\Context::getCurrentProject() instanceof \thebuggenie\entities\Project || $issue->getProjectID() != \thebuggenie\core\Context::getCurrentProject()->getID())
 								{
 									$issue = null;
 								}

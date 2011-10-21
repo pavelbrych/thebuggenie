@@ -38,7 +38,7 @@
 		 */
 		public static function getModule()
 		{
-			return TBGContext::getModule('auth_ldap');
+			return \thebuggenie\core\Context::getModule('auth_ldap');
 		}
 
 		protected function _initialize()
@@ -113,7 +113,7 @@
 
 			if ($failed)
 			{
-				throw new Exception(TBGContext::geti18n()->__('Failed to connect to server'));
+				throw new Exception(\caspar\core\Caspar::getI18n()->__('Failed to connect to server'));
 			}
 			
 			return $connection;
@@ -127,7 +127,7 @@
 			{
 				ldap_unbind($connection);
 				\caspar\core\Logging::log('bind failed: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-				throw new Exception(TBGContext::geti18n()->__('Failed to bind: ').ldap_error($connection));
+				throw new Exception(\caspar\core\Caspar::getI18n()->__('Failed to bind: ').ldap_error($connection));
 			}
 		}
 		
@@ -152,8 +152,8 @@
 			$email_attr = $this->escape($this->getSetting('e_attr'));
 			$groups_members_attr = $this->escape($this->getSetting('g_attr'));
 			
-			$user_class = TBGContext::getModule('auth_ldap')->getSetting('u_type');
-			$group_class = TBGContext::getModule('auth_ldap')->getSetting('g_type');
+			$user_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('u_type');
+			$group_class = \thebuggenie\core\Context::getModule('auth_ldap')->getSetting('g_type');
 			
 			$email = null;
 			
@@ -199,7 +199,7 @@
 				if (!$results)
 				{
 					\caspar\core\Logging::log('failed to search for user: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-					throw new Exception(TBGContext::geti18n()->__('Search failed: ').ldap_error($connection));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed: ').ldap_error($connection));
 				}
 				
 				$data = ldap_get_entries($connection, $results);
@@ -208,14 +208,14 @@
 				if ($data['count'] == 0)
 				{
 					\caspar\core\Logging::log('could not find user '.$username.', class '.$user_class.', attribute '.$username_attr, 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-					throw new Exception(TBGContext::geti18n()->__('User does not exist in the directory'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('User does not exist in the directory'));
 				}
 				
 				// If we have more than 1 user, something is seriously messed up...
 				if ($data['count'] > 1)
 				{
 					\caspar\core\Logging::log('too many users for '.$username.', class '.$user_class.', attribute '.$username_attr, 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-					throw new Exception(TBGContext::geti18n()->__('This user was found multiple times in the directory, please contact your admimistrator'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('This user was found multiple times in the directory, please contact your admimistrator'));
 				}
 
 				/*
@@ -256,7 +256,7 @@
 						if (!$results2)
 						{
 							\caspar\core\Logging::log('failed to search for user after binding: '.ldap_error($connection), 'ldap', \caspar\core\Logging::LEVEL_FATAL);
-							throw new Exception(TBGContext::geti18n()->__('Search failed ').ldap_error($connection));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__('Search failed ').ldap_error($connection));
 						}
 						
 						$data2 = ldap_get_entries($connection, $results2);
@@ -283,7 +283,7 @@
 					
 					if ($allowed == false)
 					{
-						throw new Exception(TBGContext::getI18n()->__('You are not a member of a group allowed to log in'));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('You are not a member of a group allowed to log in'));
 					}
 				}
 
@@ -333,7 +333,7 @@
 					}
 					catch (Exception $e)
 					{
-						throw new Exception(TBGContext::geti18n()->__('Your password was not accepted by the server'));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('Your password was not accepted by the server'));
 					}
 				}
 			}

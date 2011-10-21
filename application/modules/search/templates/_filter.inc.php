@@ -1,10 +1,10 @@
 <?php $show_button = false; ?>
 <li id="filter_<?php echo $key; ?>">
 	<?php if (in_array($filter, TBGIssuesTable::getValidSearchFilters())): ?>
-		<?php if ($filter == 'project_id' && !TBGContext::isProjectContext()): ?>
-			<label<?php if (!TBGContext::isProjectContext()): ?> for="filter_project_id_<?php echo $key; ?>"<?php endif; ?>><?php echo __('Project'); ?></label>
-			<?php if (TBGContext::isProjectContext()): ?>
-				<?php //echo __('%project% is %project_name%', array('%project%' => '', '%project_name%' => '<i>"' . TBGContext::getCurrentProject()->getName() . '"</i>')); ?>
+		<?php if ($filter == 'project_id' && !\thebuggenie\core\Context::isProjectContext()): ?>
+			<label<?php if (!\thebuggenie\core\Context::isProjectContext()): ?> for="filter_project_id_<?php echo $key; ?>"<?php endif; ?>><?php echo __('Project'); ?></label>
+			<?php if (\thebuggenie\core\Context::isProjectContext()): ?>
+				<?php //echo __('%project% is %project_name%', array('%project%' => '', '%project_name%' => '<i>"' . \thebuggenie\core\Context::getCurrentProject()->getName() . '"</i>')); ?>
 			<?php else: ?>
 				<select name="filters[project_id][<?php echo $key; ?>][operator]">
 					<option value="="<?php if ($selected_operator == '='): ?> selected<?php endif; ?>><?php echo __('%field% is %value%', array('%field%' => '', '%value%' => '')); ?></option>

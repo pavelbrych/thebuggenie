@@ -856,7 +856,7 @@
 		public function getDateString()
 		{
 			\core\caspar\Caspar::loadLibrary('common');
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			if ($this->hasStartingDate() && $this->hasScheduledDate())
 			{
 				if ($this->getStartingDate() < time() && $this->getScheduledDate() < time())

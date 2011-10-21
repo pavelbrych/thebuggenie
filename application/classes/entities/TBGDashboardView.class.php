@@ -79,16 +79,16 @@
 			{
 				case TBGDashboardView::TYPE_USER:
 					$searches = array();
-					$searches[self::VIEW_PREDEFINED_SEARCH] = array(	TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES => TBGContext::geti18n()->__('Issues reported by me'),
-																				TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES => TBGContext::geti18n()->__('Open issues assigned to me'),
-																				TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES => TBGContext::geti18n()->__('Open issues assigned to my teams'),
-																				TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES => TBGContext::geti18n()->__('Open issues'),
-																				TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES => TBGContext::geti18n()->__('Closed issues'),
-																				TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED => TBGContext::geti18n()->__('Most voted issues'));
-					$searches[self::VIEW_LOGGED_ACTION] = array( 0 => TBGContext::geti18n()->__("What you've done recently"));
+					$searches[self::VIEW_PREDEFINED_SEARCH] = array(	TBGContext::PREDEFINED_SEARCH_MY_REPORTED_ISSUES => \caspar\core\Caspar::getI18n()->__('Issues reported by me'),
+																				TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES => \caspar\core\Caspar::getI18n()->__('Open issues assigned to me'),
+																				TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES => \caspar\core\Caspar::getI18n()->__('Open issues assigned to my teams'),
+																				TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES => \caspar\core\Caspar::getI18n()->__('Open issues'),
+																				TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES => \caspar\core\Caspar::getI18n()->__('Closed issues'),
+																				TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED => \caspar\core\Caspar::getI18n()->__('Most voted issues'));
+					$searches[self::VIEW_LOGGED_ACTION] = array( 0 => \caspar\core\Caspar::getI18n()->__("What you've done recently"));
 					if (\caspar\core\Caspar::getUser()->canViewComments())
 					{
-						$searches[self::VIEW_LAST_COMMENTS] = array( 0 => TBGContext::geti18n()->__('Recent comments'));
+						$searches[self::VIEW_LAST_COMMENTS] = array( 0 => \caspar\core\Caspar::getI18n()->__('Recent comments'));
 					}
 					$searches[self::VIEW_SAVED_SEARCH] = array();
 					$allsavedsearches = Caspar::getB2DBInstance()->getTable('TBGSavedSearchesTable')->getAllSavedSearchesByUserIDAndPossiblyProjectID(\caspar\core\Caspar::getUser()->getID());
@@ -102,25 +102,25 @@
 					break;
 				case TBGDashboardView::TYPE_PROJECT:
 					$issuetype_icons = array();
-					foreach (TBGIssuetype::getIcons() as $key => $descr)
+					foreach (\thebuggenie\entities\Issuetype::getIcons() as $key => $descr)
 					{
-						$issuetype_icons[] = TBGContext::geti18n()->__('Recent issues: %type%', array('%type%' => $descr));
+						$issuetype_icons[] = \caspar\core\Caspar::getI18n()->__('Recent issues: %type%', array('%type%' => $descr));
 					}
 					
 					$searches = array();
-					$searches[self::VIEW_PROJECT_INFO] = array( 0 => TBGContext::geti18n()->__('About this project'));
-					$searches[self::VIEW_PROJECT_TEAM] = array( 0 => TBGContext::geti18n()->__('Project team'));
-					$searches[self::VIEW_PROJECT_CLIENT] = array( 0 => TBGContext::geti18n()->__('Project client'));
-					$searches[self::VIEW_PROJECT_SUBPROJECTS] = array( 0 => TBGContext::geti18n()->__('Subprojects'));
-					$searches[self::VIEW_PROJECT_LAST15] = array( 0 => TBGContext::geti18n()->__('Graph of closed vs open issues, past 15 days'));
-					$searches[self::VIEW_PROJECT_STATISTICS_PRIORITY] = array( 0 => TBGContext::geti18n()->__('Statistics by priority'));
-					$searches[self::VIEW_PROJECT_STATISTICS_CATEGORY] = array( 0 => TBGContext::geti18n()->__('Statistics by category'));
-					$searches[self::VIEW_PROJECT_STATISTICS_STATUS] = array( 0 => TBGContext::geti18n()->__('Statistics by status'));
-					$searches[self::VIEW_PROJECT_STATISTICS_RESOLUTION] = array( 0 => TBGContext::geti18n()->__('Statistics by resolution'));
+					$searches[self::VIEW_PROJECT_INFO] = array( 0 => \caspar\core\Caspar::getI18n()->__('About this project'));
+					$searches[self::VIEW_PROJECT_TEAM] = array( 0 => \caspar\core\Caspar::getI18n()->__('Project team'));
+					$searches[self::VIEW_PROJECT_CLIENT] = array( 0 => \caspar\core\Caspar::getI18n()->__('Project client'));
+					$searches[self::VIEW_PROJECT_SUBPROJECTS] = array( 0 => \caspar\core\Caspar::getI18n()->__('Subprojects'));
+					$searches[self::VIEW_PROJECT_LAST15] = array( 0 => \caspar\core\Caspar::getI18n()->__('Graph of closed vs open issues, past 15 days'));
+					$searches[self::VIEW_PROJECT_STATISTICS_PRIORITY] = array( 0 => \caspar\core\Caspar::getI18n()->__('Statistics by priority'));
+					$searches[self::VIEW_PROJECT_STATISTICS_CATEGORY] = array( 0 => \caspar\core\Caspar::getI18n()->__('Statistics by category'));
+					$searches[self::VIEW_PROJECT_STATISTICS_STATUS] = array( 0 => \caspar\core\Caspar::getI18n()->__('Statistics by status'));
+					$searches[self::VIEW_PROJECT_STATISTICS_RESOLUTION] = array( 0 => \caspar\core\Caspar::getI18n()->__('Statistics by resolution'));
 					$searches[self::VIEW_PROJECT_RECENT_ISSUES] = $issuetype_icons;
-					$searches[self::VIEW_PROJECT_RECENT_ACTIVITIES] = array( 0 => TBGContext::geti18n()->__('Recent activities'));
-					$searches[self::VIEW_PROJECT_UPCOMING] = array( 0 => TBGContext::geti18n()->__('Upcoming milestones and deadlines'));
-					$searches[self::VIEW_PROJECT_DOWNLOADS] = array( 0 => TBGContext::geti18n()->__('Latest downloads'));
+					$searches[self::VIEW_PROJECT_RECENT_ACTIVITIES] = array( 0 => \caspar\core\Caspar::getI18n()->__('Recent activities'));
+					$searches[self::VIEW_PROJECT_UPCOMING] = array( 0 => \caspar\core\Caspar::getI18n()->__('Upcoming milestones and deadlines'));
+					$searches[self::VIEW_PROJECT_DOWNLOADS] = array( 0 => \caspar\core\Caspar::getI18n()->__('Latest downloads'));
 					break;
 			}
 

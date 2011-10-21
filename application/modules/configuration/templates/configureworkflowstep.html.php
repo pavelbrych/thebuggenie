@@ -54,7 +54,7 @@
 							</dd>
 						</dl>
 						<?php if (!$step->isCore()): ?>
-							<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_step', array('workflow_id' => $step->getWorkflow()->getID(), 'step_id' => $step->getID(), 'mode' => 'edit')); ?>" id="step_details_form" style="display: none;" onsubmit="$('step_update_indicator').show();$('update_step_buttons').hide();">
+							<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_step', array('workflow_id' => $step->getWorkflow()->getID(), 'step_id' => $step->getID(), 'mode' => 'edit')); ?>" id="step_details_form" style="display: none;" onsubmit="$('step_update_indicator').show();$('update_step_buttons').hide();">
 								<dl>
 									<dt><label for="step_name"><?php echo __('Name'); ?></label></dt>
 									<dd><input type="text" name="name" id="step_name" value="<?php echo $step->getName(); ?>" style="width: 150px;"></dd>

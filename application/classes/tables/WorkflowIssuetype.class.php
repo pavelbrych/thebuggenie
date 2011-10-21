@@ -43,7 +43,7 @@
 
 		public function loadFixtures(TBGScope $scope)
 		{
-			foreach (TBGIssuetype::getAll(null, $scope->getID()) as $issuetype)
+			foreach (\thebuggenie\entities\Issuetype::getAll(null, $scope->getID()) as $issuetype)
 			{
 				$crit = $this->getCriteria();
 				$crit->addInsert(self::SCOPE, $scope->getID());

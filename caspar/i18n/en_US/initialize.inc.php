@@ -1,4 +1,4 @@
 <?php
 
-	TBGContext::getI18n()->setCharset('utf-8');
+	\caspar\core\Caspar::getI18n()->setCharset('utf-8');
 	setlocale(LC_ALL, array('en_US@euro', 'en_US', 'en'));

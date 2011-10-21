@@ -103,7 +103,7 @@
 </h3>
 <?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
 	<div class="rounded_box lightgrey" style="margin: 0 0 10px 0; width: 765px; padding: 5px 10px 5px 10px; display: none;" id="add_people_to_project_container">
-		<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_project_find_assignee', array('project_id' => $project->getID())); ?>" method="post" onsubmit="TBG.Project.findDevelopers('<?php echo make_url('configure_project_find_assignee', array('project_id' => $project->getID())); ?>');return false;" id="find_dev_form">
+		<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_project_find_assignee', array('project_id' => $project->getID())); ?>" method="post" onsubmit="TBG.Project.findDevelopers('<?php echo make_url('configure_project_find_assignee', array('project_id' => $project->getID())); ?>');return false;" id="find_dev_form">
 			<table style="width: 100%; margin-top: 3px;" cellpadding=0 cellspacing=0 id="find_user">
 				<tr>
 					<td style="width: 200px; padding: 2px; text-align: left;"><label for="find_by"><?php echo __('Find team or user'); ?></label></td>

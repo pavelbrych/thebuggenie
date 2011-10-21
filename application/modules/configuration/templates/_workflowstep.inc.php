@@ -6,7 +6,7 @@
 				<div class="header"><?php echo __('Delete all outgoing transition from step "%step_name%"', array('%step_name%' => $step->getName())); ?></div>
 				<div class="content">
 					<?php echo __('Are you sure you want to delete ALL outgoing transitions from this step? This action cannot be reverted.'); ?>
-					<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_delete_step_transitions', array('workflow_id' => $step->getWorkflow()->getID(), 'step_id' => $step->getID())); ?>">
+					<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_delete_step_transitions', array('workflow_id' => $step->getWorkflow()->getID(), 'step_id' => $step->getID())); ?>">
 						<div style="text-align: right;">
 							<input type="submit" value="<?php echo __('Yes'); ?>" onclick="$('step_<?php echo $step->getID(); ?>_transition_delete_indicator').show();$(this).hide();"> ::
 							<b><?php echo javascript_link_tag(__('No'), array('onclick' => "\$('step_{$step->getID()}_transitions_delete').toggle();")); ?></b>
@@ -20,7 +20,7 @@
 				<div class="header"><?php echo __('Completely delete step "%step_name%"', array('%step_name%' => $step->getName())); ?></div>
 				<div class="content">
 					<?php echo __('Are you sure you want to completely delete this step? This action cannot be reverted.'); ?>
-					<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_delete_step', array('workflow_id' => $step->getWorkflow()->getID(), 'step_id' => $step->getID())); ?>">
+					<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" method="post" action="<?php echo make_url('configure_workflow_delete_step', array('workflow_id' => $step->getWorkflow()->getID(), 'step_id' => $step->getID())); ?>">
 						<div style="text-align: right;">
 							<input type="submit" value="<?php echo __('Yes'); ?>" onclick="$('step_<?php echo $step->getID(); ?>_delete_indicator').show();$(this).hide();"> ::
 							<b><?php echo javascript_link_tag(__('No'), array('onclick' => "\$('step_{$step->getID()}_delete').toggle();")); ?></b>

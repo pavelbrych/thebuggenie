@@ -131,7 +131,7 @@
 
 		protected function setupVariables()
 		{
-			$i18n = \TBGContext::getI18n();
+			$i18n = \\caspar\core\Caspar::getI18n();
 			$this->statuses = \TBGStatus::getAll();
 			if ($this->issue instanceof \TBGIssue)
 			{
@@ -354,15 +354,15 @@
 			{
 				\caspar\core\Caspar::getResponse()->deleteCookie('\TBG3_username');
 				\caspar\core\Caspar::getResponse()->deleteCookie('\TBG3_password');
-				$this->error = \TBGContext::geti18n()->__('You need to log in to access this site');
+				$this->error = \\caspar\core\Caspar::getI18n()->__('You need to log in to access this site');
 			}
 			elseif (!\caspar\core\Caspar::getUser()->isAuthenticated())
 			{
-				$this->error = \TBGContext::geti18n()->__('Please log in');
+				$this->error = \\caspar\core\Caspar::getI18n()->__('Please log in');
 			}
 			else
 			{
-			//$this->error = \TBGContext::geti18n()->__('Please log in');
+			//$this->error = \\caspar\core\Caspar::getI18n()->__('Please log in');
 			}
 		}
 		

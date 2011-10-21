@@ -1,6 +1,6 @@
 <div style="font-family: 'Trebuchet MS', 'Liberation Sans', 'Bitstream Vera Sans', 'Luxi Sans', Verdana, sans-serif; font-size: 11px; color: #333;">
 	Hi, %user_buddyname%!<br>
-	A comment has been added to <i><?php echo TBGContext::getI18n()->__($issue->getIssueType()->getName()); ?> <?php echo $issue->getFormattedIssueNo(true); ?> - <?php echo $issue->getTitle(); ?></i> by <?php echo $comment->getPostedBy()->getName(); ?>:<br><br>
+	A comment has been added to <i><?php echo \caspar\core\Caspar::getI18n()->__($issue->getIssueType()->getName()); ?> <?php echo $issue->getFormattedIssueNo(true); ?> - <?php echo $issue->getTitle(); ?></i> by <?php echo $comment->getPostedBy()->getName(); ?>:<br><br>
 	<?php echo tbg_parse_text($comment->getContent()); ?><br>
 	<br>
 	<br>

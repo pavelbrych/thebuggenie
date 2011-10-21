@@ -2,14 +2,14 @@
 <?php if ($target_type == TBGComment::TYPE_ISSUE): ?>
 	<div style="float: right; padding: 5px;"><label><?php echo __('Show system-generated comments'); ?><input type="checkbox" id="comments_show_system_comments_toggle" onchange="$$('#comments_box .system_comment').each(function (elm) { $(elm).toggle(); })" /></label></div>
 <?php endif; ?>
-<?php if ($csp_user->canPostComments() && ((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || !TBGContext::isProjectContext())): ?>
+<?php if ($csp_user->canPostComments() && ((\thebuggenie\core\Context::isProjectContext() && !\thebuggenie\core\Context::getCurrentProject()->isArchived()) || !\thebuggenie\core\Context::isProjectContext())): ?>
 	<ul class="simple_list" id="add_comment_button_container">
 		<li id="comment_add_button"><input class="button button-green" type="button" onclick="$('comment_add_button').hide(); $('comment_add').show();$('comment_bodybox').focus();" value="<?php echo __('Add new comment'); ?>"></li>
 	</ul>
 	<div id="comment_add" class="comment_add" style="<?php if (!(isset($comment_error) && $comment_error)): ?>display: none; <?php endif; ?>margin-top: 5px;">
 		<div class="comment_add_main">
 			<div class="comment_add_title"><?php echo __('Create a comment'); ?></div><br>
-			<form id="comment_form" accept-charset="<?php echo mb_strtoupper(TBGContext::getI18n()->getCharset()); ?>" action="<?php echo make_url('comment_add', array('comment_applies_id' => $target_id, 'comment_applies_type' => $target_type, 'comment_module' => $module)); ?>" method="post" onSubmit="TBG.Main.Comment.add('<?php echo make_url('comment_add', array('comment_applies_id' => $target_id, 'comment_applies_type' => $target_type, 'comment_module' => 'core')); ?>', '<?php echo $comment_count_div; ?>');return false;">
+			<form id="comment_form" accept-charset="<?php echo mb_strtoupper(\caspar\core\Caspar::getI18n()->getCharset()); ?>" action="<?php echo make_url('comment_add', array('comment_applies_id' => $target_id, 'comment_applies_type' => $target_type, 'comment_module' => $module)); ?>" method="post" onSubmit="TBG.Main.Comment.add('<?php echo make_url('comment_add', array('comment_applies_id' => $target_id, 'comment_applies_type' => $target_type, 'comment_module' => 'core')); ?>', '<?php echo $comment_count_div; ?>');return false;">
 				<label for="comment_visibility"><?php echo __('Comment visibility'); ?> <span class="faded_out">(<?php echo __('whether to hide this comment for "regular users"'); ?>)</span></label><br />
 				<select class="comment_visibilitybox" id="comment_visibility" name="comment_visibility">
 					<option value="1"><?php echo __('Visible for all users'); ?></option>

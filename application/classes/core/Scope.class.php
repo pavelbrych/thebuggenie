@@ -207,8 +207,8 @@
 			TBGUserstate::loadFixtures($this);
 			
 			// Set up data types
-			list($b_id, $f_id, $e_id, $t_id, $u_id, $i_id) = TBGIssuetype::loadFixtures($this);
-			$scheme = TBGIssuetypeScheme::loadFixtures($this);
+			list($b_id, $f_id, $e_id, $t_id, $u_id, $i_id) = \thebuggenie\entities\Issuetype::loadFixtures($this);
+			$scheme = IssuetypeScheme::loadFixtures($this);
 			TBGIssueFieldsTable::getTable()->loadFixtures($this, $scheme, $b_id, $f_id, $e_id, $t_id, $u_id, $i_id);
 			\thebuggenie\entities\Datatype::loadFixtures($this);
 			

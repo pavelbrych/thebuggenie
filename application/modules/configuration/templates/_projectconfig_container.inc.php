@@ -13,7 +13,7 @@
 			<?php include_component('configuration/projectconfig', array('project' => $project, 'section' => $section)); ?>
 		<?php endif; */ ?>
 		<?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
-			<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>" method="post" onsubmit="TBG.Project.submitInfo('<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>', <?php echo $project->getID(); ?>); return false;" id="project_info">
+			<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>" method="post" onsubmit="TBG.Project.submitInfo('<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>', <?php echo $project->getID(); ?>); return false;" id="project_info">
 		<?php endif; ?>
 		<table style="clear: both; width: 780px;" class="padded_table" cellpadding=0 cellspacing=0>
 			<tr>

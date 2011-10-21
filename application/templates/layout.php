@@ -12,10 +12,10 @@
 		<?php foreach ($csp_response->getFeeds() as $feed_url => $feed_title): ?>
 			<link rel="alternate" type="application/rss+xml" title="<?php echo str_replace('"', '\'', $feed_title); ?>" href="<?php echo $feed_url; ?>">
 		<?php endforeach; ?>
-		<?php include THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . TBGSettings::getThemeName() . DS . 'theme.php'; ?>
-		<?php if (count(\caspar\core\Caspar::getModules())): ?>
-			<?php foreach (\caspar\core\Caspar::getModules() as $module): ?>
-				<?php if (file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . TBGSettings::getThemeName() . DS . "{$module->getName()}.css")): ?>
+		<?php include THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . \thebuggenie\core\Settings::getThemeName() . DS . 'theme.php'; ?>
+		<?php if (count(\thebuggenie\core\Context::getModules())): ?>
+			<?php foreach (\thebuggenie\core\Context::getModules() as $module): ?>
+				<?php if (file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DS . 'themes' . DS . \thebuggenie\core\Settings::getThemeName() . DS . "{$module->getName()}.css")): ?>
 					<?php $csp_response->addStylesheet("{$module->getName()}.css"); ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
@@ -38,25 +38,25 @@
 		<?php \caspar\core\Event::createNew('core', 'header_ends')->trigger(); ?>
 	</head>
 	<body>
-		<?php require THEBUGGENIE_CORE_PATH . 'templates/backdrops.inc.php'; ?>
+		<?php require CASPAR_APPLICATION_PATH . 'templates/backdrops.inc.php'; ?>
 		<table style="width: 100%; height: 100%; table-layout: fixed; min-width: 1020px;" cellpadding=0 cellspacing=0>
 			<tr>
 				<td style="height: auto; overflow: hidden;" valign="top" id="maintd">
-					<?php require THEBUGGENIE_CORE_PATH . 'templates/headertop.inc.php'; ?>
-					<?php if (!TBGSettings::isMaintenanceModeEnabled()) require THEBUGGENIE_CORE_PATH . 'templates/submenu.inc.php'; ?>
+					<?php require CASPAR_APPLICATION_PATH . 'templates/headertop.inc.php'; ?>
+					<?php if (!\thebuggenie\core\Settings::isMaintenanceModeEnabled()) require CASPAR_APPLICATION_PATH . 'templates/submenu.inc.php'; ?>
 					<?php echo $content; ?>
 					<?php \caspar\core\Event::createNew('core', 'footer_begin')->trigger(); ?>
 				</td>
 			</tr>
 			<tr>
 				<td class="footer_bar">
-					<?php require THEBUGGENIE_CORE_PATH . 'templates/footer.inc.php'; ?>
+					<?php require CASPAR_APPLICATION_PATH . 'templates/footer.inc.php'; ?>
 					<?php \caspar\core\Event::createNew('core', 'footer_end')->trigger(); ?>
 				</td>
 			</tr>
 		</table>
 		<script type="text/javascript">
-			document.observe('dom:loaded', TBG.initialize({ autocompleter_url: '<?php echo (\caspar\core\Caspar::isProjectContext()) ? make_url('project_quicksearch', array('project_key' => \caspar\core\Caspar::getCurrentProject()->getKey())) : make_url('quicksearch'); ?>'}));
+			document.observe('dom:loaded', TBG.initialize({ autocompleter_url: '<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('project_quicksearch', array('project_key' => \caspar\core\Caspar::getCurrentProject()->getKey())) : make_url('quicksearch'); ?>'}));
 		</script>
 	</body>
 </html>

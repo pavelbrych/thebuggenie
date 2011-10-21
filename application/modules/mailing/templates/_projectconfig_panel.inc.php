@@ -34,7 +34,7 @@
 			<?php echo __('Incoming email accounts'); ?>
 		</h4>
 		<div id="mailing_incoming_accounts">
-			<?php foreach (TBGContext::getModule('mailing')->getIncomingEmailAccountsForProject(TBGContext::getCurrentProject()) as $account): ?>
+			<?php foreach (\thebuggenie\core\Context::getModule('mailing')->getIncomingEmailAccountsForProject(\thebuggenie\core\Context::getCurrentProject()) as $account): ?>
 				<?php include_template('mailing/incomingemailaccount', array('account' => $account)); ?>
 			<?php endforeach; ?>
 		</div>

@@ -8,7 +8,7 @@ else
 {
 ?>
 		<div style="vertical-align: middle; padding: 10px;" id="register">
-			<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('register'); ?>" method="post" id="register_form" onsubmit="TBG.Main.Login.register('<?php echo make_url('register'); ?>'); return false;">
+			<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('register'); ?>" method="post" id="register_form" onsubmit="TBG.Main.Login.register('<?php echo make_url('register'); ?>'); return false;">
 				<div class="login_boxheader"><?php echo __('Register a new account'); ?></div>
 				<div>
 					<?php echo __('To register, please fill out the information below.'); ?>

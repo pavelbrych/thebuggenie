@@ -57,7 +57,7 @@
 		
 		public static function doesClientNameExist($client_name)
 		{
-			return TBGClientsTable::getTable()->doesClientNameExist($client_name);
+			return \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Clients')->doesClientNameExist($client_name);
 		}
 
 		public static function getAll()
@@ -69,7 +69,7 @@
 				{
 					while ($row = $res->getNextRow())
 					{
-						self::$_clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(TBGClientsTable::ID), $row);
+						self::$_clients[$row->get(\thebuggenie\tables\Clients::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(\thebuggenie\tables\Clients::ID), $row);
 					}
 				}
 			}
@@ -196,7 +196,7 @@
 			if ($this->_members === null)
 			{
 				$this->_members = array();
-				foreach (TBGClientMembersTable::getTable()->getUIDsForClientID($this->getID()) as $uid)
+				foreach (\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\ClientMembers')->getUIDsForClientID($this->getID()) as $uid)
 				{
 					$this->_members[$uid] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', $uid);
 				}
@@ -219,21 +219,21 @@
 		
 		public function _preDelete()
 		{
-			$crit = TBGClientMembersTable::getTable()->getCriteria();
+			$crit = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\ClientMembers')->getCriteria();
 			$crit->addWhere(TBGClientMembersTable::CID, $this->getID());
-			$res = TBGClientMembersTable::getTable()->doDelete($crit);
+			$res = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\ClientMembers')->doDelete($crit);
 		}
 		
 		public static function findClients($details)
 		{
 			$crit = new \b2db\Criteria();
-			$crit->addWhere(TBGClientsTable::NAME, "%$details%", \b2db\Criteria::DB_LIKE);
+			$crit->addWhere(\thebuggenie\tables\Clients::NAME, "%$details%", \b2db\Criteria::DB_LIKE);
 			$clients = array();
 			if ($res = Caspar::getB2DBInstance()->getTable('TBGClientsTable')->doSelect($crit))
 			{
 				while ($row = $res->getNextRow())
 				{
-					$clients[$row->get(TBGClientsTable::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(TBGClientsTable::ID), $row);
+					$clients[$row->get(\thebuggenie\tables\Clients::ID)] = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\Client', $row->get(\thebuggenie\tables\Clients::ID), $row);
 				}
 			}
 			return $clients;
@@ -247,7 +247,7 @@
 			}
 			elseif ($this->_num_members === null)
 			{
-				$this->_num_members = TBGClientMembersTable::getTable()->getNumberOfMembersByClientID($this->getID());
+				$this->_num_members = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\ClientMembers')->getNumberOfMembersByClientID($this->getID());
 			}
 
 			return $this->_num_members;

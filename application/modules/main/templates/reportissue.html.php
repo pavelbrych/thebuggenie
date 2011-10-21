@@ -1,9 +1,9 @@
 <?php 
 
-	$csp_response->addBreadcrumb(__('Report an issue'), make_url('project_reportissue', array('project_key' => TBGContext::getCurrentProject()->getKey())), tbg_get_breadcrumblinks('project_summary', TBGContext::getCurrentProject()));
+	$csp_response->addBreadcrumb(__('Report an issue'), make_url('project_reportissue', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), tbg_get_breadcrumblinks('project_summary', \thebuggenie\core\Context::getCurrentProject()));
 	$csp_response->setTitle(__('Report an issue'));
 	
-	if (TBGContext::getCurrentProject()->isLocked() == true)
+	if (\thebuggenie\core\Context::getCurrentProject()->isLocked() == true)
 	{
 	   ?>
       <div class="rounded_box red borderless" id="notfound_error">

@@ -21,7 +21,7 @@
 			
 			$this->getResponse()->setPage('config');
 			\core\caspar\Caspar::loadLibrary('ui');
-			$this->getResponse()->addBreadcrumb(TBGContext::getI18n()->__('Configure The Bug Genie'), TBGContext::getRouting()->generate('configure'), $this->getResponse()->getPredefinedBreadcrumbLinks('main_links'));
+			$this->getResponse()->addBreadcrumb(\caspar\core\Caspar::getI18n()->__('Configure The Bug Genie'), TBGContext::getRouting()->generate('configure'), $this->getResponse()->getPredefinedBreadcrumbLinks('main_links'));
 			
 		}
 		
@@ -32,7 +32,7 @@
 		 */
 		public function runIndex(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$general_config_sections = array();
 			$data_config_sections = array();
 			$module_config_sections = array();
@@ -54,10 +54,10 @@
 			$data_config_sections[TBGSettings::CONFIGURATION_SECTION_WORKFLOW] = array('icon' => 'workflow', 'description' => $i18n->__('Workflow'), 'route' => 'configure_workflow', 'details' => $i18n->__('Set up and edit workflow configuration from this section'));
 			$data_config_sections[TBGSettings::CONFIGURATION_SECTION_USERS] = array('route' => 'configure_users', 'description' => $i18n->__('Users, teams, clients &amp; groups'), 'icon' => 'users', 'details' => $i18n->__('Manage users, user groups, clients and user teams from this section.'));
 			$module_config_sections[TBGSettings::CONFIGURATION_SECTION_MODULES][] = array('route' => 'configure_modules', 'description' => $i18n->__('Module settings'), 'icon' => 'modules', 'details' => $i18n->__('Manage Bug Genie extensions from this section. New modules are installed from here.'), 'module' => 'core');
-			foreach (TBGContext::getModules() as $module)
+			foreach (\thebuggenie\core\Context::getModules() as $module)
 			{
 				if ($module->hasConfigSettings() && $module->isEnabled())
-					$module_config_sections[TBGSettings::CONFIGURATION_SECTION_MODULES][] = array('route' => array('configure_module', array('config_module' => $module->getName())), 'description' => TBGContext::geti18n()->__($module->getConfigTitle()), 'icon' => $module->getName(), 'details' => TBGContext::geti18n()->__($module->getConfigDescription()), 'module' => $module->getName());
+					$module_config_sections[TBGSettings::CONFIGURATION_SECTION_MODULES][] = array('route' => array('configure_module', array('config_module' => $module->getName())), 'description' => \caspar\core\Caspar::getI18n()->__($module->getConfigTitle()), 'icon' => $module->getName(), 'details' => \caspar\core\Caspar::getI18n()->__($module->getConfigDescription()), 'module' => $module->getName());
 			}
 			$this->general_config_sections = $general_config_sections; 
 			$this->data_config_sections = $data_config_sections;
@@ -76,7 +76,7 @@
 			if (!is_object($data))
 			{
 				$this->getResponse()->setHttpStatus(500);
-				return $this->renderJSON(array('failed' => true, 'title' => TBGContext::getI18n()->__('Failed to check for updates'), 'message' => TBGContext::getI18n()->__('The response from The Bug Genie website was invalid')));
+				return $this->renderJSON(array('failed' => true, 'title' => \caspar\core\Caspar::getI18n()->__('Failed to check for updates'), 'message' => \caspar\core\Caspar::getI18n()->__('The response from The Bug Genie website was invalid')));
 			}
 			
 			$outofdate = false;
@@ -97,11 +97,11 @@
 			
 			if (!$outofdate)
 			{
-				return $this->renderJSON(array('failed' => false, 'uptodate' => true, 'title' => TBGContext::getI18n()->__('The Bug Genie is up to date'), 'message' => TBGContext::getI18n()->__('The latest version is %ver%', array('%ver%' => $data->nicever))));
+				return $this->renderJSON(array('failed' => false, 'uptodate' => true, 'title' => \caspar\core\Caspar::getI18n()->__('The Bug Genie is up to date'), 'message' => \caspar\core\Caspar::getI18n()->__('The latest version is %ver%', array('%ver%' => $data->nicever))));
 			}
 			else
 			{
-				return $this->renderJSON(array('failed' => false, 'uptodate' => false, 'title' => TBGContext::getI18n()->__('The Bug Genie is out of date'), 'message' => TBGContext::getI18n()->__('The latest version is %ver%. Update now from www.thebuggenie.com.', array('%ver%' => $data->nicever))));
+				return $this->renderJSON(array('failed' => false, 'uptodate' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The Bug Genie is out of date'), 'message' => \caspar\core\Caspar::getI18n()->__('The latest version is %ver%. Update now from www.thebuggenie.com.', array('%ver%' => $data->nicever))));
 			}
 		}
 		
@@ -198,7 +198,7 @@
 					
 					foreach (array('bugreport', 'featurerequest', 'enhancement', 'idea') as $issuetype)
 					{
-						$issuetype = TBGIssuetype::getIssuetypeByKeyish($issuetype);
+						$issuetype = \thebuggenie\entities\Issuetype::getIssuetypeByKeyish($issuetype);
 						for ($cc = 1; $cc <= 10; $cc++)
 						{
 							$issue1 = new TBGIssue();
@@ -379,7 +379,7 @@
 								if (!is_numeric($value) || $value < 1)
 								{
 									$this->getResponse()->setHttpStatus(400);
-									return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid setting for highlighting interval')));
+									return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid setting for highlighting interval')));
 								}
 								break;
 							case TBGSettings::SETTING_DEFAULT_CHARSET:
@@ -387,14 +387,14 @@
 								if ($value && !tbg_check_syntax($value, "CHARSET"))
 								{
 										$this->getResponse()->setHttpStatus(400);
-										return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid setting for charset')));
+										return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid setting for charset')));
 								}
 								break;
 						}
 						TBGSettings::saveSetting($setting, $value);
 					}
 				}
-				return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('All settings saved')));
+				return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('All settings saved')));
 			}
 		}
 
@@ -415,7 +415,7 @@
 		 */
 		public function runConfigureIssuefields(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$builtin_types = array();
 			$builtin_types['status'] = array('description' => $i18n->__('Status types'), 'key' => 'status');
 			$builtin_types['resolution'] = array('description' => $i18n->__('Resolution types'), 'key' => 'resolution');
@@ -440,12 +440,12 @@
 			$this->mode = $request->getParameter('mode', 'issuetypes');
 			if ($this->mode == 'issuetypes' || $this->mode == 'scheme')
 			{
-				$this->issue_types = TBGIssuetype::getAll();
-				$this->icons = TBGIssuetype::getIcons();
+				$this->issue_types = \thebuggenie\entities\Issuetype::getAll();
+				$this->icons = \thebuggenie\entities\Issuetype::getIcons();
 			}
 			elseif ($this->mode == 'schemes')
 			{
-				$this->issue_type_schemes = TBGIssuetypeScheme::getAll();
+				$this->issue_type_schemes = IssuetypeScheme::getAll();
 			}
 			if ($request->hasParameter('scheme_id'))
 			{
@@ -468,13 +468,13 @@
 					}
 					else
 					{
-						$this->error = TBGContext::getI18n()->__('Please enter a valid name');
+						$this->error = \caspar\core\Caspar::getI18n()->__('Please enter a valid name');
 					}
 				}
 				elseif ($this->mode == 'delete_scheme')
 				{
 					$this->scheme->delete();
-					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The issuetype scheme was deleted')));
+					return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('The issuetype scheme was deleted')));
 				}
 			}
 		}
@@ -510,9 +510,9 @@
 						$issuetype->setName($request->getParameter('name'));
 						$issuetype->setIcon($request->getParameter('icon'));
 						$issuetype->save();
-						return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('Issue type created'), 'content' => $this->getComponentHTML('issuetype', array('type' => $issuetype))));
+						return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('Issue type created'), 'content' => $this->getComponentHTML('issuetype', array('type' => $issuetype))));
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name for the issue type')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid name for the issue type')));
 					break;
 				case 'update':
 					if (($issuetype = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issuetype', $request->getParameter('id'))) instanceof TBGIssuetype)
@@ -521,7 +521,7 @@
 						{
 							$this->scheme->setIssuetypeRedirectedAfterReporting($issuetype, $request->getParameter('redirect_after_reporting'));
 							$this->scheme->setIssuetypeReportable($issuetype, $request->getParameter('reportable'));
-							return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The issue type details were updated'), 'description' => $issuetype->getDescription(), 'name' => $issuetype->getName()));
+							return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The issue type details were updated'), 'description' => $issuetype->getDescription(), 'name' => $issuetype->getName()));
 						}
 						elseif ($request->getParameter('name'))
 						{
@@ -529,14 +529,14 @@
 							$issuetype->setName($request->getParameter('name'));
 							$issuetype->setIcon($request->getParameter('icon'));
 							$issuetype->save();
-							return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The issue type was updated'), 'description' => $issuetype->getDescription(), 'name' => $issuetype->getName()));
+							return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The issue type was updated'), 'description' => $issuetype->getDescription(), 'name' => $issuetype->getName()));
 						}
 						else
 						{
-							return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name for the issue type')));
+							return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid name for the issue type')));
 						}
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid issue type')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid issue type')));
 					break;
 				case 'updatechoices':
 					if (($issuetype = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issuetype', $request->getParameter('id'))) instanceof TBGIssuetype)
@@ -546,23 +546,23 @@
 						{
 							$this->scheme->setFieldAvailableForIssuetype($issuetype, $key, $details);
 						}
-						return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('Available choices updated')));
+						return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('Available choices updated')));
 					}
 					else
 					{
-						return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid issue type')));
+						return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid issue type')));
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Not implemented yet')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Not implemented yet')));
 					break;
 				case 'delete':
 					if (($issuetype = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issuetype', $request->getParameter('id'))) instanceof TBGIssuetype)
 					{
 						$issuetype->delete();
-						return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('Issue type deleted')));
+						return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('Issue type deleted')));
 					}
 					else
 					{
-						return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid issue type')));
+						return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid issue type')));
 					}
 					break;
 				case 'toggletype':
@@ -574,10 +574,10 @@
 							return $this->renderJSON(array('failed' => false, 'issuetype_id' => $issuetype->getID()));
 						}
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid action for this issue type / scheme')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid action for this issue type / scheme')));
 					break;
 				default:
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid action for this issue type')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid action for this issue type')));
 			}
 		}
 
@@ -598,7 +598,7 @@
 		 */
 		public function runConfigureIssuefieldsAction(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL);
 			$types = \thebuggenie\entities\Datatype::getTypes();
 
@@ -620,9 +620,9 @@
 							$customtype = TBGCustomDatatype::getByKey($request->getParameter('type'));
 							$item = $customtype->createNewOption($request->getParameter('name'), $request->getParameter('value'), $request->getParameter('itemdata'));
 						}
-						return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The option was added'), 'content' => $this->getTemplateHTML('issuefield', array('item' => $item, 'access_level' => $this->access_level, 'type' => $request->getParameter('type')))));
+						return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The option was added'), 'content' => $this->getTemplateHTML('issuefield', array('item' => $item, 'access_level' => $this->access_level, 'type' => $request->getParameter('type')))));
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid name')));
 				case 'edit':
 					if ($request->getParameter('name'))
 					{
@@ -645,14 +645,14 @@
 								$item->setValue($request->getParameter('value'));
 							}
 							$item->save();
-							return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The option was updated')));
+							return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The option was updated')));
 						}
 						else
 						{
-							return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid id')));
+							return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid id')));
 						}
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid name')));
 				case 'delete':
 					if ($request->hasParameter('id'))
 					{
@@ -692,14 +692,14 @@
 							$customtype->setItemdata($request->getParameter('label'));
 							$customtype->setType($request->getParameter('field_type'));
 							$customtype->save();
-							return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The custom field was added'), 'content' => $this->getComponentHTML('issuefields_customtype', array('type_key' => $customtype->getKey(), 'type' => $customtype))));
+							return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The custom field was added'), 'content' => $this->getComponentHTML('issuefields_customtype', array('type_key' => $customtype->getKey(), 'type' => $customtype))));
 						}
 						catch (Exception $e)
 						{
-							return $this->renderJSON(array('failed' => true, 'error' => $e->getMessage() /*TBGContext::getI18n()->__('You need to provide a unique custom field name (key already exists)')*/));
+							return $this->renderJSON(array('failed' => true, 'error' => $e->getMessage() /*\caspar\core\Caspar::getI18n()->__('You need to provide a unique custom field name (key already exists)')*/));
 						}
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid name')));
 					break;
 				case 'update':
 					if ($request->getParameter('name') != '')
@@ -711,20 +711,20 @@
 							$customtype->setInstructions($request->getParameter('instructions'));
 							$customtype->setName($request->getParameter('name'));
 							$customtype->save();
-							return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The custom field was updated'), 'description' => $customtype->getDescription(), 'instructions' => $customtype->getInstructions(), 'name' => $customtype->getName()));
+							return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The custom field was updated'), 'description' => $customtype->getDescription(), 'instructions' => $customtype->getInstructions(), 'name' => $customtype->getName()));
 						}
-						return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('You need to provide a custom field key that already exists')));
+						return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('You need to provide a custom field key that already exists')));
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please provide a valid name')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please provide a valid name')));
 					break;
 				case 'delete':
 					$customtype = TBGCustomDatatype::getByKey($request->getParameter('type'));
 					if ($customtype instanceof TBGCustomDatatype)
 					{
 						$customtype->delete();
-						return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('The custom field was deleted')));
+						return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('The custom field was deleted')));
 					}
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('You need to provide a custom field key that already exists')));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('You need to provide a custom field key that already exists')));
 					break;
 			}
 		}
@@ -738,7 +738,7 @@
 		{
 			$this->module_message = TBGContext::getMessageAndClear('module_message');
 			$this->module_error = TBGContext::getMessageAndClear('module_error');
-			$this->modules = TBGContext::getModules();
+			$this->modules = \thebuggenie\core\Context::getModules();
 			$this->uninstalled_modules = TBGContext::getUninstalledModules();
 			$this->outdated_modules = TBGContext::getOutdatedModules();
 		}
@@ -845,7 +845,7 @@
 				
 				return $this->renderTemplate('projects_assignees', array('project' => $this->theProject));
 			}
-			return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__("You don't have access to save project settings")));
+			return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__("You don't have access to save project settings")));
 			
 		}
 
@@ -911,7 +911,7 @@
 			}
 			catch (Exception $e)
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('This project does not exist')));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('This project does not exist')));
 			}
 			
 			$this->forward403unless($this->theProject instanceof \thebuggenie\entities\Project && $request->hasParameter('frontpage_summary'));
@@ -946,13 +946,13 @@
 							$this->theProject->save();
 							break;
 					}
-					return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('Your changes has been saved'), 'message' => ''));
+					return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('Your changes has been saved'), 'message' => ''));
 				}
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__("You don't have access to save project settings")));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__("You don't have access to save project settings")));
 			}
 			catch (Exception $e)
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('An error occured'), 'message' => $e->getMessage()));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('An error occured'), 'message' => $e->getMessage()));
 			}
 		}
 
@@ -1052,11 +1052,11 @@
 			}
 			catch (Exception $e) {}
 			
-			if (!$this->project instanceof \thebuggenie\entities\Project) return $this->return404(TBGContext::getI18n()->__("This project doesn't exist"));
+			if (!$this->project instanceof \thebuggenie\entities\Project) return $this->return404(\caspar\core\Caspar::getI18n()->__("This project doesn't exist"));
 			
 			if ($request->isMethod(TBGRequest::POST))
 			{
-				$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL, TBGContext::getI18n()->__('You do not have access to update these settings'));
+				$this->forward403unless($this->access_level == TBGSettings::ACCESS_FULL, \caspar\core\Caspar::getI18n()->__('You do not have access to update these settings'));
 				
 				if ($request->hasParameter('release_month') && $request->hasParameter('release_day') && $request->hasParameter('release_year'))
 				{
@@ -1070,7 +1070,7 @@
 				{
 					if (trim($request->getParameter('project_name')) == '')
 					{
-						return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please specify a valid project name')));
+						return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please specify a valid project name')));
 					}
 					else
 					{
@@ -1079,7 +1079,7 @@
 				}
 
 
-				$message = ($old_key != $this->project->getKey()) ? TBGContext::getI18n()->__('%IMPORTANT%: The project key has changed. Remember to replace the current url with the new project key', array('%IMPORTANT%' => '<b>'.TBGContext::getI18n()->__('IMPORTANT').'</b>')) : '';
+				$message = ($old_key != $this->project->getKey()) ? \caspar\core\Caspar::getI18n()->__('%IMPORTANT%: The project key has changed. Remember to replace the current url with the new project key', array('%IMPORTANT%' => '<b>'.\caspar\core\Caspar::getI18n()->__('IMPORTANT').'</b>')) : '';
 
 				if ($request->hasParameter('project_key'))
 					$this->project->setKey($request->getParameter('project_key'));
@@ -1090,7 +1090,7 @@
 				if ($request->hasParameter('use_prefix') && $this->project->doesUsePrefix())
 				{
 					if (!$this->project->setPrefix($request->getParameter('prefix')))
-						return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__("Project prefixes may only contain letters and numbers")));
+						return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__("Project prefixes may only contain letters and numbers")));
 				}
 
 				if ($request->hasParameter('client'))
@@ -1174,7 +1174,7 @@
 		 */
 		public function runAddProject(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if (!\thebuggenie\core\Context::getScope()->hasProjectsAvailable())
 			{
@@ -1212,7 +1212,7 @@
 		 */
 		public function runAddEdition(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1263,7 +1263,7 @@
 		 */
 		public function runBuildAction(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1370,7 +1370,7 @@
 		 */
 		public function runProjectBuild(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1464,7 +1464,7 @@
 		 */
 		public function runAddComponent(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1515,7 +1515,7 @@
 		 */
 		public function runAddMilestone(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1566,7 +1566,7 @@
 		 */
 		public function runMilestoneAction(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1631,11 +1631,11 @@
 										}
 										
 										$theMilestone->save();
-										return $this->renderJSON(array('message' => TBGContext::getI18n()->__('Milestone updated'), 'content' => $this->getTemplateHTML('milestonebox', array('milestone' => $theMilestone))));
+										return $this->renderJSON(array('message' => \caspar\core\Caspar::getI18n()->__('Milestone updated'), 'content' => $this->getTemplateHTML('milestonebox', array('milestone' => $theMilestone))));
 									}
 									else
 									{
-										throw new Exception(TBGContext::getI18n()->__('The milestone needs to have a name'));
+										throw new Exception(\caspar\core\Caspar::getI18n()->__('The milestone needs to have a name'));
 									}
 									break;
 								case 'delete':
@@ -1646,17 +1646,17 @@
 						}
 						else
 						{
-							throw new Exception(TBGContext::getI18n()->__('You do not have access to this milestone'));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__('You do not have access to this milestone'));
 						}
 					}
 					else
 					{
-						throw new Exception(TBGContext::getI18n()->__('You need to specify a milestone'));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('You need to specify a milestone'));
 					}
 				}
 				catch (Exception $e)
 				{
-					return $this->renderJSON(array('failed' => true, "error" => TBGContext::getI18n()->__('Could not update the milestone').", ".$e->getMessage()));
+					return $this->renderJSON(array('failed' => true, "error" => \caspar\core\Caspar::getI18n()->__('Could not update the milestone').", ".$e->getMessage()));
 				}
 				return $this->renderJSON(array('done' => true));
 			}
@@ -1670,7 +1670,7 @@
 		 */
 		public function runEditEditionComponent(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1703,7 +1703,7 @@
 		 */
 		public function runEditComponent(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1735,12 +1735,12 @@
 						$project = $theComponent->getProject();
 						$theComponent->delete();
 						$count = count(TBGComponent::getAllByProjectID($project->getID()));
-						return $this->renderJSON(array('failed' => false, 'deleted' => true, 'itemcount' => $count, 'message' => TBGContext::getI18n()->__('Component deleted')));
+						return $this->renderJSON(array('failed' => false, 'deleted' => true, 'itemcount' => $count, 'message' => \caspar\core\Caspar::getI18n()->__('Component deleted')));
 					}
 				}
 				catch (Exception $e)
 				{
-					return $this->renderJSON(array('failed' => true, "error" => TBGContext::getI18n()->__('Could not edit this component').", ".$e->getMessage()));
+					return $this->renderJSON(array('failed' => true, "error" => \caspar\core\Caspar::getI18n()->__('Could not edit this component').", ".$e->getMessage()));
 				}
 			}
 			return $this->renderJSON(array('failed' => true, "error" => $i18n->__("You don't have access to modify components")));
@@ -1753,7 +1753,7 @@
 		 */
 		public function runDeleteProject(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1780,7 +1780,7 @@
 		 */
 		protected function _setArchived($archived, TBGRequest $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1842,11 +1842,11 @@
 				{
 					if (TBGModule::installModule($request->getParameter('module_key')))
 					{
-						TBGContext::setMessage('module_message', TBGContext::getI18n()->__('The module "%module_name%" was installed successfully', array('%module_name%' => $request->getParameter('module_key'))));
+						TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('The module "%module_name%" was installed successfully', array('%module_name%' => $request->getParameter('module_key'))));
 					}
 					else
 					{
-						TBGContext::setMessage('module_error', TBGContext::getI18n()->__('There was an error install the module %module_name%', array('%module_name%' => $request->getParameter('module_key'))));
+						TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('There was an error install the module %module_name%', array('%module_name%' => $request->getParameter('module_key'))));
 					}
 				}
 				else if ($request->getParameter('mode') == 'upload')
@@ -1854,17 +1854,17 @@
 					$archive = $request->getUploadedFile('archive');	
 					if ($archive == null || $archive['error'] != UPLOAD_ERR_OK || !preg_match('/application\/(x-)?zip/i', $archive['type']))
 					{
-						TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Invalid or empty archive uploaded'));
+						TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Invalid or empty archive uploaded'));
 					}
 					else
 					{
 						$module_name = TBGModule::uploadModule($archive);
-						TBGContext::setMessage('module_message', TBGContext::getI18n()->__('The module "%module_name%" was uploaded successfully', array('%module_name%' => $module_name)));
+						TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('The module "%module_name%" was uploaded successfully', array('%module_name%' => $module_name)));
 					}
 				}				
 				else
 				{
-					$module = TBGContext::getModule($request->getParameter('module_key'));
+					$module = \thebuggenie\core\Context::getModule($request->getParameter('module_key'));
 					if (!$module->isCore())
 						switch ($request->getParameter('mode'))
 						{
@@ -1880,17 +1880,17 @@
 								break;
 							case 'uninstall':
 								$module->uninstall();
-								TBGContext::setMessage('module_message', TBGContext::getI18n()->__('The module "%module_name%" was uninstalled successfully', array('%module_name%' => $module->getName())));
+								TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('The module "%module_name%" was uninstalled successfully', array('%module_name%' => $module->getName())));
 								break;
 							case 'update':
 								try
 								{
 									$module->upgrade();
-									TBGContext::setMessage('module_message', TBGContext::getI18n()->__('The module "%module_name%" was successfully upgraded and can now be used again', array('%module_name%' => $module->getName())));
+									TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('The module "%module_name%" was successfully upgraded and can now be used again', array('%module_name%' => $module->getName())));
 								}
 								catch (Exception $e)
 								{ throw $e;
-									TBGContext::setMessage('module_error', TBGContext::getI18n()->__('The module "%module_name%" was not successfully upgraded', array('%module_name%' => $module->getName())));	
+									TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('The module "%module_name%" was not successfully upgraded', array('%module_name%' => $module->getName())));	
 								}
 								break;
 						}
@@ -1899,7 +1899,7 @@
 			catch (Exception $e)
 			{ throw $e;
 				\caspar\core\Logging::log('Trying to run action ' . $request->getParameter('mode') . ' on module ' . $request->getParameter('module_key') . ' made an exception: ' . $e->getMessage(), \caspar\core\Logging::LEVEL_FATAL);
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('This module (%module_name%) does not exist', array('%module_name%' => $request->getParameter('module_key'))));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('This module (%module_name%) does not exist', array('%module_name%' => $request->getParameter('module_key'))));
 			}
 			$this->forward(TBGContext::getRouting()->generate('configure_modules'));
 		}
@@ -1911,7 +1911,7 @@
 		 */
 		public function runGetPermissionsInfo(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1922,7 +1922,7 @@
 
 		public function runSetPermission(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			if ($this->access_level == TBGSettings::ACCESS_FULL)
 			{
@@ -1970,7 +1970,7 @@
 			
 			try
 			{
-				$module = TBGContext::getModule($request->getParameter('config_module'));
+				$module = \thebuggenie\core\Context::getModule($request->getParameter('config_module'));
 				if (!$module->isEnabled())
 				{
 					throw new Exception('disabled');
@@ -1988,7 +1988,7 @@
 							$module->postConfigSettings($request);
 							if (!TBGContext::hasMessage('module_message'))
 							{
-								TBGContext::setMessage('module_message', TBGContext::getI18n()->__('Settings saved successfully'));
+								TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('Settings saved successfully'));
 							}
 						}
 						catch (Exception $e)
@@ -2003,7 +2003,7 @@
 			catch (Exception $e)
 			{
 				\caspar\core\Logging::log('Trying to configure module ' . $request->getParameter('config_module') . " which isn't configurable", 'main', \caspar\core\Logging::LEVEL_FATAL);
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('The module "%module_name%" is not configurable', array('%module_name%' => $request->getParameter('config_module'))));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('The module "%module_name%" is not configurable', array('%module_name%' => $request->getParameter('config_module'))));
 				$this->forward(TBGContext::getRouting()->generate('configure_modules'));
 			}
 			$this->module_message = TBGContext::getMessageAndClear('module_message');
@@ -2027,13 +2027,13 @@
 					if (!is_writable($request->getParameter('upload_localpath')))
 					{
 						$this->getResponse()->setHttpStatus(400);
-						return $this->renderJSON(array('error' => TBGContext::getI18n()->__("The upload path isn't writable")));
+						return $this->renderJSON(array('error' => \caspar\core\Caspar::getI18n()->__("The upload path isn't writable")));
 					}
 				}
 				
 				if (!is_numeric($request->getParameter('upload_max_file_size')))
 				{
-					return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__("The maximum file size must be a number")));
+					return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__("The maximum file size must be a number")));
 				}
 				
 				$settings = array('enable_uploads', 'upload_restriction_mode', 'upload_extensions_list', 'upload_max_file_size', 'upload_storage', 'upload_localpath');
@@ -2045,14 +2045,14 @@
 						TBGSettings::saveSetting($setting, \caspar\core\Caspar::getRequest()->getParameter($setting));
 					}
 				}
-				return $this->renderJSON(array('failed' => false, 'title' => TBGContext::getI18n()->__('All settings saved')));
+				return $this->renderJSON(array('failed' => false, 'title' => \caspar\core\Caspar::getI18n()->__('All settings saved')));
 			}
 		}
 		
 		public function runConfigureAuthentication(Request $request)
 		{
 			$modules = array();
-			$allmods = TBGContext::getModules();
+			$allmods = \thebuggenie\core\Context::getModules();
 			foreach ($allmods as $mod)
 			{
 				if ($mod->getType() == TBGModule::MODULE_AUTH)
@@ -2095,7 +2095,7 @@
 			{
 				if (!(!in_array($request->getParameter('group_id'), TBGSettings::getDefaultGroupIDs())))
 				{
-					throw new Exception(TBGContext::getI18n()->__("You cannot delete the default groups"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot delete the default groups"));
 				}
 				
 				try
@@ -2105,10 +2105,10 @@
 				catch (Exception $e) { }
 				if (!$group instanceof \thebuggenie\entities\Group)
 				{
-					throw new Exception(TBGContext::getI18n()->__("You cannot delete this group"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot delete this group"));
 				}
 				$group->delete();
-				return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The group was deleted')));
+				return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('The group was deleted')));
 			}
 			catch (Exception $e)
 			{
@@ -2133,12 +2133,12 @@
 						catch (Exception $e) { }
 						if (!$old_group instanceof \thebuggenie\entities\Group)
 						{
-							throw new Exception(TBGContext::getI18n()->__("You cannot clone this group"));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot clone this group"));
 						}
 					}
 					if (\thebuggenie\entities\Group::doesGroupNameExist(trim($group_name)))
 					{
-						throw new Exception(TBGContext::getI18n()->__("Please enter a group name that doesn't already exist"));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__("Please enter a group name that doesn't already exist"));
 					}
 					$group = new \thebuggenie\entities\Group();
 					$group->setName($group_name);
@@ -2149,17 +2149,17 @@
 						{
 							\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Permissions')->cloneGroupPermissions($old_group->getID(), $group->getID());
 						}
-						$message = TBGContext::getI18n()->__('The group was cloned');
+						$message = \caspar\core\Caspar::getI18n()->__('The group was cloned');
 					}
 					else
 					{
-						$message = TBGContext::getI18n()->__('The group was added');
+						$message = \caspar\core\Caspar::getI18n()->__('The group was added');
 					}
 					return $this->renderJSON(array('failed' => false, 'message' => $message, 'content' => $this->getTemplateHTML('configuration/groupbox', array('group' => $group))));
 				}
 				else
 				{
-					throw new Exception(TBGContext::getI18n()->__('Please enter a group name'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Please enter a group name'));
 				}
 			}
 			catch (Exception $e)
@@ -2195,11 +2195,11 @@
 					$project = $theEdition->getProject();
 					$theEdition->delete();
 					$count = count(TBGEdition::getAllByProjectID($project->getID()));
-					return $this->renderJSON(array('failed' => false, 'deleted' => true, 'itemcount' => $count, 'message' => TBGContext::getI18n()->__('Edition deleted')));
+					return $this->renderJSON(array('failed' => false, 'deleted' => true, 'itemcount' => $count, 'message' => \caspar\core\Caspar::getI18n()->__('Edition deleted')));
 				}
 				catch (Exception $e)
 				{
-					return $this->renderJSON(array('failed' => true, "error" => TBGContext::getI18n()->__('Could not delete this edition').", ".$e->getMessage()));
+					return $this->renderJSON(array('failed' => true, "error" => \caspar\core\Caspar::getI18n()->__('Could not delete this edition').", ".$e->getMessage()));
 				}
 			}
 			return $this->renderJSON(array('failed' => true, "error" => $i18n->__("You don't have access to modify edition")));
@@ -2233,17 +2233,17 @@
 					}
 					if (in_array($user->getUsername(), array('administrator', 'guest')))
 					{
-						throw new Exception(TBGContext::getI18n()->__("You cannot delete this system user"));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot delete this system user"));
 					}
 				}
 				catch (Exception $e) { }
 				if (!$user instanceof TBGUser)
 				{
-					throw new Exception(TBGContext::getI18n()->__("You cannot delete this user"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot delete this user"));
 				}
 				$user->markAsDeleted();
 				$user->save();
-				$return_options['message'] = TBGContext::getI18n()->__('The user was deleted');
+				$return_options['message'] = \caspar\core\Caspar::getI18n()->__('The user was deleted');
 				$return_options['total_count'] = TBGUser::getUsersCount();
 				$return_options['more_available'] = \thebuggenie\core\Context::getScope()->hasUsersAvailable();
 				
@@ -2267,10 +2267,10 @@
 				catch (Exception $e) { }
 				if (!$team instanceof TBGTeam)
 				{
-					throw new Exception(TBGContext::getI18n()->__("You cannot delete this team"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot delete this team"));
 				}
 				$team->delete();
-				return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The team was deleted'), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasTeamsAvailable()));
+				return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('The team was deleted'), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasTeamsAvailable()));
 			}
 			catch (Exception $e)
 			{
@@ -2295,12 +2295,12 @@
 						catch (Exception $e) { }
 						if (!$old_team instanceof TBGTeam)
 						{
-							throw new Exception(TBGContext::getI18n()->__("You cannot clone this team"));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot clone this team"));
 						}
 					}
 					if (TBGTeam::doesTeamNameExist(trim($team_name)))
 					{
-						throw new Exception(TBGContext::getI18n()->__("Please enter a team name that doesn't already exist"));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__("Please enter a team name that doesn't already exist"));
 					}
 					$team = new TBGTeam();
 					$team->setName($team_name);
@@ -2315,17 +2315,17 @@
 						{
 							\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\TeamMembers')->cloneTeamMemberships($old_team->getID(), $team->getID());
 						}
-						$message = TBGContext::getI18n()->__('The team was cloned');
+						$message = \caspar\core\Caspar::getI18n()->__('The team was cloned');
 					}
 					else
 					{
-						$message = TBGContext::getI18n()->__('The team was added');
+						$message = \caspar\core\Caspar::getI18n()->__('The team was added');
 					}
 					return $this->renderJSON(array('failed' => false, 'message' => $message, 'content' => $this->getTemplateHTML('configuration/teambox', array('team' => $team)), 'total_count' => TBGTeam::getTeamsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasTeamsAvailable()));
 				}
 				else
 				{
-					throw new Exception(TBGContext::getI18n()->__('Please enter a team name'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Please enter a team name'));
 				}
 			}
 			catch (Exception $e)
@@ -2365,13 +2365,13 @@
 			switch ($findstring)
 			{
 				case 'unactivated':
-					$this->findstring = TBGContext::getI18n()->__('Unactivated users');
+					$this->findstring = \caspar\core\Caspar::getI18n()->__('Unactivated users');
 					break;
 				case 'newusers':
-					$this->findstring = TBGContext::getI18n()->__('New users');
+					$this->findstring = \caspar\core\Caspar::getI18n()->__('New users');
 					break;
 				case 'all':
-					$this->findstring = TBGContext::getI18n()->__('All users');
+					$this->findstring = \caspar\core\Caspar::getI18n()->__('All users');
 					break;
 				default:
 					$this->findstring = $findstring;
@@ -2385,7 +2385,7 @@
 			{
 				if (!\thebuggenie\core\Context::getScope()->hasUsersAvailable())
 				{
-					throw new Exception(TBGContext::getI18n()->__('This instance of The Bug Genie cannot add more users'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('This instance of The Bug Genie cannot add more users'));
 				}
 				
 				if ($username = $request->getParameter('username'))
@@ -2402,14 +2402,14 @@
 				}
 				else
 				{
-					throw new Exception(TBGContext::getI18n()->__('Please enter a username'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Please enter a username'));
 				}
 				$this->getResponse()->setTemplate('configuration/findusers');
 				$this->too_short = false;
 				$this->created_user = true;
 				$this->users = array($user);
 				$this->total_results = 1;
-				$this->title = TBGContext::getI18n()->__('User %username% created', array('%username%' => $username));
+				$this->title = \caspar\core\Caspar::getI18n()->__('User %username% created', array('%username%' => $username));
 				$this->total_count = TBGUser::getUsersCount();
 				$this->more_available = \thebuggenie\core\Context::getScope()->hasUsersAvailable();
 			}
@@ -2434,7 +2434,7 @@
 					}
 					else
 					{
-						return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('This username is already taken')));
+						return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('This username is already taken')));
 					}
 					$password_changed = false;
 					if ($request->getParameter('password_action') == 'change' && $request->getParameter('new_password_1') && $request->getParameter('new_password_2'))
@@ -2446,7 +2446,7 @@
 						}
 						else
 						{
-							return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please enter the new password twice')));
+							return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please enter the new password twice')));
 						}
 					}
 					elseif ($request->getParameter('password_action') == 'random')
@@ -2471,7 +2471,7 @@
 					}
 					catch (Exception $e)
 					{
-						throw new Exception(TBGContext::getI18n()->__('Invalid user group'));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('Invalid user group'));
 					}
 					
 					$existing_teams = array_keys($user->getTeams());
@@ -2490,7 +2490,7 @@
 					}
 					catch (Exception $e)
 					{
-						throw new Exception(TBGContext::getI18n()->__('One or more teams were invalid'));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('One or more teams were invalid'));
 					}
 					
 					try
@@ -2507,7 +2507,7 @@
 					}
 					catch (Exception $e)
 					{
-						throw new Exception(TBGContext::getI18n()->__('One or more clients were invalid'));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__('One or more clients were invalid'));
 					}
 					$user->setBuddyname($request->getParameter('nickname'));
 					$user->setActivated((bool) $request->getParameter('activated'));
@@ -2542,10 +2542,10 @@
 						$template_options['random_password'] = $random_password;
 					}
 					$return_options['content'] = $this->getTemplateHTML('configuration/finduser_row', $template_options);
-					$return_options['title'] = TBGContext::getI18n()->__('User updated!');
+					$return_options['title'] = \caspar\core\Caspar::getI18n()->__('User updated!');
 					if ($password_changed)
 					{
-						$return_options['message'] = TBGContext::getI18n()->__('The password was changed');
+						$return_options['message'] = \caspar\core\Caspar::getI18n()->__('The password was changed');
 					}
 					return $this->renderJSON($return_options);
 				}
@@ -2553,10 +2553,10 @@
 			catch (Exception $e)
 			{
 				$this->getResponse()->setHttpStatus(400);
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('This user could not be updated: %message%', array('%message%' => $e->getMessage()))));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('This user could not be updated: %message%', array('%message%' => $e->getMessage()))));
 			}
 			$this->getResponse()->setHttpStatus(400);
-			return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('This user could not be updated')));
+			return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('This user could not be updated')));
 		}
 
 		public function runGetPermissionsConfigurator(Request $request)
@@ -2585,14 +2585,14 @@
 							{
 								if (in_array($e_name, $edition->getProject()->getEditions()))
 								{
-									throw new Exception(TBGContext::getI18n()->__('This edition already exists for this project'));
+									throw new Exception(\caspar\core\Caspar::getI18n()->__('This edition already exists for this project'));
 								}
 								$edition->setName($e_name);
 							}
 						}
 						else
 						{
-							throw new Exception(TBGContext::getI18n()->__('You need to specify a name for this edition'));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__('You need to specify a name for this edition'));
 						}
 							
 						$edition->setDescription($request->getParameter('description', null, false));
@@ -2601,7 +2601,7 @@
 						$edition->setReleased((int) $request->getParameter('released'));
 						$edition->setLocked((bool) $request->getParameter('locked'));
 						$edition->save();
-						return $this->renderJSON(array('edition_name' => $edition->getName(), 'message' => TBGContext::getI18n()->__('Edition details saved')));
+						return $this->renderJSON(array('edition_name' => $edition->getName(), 'message' => \caspar\core\Caspar::getI18n()->__('Edition details saved')));
 					}
 					else
 					{
@@ -2620,7 +2620,7 @@
 				}
 				else
 				{
-					throw new Exception(TBGContext::getI18n()->__('Invalid edition id'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Invalid edition id'));
 				}
 			}
 			catch (Exception $e)
@@ -2645,7 +2645,7 @@
 				}
 				else
 				{
-					throw new Exception(TBGContext::getI18n()->__('Invalid project id'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Invalid project id'));
 				}
 			}
 			catch (Exception $e)
@@ -2671,7 +2671,7 @@
 					$workflow->setName($workflow_name);
 					$workflow->save();
 					$step = new TBGWorkflowStep();
-					$step->setName(TBGContext::getI18n()->__('New'));
+					$step->setName(\caspar\core\Caspar::getI18n()->__('New'));
 					$step->setWorkflow($workflow);
 					$step->save();
 					$this->forward(TBGContext::getRouting()->generate('configure_workflow'));
@@ -2690,7 +2690,7 @@
 			try
 			{
 				$this->workflow_scheme = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowScheme', $request->getParameter('scheme_id'));
-				$this->issuetypes = TBGIssuetype::getAll();
+				$this->issuetypes = \thebuggenie\entities\Issuetype::getAll();
 				if (\thebuggenie\core\Context::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'copy_scheme')
 				{
 					if ($new_name = $request->getParameter('new_name'))
@@ -2709,13 +2709,13 @@
 					}
 					else
 					{
-						$this->error = TBGContext::getI18n()->__('Please enter a valid name');
+						$this->error = \caspar\core\Caspar::getI18n()->__('Please enter a valid name');
 					}
 				}
 				elseif (\thebuggenie\core\Context::getScope()->isCustomWorkflowsEnabled() && $this->mode == 'delete_scheme')
 				{
 					$this->workflow_scheme->delete();
-					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The workflow scheme was deleted')));
+					return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('The workflow scheme was deleted')));
 				}
 				elseif (\thebuggenie\core\Context::getScope()->isCustomWorkflowsEnabled() && $request->isMethod(TBGRequest::POST))
 				{
@@ -2732,7 +2732,7 @@
 							$this->workflow_scheme->unassociateIssuetype($issuetype);
 						}
 					}
-					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('Workflow associations were updated')));
+					return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('Workflow associations were updated')));
 				}
 			}
 			catch (Exception $e)
@@ -2740,11 +2740,11 @@
 				if ($request->getRequestedFormat() == 'json')
 				{
 					$this->getResponse()->setHttpStatus(400);
-					return $this->renderJSON(array('success' => false, 'message' => TBGContext::getI18n()->__('An error occured'), 'error' => $e->getMessage()));
+					return $this->renderJSON(array('success' => false, 'message' => \caspar\core\Caspar::getI18n()->__('An error occured'), 'error' => $e->getMessage()));
 				}
 				else
 				{
-					$this->error = TBGContext::getI18n()->__('This workflow scheme does not exist');
+					$this->error = \caspar\core\Caspar::getI18n()->__('This workflow scheme does not exist');
 				}
 			}
 		}
@@ -2765,13 +2765,13 @@
 					}
 					else
 					{
-						$this->error = TBGContext::getI18n()->__('Please enter a valid name');
+						$this->error = \caspar\core\Caspar::getI18n()->__('Please enter a valid name');
 					}
 				}
 				elseif ($this->mode == 'delete_workflow')
 				{
 					$this->workflow->delete();
-					return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The workflow was deleted'), 'total_count' => TBGWorkflow::getCustomWorkflowsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasCustomWorkflowsAvailable()));
+					return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('The workflow was deleted'), 'total_count' => TBGWorkflow::getCustomWorkflowsCount(), 'more_available' => \thebuggenie\core\Context::getScope()->hasCustomWorkflowsAvailable()));
 				}
 			}
 			catch (Exception $e)
@@ -2779,11 +2779,11 @@
 				if ($request->getRequestedFormat() == 'json')
 				{
 					$this->getResponse()->setHttpStatus(400);
-					return $this->renderJSON(array('success' => false, 'message' => TBGContext::getI18n()->__('An error occured'), 'error' => $e->getMessage()));
+					return $this->renderJSON(array('success' => false, 'message' => \caspar\core\Caspar::getI18n()->__('An error occured'), 'error' => $e->getMessage()));
 				}
 				else
 				{
-					$this->error = TBGContext::getI18n()->__('This workflow does not exist');
+					$this->error = \caspar\core\Caspar::getI18n()->__('This workflow does not exist');
 				}
 			}
 		}
@@ -2828,7 +2828,7 @@
 			}
 			catch (Exception $e)
 			{
-				$this->error = TBGContext::getI18n()->__('This workflow / step does not exist');
+				$this->error = \caspar\core\Caspar::getI18n()->__('This workflow / step does not exist');
 			}
 		}
 
@@ -2855,7 +2855,7 @@
 						{
 							$this->action = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransitionAction', $request->getParameter('action_id'));
 							$this->action->delete();
-							return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The action has been deleted')));
+							return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('The action has been deleted')));
 						}
 						elseif ($mode == 'new_action')
 						{
@@ -2876,22 +2876,22 @@
 							switch ($this->action->getActionType())
 							{
 								case TBGWorkflowTransitionAction::ACTION_ASSIGN_ISSUE:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('User specified during transition');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\core\\User', (int) $this->action->getTargetValue())->getName() : \caspar\core\Caspar::getI18n()->__('User specified during transition');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_RESOLUTION:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Resolution', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Resolution specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Resolution', (int) $this->action->getTargetValue())->getName() : \caspar\core\Caspar::getI18n()->__('Resolution specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_REPRODUCABILITY:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Reproducability', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Reproducability specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Reproducability', (int) $this->action->getTargetValue())->getName() : \caspar\core\Caspar::getI18n()->__('Reproducability specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_STATUS:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Status', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Status specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Status', (int) $this->action->getTargetValue())->getName() : \caspar\core\Caspar::getI18n()->__('Status specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_MILESTONE:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Milestone specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', (int) $this->action->getTargetValue())->getName() : \caspar\core\Caspar::getI18n()->__('Milestone specified by user');
 									break;
 								case TBGWorkflowTransitionAction::ACTION_SET_PRIORITY:
-									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Priority', (int) $this->action->getTargetValue())->getName() : TBGContext::getI18n()->__('Priority specified by user');
+									$text = ($this->action->getTargetValue()) ? \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Priority', (int) $this->action->getTargetValue())->getName() : \caspar\core\Caspar::getI18n()->__('Priority specified by user');
 									break;
 							}
 							return $this->renderJSON(array('failed' => false, 'content' => $text));
@@ -2900,7 +2900,7 @@
 						{
 							$this->rule = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowTransitionValidationRule', $request->getParameter('rule_id'));
 							$this->rule->delete();
-							return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The validation rule has been deleted')));
+							return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('The validation rule has been deleted')));
 						}
 						elseif ($mode == 'new_validation_rule')
 						{
@@ -2918,7 +2918,7 @@
 							if ($exists)
 							{
 								$this->getResponse()->setHttpStatus(400);
-								return $this->renderJSON(array('failed' => true, 'message' => TBGContext::getI18n()->__('This validation rule already exist')));
+								return $this->renderJSON(array('failed' => true, 'message' => \caspar\core\Caspar::getI18n()->__('This validation rule already exist')));
 							}
 							$rule->setRule($request->getParameter('rule'));
 							$rule->setRuleValue('');
@@ -2936,17 +2936,17 @@
 							{
 								case TBGWorkflowTransitionValidationRule::RULE_MAX_ASSIGNED_ISSUES:
 									$this->rule->setRuleValue($request->getParameter('rule_value'));
-									$text = ($this->rule->getRuleValue()) ? $this->rule->getRuleValue() : TBGContext::getI18n()->__('Unlimited');
+									$text = ($this->rule->getRuleValue()) ? $this->rule->getRuleValue() : \caspar\core\Caspar::getI18n()->__('Unlimited');
 									break;
 								case TBGWorkflowTransitionValidationRule::RULE_PRIORITY_VALID:
 								case TBGWorkflowTransitionValidationRule::RULE_REPRODUCABILITY_VALID:
 								case TBGWorkflowTransitionValidationRule::RULE_RESOLUTION_VALID:
 								case TBGWorkflowTransitionValidationRule::RULE_STATUS_VALID:
 									$this->rule->setRuleValue(join(',', $request->getParameter('rule_value')));
-									$text = ($this->rule->getRuleValue()) ? $this->rule->getRuleValueAsJoinedString() : TBGContext::getI18n()->__('Any valid value');
+									$text = ($this->rule->getRuleValue()) ? $this->rule->getRuleValueAsJoinedString() : \caspar\core\Caspar::getI18n()->__('Any valid value');
 									break;
 								//case TBGWorkflowTransitionValidationRule::RULE_:
-								//	$text = ($this->rule->getRuleValue()) ? $this->rule->getRuleValue() : TBGContext::getI18n()->__('Unlimited');
+								//	$text = ($this->rule->getRuleValue()) ? $this->rule->getRuleValue() : \caspar\core\Caspar::getI18n()->__('Unlimited');
 								//	break;
 							}
 							$this->rule->save();
@@ -3008,17 +3008,17 @@
 								}
 								else
 								{
-									throw new InvalidArgumentException(TBGContext::getI18n()->__('Please select a valid template'));
+									throw new InvalidArgumentException(\caspar\core\Caspar::getI18n()->__('Please select a valid template'));
 								}
 							}
 							else
 							{
-								throw new InvalidArgumentException(TBGContext::getI18n()->__('Please select a valid outgoing step'));
+								throw new InvalidArgumentException(\caspar\core\Caspar::getI18n()->__('Please select a valid outgoing step'));
 							}
 						}
 						else
 						{
-							throw new InvalidArgumentException(TBGContext::getI18n()->__('Please fill in all required fields'));
+							throw new InvalidArgumentException(\caspar\core\Caspar::getI18n()->__('Please fill in all required fields'));
 						}
 					}
 					$step->addOutgoingTransition($transition);
@@ -3036,7 +3036,7 @@
 			catch (Exception $e)
 			{
 				throw $e;
-				$this->error = TBGContext::getI18n()->__('This workflow / transition does not exist');
+				$this->error = \caspar\core\Caspar::getI18n()->__('This workflow / transition does not exist');
 			}
 			if (isset($redirect_transition) && $redirect_transition)
 			{
@@ -3062,18 +3062,18 @@
 				{
 					if (TBGClient::doesClientNameExist(trim($request->getParameter('client_name'))))
 					{
-						throw new Exception(TBGContext::getI18n()->__("Please enter a client name that doesn't already exist"));
+						throw new Exception(\caspar\core\Caspar::getI18n()->__("Please enter a client name that doesn't already exist"));
 					}
 					$client = new TBGClient();
 					$client->setName($request->getParameter('client_name'));
 					$client->save();
 
-					$message = TBGContext::getI18n()->__('The client was added');
+					$message = \caspar\core\Caspar::getI18n()->__('The client was added');
 					return $this->renderJSON(array('failed' => false, 'message' => $message, 'content' => $this->getTemplateHTML('configuration/clientbox', array('client' => $client))));
 				}
 				else
 				{
-					throw new Exception(TBGContext::getI18n()->__('Please enter a client name'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Please enter a client name'));
 				}
 			}
 			catch (Exception $e)
@@ -3094,7 +3094,7 @@
 				catch (Exception $e) { }
 				if (!$client instanceof TBGClient)
 				{
-					throw new Exception(TBGContext::getI18n()->__("You cannot delete this client"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot delete this client"));
 				}
 				
 				if (\thebuggenie\entities\Project::getAllByClientID($client->getID()) !== null)
@@ -3107,7 +3107,7 @@
 				}
 				
 				$client->delete();
-				return $this->renderJSON(array('success' => true, 'message' => TBGContext::getI18n()->__('The client was deleted')));
+				return $this->renderJSON(array('success' => true, 'message' => \caspar\core\Caspar::getI18n()->__('The client was deleted')));
 			}
 			catch (Exception $e)
 			{
@@ -3142,12 +3142,12 @@
 				catch (Exception $e) { }
 				if (!$client instanceof TBGClient)
 				{
-					throw new Exception(TBGContext::getI18n()->__("You cannot edit this client"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("You cannot edit this client"));
 				}
 				
 				if (TBGClient::doesClientNameExist(trim($request->getParameter('client_name'))) && $request->getParameter('client_name') != $client->getName())
 				{
-					throw new Exception(TBGContext::getI18n()->__("Please enter a client name that doesn't already exist"));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__("Please enter a client name that doesn't already exist"));
 				}
 				
 				$client->setName($request->getParameter('client_name'));
@@ -3156,7 +3156,7 @@
 				$client->setTelephone($request->getParameter('client_telephone'));
 				$client->setFax($request->getParameter('client_fax'));
 				$client->save();
-				return $this->renderJSON(array('success' => true, 'content' => $this->getTemplateHTML('configuration/clientbox', array('client' => $client)), 'message' => TBGContext::getI18n()->__('The client was saved')));
+				return $this->renderJSON(array('success' => true, 'content' => $this->getTemplateHTML('configuration/clientbox', array('client' => $client)), 'message' => \caspar\core\Caspar::getI18n()->__('The client was saved')));
 			}
 			catch (Exception $e)
 			{
@@ -3177,7 +3177,7 @@
 			{
 				if ($request->getParameter('csv_data') == '')
 				{
-					throw new Exception(TBGContext::getI18n()->__('No data supplied to import'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('No data supplied to import'));
 				}
 				
 				// Split data into individual lines
@@ -3185,7 +3185,7 @@
 				$data = explode("\n", $data);
 				if (count($data) <= 1)
 				{
-					throw new Exception(TBGContext::getI18n()->__('Insufficient data to import'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Insufficient data to import'));
 				}
 				$headerrow = $data[0];
 				$headerrow = html_entity_decode($headerrow, ENT_QUOTES);
@@ -3227,7 +3227,7 @@
 						
 						if ($namecol === null)
 						{
-							$errors[] = TBGContext::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'name'));
+							$errors[] = \caspar\core\Caspar::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'name'));
 						}
 						
 						break;
@@ -3308,7 +3308,7 @@
 						
 						if ($namecol === null)
 						{
-							$errors[] = TBGContext::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'name'));
+							$errors[] = \caspar\core\Caspar::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'name'));
 						}
 						
 						break;
@@ -3388,17 +3388,17 @@
 						
 						if ($title === null)
 						{
-							$errors[] = TBGContext::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'title'));
+							$errors[] = \caspar\core\Caspar::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'title'));
 						}
 						
 						if ($project === null)
 						{
-							$errors[] = TBGContext::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'project'));
+							$errors[] = \caspar\core\Caspar::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'project'));
 						}
 										
 						if ($issue_type === null)
 						{
-							$errors[] = TBGContext::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'issue_type'));
+							$errors[] = \caspar\core\Caspar::getI18n()->__('Required column \'%col%\' not found in header row', array('%col%' => 'issue_type'));
 						}
 						
 						break;
@@ -3416,7 +3416,7 @@
 					
 					if (count($activerow) != $rowlength)
 					{
-						$errors[] = TBGContext::getI18n()->__('Row %row% does not have the same number of elements as the header row', array('%row%' => $i+1));
+						$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% does not have the same number of elements as the header row', array('%row%' => $i+1));
 					}
 				}
 				
@@ -3433,7 +3433,7 @@
 					{
 						if ($activerow[$j] == '' || $activerow[$j] == '""')
 						{
-							$errors[] = TBGContext::getI18n()->__('Row %row% column %col% has no value', array('%col%' => $j+1, '%row%' => $i+1));
+							$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col% has no value', array('%col%' => $j+1, '%row%' => $i+1));
 						}
 					}
 				}
@@ -3459,7 +3459,7 @@
 								
 								if ($tmp !== null)
 								{
-									$errors[] = TBGContext::getI18n()->__('Row %row%: A project with this name already exists', array('%row%' => $i+1));
+									$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row%: A project with this name already exists', array('%row%' => $i+1));
 								}
 								
 								// First off are booleans
@@ -3469,7 +3469,7 @@
 								{
 									if ($boolitem !== null && trim($activerow[$boolitem], '"') != 0 && trim($activerow[$boolitem], '"') != 1)
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be 1/0)', array('%col%' => $boolitem+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be 1/0)', array('%col%' => $boolitem+1, '%row%' => $i+1));
 									}
 								}
 								
@@ -3480,18 +3480,18 @@
 								{
 									if (($identifiableitem[0] === null || $identifiableitem[1] === null) && !($identifiableitem[0] === null && $identifiableitem[1] === null))
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row%: Both the type and item ID must be supplied for owner/lead/qa fields', array('%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row%: Both the type and item ID must be supplied for owner/lead/qa fields', array('%row%' => $i+1));
 											continue;
 									}
 									
 									if ($identifiableitem[1] !== null && trim($activerow[$identifiableitem[1]], '"') != 1 && trim($activerow[$identifiableitem[1]], '"') != 2)
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be 1 for a user or 2 for a team)', array('%col%' => $identifiableitem[1]+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be 1 for a user or 2 for a team)', array('%col%' => $identifiableitem[1]+1, '%row%' => $i+1));
 									}
 									
 									if ($identifiableitem[0] !== null && !(is_numeric(trim($activerow[$identifiableitem[0]], '"'))))
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
 									}
 									elseif ($identifiableitem[0] !== null && (is_numeric(trim($activerow[$identifiableitem[0]], '"'))))
 									{
@@ -3505,7 +3505,7 @@
 												}
 												catch (Exception $e)
 												{
-													$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: user does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
+													$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: user does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
 												}
 												break;
 											case 2:
@@ -3515,7 +3515,7 @@
 												}
 												catch (Exception $e)
 												{
-													$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: team does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
+													$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: team does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
 												}
 												break;
 										}
@@ -3527,7 +3527,7 @@
 								{
 									if (!is_numeric(trim($activerow[$client], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $client+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $client+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3537,7 +3537,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: client does not exist', array('%col%' => $client+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: client does not exist', array('%col%' => $client+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3547,7 +3547,7 @@
 								{
 									if (!is_numeric(trim($activerow[$workflow_id], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $workflow_id+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $workflow_id+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3557,7 +3557,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: workflow scheme does not exist', array('%col%' => $workflow_id+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: workflow scheme does not exist', array('%col%' => $workflow_id+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3567,7 +3567,7 @@
 								{
 									if (!is_numeric(trim($activerow[$issuetype_scheme], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $issuetype_scheme+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $issuetype_scheme+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3577,7 +3577,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: issuetype scheme does not exist', array('%col%' => $issuetype_scheme+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: issuetype scheme does not exist', array('%col%' => $issuetype_scheme+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3587,7 +3587,7 @@
 								{
 									if (trim($activerow[$summary_type], '"') != 'issuetypes' && trim($activerow[$summary_type], '"') != 'milestones')
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be \'issuetypes\' or \'milestones\')', array('%col%' => $summary_type+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be \'issuetypes\' or \'milestones\')', array('%col%' => $summary_type+1, '%row%' => $i+1));
 									}
 								}
 							}
@@ -3606,7 +3606,7 @@
 								}
 								catch (Exception $e)
 								{
-									$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: Project does not exist', array('%col%' => $project+1, '%row%' => $i+1));
+									$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: Project does not exist', array('%col%' => $project+1, '%row%' => $i+1));
 									break;
 								}
 								
@@ -3617,7 +3617,7 @@
 								{
 									if ($boolitem !== null && trim($activerow[$boolitem], '"') != 0 && trim($activerow[$boolitem], '"') != 1)
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be 1/0)', array('%col%' => $boolitem+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be 1/0)', array('%col%' => $boolitem+1, '%row%' => $i+1));
 									}
 								}
 								
@@ -3628,14 +3628,14 @@
 								{
 									if ($numericitem !== null && !(is_numeric(trim($activerow[$numericitem], '"'))))
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $numericitem+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $numericitem+1, '%row%' => $i+1));
 									}
 								}
 								
 								// Percentage must be 0-100
 								if ($numericitem !== null && ((trim($activerow[$percentage], '"') < 0) || (trim($activerow[$percentage], '"') > 100)))
 								{
-									$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: Percentage must be from 0 to 100 inclusive', array('%col%' => $percentage+1, '%row%' => $i+1));
+									$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: Percentage must be from 0 to 100 inclusive', array('%col%' => $percentage+1, '%row%' => $i+1));
 								}
 									
 								// Now identifiables
@@ -3645,18 +3645,18 @@
 								{
 									if (($identifiableitem[0] === null || $identifiableitem[1] === null) && !($identifiableitem[0] === null && $identifiableitem[1] === null))
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row%: Both the type and item ID must be supplied for owner/lead/qa fields', array('%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row%: Both the type and item ID must be supplied for owner/lead/qa fields', array('%row%' => $i+1));
 											continue;
 									}
 									
 									if ($identifiableitem[1] !== null && trim($activerow[$identifiableitem[1]], '"') != 1 && trim($activerow[$identifiableitem[1]], '"') != 2)
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be 1 for a user or 2 for a team)', array('%col%' => $identifiableitem[1]+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be 1 for a user or 2 for a team)', array('%col%' => $identifiableitem[1]+1, '%row%' => $i+1));
 									}
 									
 									if ($identifiableitem[0] !== null && !(is_numeric(trim($activerow[$identifiableitem[0]], '"'))))
 									{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
 									}
 									elseif ($identifiableitem[0] !== null && (is_numeric(trim($activerow[$identifiableitem[0]], '"'))))
 									{
@@ -3670,7 +3670,7 @@
 												}
 												catch (Exception $e)
 												{
-													$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: user does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
+													$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: user does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
 												}
 												break;
 											case 2:
@@ -3680,7 +3680,7 @@
 												}
 												catch (Exception $e)
 												{
-													$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: team does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
+													$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: team does not exist', array('%col%' => $identifiableitem[0]+1, '%row%' => $i+1));
 												}
 												break;
 										}
@@ -3692,7 +3692,7 @@
 								{
 									if (!is_numeric(trim($activerow[$posted_by], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $posted_by+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $posted_by+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3702,7 +3702,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: user does not exist', array('%col%' => $posted_by+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: user does not exist', array('%col%' => $posted_by+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3712,7 +3712,7 @@
 								{
 									if (!is_numeric(trim($activerow[$milestone], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $milestone+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $milestone+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3721,12 +3721,12 @@
 											$milestonetmp = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', trim($activerow[$milestone], '" '));
 											if ($milestonetmp->getProject()->getID() != $activerow[$project])
 											{
-												$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: milestone does not apply to the specified project', array('%col%' => $milestone+1, '%row%' => $i+1));
+												$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: milestone does not apply to the specified project', array('%col%' => $milestone+1, '%row%' => $i+1));
 											}
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: milestone does not exist', array('%col%' => $milestone+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: milestone does not exist', array('%col%' => $milestone+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3736,7 +3736,7 @@
 								{
 									if (!is_numeric(trim($activerow[$status], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $status+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $status+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3746,7 +3746,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: status does not exist', array('%col%' => $status+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: status does not exist', array('%col%' => $status+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3756,7 +3756,7 @@
 								{
 									if (!is_numeric(trim($activerow[$resolution], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $resolution+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $resolution+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3766,7 +3766,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: resolution does not exist', array('%col%' => $resolution+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: resolution does not exist', array('%col%' => $resolution+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3776,7 +3776,7 @@
 								{
 									if (!is_numeric(trim($activerow[$priority], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $priority+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $priority+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3786,7 +3786,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: priority does not exist', array('%col%' => $priority+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: priority does not exist', array('%col%' => $priority+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3796,7 +3796,7 @@
 								{
 									if (!is_numeric(trim($activerow[$category], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $category+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $category+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3806,7 +3806,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: category does not exist', array('%col%' => $category+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: category does not exist', array('%col%' => $category+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3816,7 +3816,7 @@
 								{
 									if (!is_numeric(trim($activerow[$severity], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $severity+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $severity+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3826,7 +3826,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: severity does not exist', array('%col%' => $severity+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: severity does not exist', array('%col%' => $severity+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3836,7 +3836,7 @@
 								{
 									if (!is_numeric(trim($activerow[$reproducability], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $reproducability+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $reproducability+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3846,7 +3846,7 @@
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: reproducability does not exist', array('%col%' => $reproducability+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: reproducability does not exist', array('%col%' => $reproducability+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3856,7 +3856,7 @@
 								{
 									if (!is_numeric(trim($activerow[$issue_type], '"')))
 									{
-										$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $issue_type+1, '%row%' => $i+1));
+										$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: invalid value (must be a number)', array('%col%' => $issue_type+1, '%row%' => $i+1));
 									}
 									else
 									{
@@ -3864,11 +3864,11 @@
 										{
 											$typetmp = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issuetype', trim($activerow[$issue_type], '" '));
 											if (!($prjtmp->getIssuetypeScheme()->isSchemeAssociatedWithIssuetype($typetmp)))
-												$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: this project does not support issues of this type (%type%)', array('%type%' => $typetmp->getName(), '%col%' => $issue_type+1, '%row%' => $i+1));
+												$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: this project does not support issues of this type (%type%)', array('%type%' => $typetmp->getName(), '%col%' => $issue_type+1, '%row%' => $i+1));
 										}
 										catch (Exception $e)
 										{
-											$errors[] = TBGContext::getI18n()->__('Row %row% column %col%: issue type does not exist', array('%col%' => $issue_type+1, '%row%' => $i+1));
+											$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% column %col%: issue type does not exist', array('%col%' => $issue_type+1, '%row%' => $i+1));
 										}
 									}
 								}
@@ -3887,7 +3887,7 @@
 					}
 					$errordiv .= '</ul>';
 					$this->getResponse()->setHttpStatus(400);
-					return $this->renderJSON(array('failed' => true, 'errordetail' => $errordiv, 'error' => TBGContext::getI18n()->__('Errors occured while importing, see the error list in the import screen for further details')));
+					return $this->renderJSON(array('failed' => true, 'errordetail' => $errordiv, 'error' => \caspar\core\Caspar::getI18n()->__('Errors occured while importing, see the error list in the import screen for further details')));
 				}
 			}
 			catch (Exception $e)
@@ -3898,7 +3898,7 @@
 				
 			if ($request->getParameter('csv_dry_run'))
 			{
-				return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('Dry-run successful, you can now uncheck the dry-run box and import your data.')));
+				return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('Dry-run successful, you can now uncheck the dry-run box and import your data.')));
 			}
 			else
 			{
@@ -3931,7 +3931,7 @@
 							}
 							catch (Exception $e)
 							{
-									$errors[] = TBGContext::getI18n()->__('Row %row% failed: %err%', array('%row%' => $i+1, '%err%' => $e->getMessage()));
+									$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% failed: %err%', array('%row%' => $i+1, '%err%' => $e->getMessage()));
 							}
 						}
 						break;
@@ -4067,7 +4067,7 @@
 							}
 							catch (Exception $e)
 							{
-								$errors[] = TBGContext::getI18n()->__('Row %row% failed: %err%', array('%row%' => $i+1, '%err%' => $e->getMessage()));
+								$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% failed: %err%', array('%row%' => $i+1, '%err%' => $e->getMessage()));
 							}
 						}
 						break;
@@ -4163,7 +4163,7 @@
 							}
 							catch (Exception $e)
 							{
-								$errors[] = TBGContext::getI18n()->__('Row %row% failed: %err%', array('%row%' => $i+1, '%err%' => $e->getMessage()));
+								$errors[] = \caspar\core\Caspar::getI18n()->__('Row %row% failed: %err%', array('%row%' => $i+1, '%err%' => $e->getMessage()));
 							}
 						}
 						break;
@@ -4179,11 +4179,11 @@
 					}
 					$errordiv .= '</ul>';
 					$this->getResponse()->setHttpStatus(400);
-					return $this->renderJSON(array('failed' => true, 'errordetail' => $errordiv, 'error' => TBGContext::getI18n()->__('Errors occured while importing, see the error list in the import screen for further details')));
+					return $this->renderJSON(array('failed' => true, 'errordetail' => $errordiv, 'error' => \caspar\core\Caspar::getI18n()->__('Errors occured while importing, see the error list in the import screen for further details')));
 				}
 				else
 				{
-					return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('Successfully imported %num% rows!', array('%num%' => count($data)-1))));
+					return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('Successfully imported %num% rows!', array('%num%' => count($data)-1))));
 				}
 			}
 		}
@@ -4196,7 +4196,7 @@
 			}
 			catch (Exception $e) {}
 			
-			if (!$this->project instanceof \thebuggenie\entities\Project) return $this->return404(TBGContext::getI18n()->__("This project doesn't exist"));
+			if (!$this->project instanceof \thebuggenie\entities\Project) return $this->return404(\caspar\core\Caspar::getI18n()->__("This project doesn't exist"));
 			$this->project->setName($request->getParameter('project_name'));
 			
 			return $this->renderJSON(array('content' => $this->project->getKey()));
@@ -4252,14 +4252,14 @@
 						}
 						else
 						{
-							$this->scope_save_error = TBGContext::getI18n()->__('You cannot delete the default scope');
+							$this->scope_save_error = \caspar\core\Caspar::getI18n()->__('You cannot delete the default scope');
 						}
 					}
 					else
 					{
 						if (!$request->getParameter('name'))
 						{
-							throw new Exception(TBGContext::getI18n()->__('Please specify a scope name'));
+							throw new Exception(\caspar\core\Caspar::getI18n()->__('Please specify a scope name'));
 						}
 						$this->scope->setName($request->getParameter('name'));
 						$this->scope->setDescription($request->getParameter('description'));
@@ -4276,12 +4276,12 @@
 						$prev_scope = \thebuggenie\core\Context::getScope();
 						foreach ($enabled_modules as $module => $enabled)
 						{
-							if (!TBGContext::getModule($module)->isCore() && !$enabled && array_key_exists($module, $modules))
+							if (!\thebuggenie\core\Context::getModule($module)->isCore() && !$enabled && array_key_exists($module, $modules))
 							{
 								$module = TBGModulesTable::getTable()->getModuleForScope($module, $this->scope->getID());
 								$module->uninstall($this->scope->getID());
 							}
-							elseif (!TBGContext::getModule($module)->isCore() && $enabled && !array_key_exists($module, $modules))
+							elseif (!\thebuggenie\core\Context::getModule($module)->isCore() && $enabled && !array_key_exists($module, $modules))
 							{
 								TBGContext::setScope($this->scope);
 								TBGModule::installModule($module);
@@ -4305,7 +4305,7 @@
 			{
 				$project = \caspar\core\Caspar::factory()->manufacture('\\thebuggenie\\entities\\Project', $request->getParameter('project_id'));
 				$project->removeAssignee($request->getParameter('assignee_type'), $request->getParameter('assignee_id'));
-				return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('The assignee has been removed')));
+				return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('The assignee has been removed')));
 			}
 			catch (Exception $e)
 			{
@@ -4378,12 +4378,12 @@
 				$project->setWorkflowScheme(\caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\WorkflowScheme', $request->getParameter('workflow_id')));
 				$project->save();
 				
-				return $this->renderJSON(array('message' => TBGContext::geti18n()->__('Workflow scheme changed and issues updated')));
+				return $this->renderJSON(array('message' => \caspar\core\Caspar::getI18n()->__('Workflow scheme changed and issues updated')));
 			}
 			catch (Exception $e)
 			{
 				$this->getResponse()->setHTTPStatus(500);
-				return $this->renderJSON(array('error' => TBGContext::geti18n()->__('An internal error occured')));
+				return $this->renderJSON(array('error' => \caspar\core\Caspar::getI18n()->__('An internal error occured')));
 			}
 		}
 
@@ -4400,7 +4400,7 @@
 				catch (Exception $e)
 				{
 					$this->getResponse()->setHTTPStatus(500);
-					return $this->renderJSON(array('error' => TBGContext::geti18n()->__('This workflow scheme is not valid')));
+					return $this->renderJSON(array('error' => \caspar\core\Caspar::getI18n()->__('This workflow scheme is not valid')));
 				}
 			}
 		}

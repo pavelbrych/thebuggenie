@@ -66,11 +66,11 @@
 	function tbg_formatTime($tstamp, $format = 0)
 	{
 		// offset the timestamp properly
-		if (TBGSettings::getGMToffset() != 0)
-			$tstamp += TBGSettings::getGMToffset() * 60 * 60;
+		if (\thebuggenie\core\Settings::getGMToffset() != 0)
+			$tstamp += \thebuggenie\core\Settings::getGMToffset() * 60 * 60;
 
-		if ((TBGSettings::getUserTimezone() != 0) && TBGSettings::getUserTimezone() != 'sys')
-			$tstamp += TBGSettings::getUserTimezone() * 60 * 60;
+		if ((\thebuggenie\core\Settings::getUserTimezone() != 0) && \thebuggenie\core\Settings::getUserTimezone() != 'sys')
+			$tstamp += \thebuggenie\core\Settings::getUserTimezone() * 60 * 60;
 			
 		switch ($format)
 		{
@@ -378,8 +378,8 @@
 		// Add stylesheets to minify and non-minify lists
 		foreach ($csp_response->getStylesheets() as $stylesheet => $minify)
 		{
-			if ($minify == true && file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . TBGSettings::getThemeName() . DIRECTORY_SEPARATOR .$stylesheet))
-				$cssstrings[] = 'themes/'.TBGSettings::getThemeName().'/'.$stylesheet;
+			if ($minify == true && file_exists(THEBUGGENIE_PATH . THEBUGGENIE_PUBLIC_FOLDER_NAME . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . \thebuggenie\core\Settings::getThemeName() . DIRECTORY_SEPARATOR .$stylesheet))
+				$cssstrings[] = 'themes/'.\thebuggenie\core\Settings::getThemeName().'/'.$stylesheet;
 			else
 				$sepcss[] = $stylesheet;
 		}

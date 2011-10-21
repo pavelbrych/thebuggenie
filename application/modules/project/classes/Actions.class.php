@@ -53,7 +53,7 @@
 			}
 			else
 			{
-				$this->return404(TBGContext::getI18n()->__('This project does not exist'));
+				$this->return404(\caspar\core\Caspar::getI18n()->__('This project does not exist'));
 			}
 		}
 
@@ -131,7 +131,7 @@
 //			$this->unassigned_issues = $this->selected_project->getUnassignedStories();
 //			$this->unassigned_issues = $this->selected_project->getIssuesWithoutMilestone();
 			$this->unassigned_milestone = new TBGMilestone();
-			$this->unassigned_milestone->setName(TBGContext::getI18n()->__('Unassigned issues / backlog'));
+			$this->unassigned_milestone->setName(\caspar\core\Caspar::getI18n()->__('Unassigned issues / backlog'));
 			$this->unassigned_milestone->setId(0);
 			$this->unassigned_milestone->setProject($this->selected_project);
 		}
@@ -172,7 +172,7 @@
 		 */
 		public function runScrumAddTask(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum'));
 			$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('story_id'));
 			try
@@ -182,7 +182,7 @@
 					$this->forward403unless($issue->canAddRelatedIssues());
 					$task = new TBGIssue();
 					$task->setTitle($request->getParameter('task_name'));
-					$task->setIssuetype(TBGIssuetype::getTask()->getID());
+					$task->setIssuetype(\thebuggenie\entities\Issuetype::getTask()->getID());
 					$task->setProject($issue->getProjectID());
 					$task->setMilestone(($issue->getMilestone() instanceof TBGMilestone) ? $issue->getMilestone()->getID() : null);
 					$task->save();
@@ -198,14 +198,14 @@
 					}
 					else
 					{
-						return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('main/relatedissue', array('theIssue' => $issue, 'related_issue' => $task)), 'comment' => (($comment instanceof TBGComment) ? $this->getTemplateHTML('main/comment', array('comment' => $comment, 'theIssue' => $issue)) : false), 'message' => TBGContext::getI18n()->__('The task was added')));
+						return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('main/relatedissue', array('theIssue' => $issue, 'related_issue' => $task)), 'comment' => (($comment instanceof TBGComment) ? $this->getTemplateHTML('main/comment', array('comment' => $comment, 'theIssue' => $issue)) : false), 'message' => \caspar\core\Caspar::getI18n()->__('The task was added')));
 					}
 				}
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Invalid user story')));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Invalid user story')));
 			}
 			catch (Exception $e)
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__("An error occured while trying to create a new task: %exception_message%", array('%exception_message%' => $e->getMessage()))));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__("An error occured while trying to create a new task: %exception_message%", array('%exception_message%' => $e->getMessage()))));
 			}
 		}
 
@@ -252,12 +252,12 @@
 							if ($burndown_data['estimations']['hours'][$key]>$maxEstimation) $maxEstimation = $burndown_data['estimations']['hours'][$key];
 						}
 					}
-					$datasets[] = array('values' => array_values($burndown_data['estimations']['hours']), 'label' => TBGContext::getI18n()->__('Remaining effort'), 'burndown'=>array('maxEstimation' => $maxEstimation, 'label' => "Burndown Line"));
+					$datasets[] = array('values' => array_values($burndown_data['estimations']['hours']), 'label' => \caspar\core\Caspar::getI18n()->__('Remaining effort'), 'burndown'=>array('maxEstimation' => $maxEstimation, 'label' => "Burndown Line"));
 					$this->labels = array_keys($burndown_data['estimations']['hours']);
 				}
 				else
 				{
-					$datasets[] = array('values' => array(0), 'label' => TBGContext::getI18n()->__('Remaining effort'), 'burndown'=>array('maxEstimation' => $maxEstimation, 'label' => "Burndown Line"));
+					$datasets[] = array('values' => array(0), 'label' => \caspar\core\Caspar::getI18n()->__('Remaining effort'), 'burndown'=>array('maxEstimation' => $maxEstimation, 'label' => "Burndown Line"));
 					$this->labels = array(0);
 				}
 				$this->datasets = $datasets;
@@ -276,7 +276,7 @@
 		 */
 		public function runScrumSetStoryDetail(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum'));
 			$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('story_id'));
 			if ($issue instanceof TBGIssue)
@@ -311,7 +311,7 @@
 						break;
 				}
 			}
-			return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Invalid user story')));
+			return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Invalid user story')));
 		}
 		
 		public function runUpdateMilestoneIssues(Request $request)
@@ -323,7 +323,7 @@
 			else
 			{
 				$milestone = new TBGMilestone();
-				$milestone->setName(TBGContext::getI18n()->__('Unassigned issues / backlog'));
+				$milestone->setName(\caspar\core\Caspar::getI18n()->__('Unassigned issues / backlog'));
 				$milestone->setId(0);
 				$milestone->setProject($this->selected_project);
 			}
@@ -337,7 +337,7 @@
 				$issue->setPriority($request['priority'][$issue_id]);
 				$issue->save();
 			}
-			return $this->renderJSON(array('estimated_hours' => $milestone->getHoursEstimated(), 'estimated_points' => $milestone->getPointsEstimated(), 'message' => TBGContext::getI18n()->__('%num% issue(s) updated', array('%num%' => count($request['issue_id'])))));
+			return $this->renderJSON(array('estimated_hours' => $milestone->getHoursEstimated(), 'estimated_points' => $milestone->getPointsEstimated(), 'message' => \caspar\core\Caspar::getI18n()->__('%num% issue(s) updated', array('%num%' => count($request['issue_id'])))));
 		}
 		
 		/**
@@ -347,7 +347,7 @@
 		 */
 		public function runScrumAssignStory(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum') && \caspar\core\Caspar::getUser()->canAssignScrumUserStories($this->selected_project));
 			try
 			{
@@ -377,7 +377,7 @@
 					$new_s_hours = ($sprint instanceof TBGMilestone) ? $sprint->getHoursSpent() : 0;
 					return $this->renderJSON(array('failed' => false, 'issue_id' => $issue->getID(), 'old_sprint_id' => $old_sprint_id, 'old_issues' => $old_issues, 'old_estimated_points' => $old_e_points, 'old_spent_points' => $old_s_points, 'old_estimated_hours' => $old_e_hours, 'old_spent_hours' => $old_s_hours, 'new_sprint_id' => $new_sprint_id, 'new_issues' => $new_issues, 'new_estimated_points' => $new_e_points, 'new_spent_points' => $new_s_points, 'new_estimated_hours' => $new_e_hours, 'new_spent_hours' => $new_s_hours));
 				}
-				return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Invalid user story or sprint')));
+				return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Invalid user story or sprint')));
 			}
 			catch (Exception $e)
 			{
@@ -392,7 +392,7 @@
 		 */
 		public function runScrumAddSprint(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->forward403unless($this->_checkProjectPageAccess('project_scrum'));
 			if (($sprint_name = $request->getParameter('sprint_name')) && trim($sprint_name) != '')
 			{
@@ -405,7 +405,7 @@
 				$sprint->save();
 				return $this->renderJSON(array('failed' => false, 'content' => $this->getTemplateHTML('sprintbox', array('sprint' => $sprint)), 'sprint_id' => $sprint->getID()));
 			}
-			return $this->renderJSON(array('failed' => true, 'error' => TBGContext::getI18n()->__('Please specify a sprint name')));
+			return $this->renderJSON(array('failed' => true, 'error' => \caspar\core\Caspar::getI18n()->__('Please specify a sprint name')));
 		}
 
 		/**
@@ -445,15 +445,15 @@
 
 			if (!function_exists('imagecreatetruecolor'))
 			{
-				return $this->return404(TBGContext::getI18n()->__('The libraries to generate images are not installed. Please see http://www.thebuggenie.com for more information'));
+				return $this->return404(\caspar\core\Caspar::getI18n()->__('The libraries to generate images are not installed. Please see http://www.thebuggenie.com for more information'));
 			}
 			
 			$this->getResponse()->setContentType('image/png');
 			$this->getResponse()->setDecoration(TBGResponse::DECORATE_NONE);
 			$datasets = array();
 			$issues = $this->selected_project->getLast15Counts();
-			$datasets[] = array('values' => $issues['open'], 'label' => TBGContext::getI18n()->__('Open issues', array(), true));
-			$datasets[] = array('values' => $issues['closed'], 'label' => TBGContext::getI18n()->__('Issues closed', array(), true));
+			$datasets[] = array('values' => $issues['open'], 'label' => \caspar\core\Caspar::getI18n()->__('Open issues', array(), true));
+			$datasets[] = array('values' => $issues['closed'], 'label' => \caspar\core\Caspar::getI18n()->__('Issues closed', array(), true));
 			$this->datasets = $datasets;
 			$this->labels = array(15,'','','','',10,'','','','',5,'','','','',0);
 		}
@@ -487,7 +487,7 @@
 			}
 			else
 			{
-				$error = TBGContext::getI18n()->__('Invalid image set');
+				$error = \caspar\core\Caspar::getI18n()->__('Invalid image set');
 			}
 
 			$this->getResponse()->setHttpStatus(($success) ? 200 : 400);
@@ -496,7 +496,7 @@
 
 		protected function _calculateImageDetails($counts)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$labels = array();
 			$values = array();
 			foreach ($counts as $item_id => $details)
@@ -561,7 +561,7 @@
 		protected function _generateImageDetailsFromKey($mode = null)
 		{
 			$this->graphmode = null;
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			if ($mode == 'main')
 			{
 				$this->width = 695;
@@ -677,7 +677,7 @@
 
 			if (!function_exists('imagecreatetruecolor'))
 			{
-				return $this->return404(TBGContext::getI18n()->__('The libraries to generate images are not installed. Please see http://www.thebuggenie.com for more information'));
+				return $this->return404(\caspar\core\Caspar::getI18n()->__('The libraries to generate images are not installed. Please see http://www.thebuggenie.com for more information'));
 			}
 
 			$this->getResponse()->setContentType('image/png');
@@ -706,7 +706,7 @@
 
 			if (mb_strtolower($filter_issuetype) != 'all')
 			{
-				$issuetype = TBGIssuetype::getIssuetypeByKeyish($filter_issuetype);
+				$issuetype = \thebuggenie\entities\Issuetype::getIssuetypeByKeyish($filter_issuetype);
 				if ($issuetype instanceof TBGIssuetype)
 				{
 					$filters['issuetype'] = array('operator' => '=', 'value' => $issuetype->getID());
@@ -749,7 +749,7 @@
 		{
 			try
 			{
-				$issuetype = TBGIssuetype::getIssuetypeByKeyish($request->getParameter('issuetype'));
+				$issuetype = \thebuggenie\entities\Issuetype::getIssuetypeByKeyish($request->getParameter('issuetype'));
 				$issuefields = $this->selected_project->getVisibleFieldsArray($issuetype->getID());
 			}
 			catch (Exception $e)
@@ -763,7 +763,7 @@
 
 		public function runListWorkflowTransitions(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$issue = TBGIssue::getIssueFromLink($request->getParameter('issue_no'));
 			if ($issue->getProject()->getID() != $this->selected_project->getID())
 			{
@@ -789,11 +789,11 @@
 
 		public function runUpdateIssueDetails(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->error = false;
 			try
 			{
-				$i18n = TBGContext::getI18n();
+				$i18n = \caspar\core\Caspar::getI18n();
 				$issue = TBGIssue::getIssueFromLink($request->getParameter('issue_no'));
 				if ($issue->getProject()->getID() != $this->selected_project->getID())
 				{
@@ -987,7 +987,7 @@
 		{
 			try
 			{
-				$i18n = TBGContext::getI18n();
+				$i18n = \caspar\core\Caspar::getI18n();
 				if ($request->hasParameter('milestone_id'))
 				{
 					if ($request->getParameter('milestone_id'))
@@ -997,7 +997,7 @@
 					else
 					{
 						$milestone = new TBGMilestone();
-						$milestone->setName(TBGContext::getI18n()->__('Unassigned issues / backlog'));
+						$milestone->setName(\caspar\core\Caspar::getI18n()->__('Unassigned issues / backlog'));
 						$milestone->setId(0);
 						$milestone->setProject($this->selected_project);
 					}
@@ -1021,7 +1021,7 @@
 		{
 			try
 			{
-				$i18n = TBGContext::getI18n();
+				$i18n = \caspar\core\Caspar::getI18n();
 				if ($request->hasParameter('milestone_id'))
 				{
 					$milestone = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Milestone', $request->getParameter('milestone_id'));
@@ -1095,12 +1095,12 @@
 				$milestone->save();
 				if ($request->getParameter('milestone_id'))
 				{
-					$message = TBGContext::getI18n()->__('Milestone updated');
+					$message = \caspar\core\Caspar::getI18n()->__('Milestone updated');
 					$template = 'milestoneboxheader';
 				}
 				else
 				{
-					$message = TBGContext::getI18n()->__('Milestone created');
+					$message = \caspar\core\Caspar::getI18n()->__('Milestone created');
 					$template = 'milestonebox';
 				}
 				return $this->renderJSON(array('content' => $this->getTemplateHTML($template, array('milestone' => $milestone)), 'milestone_id' => $milestone->getID(), 'milestone_name' => $milestone->getName(), 'milestone_order' => array_keys($this->selected_project->getAllMilestones())));
@@ -1119,7 +1119,7 @@
 				$issue = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Issue', $request->getParameter('issue_id'));
 				if (!$issue->isWorkflowTransitionsAvailable())
 				{
-					throw new Exception(TBGContext::getI18n()->__('You are not allowed to perform any workflow transitions on this issue'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('You are not allowed to perform any workflow transitions on this issue'));
 				}
 				
 				if ($transition->validateFromRequest($request))
@@ -1154,7 +1154,7 @@
 					if (!$issue->isWorkflowTransitionsAvailable() || !$transition->validateFromRequest($request))
 					{
 						$this->getResponse()->setHttpStatus(400);
-						return $this->renderJSON(array('error' => TBGContext::getI18n()->__('The transition could not be applied to issue %issue_number% because of %errors%', array('%issue_number%' => $issue->getFormattedIssueNo(), '%errors%' => join(', ', $transition->getValidationErrors())))));
+						return $this->renderJSON(array('error' => \caspar\core\Caspar::getI18n()->__('The transition could not be applied to issue %issue_number% because of %errors%', array('%issue_number%' => $issue->getFormattedIssueNo(), '%errors%' => join(', ', $transition->getValidationErrors())))));
 					}
 
 					$transition->transitionIssueToOutgoingStepFromRequest($issue);
@@ -1201,13 +1201,13 @@
 		
 		public function runSettings(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->settings_saved = TBGContext::getMessageAndClear('project_settings_saved');
 		}
 		
 		public function runReleaseCenter(Request $request)
 		{
-			$this->forward403if(TBGContext::getCurrentProject()->isArchived());
+			$this->forward403if(\thebuggenie\core\Context::getCurrentProject()->isArchived());
 			$this->build_error = TBGContext::getMessageAndClear('build_error');
 			$this->_setupBuilds();
 		}

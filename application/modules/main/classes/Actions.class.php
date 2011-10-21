@@ -859,10 +859,10 @@
 			if ($this->selected_project instanceof thebuggenie\entities\Project)
 				$this->issuetypes = $this->selected_project->getIssuetypeScheme()->getIssuetypes();
 			else
-				$this->issuetypes = \TBGIssuetype::getAll();
+				$this->issuetypes = \thebuggenie\entities\Issuetype::getAll();
 
 			if ($request->hasParameter('issuetype'))
-				$this->selected_issuetype = \TBGIssuetype::getIssuetypeByKeyish($request->getParameter('issuetype'));
+				$this->selected_issuetype = \thebuggenie\entities\Issuetype::getIssuetypeByKeyish($request->getParameter('issuetype'));
 
 			if (!$this->selected_issuetype instanceof \TBGIssuetype)
 			{
@@ -2453,7 +2453,7 @@
 
 		public function runListIssuetypes(Request $request)
 		{
-			$issuetypes = \TBGIssuetype::getAll();
+			$issuetypes = \thebuggenie\entities\Issuetype::getAll();
 
 			$return_array = array();
 			foreach ($issuetypes as $issuetype)
@@ -3404,7 +3404,7 @@
 		
 		public function runServe(Request $request)
 		{
-			if(Context::isMinifyDisabled())
+			if(Caspar::isMinifyDisabled())
 			{
 				$itemarray = array($request->getParameter('g') => explode(',', base64_decode($request->getParameter('files'))));
 				

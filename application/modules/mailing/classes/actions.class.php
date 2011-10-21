@@ -10,7 +10,7 @@
 		 */
 		public function runForgot(Request $request)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			try
 			{
@@ -66,23 +66,23 @@
 				{
 					if (TBGMailing::getModule()->sendTestEmail($email_to))
 					{
-						TBGContext::setMessage('module_message', TBGContext::getI18n()->__('The email was successfully accepted for delivery'));
+						TBGContext::setMessage('module_message', \caspar\core\Caspar::getI18n()->__('The email was successfully accepted for delivery'));
 					}
 					else
 					{
-						TBGContext::setMessage('module_error', TBGContext::getI18n()->__('The email was not sent'));
+						TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('The email was not sent'));
 						TBGContext::setMessage('module_error_details', \caspar\core\Logging::getMessagesForCategory('mailing', \caspar\core\Logging::LEVEL_NOTICE));
 					}
 				}
 				catch (Exception $e)
 				{
-					TBGContext::setMessage('module_error', TBGContext::getI18n()->__('The email was not sent'));
+					TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('The email was not sent'));
 					TBGContext::setMessage('module_error_details', $e->getMessage());
 				}
 			}
 			else
 			{
-				TBGContext::setMessage('module_error', TBGContext::getI18n()->__('Please specify an email address'));
+				TBGContext::setMessage('module_error', \caspar\core\Caspar::getI18n()->__('Please specify an email address'));
 			}
 			$this->forward(TBGContext::getRouting()->generate('configure_module', array('config_module' => 'mailing')));
 		}
@@ -130,7 +130,7 @@
 			if ($account_id = $request->getParameter('account_id'))
 			{
 				$account = new TBGIncomingEmailAccount($account_id);
-				TBGContext::getModule('mailing')->processIncomingEmailAccount($account);
+				\thebuggenie\core\Context::getModule('mailing')->processIncomingEmailAccount($account);
 				
 				return $this->renderJSON(array('account_id' => $account->getID(), 'time' => tbg_formatTime($account->getTimeLastFetched(), 6), 'count' => $account->getNumberOfEmailsLastFetched()));
 			}

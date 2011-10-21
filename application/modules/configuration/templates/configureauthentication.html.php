@@ -11,7 +11,7 @@
 			<div class="config_header" style="width: 750px;"><?php echo __('Configure authentication'); ?></div>
 			<?php echo __('Please remember to install and configure your chosen authentication backend before setting it here. Changing settings on this page will result in you being logged out.'); ?>
 			<?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
-				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_authentication_pt2'); ?>" method="post" id="config_auth">
+				<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_authentication_pt2'); ?>" method="post" id="config_auth">
 			<?php endif; ?>
 					<table style="clear: both; width: 700px; margin-top: 5px;" class="padded_table" cellpadding=0 cellspacing=0>
 						<tr>

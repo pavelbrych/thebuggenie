@@ -391,7 +391,7 @@
 			{
 				if (!array_key_exists('overwrite', $options) || !$options['overwrite'])
 				{
-					throw new Exception(TBGContext::getI18n()->__('Another article with this name already exists'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('Another article with this name already exists'));
 				}
 			}
 			$user_id = (\caspar\core\Caspar::getUser() instanceof TBGUser) ? \caspar\core\Caspar::getUser()->getID() : 0;
@@ -639,7 +639,7 @@
 				}
 			}
 			
-			return TBGContext::getModule('publish')->canUserDeleteArticle($this->getName());
+			return \thebuggenie\core\Context::getModule('publish')->canUserDeleteArticle($this->getName());
 		}
 		
 		public function canEdit()
@@ -662,12 +662,12 @@
 				}
 			}
 			
-			return TBGContext::getModule('publish')->canUserEditArticle($this->getName());
+			return \thebuggenie\core\Context::getModule('publish')->canUserEditArticle($this->getName());
 		}
 		
 		public function canRead()
 		{
-			return TBGContext::getModule('publish')->canUserReadArticle($this->getName());
+			return \thebuggenie\core\Context::getModule('publish')->canUserReadArticle($this->getName());
 		}
 		
 		public function hasAccess()

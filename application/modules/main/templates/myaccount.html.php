@@ -33,7 +33,7 @@
 		<?php if ($csp_user->isOpenIdLocked()): ?>
 			<a href="javascript:void(0);" onclick="$(this).toggleClassName('button-pressed');$('pick_username_div').toggle();" id="pick_username_button" class="button button-blue"><?php echo __('Pick a username'); ?></a>
 			<div class="rounded_box white shadowed"  style="display: none; position: absolute; right: 0; top: 38px; z-index: 100; padding: 5px 10px 5px 10px; font-size: 13px; width: 400px;" id="pick_username_div">
-				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_check_username'); ?>" onsubmit="TBG.Main.Profile.checkUsernameAvailability('<?php echo make_url('account_check_username'); ?>'); return false;" method="post" id="check_username_form">
+				<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_check_username'); ?>" onsubmit="TBG.Main.Profile.checkUsernameAvailability('<?php echo make_url('account_check_username'); ?>'); return false;" method="post" id="check_username_form">
 					<b><?php echo __('Picking a username'); ?></b><br>
 					<div style="font-size: 13px; margin-bottom: 10px;"><?php echo __('Since this account was created via an OpenID login, you will have to pick a username to be able to log in with a username or password. You can continue to use your account with your OpenID login, so this is only if you want to pick a username for your account.'); ?><br>
 					<br><?php echo __('Click "%check_availability%" to see if your desired username is available.', array('%check_availability%' => __('Check availability'))); ?></div>
@@ -49,7 +49,7 @@
 		<?php endif; ?>
 		<?php if ($csp_user->canChangePassword()): ?>
 			<div class="rounded_box white shadowed"  style="display: none; position: absolute; right: 0; top: 38px; z-index: 100; padding: 5px 10px 5px 10px; font-size: 13px; width: 350px;" id="change_password_div">
-				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_change_password'); ?>" onsubmit="TBG.Main.Profile.changePassword('<?php echo make_url('account_change_password'); ?>'); return false;" method="post" id="change_password_form">
+				<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_change_password'); ?>" onsubmit="TBG.Main.Profile.changePassword('<?php echo make_url('account_change_password'); ?>'); return false;" method="post" id="change_password_form">
 					<b><?php echo __('Changing your password'); ?></b><br>
 					<div style="font-size: 13px; margin-bottom: 10px;"><?php echo __('Enter your current password in the first box, then enter your new password twice (to prevent you from typing mistakes).'); ?><br>
 					<br><?php echo __('Click "%change_password%" to change it.', array('%change_password%' => __('Change password'))); ?></div>
@@ -129,7 +129,7 @@
 				<li class="selected" id="tab_profile"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_profile', 'account_tabs');" href="javascript:void(0);"><?php echo image_tag('cfg_icon_users.png', array('style' => 'float: left;')).__('Profile information'); ?></a></li>
 				<li id="tab_settings"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_settings', 'account_tabs');" href="javascript:void(0);"><?php echo image_tag('cfg_icon_general.png', array('style' => 'float: left;')).__('Settings'); ?></a></li>
 				<?php \caspar\core\Event::createNew('core', 'account_tabs')->trigger(); ?>
-				<?php foreach (TBGContext::getModules() as $module_name => $module): ?>
+				<?php foreach (\thebuggenie\core\Context::getModules() as $module_name => $module): ?>
 					<?php if ($module->hasAccountSettings()): ?>
 						<li id="tab_settings_<?php echo $module_name; ?>"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_settings_<?php echo $module_name; ?>', 'account_tabs');" href="javascript:void(0);"><?php echo image_tag($module->getAccountSettingsLogo(), array('style' => 'float: left;'), false, $module_name).$module->getAccountSettingsName(); ?></a></li>
 					<?php endif; ?>
@@ -146,7 +146,7 @@
 				else
 				{
 				?>
-				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_save_information'); ?>" onsubmit="TBG.Main.Profile.updateInformation('<?php echo make_url('account_save_information'); ?>'); return false;" method="post" id="profile_information_form">
+				<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_save_information'); ?>" onsubmit="TBG.Main.Profile.updateInformation('<?php echo make_url('account_save_information'); ?>'); return false;" method="post" id="profile_information_form">
 					<div class="rounded_box borderless lightgrey cut_bottom" style="margin: 5px 0 0 0; width: 895px; border-bottom: 0;">
 						<p class="content"><?php echo __('Edit your profile details here, including additional information.'); ?><br><?php echo __('Required fields are marked with a little star.'); ?></p>
 						<table style="width: 680px;" class="padded_table" cellpadding=0 cellspacing=0>
@@ -206,7 +206,7 @@
 				?>
 			</div>
 			<div id="tab_settings_pane" style="display: none;">
-				<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_save_settings'); ?>" onsubmit="TBG.Main.Profile.updateSettings('<?php echo make_url('account_save_settings'); ?>'); return false;" method="post" id="profile_settings_form">
+				<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_save_settings'); ?>" onsubmit="TBG.Main.Profile.updateSettings('<?php echo make_url('account_save_settings'); ?>'); return false;" method="post" id="profile_settings_form">
 					<div class="rounded_box borderless lightgrey cut_bottom" style="margin: 5px 0 0 0; width: 895px; border-bottom: 0;">
 						<table style="width: 680px;" class="padded_table" cellpadding=0 cellspacing=0>
 							<tr>
@@ -273,10 +273,10 @@
 				</form>
 			</div>
 			<?php \caspar\core\Event::createNew('core', 'account_tab_panes')->trigger(); ?>
-			<?php foreach (TBGContext::getModules() as $module_name => $module): ?>
+			<?php foreach (\thebuggenie\core\Context::getModules() as $module_name => $module): ?>
 				<?php if ($module->hasAccountSettings()): ?>
 					<div id="tab_settings_<?php echo $module_name; ?>_pane" style="display: none;">
-						<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_save_module_settings', array('target_module' => $module_name)); ?>" onsubmit="TBG.Main.Profile.updateModuleSettings('<?php echo make_url('account_save_module_settings', array('target_module' => $module_name)); ?>', '<?php echo $module_name; ?>'); return false;" method="post" id="profile_<?php echo $module_name; ?>_form">
+						<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('account_save_module_settings', array('target_module' => $module_name)); ?>" onsubmit="TBG.Main.Profile.updateModuleSettings('<?php echo make_url('account_save_module_settings', array('target_module' => $module_name)); ?>', '<?php echo $module_name; ?>'); return false;" method="post" id="profile_<?php echo $module_name; ?>_form">
 							<div class="rounded_box borderless lightgrey cut_bottom" style="margin: 5px 0 0 0; width: 895px; border-bottom: 0;">
 								<?php include_component("{$module_name}/accountsettings", array('module' => $module)); ?>
 							</div>

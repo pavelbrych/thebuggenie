@@ -39,7 +39,7 @@
 
 		public function componentLeftmenu()
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$config_sections = array();
 
 			if (\caspar\core\Caspar::getUser()->getScope()->getID() == 1)
@@ -59,11 +59,11 @@
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_WORKFLOW] = array('icon' => 'workflow', 'description' => $i18n->__('Workflow'), 'route' => 'configure_workflow', 'module' => 'core');
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_USERS] = array('route' => 'configure_users', 'description' => $i18n->__('Users, teams, clients &amp; groups'), 'icon' => 'users', 'module' => 'core');
 			$config_sections[TBGSettings::CONFIGURATION_SECTION_MODULES][] = array('route' => 'configure_modules', 'description' => $i18n->__('Modules'), 'icon' => 'modules', 'module' => 'core');
-			foreach (TBGContext::getModules() as $module)
+			foreach (\thebuggenie\core\Context::getModules() as $module)
 			{
 				if ($module->hasConfigSettings() && $module->isEnabled())
 				{
-					$config_sections[TBGSettings::CONFIGURATION_SECTION_MODULES][] = array('route' => array('configure_module', array('config_module' => $module->getName())), 'description' => TBGContext::geti18n()->__($module->getConfigTitle()), 'icon' => $module->getName(), 'module' => $module->getName());
+					$config_sections[TBGSettings::CONFIGURATION_SECTION_MODULES][] = array('route' => array('configure_module', array('config_module' => $module->getName())), 'description' => \caspar\core\Caspar::getI18n()->__($module->getConfigTitle()), 'icon' => $module->getName(), 'module' => $module->getName());
 				}
 			}
 			$breadcrumblinks = array();
@@ -134,7 +134,7 @@
 
 		public function componentIssueType()
 		{
-			$this->icons = TBGIssuetype::getIcons();
+			$this->icons = \thebuggenie\entities\Issuetype::getIcons();
 		}
 		
 		public function componentIssuetypescheme()
@@ -256,8 +256,8 @@
 			if (!isset($this->build))
 			{
 				$this->build = new TBGBuild();
-				$this->build->setProject(TBGContext::getCurrentProject());
-				$this->build->setName(TBGContext::getI18n()->__('%project_name% version 0.0.0', array('%project_name%' => $this->project->getName())));
+				$this->build->setProject(\thebuggenie\core\Context::getCurrentProject());
+				$this->build->setName(\caspar\core\Caspar::getI18n()->__('%project_name% version 0.0.0', array('%project_name%' => $this->project->getName())));
 				if (\caspar\core\Caspar::getRequest()->getParameter('edition_id') && $edition = \caspar\core\Caspar::factory()->manufacture('\thebuggenie\entities\Edition', \caspar\core\Caspar::getRequest()->getParameter('edition_id')))
 				{
 					$this->build->setEdition($edition);

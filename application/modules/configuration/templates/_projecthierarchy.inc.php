@@ -5,7 +5,7 @@
 	<?php echo __('Project editions'); ?>
 </h3>
 <?php if ($access_level == TBGSettings::ACCESS_FULL && $project->isEditionsEnabled()): ?>
-	<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_projects_add_edition', array('project_id' => $project->getID())); ?>" method="post" id="add_edition_form" onsubmit="TBG.Project.Edition.add('<?php echo make_url('configure_projects_add_edition', array('project_id' => $project->getID())); ?>');return false;" style="display: none;">
+	<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_projects_add_edition', array('project_id' => $project->getID())); ?>" method="post" id="add_edition_form" onsubmit="TBG.Project.Edition.add('<?php echo make_url('configure_projects_add_edition', array('project_id' => $project->getID())); ?>');return false;" style="display: none;">
 		<div class="rounded_box lightgrey" style="vertical-align: middle; padding: 5px; font-size: 12px;">
 			<input class="button button-silver" style="float: right; margin: -2px 0;" type="submit" value="<?php echo __('Create'); ?>">
 			<label for="edition_name"><?php echo __('Edition name'); ?></label>
@@ -35,7 +35,7 @@
 	<?php echo __('Project components'); ?>
 </h3>
 <?php if ($access_level == TBGSettings::ACCESS_FULL && $project->isComponentsEnabled()): ?>
-	<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_projects_add_component', array('project_id' => $project->getID())); ?>" method="post" id="add_component_form" onsubmit="TBG.Project.Component.add('<?php echo make_url('configure_projects_add_component', array('project_id' => $project->getID())); ?>');return false;" style="display: none;">
+	<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_projects_add_component', array('project_id' => $project->getID())); ?>" method="post" id="add_component_form" onsubmit="TBG.Project.Component.add('<?php echo make_url('configure_projects_add_component', array('project_id' => $project->getID())); ?>');return false;" style="display: none;">
 		<div class="rounded_box lightgrey" style="vertical-align: middle; padding: 5px; font-size: 12px;">
 			<input class="button button-silver" style="float: right; margin: -2px 0;" type="submit" value="<?php echo __('Create'); ?>">
 			<label for="component_name"><?php echo __('Component name'); ?></label>

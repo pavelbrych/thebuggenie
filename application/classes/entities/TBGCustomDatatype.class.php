@@ -71,7 +71,7 @@
 
 		public static function getFieldTypes()
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$types = array();
 			$types[self::DROPDOWN_CHOICE_TEXT] = $i18n->__('Dropdown list with custom text choices');
 			/*$types[self::DROPDOWN_CHOICE_TEXT_COLORED] = $i18n->__('Dropdown list with custom colored text choices');
@@ -104,7 +104,7 @@
 				$this->_generateKey();
 				if (array_key_exists($this->_key, self::getAll()))
 				{
-					throw new Exception(TBGContext::getI18n()->__('This field key already exists'));
+					throw new Exception(\caspar\core\Caspar::getI18n()->__('This field key already exists'));
 				}
 			}
 		}

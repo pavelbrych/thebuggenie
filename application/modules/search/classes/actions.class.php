@@ -47,17 +47,17 @@
 
 		public function getPredefinedSearchName($type, $project)
 		{
-			$i18n = \TBGContext::getI18n();
+			$i18n = \\caspar\core\Caspar::getI18n();
 			switch ($type)
 			{
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_OPEN_ISSUES:
-					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Open issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All open issues');
+					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Open issues for %project_name%', array('%project_name%' => \\thebuggenie\core\Context::getCurrentProject()->getName())) : $i18n->__('All open issues');
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_CLOSED_ISSUES:
-					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Closed issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('All closed issues');
+					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Closed issues for %project_name%', array('%project_name%' => \\thebuggenie\core\Context::getCurrentProject()->getName())) : $i18n->__('All closed issues');
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_MILESTONE_TODO:
-					return $i18n->__('Milestone todo-list for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName()));
+					return $i18n->__('Milestone todo-list for %project_name%', array('%project_name%' => \\thebuggenie\core\Context::getCurrentProject()->getName()));
 				case \TBGContext::PREDEFINED_SEARCH_PROJECT_MOST_VOTED:
-					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Most voted issues for %project_name%', array('%project_name%' => \TBGContext::getCurrentProject()->getName())) : $i18n->__('Most voted issues');
+					return ($project instanceof \thebuggenie\entities\Project) ? $i18n->__('Most voted issues for %project_name%', array('%project_name%' => \\thebuggenie\core\Context::getCurrentProject()->getName())) : $i18n->__('Most voted issues');
 				case \TBGContext::PREDEFINED_SEARCH_MY_ASSIGNED_OPEN_ISSUES:
 					return $i18n->__('Open issues assigned to me');
 				case \TBGContext::PREDEFINED_SEARCH_TEAM_ASSIGNED_OPEN_ISSUES:
@@ -77,16 +77,16 @@
 				$filters['text']['operator'] = '=';
 			}
 			$this->filters = $filters;
-			if (\TBGContext::isProjectContext())
+			if (\\thebuggenie\core\Context::isProjectContext())
 			{
-				$this->filters['project_id'][0] = array('operator' => '=', 'value' => \TBGContext::getCurrentProject()->getID());
+				$this->filters['project_id'][0] = array('operator' => '=', 'value' => \\thebuggenie\core\Context::getCurrentProject()->getID());
 			}
 			$this->groupby = $request->getParameter('groupby');
 			$this->grouporder = $request->getParameter('grouporder', 'asc');
 			$this->predefined_search = $request->getParameter('predefined_search', false);
 			$this->templatename = ($request->hasParameter('template') && in_array($request->getParameter('template'), array_keys(self::getTemplates(false)))) ? $request->getParameter('template') : 'results_normal';
 			$this->template_parameter = $request->getParameter('template_parameter');
-			$this->searchtitle = \TBGContext::getI18n()->__('Search results');
+			$this->searchtitle = \\caspar\core\Caspar::getI18n()->__('Search results');
 			$this->issavedsearch = false;
 			$this->show_results = ($request->hasParameter('quicksearch') || $request->hasParameter('filters') || $request->getParameter('search', false)) ? true : false;
 
@@ -110,7 +110,7 @@
 
 		protected function doSearch(\TBGRequest $request)
 		{
-			$i18n = \TBGContext::getI18n();
+			$i18n = \\caspar\core\Caspar::getI18n();
 			if ($this->searchterm)
 			{
 				preg_replace_callback(\thebuggenie\core\TextParser::getIssueRegex(), array($this, 'extractIssues'), $this->searchterm);
@@ -221,7 +221,7 @@
 						$this->templatename = 'results_votes';
 						break;
 				}
-				$this->searchtitle = $this->getPredefinedSearchName($predefined_search, \TBGContext::getCurrentProject());
+				$this->searchtitle = $this->getPredefinedSearchName($predefined_search, \\thebuggenie\core\Context::getCurrentProject());
 			}
 
 		}
@@ -229,14 +229,14 @@
 		public static function getTemplates($display_only = true)
 		{
 			$templates = array();
-			$templates['results_normal'] = \TBGContext::getI18n()->__('Standard search results');
-			$templates['results_todo'] = \TBGContext::getI18n()->__('Todo-list with progress indicator');
-			$templates['results_votes'] = \TBGContext::getI18n()->__('Most voted-for issues');
-			$templates['results_userpain_singlepainthreshold'] = \TBGContext::getI18n()->__('User pain indicator with custom single bug pain threshold');
-			//$templates['results_userpain_totalpainthreshold'] = \TBGContext::getI18n()->__('User pain indicator with custom total pain threshold');
+			$templates['results_normal'] = \\caspar\core\Caspar::getI18n()->__('Standard search results');
+			$templates['results_todo'] = \\caspar\core\Caspar::getI18n()->__('Todo-list with progress indicator');
+			$templates['results_votes'] = \\caspar\core\Caspar::getI18n()->__('Most voted-for issues');
+			$templates['results_userpain_singlepainthreshold'] = \\caspar\core\Caspar::getI18n()->__('User pain indicator with custom single bug pain threshold');
+			//$templates['results_userpain_totalpainthreshold'] = \\caspar\core\Caspar::getI18n()->__('User pain indicator with custom total pain threshold');
 			if (!$display_only)
 			{
-				$templates['results_rss'] = \TBGContext::getI18n()->__('RSS feed');
+				$templates['results_rss'] = \\caspar\core\Caspar::getI18n()->__('RSS feed');
 			}
 			return $templates;
 		}
@@ -260,37 +260,37 @@
 						if ($search->get(TBGSavedSearchesTable::UID) == \caspar\core\Caspar::getUser()->getID() || $search->get(TBGSavedSearchesTable::IS_PUBLIC) && \caspar\core\Caspar::getUser()->canCreatePublicSearches())
 						{
 							TBGSavedSearchesTable::getTable()->doDeleteById($request->getParameter('saved_search_id'));
-							return $this->renderJSON(array('failed' => false, 'message' => \TBGContext::getI18n()->__('The saved search was deleted successfully')));
+							return $this->renderJSON(array('failed' => false, 'message' => \\caspar\core\Caspar::getI18n()->__('The saved search was deleted successfully')));
 						}
 					}
 					catch (Exception $e)
 					{
-						return $this->renderJSON(array('failed' => true, 'message' => \TBGContext::getI18n()->__('Cannot delete this saved search')));
+						return $this->renderJSON(array('failed' => true, 'message' => \\caspar\core\Caspar::getI18n()->__('Cannot delete this saved search')));
 					}
 				}
 				elseif ($request->getParameter('saved_search_name') != '')
 				{
-					$project_id = (\TBGContext::isProjectContext()) ? \TBGContext::getCurrentProject()->getID() : 0;
+					$project_id = (\\thebuggenie\core\Context::isProjectContext()) ? \\thebuggenie\core\Context::getCurrentProject()->getID() : 0;
 					TBGSavedSearchesTable::getTable()->saveSearch($request->getParameter('saved_search_name'), $request->getParameter('saved_search_description'), $request->getParameter('saved_search_public'), $this->filters, $this->groupby, $this->grouporder, $this->ipp, $this->templatename, $this->template_parameter, $project_id, $request->getParameter('saved_search_id'));
 					if ($request->getParameter('saved_search_id'))
 					{
-						\TBGContext::setMessage('search_message', \TBGContext::getI18n()->__('The saved search was updated'));
+						\TBGContext::setMessage('search_message', \\caspar\core\Caspar::getI18n()->__('The saved search was updated'));
 					}
 					else
 					{
-						\TBGContext::setMessage('search_message', \TBGContext::getI18n()->__('The saved search has been created'));
+						\TBGContext::setMessage('search_message', \\caspar\core\Caspar::getI18n()->__('The saved search has been created'));
 					}
 					$params = array();
 				}
 				else
 				{
-					\TBGContext::setMessage('search_error', \TBGContext::getI18n()->__('You have to specify a name for the saved search'));
+					\TBGContext::setMessage('search_error', \\caspar\core\Caspar::getI18n()->__('You have to specify a name for the saved search'));
 					$params = array('filters' => $this->filters, 'groupby' => $this->groupby, 'grouporder' => $this->grouporder, 'templatename' => $this->templatename, 'saved_search' => $request->getParameter('saved_search_id'), 'issues_per_page' => $this->ipp);
 				}
-				if (\TBGContext::isProjectContext())
+				if (\\thebuggenie\core\Context::isProjectContext())
 				{
 					$route = 'project_issues';
-					$params['project_key'] = \TBGContext::getCurrentProject()->getKey();
+					$params['project_key'] = \\thebuggenie\core\Context::getCurrentProject()->getKey();
 				}
 				else
 				{
@@ -331,7 +331,7 @@
 		{
 			if ($request->getParameter('filter_name') == 'project_id' && count(\thebuggenie\entities\Project::getAll()) == 0)
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => \TBGContext::getI18n()->__('No projects exist so this filter can not be added')));
+				return $this->renderJSON(array('failed' => true, 'error' => \\caspar\core\Caspar::getI18n()->__('No projects exist so this filter can not be added')));
 			}
 			elseif (in_array($request->getParameter('filter_name'), \TBGIssuesTable::getValidSearchFilters()) || TBGCustomDatatype::doesKeyExist($request->getParameter('filter_name')))
 			{
@@ -339,7 +339,7 @@
 			}
 			else
 			{
-				return $this->renderJSON(array('failed' => true, 'error' => \TBGContext::getI18n()->__('This is not a valid search field')));
+				return $this->renderJSON(array('failed' => true, 'error' => \\caspar\core\Caspar::getI18n()->__('This is not a valid search field')));
 			}
 		}
 
@@ -348,7 +348,7 @@
 			$issue = \TBGIssue::getIssueFromLink($matches[0]);
 			if ($issue instanceof \TBGIssue)
 			{
-				if (!\TBGContext::isProjectContext() || (\TBGContext::isProjectContext() && $issue->getProjectID() == \TBGContext::getCurrentProject()->getID()))
+				if (!\\thebuggenie\core\Context::isProjectContext() || (\\thebuggenie\core\Context::isProjectContext() && $issue->getProjectID() == \\thebuggenie\core\Context::getCurrentProject()->getID()))
 				{
 					$this->foundissues[$issue->getID()] = $issue;
 					$this->resultcount++;
@@ -363,7 +363,7 @@
 
 		static function resultGrouping(\TBGIssue $issue, $groupby, $cc, $prevgroup_id)
 		{
-			$i18n = \TBGContext::getI18n();
+			$i18n = \\caspar\core\Caspar::getI18n();
 			$showtablestart = false;
 			$showheader = false;
 			$groupby_id = 0;
@@ -562,7 +562,7 @@
 						if ($request['milestone'] == 'new')
 						{
 							$milestone = new TBGMilestone();
-							$milestone->setProject(\TBGContext::getCurrentProject());
+							$milestone->setProject(\\thebuggenie\core\Context::getCurrentProject());
 							$milestone->setName($request['milestone_name']);
 							$milestone->save();
 							$options['milestone_url'] = \TBGContext::getRouting()->generate('project_planning_milestone', array('project_key' => $milestone->getProject()->getKey(), 'milestone_id' => $milestone->getID()));

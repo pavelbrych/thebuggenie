@@ -42,7 +42,7 @@
 
 		public function runListIssuetypes(Request $request)
 		{
-			$issuetypes = TBGIssuetype::getAll();
+			$issuetypes = \thebuggenie\entities\Issuetype::getAll();
 
 			$return_array = array();
 			foreach ($issuetypes as $issuetype)
@@ -62,12 +62,12 @@
 				switch ($field_key)
 				{
 					case 'title':
-						$return_array['description'] = TBGContext::getI18n()->__('Single line text input without formatting');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Single line text input without formatting');
 						$return_array['type'] = 'single_line_input';
 						break;
 					case 'description':
 					case 'reproduction_steps':
-						$return_array['description'] = TBGContext::getI18n()->__('Text input with wiki formatting capabilities');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Text input with wiki formatting capabilities');
 						$return_array['type'] = 'wiki_input';
 						break;
 					case 'status':
@@ -76,7 +76,7 @@
 					case 'priority':
 					case 'severity':
 					case 'category':
-						$return_array['description'] = TBGContext::getI18n()->__('Choose one of the available values');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Choose one of the available values');
 						$return_array['type'] = 'choice';
 
 						$classname = "TBG".ucfirst($field_key);
@@ -87,22 +87,22 @@
 						}
 						break;
 					case 'percent_complete':
-						$return_array['description'] = TBGContext::getI18n()->__('Value of percentage completed');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Value of percentage completed');
 						$return_array['type'] = 'choice';
 						$return_array['choices'][] = "1-100%";
 						break;
 					case 'owner':
 					case 'assignee':
-						$return_array['description'] = TBGContext::getI18n()->__('Select an existing user or <none>');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Select an existing user or <none>');
 						$return_array['type'] = 'select_user';
 						break;
 					case 'estimated_time':
 					case 'spent_time':
-						$return_array['description'] = TBGContext::getI18n()->__('Enter time, such as points, hours, minutes, etc or <none>');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Enter time, such as points, hours, minutes, etc or <none>');
 						$return_array['type'] = 'time';
 						break;
 					case 'milestone':
-						$return_array['description'] = TBGContext::getI18n()->__('Select from available project milestones');
+						$return_array['description'] = \caspar\core\Caspar::getI18n()->__('Select from available project milestones');
 						$return_array['type'] = 'choice';
 						if ($this->selected_project instanceof \thebuggenie\entities\Project)
 						{

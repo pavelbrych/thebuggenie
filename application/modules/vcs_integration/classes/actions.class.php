@@ -22,7 +22,7 @@
 			$this->selected_project = \thebuggenie\entities\Project::getByKey($request->getParameter('project_key'));
 			TBGContext::setCurrentProject($this->selected_project);
 			
-			if (TBGContext::getModule('vcs_integration')->getSetting('vcs_mode_' . TBGContext::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return $this->return404(TBGContext::getI18n()->__('VCS Integration has been disabled for this project'));; endif;
+			if (\thebuggenie\core\Context::getModule('vcs_integration')->getSetting('vcs_mode_' . \thebuggenie\core\Context::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return $this->return404(\caspar\core\Caspar::getI18n()->__('VCS Integration has been disabled for this project'));; endif;
 			
 			$offset = $request->getParameter('offset', 0);
 			
@@ -322,7 +322,7 @@
 				
 				foreach ($fields as $field)
 				{
-					TBGContext::getModule('vcs_integration')->saveSetting($field.'_'.$project_id, $request->getParameter($field));
+					\thebuggenie\core\Context::getModule('vcs_integration')->saveSetting($field.'_'.$project_id, $request->getParameter($field));
 				}
 				
 				switch ($request->getParameter('browser_type'))
@@ -401,14 +401,14 @@
 
 				if ($request->getParameter('browser_type') != 'other')
 				{
-					TBGContext::getModule('vcs_integration')->saveSetting('browser_url_'.$project_id, $base_url);
-					TBGContext::getModule('vcs_integration')->saveSetting('log_url_'.$project_id, $link_file);
-					TBGContext::getModule('vcs_integration')->saveSetting('blob_url_'.$project_id, $link_diff);
-					TBGContext::getModule('vcs_integration')->saveSetting('diff_url_'.$project_id, $link_view);
-					TBGContext::getModule('vcs_integration')->saveSetting('commit_url_'.$project_id, $link_rev);
+					\thebuggenie\core\Context::getModule('vcs_integration')->saveSetting('browser_url_'.$project_id, $base_url);
+					\thebuggenie\core\Context::getModule('vcs_integration')->saveSetting('log_url_'.$project_id, $link_file);
+					\thebuggenie\core\Context::getModule('vcs_integration')->saveSetting('blob_url_'.$project_id, $link_diff);
+					\thebuggenie\core\Context::getModule('vcs_integration')->saveSetting('diff_url_'.$project_id, $link_view);
+					\thebuggenie\core\Context::getModule('vcs_integration')->saveSetting('commit_url_'.$project_id, $link_rev);
 				}
 				
-				return $this->renderJSON(array('failed' => false, 'message' => TBGContext::getI18n()->__('Settings saved')));
+				return $this->renderJSON(array('failed' => false, 'message' => \caspar\core\Caspar::getI18n()->__('Settings saved')));
 			}
 			else
 			{

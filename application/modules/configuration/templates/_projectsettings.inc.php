@@ -1,5 +1,5 @@
 <?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
-<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>" method="post" onsubmit="submitProjectSettings('<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>'); return false;" id="project_settings">
+<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>" method="post" onsubmit="submitProjectSettings('<?php echo make_url('configure_project_settings', array('project_id' => $project->getID())); ?>'); return false;" id="project_settings">
 <?php endif; ?>
 	<h3><?php echo __('Editing advanced project settings'); ?></h3>
 	<h4><?php echo __('Project-specific settings'); ?>
@@ -152,7 +152,7 @@
 			<td>
 				<?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
 					<select name="issuetype_scheme" id="issuetype_scheme">
-						<?php foreach (TBGIssuetypeScheme::getAll() as $issuetype_scheme): ?>
+						<?php foreach (IssuetypeScheme::getAll() as $issuetype_scheme): ?>
 							<option value=<?php echo $issuetype_scheme->getID(); ?><?php if ($project->getIssuetypeScheme()->getID() == $issuetype_scheme->getID()): ?> selected<?php endif; ?>><?php echo $issuetype_scheme->getName(); ?></option>
 						<?php endforeach; ?>
 					</select>

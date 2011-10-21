@@ -23,7 +23,7 @@
 				</div>
 			<?php endif; ?>
 			<h2><?php echo __('Find articles'); ?></h2>
-			<form action="<?php echo (TBGContext::isProjectContext()) ? make_url('publish_find_project_articles', array('project_key' => TBGContext::getCurrentProject()->getKey())) : make_url('publish_find_articles'); ?>" method="get" accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>">
+			<form action="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('publish_find_project_articles', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : make_url('publish_find_articles'); ?>" method="get" accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>">
 				<label><?php echo __('Find articles by name'); ?>:<input type="text" name="articlename" value="<?php echo $articlename; ?>" style="width: 400px; margin-left: 5px; padding: 4px; font-size: 1.3em;"></label>
 				<input type="submit" value="<?php echo __('Find'); ?>" style="font-size: 1.3em; padding: 3px;">
 			</form>

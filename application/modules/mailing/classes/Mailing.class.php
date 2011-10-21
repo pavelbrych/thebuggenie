@@ -78,7 +78,7 @@
 		 */
 		public static function getModule()
 		{
-			return TBGContext::getModule('mailing');
+			return \thebuggenie\core\Context::getModule('mailing');
 		}
 		
 		protected function _initialize()
@@ -118,7 +118,7 @@
 			$this->saveSetting('smtp_port', 25);
 			$this->saveSetting('smtp_user', '');
 			$this->saveSetting('smtp_pwd', '');
-			$this->saveSetting('headcharset', TBGContext::getI18n()->getLangCharset());
+			$this->saveSetting('headcharset', \caspar\core\Caspar::getI18n()->getLangCharset());
 			$this->saveSetting('from_name', 'The Bug Genie Automailer');
 			$this->saveSetting('from_addr', '');
 			$this->saveSetting('ehlo', 1);
@@ -146,32 +146,32 @@
 						case 'smtp_host':
 							if ($request->getParameter('mail_type') == TBGMailer::MAIL_TYPE_B2M && !tbg_check_syntax($value, "MAILSERVER"))
 							{
-								throw new Exception(TBGContext::getI18n()->__('Please provide a valid setting for SMTP server address'));
+								throw new Exception(\caspar\core\Caspar::getI18n()->__('Please provide a valid setting for SMTP server address'));
 							}
 							break;
 						case 'from_addr':
 							if (!tbg_check_syntax($value, "EMAIL"))
 							{						
-								throw new Exception(TBGContext::getI18n()->__('Please provide a valid setting for email "from"-address'));
+								throw new Exception(\caspar\core\Caspar::getI18n()->__('Please provide a valid setting for email "from"-address'));
 							}
 							break;
 						case 'timeout':
 							if ($request->getParameter('mail_type') == TBGMailer::MAIL_TYPE_B2M && !is_numeric($value) || $value < 0)
 							{
-								throw new Exception(TBGContext::getI18n()->__('Please provide a valid setting for SMTP server timeout'));
+								throw new Exception(\caspar\core\Caspar::getI18n()->__('Please provide a valid setting for SMTP server timeout'));
 							}
 							break;
 						case 'smtp_port':
 							if ($request->getParameter('mail_type') == TBGMailer::MAIL_TYPE_B2M && !is_numeric($value) || $value < 1)
 							{
-								throw new Exception(TBGContext::getI18n()->__('Please provide a valid setting for SMTP server port'));
+								throw new Exception(\caspar\core\Caspar::getI18n()->__('Please provide a valid setting for SMTP server port'));
 							}							
 							break;							
 						case 'headcharset':
 							// list of supported character sets based on PHP doc : http://www.php.net/manual/en/function.htmlentities.php
 							if (!tbg_check_syntax($value, "CHARSET"))
 							{
-									throw new Exception(TBGContext::getI18n()->__('Please provide a valid setting for email header charset'));
+									throw new Exception(\caspar\core\Caspar::getI18n()->__('Please provide a valid setting for email header charset'));
 							}							
 							break;	
 						case 'no_dash_f':
@@ -215,7 +215,7 @@
 				$user->save();
 				if ($this->isOutgoingNotificationsEnabled())
 				{
-					$subject = TBGContext::getI18n()->__('User account registered with The Bug Genie');
+					$subject = \caspar\core\Caspar::getI18n()->__('User account registered with The Bug Genie');
 					$message = $this->createNewTBGMimemailFromTemplate($subject, 'registeruser', array('user' => $user, 'password' => $password), null, array(array($user->getBuddyname(), $user->getEmail())));
 	
 					$message->addReplacementValues(array('%user_buddyname%' => $user->getBuddyname()));
@@ -255,7 +255,7 @@
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
-				$subject = TBGContext::getI18n()->__('Password reset');
+				$subject = \caspar\core\Caspar::getI18n()->__('Password reset');
 				$message = $this->createNewTBGMimemailFromTemplate($subject, 'passwordreset', array('password' => $event->getParameter('password')));
 				$message->addReplacementValues(array('%password%' => $event->getParameter('password')));
 				$this->_sendToUsers($event->getSubject(), $message);
@@ -279,7 +279,7 @@
 		{
 			if ($this->isOutgoingNotificationsEnabled())
 			{
-				$subject = TBGContext::getI18n()->__('Forgot your password?');
+				$subject = \caspar\core\Caspar::getI18n()->__('Forgot your password?');
 				$message = $this->createNewTBGMimemailFromTemplate($subject, 'forgottenpassword', array('user' => $user));
 				$this->_sendToUsers($user, $message);
 			}
@@ -291,7 +291,7 @@
 			{
 				try
 				{
-					$subject = TBGContext::getI18n()->__('Test email');
+					$subject = \caspar\core\Caspar::getI18n()->__('Test email');
 					$message = $this->createNewTBGMimemailFromTemplate($subject, 'testemail', array(), null, array($email_address));
 					return $this->sendMail($message);
 				}
@@ -302,7 +302,7 @@
 			}
 			else
 			{
-				throw new Exception(TBGContext::getI18n()->__('The email module is not configured for outgoing emails'));
+				throw new Exception(\caspar\core\Caspar::getI18n()->__('The email module is not configured for outgoing emails'));
 			}
 		}
 
@@ -521,7 +521,7 @@
 				if ($issue instanceof TBGIssue)
 				{
 					$to_users = $this->_getIssueRelatedUsers($issue);
-					$subject = TBGContext::getI18n()->__('[%project_name%] %issue_type% %issue_no% - "%issue_title%" created', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => TBGContext::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()));
+					$subject = \caspar\core\Caspar::getI18n()->__('[%project_name%] %issue_type% %issue_no% - "%issue_title%" created', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => \caspar\core\Caspar::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()));
 					$message = $this->createNewTBGMimemailFromTemplate($subject, 'issuecreate', array('issue' => $issue));
 					$this->_sendToUsers($to_users, $message);
 				}
@@ -593,11 +593,11 @@
 						$content = $comment->getContent();
 						$to_users = $this->_getIssueRelatedUsers($issue);
 						
-						$subject = TBGContext::getI18n()->__('[%project_name%] %issue_type% %issue_no% - "%issue_title%" updated', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => TBGContext::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()));
+						$subject = \caspar\core\Caspar::getI18n()->__('[%project_name%] %issue_type% %issue_no% - "%issue_title%" updated', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => \caspar\core\Caspar::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()));
 						$message = $this->createNewTBGMimemailFromTemplate($subject, 'issueupdate', array('issue' => $issue, 'comment' => $content, 'updated_by' => $comment->getPostedBy()));
 //						var_dump($message);
 						$this->_sendToUsers($to_users, $message);
-//						$subject = TBGContext::getI18n()->__('[%project_name%] %issue_type% %issue_no% - Comment added by %comment_user%', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => TBGContext::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%comment_user%' => $comment->getPostedBy()->getName()));
+//						$subject = \caspar\core\Caspar::getI18n()->__('[%project_name%] %issue_type% %issue_no% - Comment added by %comment_user%', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => \caspar\core\Caspar::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%comment_user%' => $comment->getPostedBy()->getName()));
 //						$message = $this->createNewTBGMimemailFromTemplate($subject, 'issuecomment', array('issue' => $issue, 'comment' => $comment));
 //						$this->_sendToUsers($to_users, $message);
 					}
@@ -621,7 +621,7 @@
 				{
 					$to_users = $this->_getIssueRelatedUsers($issue);
 
-					$subject = TBGContext::getI18n()->__('[%project_name%] %issue_type% %issue_no% - "%issue_title%" updated', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => TBGContext::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()));
+					$subject = \caspar\core\Caspar::getI18n()->__('[%project_name%] %issue_type% %issue_no% - "%issue_title%" updated', array('%project_name%' => $issue->getProject()->getKey(), '%issue_type%' => \caspar\core\Caspar::getI18n()->__($issue->getIssueType()->getName()), '%issue_no%' => $issue->getFormattedIssueNo(true), '%issue_title%' => $issue->getTitle()));
 					$message = $this->createNewTBGMimemailFromTemplate($subject, 'issueupdate', array('issue' => $issue, 'comment_lines' => $event->getParameter('comment_lines'), 'updated_by' => $event->getParameter('updated_by')));
 					$this->_sendToUsers($to_users, $message);
 				}

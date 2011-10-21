@@ -292,7 +292,7 @@
 		 */
 		public static function getRouting()
 		{
-			if (!self::$_routing)
+			if (!is_object(self::$_routing))
 			{
 				self::$_routing = new Routing(self::$_configuration['routes']);
 			}
@@ -668,110 +668,6 @@
 		{
 			self::$_user = $user;
 		}
-		
-		/**
-		 * Adds a module to the module list
-		 *
-		 * @param TBGModule $module
-		 */
-		public static function addModule($module, $module_name)
-		{
-			if (self::$_modules === null)
-			{
-				self::$_modules = array();
-			}
-			self::$_modules[$module_name] = $module;
-		}
-		
-		/**
-		 * Returns an array of modules
-		 *
-		 * @return array
-		 */
-		public static function getModules()
-		{
-			return self::$_modules;
-		}
-		
-		/**
-		 * Returns an array of modules which need upgrading
-		 * 
-		 * @return array
-		 */
-		public static function getOutdatedModules()
-		{
-			if (self::$_outdated_modules == null)
-			{
-				self::$_outdated_modules = array();
-				foreach (self::getModules() as $module)
-				{
-					if ($module->isOutdated())
-					{
-						self::$_outdated_modules[] = $module;
-					}
-				}
-			}
-			
-			return self::$_outdated_modules;
-		}
-
-		/**
-		 * Get uninstalled modules
-		 *
-		 * @return array
-		 */
-		public static function getUninstalledModules()
-		{
-			$module_path_handle = opendir(THEBUGGENIE_MODULES_PATH);
-			$modules = array();
-			while ($module_name = readdir($module_path_handle))
-			{
-				if (is_dir(THEBUGGENIE_MODULES_PATH . $module_name) && file_exists(THEBUGGENIE_MODULES_PATH . $module_name . DS . 'module'))
-				{
-					if (self::isModuleLoaded($module_name)) continue;
-					$modules[$module_name] = file_get_contents(THEBUGGENIE_MODULES_PATH . $module_name . DS . 'module');
-				}
-			}
-			return $modules;
-		}
-		
-		/**
-		 * Returns a specified module
-		 *
-		 * @param string $module_name
-		 * 
-		 * @return TBGModule
-		 */
-		public static function getModule($module_name)
-		{
-			if (!self::isModuleLoaded($module_name))
-			{
-				throw new \Exception('This module is not loaded');
-			}
-			else
-			{
-				return self::$_modules[$module_name];	
-			}
-		}
-		
-		/**
-		 * Whether or not a module is loaded
-		 *
-		 * @param string $module_name
-		 * 
-		 * @return boolean
-		 */
-		public static function isModuleLoaded($module_name)
-		{
-			if (isset(self::$_modules[$module_name]))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
 
 		/**
 		 * Log out the current user (does not work when auth method is set to http)
@@ -1106,9 +1002,14 @@
 					$csp_user = self::getUser();
 
 					/**
-					 * @global Response The action object
+					 * @global Response The response object
 					 */
 					$csp_response = self::getResponse();
+					
+					/**
+					 * @global Routing The routing object
+					 */
+					$csp_routing = self::getRouting();
 
 					// Load the "ui" library, since this is used a lot
 					self::loadLibrary('ui');
@@ -1119,13 +1020,13 @@
 				
 				if (self::isMaintenanceModeEnabled() && !mb_strstr(self::getRouting()->getCurrentRouteName(), 'configure'))
 				{
-					if (!file_exists(THEBUGGENIE_CORE_PATH . 'templates/offline.inc.php'))
+					if (!file_exists(CASPAR_APPLICATION_PATH . 'templates/offline.inc.php'))
 					{
 						throw new TBGTemplateNotFoundException('Can not find offline mode template');
 					}
 					ob_start('mb_output_handler');
 					ob_implicit_flush(0);
-					require THEBUGGENIE_CORE_PATH . 'templates/offline.inc.php';
+					require CASPAR_APPLICATION_PATH . 'templates/offline.inc.php';
 					$content = ob_get_clean();
 				}
 
@@ -1181,13 +1082,13 @@
 		public static function calculateTimings(&$tbg_summary)
 		{
 			$load_time = self::getLoadtime();
-			if (\b2db\Core::isInitialized())
+			if (self::getB2DBInstance() instanceof \b2db\Connection)
 			{
 				$tbg_summary['db_queries'] = \b2db\Core::getSQLHits();
 				$tbg_summary['db_timing'] = \b2db\Core::getSQLTiming();
 			}
 			$tbg_summary['load_time'] = ($load_time >= 1) ? round($load_time, 2) . ' seconds' : round($load_time * 1000, 1) . 'ms';
-			$tbg_summary['scope_id'] = self::getScope() instanceof \thebuggenie\core\Scope ? self::getScope()->getID() : 'unknown';
+			$tbg_summary['scope_id'] = \thebuggenie\core\Context::getScope() instanceof \thebuggenie\core\Scope ? \thebuggenie\core\Context::getScope()->getID() : 'unknown';
 			self::ping();
 		}
 		
@@ -1210,7 +1111,7 @@
 						self::getResponse()->headerRedirect(self::getRouting()->generate('login_page'), 403);
 					}
 					if (self::performAction($route['module'], $route['action'])) {
-						\b2db\Core::closeConnections();
+						//\b2db\Core::closeConnections();
 						return true;
 					}
 				} else {

@@ -1,4 +1,4 @@
-<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
+<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_module', array('config_module' => $module->getName())); ?>" enctype="multipart/form-data" method="post">
 <div style="margin-top: 5px; width: 750px; clear: both; height: 30px;" class="tab_menu">
 	<ul id="mailing_settings_menu">
 		<li class="selected" id="tab_outgoing_settings"><a onclick="TBG.Main.Helpers.tabSwitcher('tab_outgoing_settings', 'mailing_settings_menu');" href="javascript:void(0);"><?php echo image_tag('cfg_icon_general.png', array('style' => 'float: left;')).__('Outgoing settings'); ?></a></li>
@@ -132,7 +132,7 @@
 <?php endif; ?>
 </form>
 <?php if ($module->isEnabled()): ?>
-	<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('mailing_test_email'); ?>" method="post">
+	<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('mailing_test_email'); ?>" method="post">
 		<div class="rounded_box borderless mediumgrey" style="margin: 10px 0 0 0; width: 700px; padding: 5px 5px 30px 5px;">
 			<table style="width: 680px;" class="padded_table" cellpadding=0 cellspacing=0>
 				<tr>

@@ -394,7 +394,7 @@
 			TBGIssueFieldsTable::getTable()->upgrade(TBGIssueFieldsTable3dot0::getTable());
 
 			// Upgrade all modules
-			foreach (TBGContext::getModules() as $module)
+			foreach (\thebuggenie\core\Context::getModules() as $module)
 			{
 				if (method_exists($module, 'upgradeFrom3dot0'))
 				{
@@ -407,7 +407,7 @@
 			
 			// Add votes to feature requests for default issue type scheme
 			$its = new TBGIssuetypeScheme(1);
-			foreach (TBGIssuetype::getAll() as $fr)
+			foreach (\thebuggenie\entities\Issuetype::getAll() as $fr)
 			{
 				if ($fr instanceof TBGIssuetype)
 				{

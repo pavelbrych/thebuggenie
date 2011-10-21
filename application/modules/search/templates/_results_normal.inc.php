@@ -21,7 +21,7 @@
 			<thead>
 				<tr>
 					<th class="nosort" style="width: 20px; padding: 1px !important;"><input type="checkbox" onclick="TBG.Search.toggleCheckboxes(this);"></th>
-					<?php if (!TBGContext::isProjectContext() && $show_project == true): ?>
+					<?php if (!\thebuggenie\core\Context::isProjectContext() && $show_project == true): ?>
 						<th style="padding-left: 3px;"><?php echo __('Project'); ?></th>
 					<?php endif; ?>
 					<th class="sc_issuetype"<?php if (!in_array('issuetype', $visible_columns)): ?> style="display: none;"<?php endif; ?>><?php echo __('Issue type'); ?></th>
@@ -47,14 +47,14 @@
 							<input type="checkbox" name="update_issue[<?php echo $issue->getID(); ?>]" onclick="TBG.Search.toggleCheckbox(this);" value="<?php echo $issue->getID(); ?>">
 						<?php endif; ?>
 					</td>
-				<?php if (!TBGContext::isProjectContext() && $show_project == true): ?>
+				<?php if (!\thebuggenie\core\Context::isProjectContext() && $show_project == true): ?>
 					<td style="padding-left: 5px;"><?php echo link_tag(make_url('project_issues', array('project_key' => $issue->getProject()->getKey())), $issue->getProject()->getName()); ?></td>
 				<?php endif; ?>
 					<td class="sc_issuetype"<?php if (!in_array('issuetype', $visible_columns)): ?> style="display: none;"<?php endif; ?>>
 						<?php echo image_tag($issue->getIssueType()->getIcon() . '_tiny.png', array('title' => $issue->getIssueType()->getName())); ?>
 						<?php echo $issue->getIssuetype()->getName(); ?>
 					</td>
-					<td class="result_issue"<?php if (TBGContext::isProjectContext()): ?> style="padding-left: 3px;"<?php endif; ?>>
+					<td class="result_issue"<?php if (\thebuggenie\core\Context::isProjectContext()): ?> style="padding-left: 3px;"<?php endif; ?>>
 						<?php if ($issue->countFiles()): ?>
 							<?php echo image_tag('icon_attached_information.png', array('style' => 'float: left; margin-right: 3px;', 'title' => __('This issue has %num% attachments', array('%num%' => $issue->countFiles())))); ?>
 						<?php endif; ?>

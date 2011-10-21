@@ -8,11 +8,11 @@
 				<?php if ($csp_user->canAccessConfigurationPage()): ?>
 					| <b><?php echo link_tag(make_url('configure'), __('Configure The Bug Genie')); ?></b>
 				<?php endif; ?>
-				<?php if (\caspar\core\Logging::isEnabled() && TBGContext::isDebugMode()): ?>
+				<?php if (\caspar\core\Logging::isEnabled() && \caspar\core\Caspar::isDebugMode()): ?>
 					<?php echo image_tag('debug_show.png', array('style' => 'position: fixed; bottom: 5px; right: 3px; cursor: pointer;', 'onclick' => "$('debug_bar').show();", 'title' => 'Show debug bar')); ?>
 				<?php endif; ?>
 			</td>
 		</tr>
 	</table>
-	<?php if (\caspar\core\Logging::isEnabled() && TBGContext::isDebugMode()) require THEBUGGENIE_CORE_PATH . 'templates/debugbar.inc.php'; ?>
+	<?php if (\caspar\core\Logging::isEnabled() && \caspar\core\Caspar::isDebugMode()) require CASPAR_APPLICATION_PATH . 'templates/debugbar.inc.php'; ?>
 </footer>

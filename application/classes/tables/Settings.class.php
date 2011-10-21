@@ -110,7 +110,7 @@
 
 		public function loadFixtures(TBGScope $scope)
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			$settings = array();
 			$settings[TBGSettings::SETTING_THEME_NAME] = 'oxygen';

@@ -17,7 +17,7 @@
 		<?php echo ($account->getId()) ? __('Edit incoming email account') : __('Add new incoming email account'); ?>
 	</div>
 	<div id="backdrop_detail_content">
-		<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" id="incoming_email_account_form" action="<?php echo make_url('mailing_save_incoming_account', array('project_key' => $project->getKey())); ?>" method="post" id="build_form" onsubmit="TBG.Modules.mailing.saveIncomingEmailAccount('<?php echo make_url('mailing_save_incoming_account', array('project_key' => $project->getKey())); ?>');return false;">
+		<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" id="incoming_email_account_form" action="<?php echo make_url('mailing_save_incoming_account', array('project_key' => $project->getKey())); ?>" method="post" id="build_form" onsubmit="TBG.Modules.mailing.saveIncomingEmailAccount('<?php echo make_url('mailing_save_incoming_account', array('project_key' => $project->getKey())); ?>');return false;">
 			<input type="hidden" name="account_id" value="<?php echo $account->getID(); ?>">
 			<table style="clear: both; width: 780px;" class="padded_table" cellpadding=0 cellspacing=0>
 				<tr>

@@ -15,7 +15,7 @@
 					</div>
 				<?php endif; ?>
 				<div class="rounded_box lightyellow" style="margin-top: 5px;">
-					<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_workflow'); ?>" id="add_workflow_form" method="post">
+					<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_workflow'); ?>" id="add_workflow_form" method="post">
 						<label for="add_workflow_name"><?php echo __('Add an empty workflow'); ?></label>
 						<input type="text" name="workflow_name" id="add_workflow_name" value="<?php echo __('Blank workflow'); ?>" style="width: 300px;">
 						<div style="text-align: right; float: right;">

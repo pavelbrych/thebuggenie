@@ -1078,6 +1078,110 @@
 			}
 			return $links;
 		}
+
+		/**
+		 * Adds a module to the module list
+		 *
+		 * @param TBGModule $module
+		 */
+		public static function addModule($module, $module_name)
+		{
+			if (self::$_modules === null)
+			{
+				self::$_modules = array();
+			}
+			self::$_modules[$module_name] = $module;
+		}
+		
+		/**
+		 * Returns an array of modules
+		 *
+		 * @return array
+		 */
+		public static function getModules()
+		{
+			return self::$_modules;
+		}
+		
+		/**
+		 * Returns an array of modules which need upgrading
+		 * 
+		 * @return array
+		 */
+		public static function getOutdatedModules()
+		{
+			if (self::$_outdated_modules == null)
+			{
+				self::$_outdated_modules = array();
+				foreach (self::getModules() as $module)
+				{
+					if ($module->isOutdated())
+					{
+						self::$_outdated_modules[] = $module;
+					}
+				}
+			}
+			
+			return self::$_outdated_modules;
+		}
+
+		/**
+		 * Get uninstalled modules
+		 *
+		 * @return array
+		 */
+		public static function getUninstalledModules()
+		{
+			$module_path_handle = opendir(THEBUGGENIE_MODULES_PATH);
+			$modules = array();
+			while ($module_name = readdir($module_path_handle))
+			{
+				if (is_dir(THEBUGGENIE_MODULES_PATH . $module_name) && file_exists(THEBUGGENIE_MODULES_PATH . $module_name . DS . 'module'))
+				{
+					if (self::isModuleLoaded($module_name)) continue;
+					$modules[$module_name] = file_get_contents(THEBUGGENIE_MODULES_PATH . $module_name . DS . 'module');
+				}
+			}
+			return $modules;
+		}
+		
+		/**
+		 * Returns a specified module
+		 *
+		 * @param string $module_name
+		 * 
+		 * @return TBGModule
+		 */
+		public static function getModule($module_name)
+		{
+			if (!self::isModuleLoaded($module_name))
+			{
+				throw new \Exception('This module is not loaded');
+			}
+			else
+			{
+				return self::$_modules[$module_name];	
+			}
+		}
+		
+		/**
+		 * Whether or not a module is loaded
+		 *
+		 * @param string $module_name
+		 * 
+		 * @return boolean
+		 */
+		public static function isModuleLoaded($module_name)
+		{
+			if (isset(self::$_modules[$module_name]))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 		
 		public static function listenCoreLoadTemplateVariables(Event $event)
 		{

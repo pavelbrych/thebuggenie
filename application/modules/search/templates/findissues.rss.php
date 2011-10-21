@@ -1,15 +1,15 @@
-<<?php ?>?xml version="1.0" encoding="<?php echo TBGContext::getI18n()->getCharset(); ?>" ?>
+<<?php ?>?xml version="1.0" encoding="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" ?>
 <rss version="2.0">
 	<channel>
 		<title><?php echo TBGSettings::getTBGname() . ' ~ '. $searchtitle; ?></title>
 		<link><?php echo make_url('home', array(), false); ?></link>
 		<description><?php echo strip_tags(TBGSettings::getTBGtagline()); ?></description>
-		<language><?php echo (mb_strtolower(str_replace('_', '-', TBGContext::getI18n()->getCurrentLanguage()))); ?></language>
+		<language><?php echo (mb_strtolower(str_replace('_', '-', \caspar\core\Caspar::getI18n()->getCurrentLanguage()))); ?></language>
 		<image>
 		<?php if (TBGSettings::isUsingCustomHeaderIcon() == '2'): ?>
 			<url><?php echo TBGSettings::getHeaderIconURL(); ?></url>
 		<?php elseif (TBGSettings::isUsingCustomHeaderIcon() == '1'): ?>
-			<url><?php echo TBGContext::getUrlHost().TBGContext::getTBGPath().'header.png'; ?></url>
+			<url><?php echo TBGContext::getUrlHost().\caspar\core\Caspar::getTBGPath().'header.png'; ?></url>
 		<?php else: ?>
 			<url><?php echo image_url('logo_24.png', false, null, false); ?></url>
 		<?php endif; ?>

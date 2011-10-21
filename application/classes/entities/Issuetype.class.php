@@ -108,7 +108,7 @@
 		 */
 		public static function getIcons()
 		{
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 			$icons = array();
 			$icons['bug_report'] = $i18n->__('Bug report');
 			$icons['documentation_request'] = $i18n->__('Documentation request');

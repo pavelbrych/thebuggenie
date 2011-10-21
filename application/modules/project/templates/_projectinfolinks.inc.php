@@ -2,13 +2,13 @@
 
 	if (!isset($selected_project))
 	{
-		$selected_project = TBGContext::getCurrentProject();
+		$selected_project = \thebuggenie\core\Context::getCurrentProject();
 	}
 
 	if(!isset($submenu)): $submenu = false; endif;
 ?>
 <?php if ($csp_user->hasProjectPageAccess('project_dashboard', $selected_project->getID())): ?>
-	<?php echo link_tag(make_url('project_dashboard', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Dashboard'), (($csp_response->getPage() == 'project_dashboard') ? array('class' => 'selected') : null)); ?>
+	<?php echo link_tag(make_url('project_dashboard', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Dashboard'), (($csp_response->getPage() == 'project_dashboard') ? array('class' => 'selected') : null)); ?>
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_dashboard')->trigger(array('submenu' => $submenu)); ?>
 	<?php if (!($submenu) && $csp_response->getPage() == 'project_dashboard' && $csp_user->canEditProjectDetails($selected_project)): ?>
 		<ul class="simple_list">
@@ -17,11 +17,11 @@
 	<?php endif; ?>
 <?php endif; ?>
 <?php if ($csp_user->hasProjectPageAccess('project_releases', $selected_project->getID()) && $selected_project->isBuildsEnabled()): ?>
-	<?php echo link_tag(make_url('project_releases', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Releases'), (($csp_response->getPage() == 'project_releases') ? array('class' => 'selected') : null)); ?>
+	<?php echo link_tag(make_url('project_releases', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Releases'), (($csp_response->getPage() == 'project_releases') ? array('class' => 'selected') : null)); ?>
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_releases')->trigger(array('submenu' => $submenu)); ?>
 <?php endif; ?>
 <?php if ($csp_user->hasProjectPageAccess('project_planning', $selected_project->getID())): ?>
-	<?php echo link_tag(make_url('project_planning', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Planning'), ((in_array($csp_response->getPage(), array('project_planning', 'project_milestone_details'))) ? array('class' => 'selected') : array())); ?>
+	<?php echo link_tag(make_url('project_planning', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Planning'), ((in_array($csp_response->getPage(), array('project_planning', 'project_milestone_details'))) ? array('class' => 'selected') : array())); ?>
 	<?php if (!isset($submenu) && (count($selected_project->getAllMilestones()) > 0) && in_array($csp_response->getPage(), array('project_planning', 'project_milestones_details'))): ?>
 		<ul class="simple_list">
 			<?php foreach ($selected_project->getAllMilestones() as $milestone): ?>
@@ -32,15 +32,15 @@
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_milestone')->trigger(array('submenu' => $submenu)); ?>
 <?php endif; ?>
 <?php if ($csp_user->hasProjectPageAccess('project_roadmap', $selected_project->getID())): ?>
-	<?php echo link_tag(make_url('project_roadmap', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Roadmap'), (($csp_response->getPage() == 'project_roadmap') ? array('class' => 'selected') : array())); ?>
+	<?php echo link_tag(make_url('project_roadmap', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Roadmap'), (($csp_response->getPage() == 'project_roadmap') ? array('class' => 'selected') : array())); ?>
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_roadmap')->trigger(array('submenu' => $submenu)); ?>
 <?php endif; ?>
 <?php if ($csp_user->hasProjectPageAccess('project_team', $selected_project->getID())): ?>
-	<?php echo link_tag(make_url('project_team', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Team overview'), (($csp_response->getPage() == 'project_team') ? array('class' => 'selected') : array())); ?>
+	<?php echo link_tag(make_url('project_team', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Team overview'), (($csp_response->getPage() == 'project_team') ? array('class' => 'selected') : array())); ?>
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_team')->trigger(array('submenu' => $submenu)); ?>
 <?php endif; ?>
 <?php if ($csp_user->hasProjectPageAccess('project_statistics', $selected_project->getID())): ?>
-	<?php echo link_tag(make_url('project_statistics', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Statistics'), (($csp_response->getPage() == 'project_statistics') ? array('class' => 'selected') : array())); ?>
+	<?php echo link_tag(make_url('project_statistics', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Statistics'), (($csp_response->getPage() == 'project_statistics') ? array('class' => 'selected') : array())); ?>
 	<?php if (!($submenu) && $csp_response->getPage() == 'project_statistics'): ?>
 		<ul class="simple_list">
 			<li><b><?php echo __('Number of issues per:'); ?></b></li>
@@ -55,14 +55,14 @@
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_statistics')->trigger(array('submenu' => $submenu)); ?>
 <?php endif; ?>
 <?php if ($csp_user->hasProjectPageAccess('project_timeline', $selected_project->getID())): ?>
-	<?php echo link_tag(make_url('project_timeline_important', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Timeline'), (($csp_response->getPage() == 'project_timeline') ? array('class' => 'selected') : null)); ?>
+	<?php echo link_tag(make_url('project_timeline_important', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Timeline'), (($csp_response->getPage() == 'project_timeline') ? array('class' => 'selected') : null)); ?>
 	<?php \caspar\core\Event::createNew('core', 'project_sidebar_links_timeline')->trigger(array('submenu' => $submenu)); ?>
 <?php endif; ?>
 <?php if ($csp_user->canEditProjectDetails($selected_project)): ?>
 	<?php if ($selected_project->isBuildsEnabled()): ?>
-		<?php echo link_tag(make_url('project_release_center', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Release center'), (($csp_response->getPage() == 'project_release_center') ? array('class' => 'selected') : array())); ?>
+		<?php echo link_tag(make_url('project_release_center', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Release center'), (($csp_response->getPage() == 'project_release_center') ? array('class' => 'selected') : array())); ?>
 	<?php endif; ?>
-	<?php echo link_tag(make_url('project_settings', array('project_key' => TBGContext::getCurrentProject()->getKey())), __('Settings'), (($csp_response->getPage() == 'project_settings') ? array('class' => 'selected') : array())); ?>
+	<?php echo link_tag(make_url('project_settings', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), __('Settings'), (($csp_response->getPage() == 'project_settings') ? array('class' => 'selected') : array())); ?>
 	<?php if (!($submenu) && $csp_response->getPage() == 'project_settings'): ?>
 		<?php if (!isset($selected_tab)) $selected_tab = 'info'; ?>
 		<ul class="simple_list" id="project_config_menu">

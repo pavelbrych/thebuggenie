@@ -68,7 +68,7 @@
 		/**
 		 * Return all issuetypes in the system
 		 *
-		 * @return array An array of TBGIssuetype objects
+		 * @return array An array of Issuetype objects
 		 */
 		public static function getAll()
 		{
@@ -79,7 +79,7 @@
 		/**
 		 * Return the default (core) issuetype scheme
 		 * 
-		 * @return TBGIssuetypeScheme
+		 * @return IssuetypeScheme
 		 */
 		public static function getCoreScheme()
 		{
@@ -89,13 +89,13 @@
 
 		public static function loadFixtures(TBGScope $scope)
 		{
-			$scheme = new TBGIssuetypeScheme();
+			$scheme = new IssuetypeScheme();
 			$scheme->setScope($scope->getID());
 			$scheme->setName("Default issuetype scheme");
 			$scheme->setDescription("This is the default issuetype scheme. It is used by all projects with no specific issuetype scheme selected. This scheme cannot be edited or removed.");
 			$scheme->save();
 			
-			foreach (TBGIssuetype::getAll() as $issuetype)
+			foreach (\thebuggenie\entities\Issuetype::getAll() as $issuetype)
 			{
 				$scheme->setIssuetypeEnabled($issuetype);
 				if ($issuetype->getIcon() == 'developer_report')
@@ -146,63 +146,63 @@
 		{
 			if ($this->_issuetypedetails === null)
 			{
-				$this->_issuetypedetails = TBGIssuetypeSchemeLinkTable::getTable()->getByIssuetypeSchemeID($this->getID());
+				$this->_issuetypedetails = \caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemeLink')->getByIssuetypeSchemeID($this->getID());
 			}
 		}
 		
-		public function setIssuetypeEnabled(TBGIssuetype $issuetype, $enabled = true)
+		public function setIssuetypeEnabled(Issuetype $issuetype, $enabled = true)
 		{
 			if ($enabled)
 			{
 				if (!$this->isSchemeAssociatedWithIssuetype($issuetype))
 				{
-					TBGIssuetypeSchemeLinkTable::getTable()->associateIssuetypeWithScheme($issuetype->getID(), $this->getID());
+					\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemeLink')->associateIssuetypeWithScheme($issuetype->getID(), $this->getID());
 				}
 			}
 			else
 			{
-				TBGIssuetypeSchemeLinkTable::getTable()->unAssociateIssuetypeWithScheme($issuetype->getID(), $this->getID());
+				\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemeLink')->unAssociateIssuetypeWithScheme($issuetype->getID(), $this->getID());
 			}
 			$this->_issuetypedetails = null;
 		}
 		
-		public function setIssuetypeDisabled(TBGIssuetype $issuetype)
+		public function setIssuetypeDisabled(Issuetype $issuetype)
 		{
 			$this->setIssuetypeEnabled($issuetype, false);
 		}
 
-		public function isSchemeAssociatedWithIssuetype(TBGIssuetype $issuetype)
+		public function isSchemeAssociatedWithIssuetype(Issuetype $issuetype)
 		{
 			$this->_populateAssociatedIssuetypes();
 			return array_key_exists($issuetype->getID(), $this->_issuetypedetails);
 		}
 		
-		public function isIssuetypeReportable(TBGIssuetype $issuetype)
+		public function isIssuetypeReportable(Issuetype $issuetype)
 		{
 			$this->_populateAssociatedIssuetypes();
 			if (!$this->isSchemeAssociatedWithIssuetype($issuetype)) return false;
 			return (bool) $this->_issuetypedetails[$issuetype->getID()]['reportable'];
 		}
 
-		public function isIssuetypeRedirectedAfterReporting(TBGIssuetype $issuetype)
+		public function isIssuetypeRedirectedAfterReporting(Issuetype $issuetype)
 		{
 			$this->_populateAssociatedIssuetypes();
 			if (!$this->isSchemeAssociatedWithIssuetype($issuetype)) return false;
 			return (bool) $this->_issuetypedetails[$issuetype->getID()]['redirect'];
 		}
 		
-		public function setIssuetypeRedirectedAfterReporting(TBGIssuetype $issuetype, $val = true)
+		public function setIssuetypeRedirectedAfterReporting(Issuetype $issuetype, $val = true)
 		{
-			TBGIssuetypeSchemeLinkTable::getTable()->setIssuetypeRedirectedAfterReportingForScheme($issuetype->getID(), $this->getID(), $val);
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemeLink')->setIssuetypeRedirectedAfterReportingForScheme($issuetype->getID(), $this->getID(), $val);
 			if (array_key_exists($issuetype->getID(), $this->_visiblefields))
 			{
 				$this->_visiblefields[$issuetype->getID()]['redirect'] = $val;
 			}
 		}
 
-		public function setIssuetypeReportable(TBGIssuetype $issuetype, $val = true)
+		public function setIssuetypeReportable(Issuetype $issuetype, $val = true)
 		{
-			TBGIssuetypeSchemeLinkTable::getTable()->setIssuetypeReportableForScheme($issuetype->getID(), $this->getID(), $val);
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemeLink')->setIssuetypeReportableForScheme($issuetype->getID(), $this->getID(), $val);
 			if (array_key_exists($issuetype->getID(), $this->_visiblefields))
 			{
 				$this->_visiblefields[$issuetype->getID()]['reportable'] = $val;
@@ -212,7 +212,7 @@
 		/**
 		 * Get all steps in this issuetype
 		 *
-		 * @return array An array of TBGIssuetype objects
+		 * @return array An array of Issuetype objects
 		 */
 		public function getIssuetypes()
 		{
@@ -239,11 +239,11 @@
 		protected function _preDelete()
 		{
 			TBGIssueFieldsTable::getTable()->deleteByIssuetypeSchemeID($this->getID());
-			TBGIssuetypeSchemeLinkTable::getTable()->deleteByIssuetypeSchemeID($this->getID());
+			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\IssuetypeSchemeLink')->deleteByIssuetypeSchemeID($this->getID());
 			\caspar\core\Caspar::getB2DBInstance()->getTable('\\thebuggenie\\tables\\Projects')->updateByIssuetypeSchemeID($this->getID());
 		}
 
-		protected function _populateVisibleFieldsForIssuetype(TBGIssuetype $issuetype)
+		protected function _populateVisibleFieldsForIssuetype(Issuetype $issuetype)
 		{
 			if (!array_key_exists($issuetype->getID(), $this->_visiblefields))
 			{
@@ -251,18 +251,18 @@
 			}
 		}
 
-		public function getVisibleFieldsForIssuetype(TBGIssuetype $issuetype)
+		public function getVisibleFieldsForIssuetype(Issuetype $issuetype)
 		{
 			$this->_populateVisibleFieldsForIssuetype($issuetype);
 			return $this->_visiblefields[$issuetype->getID()];
 		}
 		
-		public function clearAvailableFieldsForIssuetype(TBGIssuetype $issuetype)
+		public function clearAvailableFieldsForIssuetype(Issuetype $issuetype)
 		{
 			TBGIssueFieldsTable::getTable()->deleteBySchemeIDandIssuetypeID($this->getID(), $issuetype->getID());
 		}
 
-		public function setFieldAvailableForIssuetype(TBGIssuetype $issuetype, $key, $details = array())
+		public function setFieldAvailableForIssuetype(Issuetype $issuetype, $key, $details = array())
 		{
 			TBGIssueFieldsTable::getTable()->addFieldAndDetailsBySchemeIDandIssuetypeID($this->getID(), $issuetype->getID(), $key, $details);
 		}

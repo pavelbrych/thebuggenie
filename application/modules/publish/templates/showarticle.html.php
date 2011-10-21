@@ -34,22 +34,22 @@
 			<?php else: ?>
 				<div class="article">
 					<?php include_template('publish/header', array('article_name' => $article_name, 'show_actions' => true, 'mode' => 'view')); ?>
-					<?php if (TBGContext::isProjectContext() && TBGContext::getCurrentProject()->isArchived()): ?>
+					<?php if (\thebuggenie\core\Context::isProjectContext() && \thebuggenie\core\Context::getCurrentProject()->isArchived()): ?>
 						<?php include_template('publish/placeholder', array('article_name' => $article_name, 'nocreate' => true)); ?>
 					<?php else: ?>
 						<?php include_template('publish/placeholder', array('article_name' => $article_name)); ?>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
-			<?php if ((isset($article) && ($article->canEdit() || $article->canDelete())) || (!isset($article) && ((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || (!TBGContext::isProjectContext() && TBGContext::getModule('publish')->canUserEditArticle($article_name))))): ?>
+			<?php if ((isset($article) && ($article->canEdit() || $article->canDelete())) || (!isset($article) && ((\thebuggenie\core\Context::isProjectContext() && !\thebuggenie\core\Context::getCurrentProject()->isArchived()) || (!\thebuggenie\core\Context::isProjectContext() && \thebuggenie\core\Context::getModule('publish')->canUserEditArticle($article_name))))): ?>
 				<div class="publish_article_actions">
 					<div class="sub_header"><?php echo __('Actions available'); ?></div>
-					<?php if ((isset($article) && $article->canEdit()) || (!isset($article) && ((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || (!TBGContext::isProjectContext() && TBGContext::getModule('publish')->canUserEditArticle($article_name))))): ?>
+					<?php if ((isset($article) && $article->canEdit()) || (!isset($article) && ((\thebuggenie\core\Context::isProjectContext() && !\thebuggenie\core\Context::getCurrentProject()->isArchived()) || (!\thebuggenie\core\Context::isProjectContext() && \thebuggenie\core\Context::getModule('publish')->canUserEditArticle($article_name))))): ?>
 						<form action="<?php echo make_url('publish_article_edit', array('article_name' => $article_name)); ?>" method="get" style="float: left; margin-right: 10px;">
 							<input class="button button-green" type="submit" value="<?php echo ($article instanceof TBGWikiArticle) ? __('Edit this article') : __('Create this article'); ?>">
 						</form>
 					<?php endif; ?>
-					<?php if ((isset($article) && $article->canDelete()) || (!isset($article) && TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived())): ?>
+					<?php if ((isset($article) && $article->canDelete()) || (!isset($article) && \thebuggenie\core\Context::isProjectContext() && !\thebuggenie\core\Context::getCurrentProject()->isArchived())): ?>
 						<?php if ($article instanceof TBGWikiArticle): ?>
 							<button class="button button-red" onclick="$('delete_article_confirm').toggle();"><?php echo __('Delete this article'); ?></button>
 							<div class="rounded_box yellow" style="margin: 10px 0 5px; width: 720px; display: none; padding: 3px 10px 3px 10px; font-size: 14px;" id="delete_article_confirm">

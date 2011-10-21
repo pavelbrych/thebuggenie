@@ -58,7 +58,7 @@
 	<?php break; ?>
 
 	<?php case TBGDashboardView::VIEW_PROJECT_INFO : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
 			<?php echo __('About this project'); ?>
@@ -143,7 +143,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_TEAM : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $assignees = $selected_project->getAssignees(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
@@ -182,7 +182,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_CLIENT : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $client = $selected_project->getClient(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
@@ -202,7 +202,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_SUBPROJECTS : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $subprojects = $selected_project->getChildren(false); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
@@ -225,7 +225,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_LAST15 : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
 			<?php echo __('Last 15 days'); ?>
@@ -236,10 +236,10 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_RECENT_ISSUES : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php
 			$issuetype_icons = array();
-			foreach (TBGIssuetype::getIcons() as $key => $descr)
+			foreach (\thebuggenie\entities\Issuetype::getIcons() as $key => $descr)
 			{
 				$issuetype_icons[] = array('key' => $key, 'descr' => $descr);
 			}
@@ -280,7 +280,7 @@
 
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
-			<?php echo TBGContext::geti18n()->__('Recent issues: %type%', array('%type%' => $issuetype_icons[$view]['descr'])); ?>
+			<?php echo \caspar\core\Caspar::getI18n()->__('Recent issues: %type%', array('%type%' => $issuetype_icons[$view]['descr'])); ?>
 		</div>
 
 		<div class="dashboard_view_content" id="dashboard_<?php echo $view->getID(); ?>">
@@ -289,7 +289,7 @@
 
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_RECENT_ACTIVITIES : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $recent_activities = $selected_project->getRecentActivities(5); ?>
 		<div class="header">
 			<?php echo link_tag(make_url('project_timeline', array('project_key' => $selected_project->getKey(), 'format' => 'rss')), image_tag('icon_rss.png', array('style' => 'float: right; margin-right: 5px;'))); ?>
@@ -307,7 +307,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_UPCOMING : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
 			<?php echo __('Upcoming milestones and deadlines'); ?>
@@ -339,7 +339,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_DOWNLOADS : ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
 			<?php echo __('Latest downloads'); ?>
@@ -350,7 +350,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_STATISTICS_PRIORITY: ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $priority_count = $selected_project->getPriorityCount(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
@@ -379,7 +379,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_STATISTICS_CATEGORY: ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $category_count = $selected_project->getCategoryCount(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
@@ -408,7 +408,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_STATISTICS_STATUS: ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $status_count = $selected_project->getStatusCount(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>
@@ -437,7 +437,7 @@
 		</div>
 		<?php break; ?>
 	<?php case TBGDashboardView::VIEW_PROJECT_STATISTICS_RESOLUTION: ?>
-		<?php $selected_project = TBGContext::getCurrentProject(); ?>
+		<?php $selected_project = \thebuggenie\core\Context::getCurrentProject(); ?>
 		<?php $resolution_count = $selected_project->getResolutionCount(); ?>
 		<div class="header">
 			<?php echo image_tag('collapse_small.png', array('id' => 'dashboard_'.$view->getID().'_collapse', 'style' => 'float: left; margin: 3px 5px 0 2px;', 'onclick' => "\$('dashboard_{$view->getID()}').toggle(); this.src = (this.src == '" . image_url('collapse_small.png', false, 'core', false) . "') ? '" . image_url('expand_small.png', false, 'core', false) . "' : '" . image_url('collapse_small.png', false, 'core', false) . "'")); ?>

@@ -277,9 +277,9 @@
 		public function getEmailDetails($email)
 		{
 			$structure = imap_fetchstructure($this->_connection, $email->msgno);
-			$type = TBGContext::getModule('mailing')->getMailMimeType($structure);
+			$type = \thebuggenie\core\Context::getModule('mailing')->getMailMimeType($structure);
 
-			$data = TBGContext::getModule('mailing')->getMailPart($this->_connection, $email->msgno, $type, $structure);
+			$data = \thebuggenie\core\Context::getModule('mailing')->getMailPart($this->_connection, $email->msgno, $type, $structure);
 			return array($type, $data);
 		}
 		

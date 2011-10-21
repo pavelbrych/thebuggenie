@@ -6,19 +6,19 @@
 	}
 	else
 	{
-		$csp_response->setTitle((TBGContext::isProjectContext()) ? __('Find issues for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())) : __('Find issues'));
+		$csp_response->setTitle((\thebuggenie\core\Context::isProjectContext()) ? __('Find issues for %project_name%', array('%project_name%' => \thebuggenie\core\Context::getCurrentProject()->getName())) : __('Find issues'));
 	}
-	if (TBGContext::isProjectContext())
+	if (\thebuggenie\core\Context::isProjectContext())
 	{
-		$csp_response->addBreadcrumb(__('Issues'), make_url('project_issues', array('project_key' => TBGContext::getCurrentProject()->getKey())), tbg_get_breadcrumblinks('project_summary', TBGContext::getCurrentProject()));
-		$csp_response->addFeed(make_url('project_open_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')), __('Open issues for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())));
-		$csp_response->addFeed(make_url('project_closed_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')), __('Closed issues for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())));
-		$csp_response->addFeed(make_url('project_milestone_todo_list', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')), __('Milestone todo-list for %project_name%', array('%project_name%' => TBGContext::getCurrentProject()->getName())));
+		$csp_response->addBreadcrumb(__('Issues'), make_url('project_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), tbg_get_breadcrumblinks('project_summary', \thebuggenie\core\Context::getCurrentProject()));
+		$csp_response->addFeed(make_url('project_open_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')), __('Open issues for %project_name%', array('%project_name%' => \thebuggenie\core\Context::getCurrentProject()->getName())));
+		$csp_response->addFeed(make_url('project_closed_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')), __('Closed issues for %project_name%', array('%project_name%' => \thebuggenie\core\Context::getCurrentProject()->getName())));
+		$csp_response->addFeed(make_url('project_milestone_todo_list', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')), __('Milestone todo-list for %project_name%', array('%project_name%' => \thebuggenie\core\Context::getCurrentProject()->getName())));
 		if (!TBGUser::isThisGuest())
 		{
-			$csp_response->addFeed(make_url('project_my_reported_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')), __('Issues reported by me') . ' ('.TBGContext::getCurrentProject()->getName().')');
-			$csp_response->addFeed(make_url('project_my_assigned_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')), __('Open issues assigned to me') . ' ('.TBGContext::getCurrentProject()->getName().')');
-			$csp_response->addFeed(make_url('project_my_teams_assigned_issues', array('project_key' => TBGContext::getCurrentProject()->getKey(), 'format' => 'rss')), __('Open issues assigned to my teams') . ' ('.TBGContext::getCurrentProject()->getName().')');
+			$csp_response->addFeed(make_url('project_my_reported_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')), __('Issues reported by me') . ' ('.\thebuggenie\core\Context::getCurrentProject()->getName().')');
+			$csp_response->addFeed(make_url('project_my_assigned_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')), __('Open issues assigned to me') . ' ('.\thebuggenie\core\Context::getCurrentProject()->getName().')');
+			$csp_response->addFeed(make_url('project_my_teams_assigned_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey(), 'format' => 'rss')), __('Open issues assigned to my teams') . ' ('.\thebuggenie\core\Context::getCurrentProject()->getName().')');
 		}
 	}
 	else

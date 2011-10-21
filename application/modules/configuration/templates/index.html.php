@@ -71,7 +71,7 @@
 				<?php foreach ($module_config_sections as $section => $config_info): ?>
 					<?php if (array_key_exists('icon', $config_info)) $config_info = array($config_info); ?>
 					<?php foreach ($config_info as $info): ?>
-						<?php if ($info['module'] != 'core' && !TBGContext::getModule($info['module'])->hasConfigSettings()) continue; ?>
+						<?php if ($info['module'] != 'core' && !\thebuggenie\core\Context::getModule($info['module'])->hasConfigSettings()) continue; ?>
 						<li class="rounded_box">
 						<?php if (is_array($info['route'])): ?>
 							<?php $url = make_url($info['route'][0], $info['route'][1]); ?>

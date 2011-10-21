@@ -22,7 +22,7 @@
 	 * @package thebuggenie
 	 * @subpackage tables
 	 */
-	class VisibleIssueTypes extends ScopedTable 
+	class VisibleIssuetypes extends ScopedTable 
 	{
 
 		const B2DB_TABLE_VERSION = 1;

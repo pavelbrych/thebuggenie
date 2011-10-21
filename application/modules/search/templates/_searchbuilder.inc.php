@@ -1,5 +1,5 @@
 <div class="rounded_box iceblue borderless searchbox_container"<?php if ($show_results): ?> style="display: none;"<?php endif; ?> id="search_builder">
-	<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo (TBGContext::isProjectContext()) ? make_url('project_issues', array('project_key' => TBGContext::getCurrentProject()->getKey())) : make_url('search'); ?>" method="get" id="find_issues_form">
+	<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('project_issues', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : make_url('search'); ?>" method="get" id="find_issues_form">
 		<label for="issues_searchfor"><?php echo __('Search for'); ?></label>
 		<select name="filters[text][operator]">
 			<option value="="<?php if (array_key_exists('text', $appliedfilters) && ((array_key_exists('operator', $appliedfilters['text']) && $appliedfilters['text']['operator'] == '=') || (!array_key_exists('operator', $appliedfilters['text']) && $appliedfilters['text'][0]['operator'] == '='))): ?> selected<?php endif; ?>><?php echo __('Issues containing'); ?></option>
@@ -30,7 +30,7 @@
 			<label for="groupby"><?php echo __('Group results by'); ?></label>
 			<select name="groupby" id="groupby">
 				<option value=""><?php echo __('No grouping'); ?></option>
-				<?php if (!TBGContext::isProjectContext()): ?>
+				<?php if (!\thebuggenie\core\Context::isProjectContext()): ?>
 					<option disabled value="project_id"<?php if ($groupby == 'project_id'): ?> selected<?php endif; ?>><?php echo __('Project'); ?></option>
 				<?php endif; ?>
 				<option value="milestone"<?php if ($groupby == 'milestone'): ?> selected<?php endif; ?>><?php echo __('Milestone'); ?></option>
@@ -62,16 +62,16 @@
 				<?php endforeach; ?>
 			</ul>
 			<div style="text-align: right;">
-				<?php if ($issavedsearch && ((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || !TBGContext::isProjectContext())): ?>
+				<?php if ($issavedsearch && ((\thebuggenie\core\Context::isProjectContext() && !\thebuggenie\core\Context::getCurrentProject()->isArchived()) || !\thebuggenie\core\Context::isProjectContext())): ?>
 					<button onclick="$('find_issues_form').method = 'post';$('saved_search_details').show();$('saved_search_name').enable();$('saved_search_description').enable();<?php if ($csp_user->canCreatePublicSearches()): ?>$('saved_search_public').enable();<?php endif; ?>$('save_search').enable();$('search_button_bottom').disable();$('search_button_bottom').hide();$('search_button_top').disable();$('search_button_top').hide();$('saved_search_id').enable();$('search_button_save_new').hide();$('search_button_save').show();return false;"><?php echo __('Edit saved search details'); ?></button>
 					<button onclick="$('find_issues_form').method = 'post';$('save_search').enable();$('saved_search_name').enable();$('saved_search_description').enable();<?php if ($csp_user->canCreatePublicSearches()): ?>$('saved_search_public').enable();<?php endif; ?>$('search_button_bottom').disable();$('search_button_bottom').hide();$('search_button_top').disable();$('search_button_top').hide();$('saved_search_id').disable();$('search_button_save_new').show();$('search_button_save').hide();if ($('saved_search_details').visible()) { return true; } else { $('saved_search_details').show(); return false; };"><?php echo __('Save as new saved search'); ?></button>
-				<?php elseif (((TBGContext::isProjectContext() && !TBGContext::getCurrentProject()->isArchived()) || !TBGContext::isProjectContext())): ?>
+				<?php elseif (((\thebuggenie\core\Context::isProjectContext() && !\thebuggenie\core\Context::getCurrentProject()->isArchived()) || !\thebuggenie\core\Context::isProjectContext())): ?>
 					<button onclick="$('find_issues_form').method = 'post';$('saved_search_details').show();$('saved_search_name').enable();$('saved_search_description').enable();<?php if ($csp_user->canCreatePublicSearches()): ?>$('saved_search_public').enable();<?php endif; ?>$('save_search').enable();$('search_button_bottom').disable();$('search_button_bottom').hide();$('search_button_top').disable();$('search_button_save').hide();$('search_button_top').hide();return false;"><?php echo __('Save this search'); ?></button>
 				<?php endif; ?>
 				<input type="submit" value="<?php echo __('Search'); ?>" id="search_button_bottom" onclick="$('save_search').disable();$('saved_search_name').disable();$('saved_search_description').disable();<?php if ($csp_user->canCreatePublicSearches()): ?>$('saved_search_public').disable();<?php endif; ?>$('find_issues_form').method = 'get';" style="margin-top: -1px;">
 			</div>
 			<div class="rounded_box white borderless" style="display: none; margin: 5px 0 5px 0; padding: 3px 10px 3px 10px; font-size: 14px;" id="saved_search_details">
-				<?php if (TBGContext::isProjectContext()): ?>
+				<?php if (\thebuggenie\core\Context::isProjectContext()): ?>
 					<p style="padding-bottom: 15px;" class="faded_out"><?php echo __('This saved search will be available under this project only. To make a non-project-specific search, use the main "%find_issues%" page instead', array('%find_issues%' => link_tag(make_url('search'), __('Find issues')))); ?></p>
 				<?php endif; ?>
 				<?php if ($issavedsearch): ?>
@@ -96,10 +96,10 @@
 		</div>
 	</form>
 	<input type="hidden" id="max_filters" name="max_filters" value="<?php echo count($appliedfilters); ?>">
-	<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo (TBGContext::isProjectContext()) ? make_url('project_search_add_filter', array('project_key' => TBGContext::getCurrentProject()->getKey())) : make_url('search_add_filter'); ?>" method="post" id="add_filter_form" onsubmit="TBG.Search.Filter.add('<?php echo (TBGContext::isProjectContext()) ? make_url('project_search_add_filter', array('project_key' => TBGContext::getCurrentProject()->getKey())) : make_url('search_add_filter'); ?>');return false;">
+	<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('project_search_add_filter', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : make_url('search_add_filter'); ?>" method="post" id="add_filter_form" onsubmit="TBG.Search.Filter.add('<?php echo (\thebuggenie\core\Context::isProjectContext()) ? make_url('project_search_add_filter', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())) : make_url('search_add_filter'); ?>');return false;">
 		<label for="add_filter"><?php echo __('Add filter'); ?></label>
 		<select name="filter_name">
-			<?php if (!TBGContext::isProjectContext()): ?>
+			<?php if (!\thebuggenie\core\Context::isProjectContext()): ?>
 				<option value="project_id"><?php echo __('Project'); ?></option>
 			<?php endif; ?>
 			<option value="state"><?php echo __('Issue state - whether an issue is open or closed'); ?></option>

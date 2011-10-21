@@ -19,7 +19,7 @@
 					<?php include_component('publish/articledisplay', array('article' => $article, 'show_title' => false, 'show_details' => false, 'show_actions' => false, 'embedded' => true)); ?>
 				<?php endif; ?>
 				<div class="logindiv regular">			
-					<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('login'); ?>" method="post" id="login_form" onsubmit="TBG.Main.Login.login('<?php echo make_url('login'); ?>'); return false;">
+					<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('login'); ?>" method="post" id="login_form" onsubmit="TBG.Main.Login.login('<?php echo make_url('login'); ?>'); return false;">
 						<?php if (!TBGContext::hasMessage('login_force_redirect') || TBGContext::getMessage('login_force_redirect') !== true): ?>
 							<input type="hidden" id="tbg3_referer" name="tbg3_referer" value="<?php echo $referer; ?>" />
 						<?php else: ?>

@@ -1,4 +1,4 @@
-<?php TBGContext::calculateTimings($tbg_summary); ?>
+<?php \caspar\core\Caspar::calculateTimings($tbg_summary); ?>
 <style type="text/css">
 	#log_messages, #scope_settings, #log_timing, #log_sql { filter:alpha(opacity=90); -moz-opacity:0.9; -khtml-opacity: 0.9; opacity: 0.9; position: fixed; top: 10px; width: 98%; margin: 5px auto; padding: 5px; border: 1px solid #DDD; background-color: #F5F5F5; height: 540px; left: 10px; color: #000; font-size: 12px; }
 	#log_messages div.log, #scope_settings div.log, #log_timing div.log, #log_sql div.log { height: 500px; overflow: auto; font-size: 12px; text-align: left; }
@@ -12,7 +12,7 @@
 			</td>
 			<td style="width: 400px; padding: 3px; font-size: 11px; font-family: Ubuntu;">
 				<?php echo image_tag('debug_route.png', array('style' => 'float: left; margin-right: 5px;')); ?>
-				<b>Current route: </b>[<i><?php echo TBGContext::getRouting()->getCurrentRouteName(); ?></i>] <?php echo TBGContext::getRouting()->getCurrentRouteModule(); ?> / <?php echo TBGContext::getRouting()->getCurrentRouteAction() ?>
+				<b>Current route: </b>[<i><?php echo $csp_routing->getCurrentRouteName(); ?></i>] <?php echo $csp_routing->getCurrentRouteModule(); ?> / <?php echo $csp_routing->getCurrentRouteAction() ?>
 			</td>
 			<td style="width: 100px; cursor: pointer; padding: 3px; font-size: 11px; font-family: Ubuntu;" onclick="$('log_timing').toggle();" title="Click to toggle timing overview">
 				<?php echo image_tag('debug_time.png', array('style' => 'float: left; margin-right: 5px;')); ?>
@@ -42,7 +42,7 @@
 <div id="scope_settings" style="display: none;">
 	<div style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #DDD; padding: 4px;">Scope <?php echo \thebuggenie\core\Context::getScope()->getID(); ?> settings</div>
 	<div class="log">
-		<?php foreach (TBGSettings::getAll() as $module => $settings): ?>
+		<?php foreach (\thebuggenie\core\Settings::getAll() as $module => $settings): ?>
 			<h3><?php echo $module; ?></h3>
 			<table style="border: 0;" cellpadding="0" cellspacing="0">
 				<?php foreach ($settings as $setting => $setting_details): ?>
@@ -63,7 +63,7 @@
 	<div style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #DDD; padding: 4px;">Timing</div>
 	<div class="log">
 		<ul class="simple_list">
-		<?php foreach (TBGContext::getVisitedPartials() as $partial_visited => $details): ?>
+		<?php foreach (\caspar\core\Caspar::getVisitedPartials() as $partial_visited => $details): ?>
 			<li>
 				<b><?php echo $partial_visited; ?>: </b>
 				<span class="faded_out dark">Visited <?php echo $details['count']; ?>time(s), totalling <?php echo ($details['time'] >= 1) ? round($details['time'], 2) . ' seconds' : round($details['time'] * 1000, 1) . 'ms'; ?></span>
@@ -81,7 +81,7 @@
 			<li>
 				<b><?php echo $cc++; ?>
 				<span class="faded_out dark small">[<?php echo ($details['time'] >= 1) ? round($details['time'], 2) . ' seconds' : round($details['time'] * 1000, 1) . 'ms'; ?>]</span> </b> from <b><?php echo $details['filename']; ?>, line <?php echo $details['line']; ?></b>:<br>
-				<span style="font-size: 12px;"><?php geshi_highlight($details['sql'], 'sql'); ?></span>
+				<span style="font-size: 12px;"><?php //geshi_highlight($details['sql'], 'sql'); ?></span>
 			</li>
 		<?php endforeach; ?>
 		</ol>
@@ -90,7 +90,7 @@
 <div id="log_messages" style="display: none;">
 	<div style="font-size: 16px; font-weight: bold; border-bottom: 1px solid #DDD; padding: 4px;">Log messages</div>
 	<div class="log">
-	<?php foreach (TBGContext::getI18n()->getMissingStrings() as $text => $t): ?>
+	<?php foreach (\caspar\core\Caspar::getI18n()->getMissingStrings() as $text => $t): ?>
 		<?php \caspar\core\Logging::log('The text "' . $text . '" does not exist in list of translated strings, and was added automatically', 'i18n', \caspar\core\Logging::LEVEL_NOTICE); ?>
 	<?php endforeach; ?>
 	<?php foreach (\caspar\core\Logging::getEntries() as $entry): ?>

@@ -45,7 +45,7 @@
 		 */
 		public static function getModule()
 		{
-			return TBGContext::getModule('vcs_integration');
+			return \thebuggenie\core\Context::getModule('vcs_integration');
 		}
 
 		protected function _initialize()
@@ -325,15 +325,15 @@
 		
 		public function listen_sidebar_links(\caspar\core\Event $event)
 		{
-			if (TBGContext::isProjectContext())
+			if (\thebuggenie\core\Context::isProjectContext())
 			{
-				\caspar\core\ActionComponents::includeTemplate('vcs_integration/menustriplinks', array('project' => TBGContext::getCurrentProject(), 'module' => $this, 'submenu' => $event->getParameter('submenu')));
+				\caspar\core\ActionComponents::includeTemplate('vcs_integration/menustriplinks', array('project' => \thebuggenie\core\Context::getCurrentProject(), 'module' => $this, 'submenu' => $event->getParameter('submenu')));
 			}
 		}
 		
 		public function listen_breadcrumb_links(\caspar\core\Event $event)
 		{
-			$event->addToReturnList(array('url' => TBGContext::getRouting()->generate('vcs_commitspage', array('project_key' => TBGContext::getCurrentProject()->getKey())), 'title' => TBGContext::getI18n()->__('Commits')));
+			$event->addToReturnList(array('url' => TBGContext::getRouting()->generate('vcs_commitspage', array('project_key' => \thebuggenie\core\Context::getCurrentProject()->getKey())), 'title' => \caspar\core\Caspar::getI18n()->__('Commits')));
 		}
 		
 		public function listen_projectheader(\caspar\core\Event $event)
@@ -353,7 +353,7 @@
 		
 		public function listen_viewissue_tab(\caspar\core\Event $event)
 		{
-			if (TBGContext::getModule('vcs_integration')->getSetting('vcs_mode_' . TBGContext::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return; endif;
+			if (\thebuggenie\core\Context::getModule('vcs_integration')->getSetting('vcs_mode_' . \thebuggenie\core\Context::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return; endif;
 				
 			$count = count(TBGVCSIntegrationIssueLink::getCommitsByIssue($event->getSubject()));
 			\caspar\core\ActionComponents::includeTemplate('vcs_integration/viewissue_tab', array('count' => $count));
@@ -361,7 +361,7 @@
 		
 		public function listen_viewissue_panel(\caspar\core\Event $event)
 		{
-			if (TBGContext::getModule('vcs_integration')->getSetting('vcs_mode_' . TBGContext::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return; endif;
+			if (\thebuggenie\core\Context::getModule('vcs_integration')->getSetting('vcs_mode_' . \thebuggenie\core\Context::getCurrentProject()->getID()) == TBGVCSIntegration::MODE_DISABLED): return; endif;
 
 			$links = TBGVCSIntegrationIssueLink::getCommitsByIssue($event->getSubject());
 			
@@ -392,7 +392,7 @@
 			
 			try
 			{
-				TBGContext::getI18n();
+				\caspar\core\Caspar::getI18n();
 			}
 			catch (Exception $e)
 			{
@@ -570,7 +570,7 @@
 				$inst->setCommit($commit);
 				$inst->save();
 				
-				$issue->addSystemComment(TBGContext::getI18n()->__('Issue updated from code repository'), TBGContext::getI18n()->__('This issue has been updated with the latest changes from the code repository.<source>%commit_msg%</source>', array('%commit_msg%' => $commit_msg)), $uid);
+				$issue->addSystemComment(\caspar\core\Caspar::getI18n()->__('Issue updated from code repository'), \caspar\core\Caspar::getI18n()->__('This issue has been updated with the latest changes from the code repository.<source>%commit_msg%</source>', array('%commit_msg%' => $commit_msg)), $uid);
 				$output .= '[VCS '.$project->getKey().'] Updated issue ' . $issue->getFormattedIssueNo() . "\n";
 			}
 			

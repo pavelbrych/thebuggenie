@@ -83,7 +83,7 @@
 							</table>
 							<div class="header" style="margin: 20px 0 5px 0;"><?php echo __('Available modules'); ?></div>
 							<table style="clear: both; width: 700px;" class="padded_table" cellpadding=0 cellspacing=0>
-								<?php foreach (TBGContext::getModules() as $module): ?>
+								<?php foreach (\thebuggenie\core\Context::getModules() as $module): ?>
 									<?php $module_is_disabled = (array_key_exists($module->getName(), $modules) && !$modules[$module->getName()]); ?>
 									<tr>
 										<td style="width: 300px; vertical-align: top;"><label for="module_<?php echo $module->getName(); ?>_available_yes"<?php if ($module_is_disabled): ?> class="faded_out" title="<?php echo __('This module has been disabled in the selected scope by its admin'); ?>"<?php endif; ?>><?php echo $module->getLongname(); ?></label></td>

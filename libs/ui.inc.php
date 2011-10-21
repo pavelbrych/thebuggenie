@@ -28,17 +28,17 @@
 		}
 		else
 		{
-			if ($module != 'core' && !file_exists(THEBUGGENIE_PATH . 'iconsets/' . TBGSettings::getIconsetName() . "/{$module}/" . $image))
+			if ($module != 'core' && !file_exists(THEBUGGENIE_PATH . 'iconsets/' . \thebuggenie\core\Settings::getIconsetName() . "/{$module}/" . $image))
 			{
-				$params['src'] = \caspar\core\Caspar::getTBGPath() . "iconsets/" . TBGSettings::getIconsetName() . "/modules/{$module}/" . $image;
+				$params['src'] = \caspar\core\Caspar::getTBGPath() . "iconsets/" . \thebuggenie\core\Settings::getIconsetName() . "/modules/{$module}/" . $image;
 			}
 			elseif ($module != 'core')
 			{
-				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'iconsets/' . TBGSettings::getIconsetName() . "/{$module}/" . $image;
+				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'iconsets/' . \thebuggenie\core\Settings::getIconsetName() . "/{$module}/" . $image;
 			}
 			else
 			{
-				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'iconsets/' . TBGSettings::getIconsetName() . '/' . $image;
+				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'iconsets/' . \thebuggenie\core\Settings::getIconsetName() . '/' . $image;
 			}
 		}
 		if (!$relative)
@@ -72,17 +72,17 @@
 		}
 		else
 		{
-			if ($module != 'core' && !file_exists(THEBUGGENIE_PATH . 'themes/' . TBGSettings::getThemeName() . "/{$module}/" . $image))
+			if ($module != 'core' && !file_exists(THEBUGGENIE_PATH . 'themes/' . \thebuggenie\core\Settings::getThemeName() . "/{$module}/" . $image))
 			{
-				$params['src'] = \caspar\core\Caspar::getTBGPath() . "themes/modules/{$module}/" . TBGSettings::getThemeName() . '/' . $image;
+				$params['src'] = \caspar\core\Caspar::getTBGPath() . "themes/modules/{$module}/" . \thebuggenie\core\Settings::getThemeName() . '/' . $image;
 			}
 			elseif ($module != 'core')
 			{
-				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'themes/' . TBGSettings::getThemeName() . "/{$module}/" . $image;
+				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'themes/' . \thebuggenie\core\Settings::getThemeName() . "/{$module}/" . $image;
 			}
 			else
 			{
-				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'themes/' . TBGSettings::getThemeName() . '/' . $image;
+				$params['src'] = \caspar\core\Caspar::getTBGPath() . 'themes/' . \thebuggenie\core\Settings::getThemeName() . '/' . $image;
 			}
 		}
 		if (!$relative)
@@ -144,7 +144,7 @@
 	 */
 	function image_submit_tag($image, $params = array(), $notheme = false)
 	{
-		$params['src'] = (!$notheme) ? \caspar\core\Caspar::getTBGPath() . 'themes/' . TBGSettings::getThemeName() . '/' . $image : $image;
+		$params['src'] = (!$notheme) ? \caspar\core\Caspar::getTBGPath() . 'themes/' . \thebuggenie\core\Settings::getThemeName() . '/' . $image : $image;
 		return '<input type="image" ' . parseHTMLoptions($params) . ' />';
 	}
 	

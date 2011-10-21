@@ -51,7 +51,7 @@
 	<div id="<?php echo $base_id; ?>_tab_modules_pane" class="tab_pane" style="display: none;">
 		<p><?php echo __('Module-specific permissions are also available from the "%configure_modules%" configuration page', array('%configure_modules%' => link_tag(make_url('configure_modules'), __('Configure modules')))); ?></p>
 		<ul>
-		<?php foreach (TBGContext::getModules() as $module_key => $module): ?>
+		<?php foreach (\thebuggenie\core\Context::getModules() as $module_key => $module): ?>
 			<li>
 				<a href="javascript:void(0);" onclick="$('module_permission_details_<?php echo $module_key; ?>').toggle();"><?php echo image_tag('icon_project_permissions.png', array('style' => 'float: right;')); ?><?php echo $module->getLongName(); ?> <span class="faded_out smaller"><?php echo $module_key; ?></span></a>
 				<ul style="display: none;" id="module_permission_details_<?php echo $module_key; ?>">

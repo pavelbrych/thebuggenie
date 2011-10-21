@@ -30,7 +30,7 @@
 		protected function _listInstalled()
 		{
 			$this->cliEcho("\nInstalled modules:\n", 'green', 'bold');
-			foreach (TBGContext::getModules() as $module_key => $module)
+			foreach (\thebuggenie\core\Context::getModules() as $module_key => $module)
 			{
 				$this->cliEcho("{$module_key}: ", 'white', 'bold');
 				$this->cliEcho($module->getDescription());
@@ -102,7 +102,7 @@
 				else
 				{
 					$this->cliEcho("Removing {$module_name} ...");
-					TBGContext::getModule($module_name)->uninstall();
+					\thebuggenie\core\Context::getModule($module_name)->uninstall();
 					$this->cliEcho(' ok!', 'green', 'bold');
 					$this->cliEcho("\n");
 				}

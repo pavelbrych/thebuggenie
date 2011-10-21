@@ -3,7 +3,7 @@
 	<?php foreach ($config_sections as $section => $config_info): ?>
 		<?php if (array_key_exists('icon', $config_info)) $config_info = array($config_info); ?>
 		<?php foreach ($config_info as $info): ?>
-			<?php if ($info['module'] != 'core' && !TBGContext::getModule($info['module'])->hasConfigSettings()) continue; ?>
+			<?php if ($info['module'] != 'core' && !\thebuggenie\core\Context::getModule($info['module'])->hasConfigSettings()) continue; ?>
 			<?php $is_selected = (bool) (($selected_section == TBGSettings::CONFIGURATION_SECTION_MODULES && $selected_subsection == $info['module'] && $section == TBGSettings::CONFIGURATION_SECTION_MODULES) || ($selected_section != TBGSettings::CONFIGURATION_SECTION_MODULES && $selected_section == $section)); ?>
 			<li<?php if ($is_selected): ?> class="config_selected"<?php endif; ?>>
 				<?php if (is_array($info['route'])): ?>

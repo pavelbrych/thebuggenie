@@ -8,7 +8,7 @@
 <?php include_component('leftmenu', array('selected_section' => 12)); ?>
 <td valign="top" style="padding-top: 10px;">
 <?php if ($access_level == TBGSettings::ACCESS_FULL): ?>
-	<form accept-charset="<?php echo TBGContext::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_settings'); ?>" method="post" onsubmit="TBG.Main.Helpers.formSubmit('<?php echo make_url('configure_settings'); ?>', 'config_settings'); return false;" id="config_settings">
+	<form accept-charset="<?php echo \caspar\core\Caspar::getI18n()->getCharset(); ?>" action="<?php echo make_url('configure_settings'); ?>" method="post" onsubmit="TBG.Main.Helpers.formSubmit('<?php echo make_url('configure_settings'); ?>', 'config_settings'); return false;" id="config_settings">
 <?php endif; ?>
 <div style="margin-top: 5px; width: 750px; clear: both; height: 30px;" class="tab_menu">
 	<ul id="settings_menu">

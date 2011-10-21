@@ -179,14 +179,14 @@
 			{
 				try
 				{
-					$current_language = TBGContext::getI18n()->getCurrentLanguage();
-					TBGContext::getI18n()->setLanguage($this->language);
-					$this->subject_translated = TBGContext::getI18n()->__($this->subject);
-					TBGContext::getI18n()->setLanguage($current_language);
+					$current_language = \caspar\core\Caspar::getI18n()->getCurrentLanguage();
+					\caspar\core\Caspar::getI18n()->setLanguage($this->language);
+					$this->subject_translated = \caspar\core\Caspar::getI18n()->__($this->subject);
+					\caspar\core\Caspar::getI18n()->setLanguage($current_language);
 				}
 				catch (Exception $e)
 				{
-					TBGContext::getI18n()->setLanguage($current_language);
+					\caspar\core\Caspar::getI18n()->setLanguage($current_language);
 					throw $e;
 				}
 			}
@@ -257,8 +257,8 @@
 					{
 						try
 						{
-							$current_language = TBGContext::getI18n()->getCurrentLanguage();
-							TBGContext::getI18n()->setLanguage($this->language);
+							$current_language = \caspar\core\Caspar::getI18n()->getCurrentLanguage();
+							\caspar\core\Caspar::getI18n()->setLanguage($this->language);
 							$this->message_html = TBGAction::returnTemplateHTML("mailing/{$this->template}.html", $this->template_parameters);
 							if ($this->message_html == '')
 							{
@@ -269,11 +269,11 @@
 							{
 								$this->message_plain = null;
 							}
-							TBGContext::getI18n()->setLanguage($current_language);
+							\caspar\core\Caspar::getI18n()->setLanguage($current_language);
 						}
 						catch (Exception $e)
 						{
-							TBGContext::getI18n()->setLanguage($current_language);
+							\caspar\core\Caspar::getI18n()->setLanguage($current_language);
 							throw $e;
 						}
 					}

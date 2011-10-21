@@ -14,7 +14,7 @@
 		public function preExecute(Request $request, $action)
 		{
 			$this->getResponse()->setPage('wiki');
-			$i18n = TBGContext::getI18n();
+			$i18n = \caspar\core\Caspar::getI18n();
 
 			$this->article = null;
 			$this->article_name = $request->getParameter('article_name');
@@ -90,7 +90,7 @@
 			{
 				if (!$this->article->hasAccess())
 				{
-					$this->error = TBGContext::getI18n()->__("You don't have access to read this article");
+					$this->error = \caspar\core\Caspar::getI18n()->__("You don't have access to read this article");
 					$this->article = null;
 				}
 				else
@@ -116,7 +116,7 @@
 					}
 					catch (Exception $e)
 					{
-						$this->error = TBGContext::getI18n()->__('There was an error trying to show this revision');
+						$this->error = \caspar\core\Caspar::getI18n()->__('There was an error trying to show this revision');
 					}
 				}
 			}
@@ -157,7 +157,7 @@
 
 						if (!$from_revision || !$to_revision)
 						{
-							$this->error = TBGContext::getI18n()->__('Please specify a from- and to-revision to compare');
+							$this->error = \caspar\core\Caspar::getI18n()->__('Please specify a from- and to-revision to compare');
 						}
 						else
 						{
@@ -174,9 +174,9 @@
 						}
 						break;
 					case 'revert':
-						if (!TBGContext::getModule('publish')->canUserEditArticle($article_name))
+						if (!\thebuggenie\core\Context::getModule('publish')->canUserEditArticle($article_name))
 						{
-							TBGContext::setMessage('publish_article_error', TBGContext::getI18n()->__('You do not have permission to edit this article'));
+							TBGContext::setMessage('publish_article_error', \caspar\core\Caspar::getI18n()->__('You do not have permission to edit this article'));
 							$this->forward(TBGContext::getRouting()->generate('publish_article_history', array('article_name' => $article_name)));
 						}
 						$revision = $request->getParameter('revision');
@@ -200,15 +200,15 @@
 		 */
 		public function runDeleteArticle(Request $request)
 		{
-			if (!TBGContext::getModule('publish')->canUserDeleteArticle($this->article->getName()))
+			if (!\thebuggenie\core\Context::getModule('publish')->canUserDeleteArticle($this->article->getName()))
 			{
-				TBGContext::setMessage('publish_article_error', TBGContext::getI18n()->__('You do not have permission to delete this article'));
+				TBGContext::setMessage('publish_article_error', \caspar\core\Caspar::getI18n()->__('You do not have permission to delete this article'));
 				$this->forward(TBGContext::getRouting()->generate('publish_article', array('article_name' => $this->article->getName())));
 			}
 			if ($article_name = $request->getParameter('article_name'))
 			{
 				TBGWikiArticle::deleteByName($article_name);
-				TBGContext::setMessage('publish_article_error', TBGContext::getI18n()->__('The article was deleted'));
+				TBGContext::setMessage('publish_article_error', \caspar\core\Caspar::getI18n()->__('The article was deleted'));
 				$this->forward(TBGContext::getRouting()->generate('publish_article', array('article_name' => $article_name)));
 			}
 		}
@@ -221,9 +221,9 @@
 		public function runEditArticle(Request $request)
 		{
 			$article_name = ($this->article instanceof TBGWikiArticle) ? $this->article->getName() : $request->getParameter('article_name');
-			if (!TBGContext::getModule('publish')->canUserEditArticle($article_name))
+			if (!\thebuggenie\core\Context::getModule('publish')->canUserEditArticle($article_name))
 			{
-				TBGContext::setMessage('publish_article_error', TBGContext::getI18n()->__('You do not have permission to edit this article'));
+				TBGContext::setMessage('publish_article_error', \caspar\core\Caspar::getI18n()->__('You do not have permission to edit this article'));
 				$this->forward(TBGContext::getRouting()->generate('publish_article', array('article_name' => $article_name)));
 			}
 			if ($request->isMethod(TBGRequest::POST))
@@ -240,7 +240,7 @@
 								{
 									if ($article->getLastUpdatedDate() != $request->getParameter('last_modified'))
 									{
-										$this->error = TBGContext::getI18n()->__('The file has been modified since you last opened it');
+										$this->error = \caspar\core\Caspar::getI18n()->__('The file has been modified since you last opened it');
 									}
 									else
 									{
@@ -255,7 +255,7 @@
 											else
 											{
 												$article->doSave(array(), $request->getParameter('change_reason'));
-												TBGContext::setMessage('publish_article_message', TBGContext::getI18n()->__('The article was saved'));
+												TBGContext::setMessage('publish_article_message', \caspar\core\Caspar::getI18n()->__('The article was saved'));
 												$this->forward(TBGContext::getRouting()->generate('publish_article', array('article_name' => $article->getName())));
 											}
 										}
@@ -271,7 +271,7 @@
 
 						if (($article = TBGWikiArticle::getByName($request->getParameter('new_article_name'))) && $article instanceof TBGWikiArticle && $article->getID() != $request->getParameter('article_id'))
 						{
-							$this->error = TBGContext::getI18n()->__('An article with that name already exists. Please choose a different article name');
+							$this->error = \caspar\core\Caspar::getI18n()->__('An article with that name already exists. Please choose a different article name');
 						}
 						elseif (!$article instanceof TBGWikiArticle)
 						{
@@ -292,12 +292,12 @@
 					}
 					else
 					{
-						$this->error = TBGContext::getI18n()->__('You have to provide a reason for the changes');
+						$this->error = \caspar\core\Caspar::getI18n()->__('You have to provide a reason for the changes');
 					}
 				}
 				else
 				{
-					$this->error = TBGContext::getI18n()->__('You need to specify the article name');
+					$this->error = \caspar\core\Caspar::getI18n()->__('You need to specify the article name');
 				}
 			}
 			$this->preview = (bool) $request->getParameter('preview');
@@ -331,7 +331,7 @@
 			}
 			else
 			{
-				$this->forward403if(TBGContext::isProjectContext() && TBGContext::getCurrentProject()->isArchived());
+				$this->forward403if(\thebuggenie\core\Context::isProjectContext() && \thebuggenie\core\Context::getCurrentProject()->isArchived());
 				if ($request->hasParameter('new_article_content'))
 				{
 					$this->article_content = $request->getRawParameter('new_article_content');
@@ -348,7 +348,7 @@
 			
 			if ($this->articlename)
 			{
-				list ($this->resultcount, $this->articles) = TBGWikiArticle::findArticlesByContentAndProject($this->articlename, TBGContext::getCurrentProject(), 10);
+				list ($this->resultcount, $this->articles) = TBGWikiArticle::findArticlesByContentAndProject($this->articlename, \thebuggenie\core\Context::getCurrentProject(), 10);
 			}
 		}
 
