@@ -96,7 +96,7 @@
 			</dd>
 		</dl>
 		<?php if ($issue->canEditAssignee() && $issue->isEditable()): ?>
-			<?php include_component('identifiableselector', array(	'html_id' 			=> 'assigned_to_change', 
+			<?php include_component('identifiableselector', array(	'html_id' 			=> 'assigned_to_change',
 																	'header' 			=> __('Assign this issue'),
 																	'callback'		 	=> "TBG.Issues.Field.set('" . make_url('issue_setfield', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getID(), 'field' => 'assigned_to', 'identifiable_type' => 'user', 'value' => '%identifiable_value%')) . "', 'assigned_to');",
 																	'team_callback'	 	=> "TBG.Issues.Field.set('" . make_url('issue_setfield', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getID(), 'field' => 'assigned_to', 'identifiable_type' => 'team', 'value' => '%identifiable_value%')) . "', 'assigned_to');",
@@ -258,7 +258,7 @@
 			</dd>
 		</dl>
 		<?php if ($issue->isEditable() && $issue->canEditPostedBy()): ?>
-			<?php include_component('identifiableselector', array(	'html_id' 			=> 'posted_by_change', 
+			<?php include_component('identifiableselector', array(	'html_id' 			=> 'posted_by_change',
 																	'header' 			=> __('Change poster'),
 																	'allow_clear'		=> false,
 																	'clear_link_text'	=> '',
@@ -288,7 +288,7 @@
 			</dd>
 		</dl>
 		<?php if ($issue->isUpdateable() && $issue->canEditOwner()): ?>
-			<?php include_component('identifiableselector', array(	'html_id' 			=> 'owned_by_change', 
+			<?php include_component('identifiableselector', array(	'html_id' 			=> 'owned_by_change',
 																	'header' 			=> __('Change issue owner'),
 																	'callback'		 	=> "TBG.Issues.Field.set('" . make_url('issue_setfield', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getID(), 'field' => 'owned_by', 'identifiable_type' => 'user', 'value' => '%identifiable_value%')) . "', 'owned_by');",
 																	'team_callback'	 	=> "TBG.Issues.Field.set('" . make_url('issue_setfield', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getID(), 'field' => 'owned_by', 'identifiable_type' => 'team', 'value' => '%identifiable_value%')) . "', 'owned_by');",
@@ -307,7 +307,7 @@
 				<?php if ($issue->isUpdateable() && $issue->canEditEstimatedTime()): ?>
 					<a href="javascript:void(0);" onclick="TBG.Issues.Field.revert('<?php echo make_url('issue_revertfield', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getID(), 'field' => 'estimated_time')); ?>', 'estimated_time');" title="<?php echo __('Undo this change'); ?>"><?php echo image_tag('undo.png', array('class' => 'undo')); ?></a>
 					<?php echo image_tag('spinning_16.gif', array('style' => 'display: none; float: left; margin-right: 5px;', 'id' => 'estimated_time_undo_spinning')); ?>
-					<a href="javascript:void(0);" onclick="if ($('estimated_time_change').visible()) { $$('div.dropdown_box').each(Element.hide); } else { $$('div.dropdown_box').each(Element.hide); $('estimated_time_<?php echo $issue->getID(); ?>_change').toggle(); }" title="<?php echo __('Click to estimate this issue'); ?>"><?php echo image_tag('action_dropdown_small.png', array('class' => 'dropdown')); ?></a>
+					<a href="javascript:void(0);" onclick="if ($('estimated_time_<?php echo $issue->getID(); ?>_change').visible()) { $$('div.dropdown_box').each(Element.hide); } else { $$('div.dropdown_box').each(Element.hide); $('estimated_time_<?php echo $issue->getID(); ?>_change').toggle(); }" title="<?php echo __('Click to estimate this issue'); ?>"><?php echo image_tag('action_dropdown_small.png', array('class' => 'dropdown')); ?></a>
 				<?php endif; ?>
 				<span id="estimated_time_<?php echo $issue->getID(); ?>_name"<?php if (!$issue->hasEstimatedTime()): ?> style="display: none;"<?php endif; ?>>
 					<?php echo $issue->getFormattedTime($issue->getEstimatedTime()); ?>
@@ -326,7 +326,7 @@
 				<?php if ($issue->isUpdateable() && $issue->canEditSpentTime()): ?>
 					<a href="javascript:void(0);" onclick="TBG.Issues.Field.revert('<?php echo make_url('issue_revertfield', array('project_key' => $issue->getProject()->getKey(), 'issue_id' => $issue->getID(), 'field' => 'spent_time')); ?>', 'spent_time');" title="<?php echo __('Undo this change'); ?>"><?php echo image_tag('undo.png', array('class' => 'undo')); ?></a>
 					<?php echo image_tag('spinning_16.gif', array('style' => 'display: none; float: left; margin-right: 5px;', 'id' => 'spent_time_undo_spinning')); ?>
-					<a href="javascript:void(0);" onclick="if ($('spent_time_change').visible()) { $$('div.dropdown_box').each(Element.hide); } else { $$('div.dropdown_box').each(Element.hide); $('spent_time_<?php echo $issue->getID(); ?>_change').toggle(); }" title="<?php echo __('Click to enter time spent on this issue'); ?>"><?php echo image_tag('action_dropdown_small.png', array('class' => 'dropdown')); ?></a>
+					<a href="javascript:void(0);" onclick="if ($('spent_time_<?php echo $issue->getID(); ?>_change').visible()) { $$('div.dropdown_box').each(Element.hide); } else { $$('div.dropdown_box').each(Element.hide); $('spent_time_<?php echo $issue->getID(); ?>_change').toggle(); }" title="<?php echo __('Click to enter time spent on this issue'); ?>"><?php echo image_tag('action_dropdown_small.png', array('class' => 'dropdown')); ?></a>
 				<?php endif; ?>
 				<span id="spent_time_name"<?php if (!$issue->hasSpentTime()): ?> style="display: none;"<?php endif; ?>>
 					<?php echo $issue->getFormattedTime($issue->getSpentTime()); ?>
@@ -399,7 +399,7 @@
 				<a href="javascript:void(0);" onclick="if ($('<?php echo $field; ?>_change').visible()) { $$('div.dropdown_box').each(Element.hide); } else { $$('div.dropdown_box').each(Element.hide); $('<?php echo $field; ?>_change').toggle(); }" title="<?php echo $info['change_tip']; ?>"><?php echo image_tag('action_dropdown_small.png', array('class' => 'dropdown')); ?></a>
 			<?php endif; ?>
 			<?php echo image_tag('icon_customdatatype.png', array('style' => 'float: left; margin-right: 5px;')); ?>
-			<?php 
+			<?php
 				switch ($info['type'])
 				{
 					case TBGCustomDatatype::INPUT_TEXTAREA_SMALL:
