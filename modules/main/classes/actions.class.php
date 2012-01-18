@@ -2632,6 +2632,10 @@
 
 		public function runGetBackdropPartial(TBGRequest $request)
 		{
+			if (!$request->isAjaxCall())
+			{
+				return $this->return404($this->getI18n()->__('You need to enable javascript for The Bug Genie to work properly'));
+			}
 			try
 			{
 				$template_name = null;
@@ -3560,7 +3564,7 @@
 		
 		public function runServe(TBGRequest $request)
 		{
-			if(TBGContext::isMinifyDisabled())
+			if(!TBGContext::isMinifyEnabled())
 			{
 				$itemarray = array($request['g'] => explode(',', base64_decode($request['files'])));
 				
